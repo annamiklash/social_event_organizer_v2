@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://172.21.40.109:5432/test_db
+    username: postgres
+    password: SocEventOrgDB
+  jpa:
+#    hibernate:
+#      ddl-auto: none
+    database: POSTGRESQL
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
+#spring:
+#  jpa:
+#    database: POSTGRESQL
+#    show-sql: true
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://dumbo.db.elephantsql.com:5432/cvaicqxj
+#    username: cvaicqxj
+#    password: zapf132i7C5CgeONjPgaA5xlUIJfYeF-
+#    hikari:
+#      maximum-pool-size: 5
+#    initialization-mode: never
+#
+#spring:
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://queenie.db.elephantsql.com:5432/lrdprxfv
+#    username: lrdprxfv
+#    password: uqayR_O688sYaR8Sm9yqnaNUc4381zXy
+
+
+logbook:
+  filter.enabled: true
+  format.style: http
+  write:
+    max-body-size: 1000
+
+final:
+  project:
+    testProperty: siemanko
+
