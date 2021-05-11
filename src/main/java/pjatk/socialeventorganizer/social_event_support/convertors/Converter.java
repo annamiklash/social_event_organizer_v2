@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Slf4j
@@ -24,5 +25,9 @@ public class Converter {
         final Optional<String> optional = Optional.ofNullable(description)
                 .filter(s -> !s.isEmpty());
         return optional.orElse(null);
+    }
+
+    public LocalDate convertDateString(String date) {
+        return LocalDate.parse(date);
     }
 }

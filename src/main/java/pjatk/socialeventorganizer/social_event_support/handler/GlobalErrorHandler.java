@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import pjatk.socialeventorganizer.social_event_support.model.exception.InvalidCredentialsException;
-import pjatk.socialeventorganizer.social_event_support.model.exception.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.PasswordsDontMatchException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Date;
@@ -55,7 +57,6 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public void notFoundExceptionHandler(Exception ex) {
@@ -71,6 +72,18 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidCredentialsException.class)
     public void invalidCredentialsExceptionHandler(Exception ex) {
+        log.error(ex.getMessage(), ex);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordsDontMatchException.class)
+    public void passwordsDontMatchExceptionHandler(Exception ex) {
+        log.error(ex.getMessage(), ex);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserExistsException.class)
+    public void userExistsExceptionHandler(Exception ex) {
         log.error(ex.getMessage(), ex);
     }
 

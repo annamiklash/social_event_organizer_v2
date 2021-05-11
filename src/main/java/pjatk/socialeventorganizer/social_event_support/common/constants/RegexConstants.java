@@ -12,14 +12,16 @@ public class RegexConstants {
     public static final String PHONE_NUMBER_REGEX = "^\\d{9}$";
     public static final String NAME_REGEX = "^(?=\\s*\\S).*$";
     /*
-     # a digit must occur at least once
-     # a lower case letter must occur at least once
-     # an upper case letter must occur at least once
-     # a special character must occur at least once
-     # no whitespace allowed in the entire string
-     # at least 8 characters long
+        ^                 # start-of-string
+        (?=.*[0-9])       # a digit must occur at least once
+        (?=.*[a-z])       # a lower case letter must occur at least once
+        (?=.*[A-Z])       # an upper case letter must occur at least once
+        (?=.*[@#$%!*^&+=])# a special character must occur at least once
+        (?=\S+$)          # no whitespace allowed in the entire string
+        .{8,}             # anything, at least eight places though
+        $                 # end-of-string
      */
-    public static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!^&+=]).{8,}$";
-
+    public static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!*^&+=])(?=\\S+$).{8,}$";
+    public static final String BIRTHDATE_REGEX = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$";
 
 }
