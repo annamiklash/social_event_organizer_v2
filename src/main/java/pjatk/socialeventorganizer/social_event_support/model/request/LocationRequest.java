@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.NumberFormat;
-import pjatk.socialeventorganizer.social_event_support.common.RegexConstants;
+import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 import pjatk.socialeventorganizer.social_event_support.model.enums.LocationDescriptionItemEnum;
 
 import javax.validation.constraints.*;

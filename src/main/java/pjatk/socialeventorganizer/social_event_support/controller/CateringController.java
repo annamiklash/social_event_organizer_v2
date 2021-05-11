@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.model.exception.IllegalArgumentException;
@@ -55,6 +56,7 @@ public class CateringController {
         return ResponseEntity.ok(cateringService.findByName(name));
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
             value = "/add",
@@ -66,6 +68,7 @@ public class CateringController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT,
             value = "/{cateringId}/?address={addressId}", //name same as function argument
@@ -79,6 +82,7 @@ public class CateringController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
             value = "/{id}") //name same as function argument

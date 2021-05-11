@@ -28,4 +28,7 @@ public class Guest implements Serializable {
     @Column
     String email;
 
+    @Column(name = "id_customer")
+    Integer customerId;
+
 }

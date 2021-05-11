@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.common.RegexConstants;
+import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;

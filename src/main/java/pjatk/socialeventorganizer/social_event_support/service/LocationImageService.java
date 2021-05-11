@@ -38,7 +38,7 @@ public class LocationImageService {
         return response;
     }
 
-    public List<LocationImage> findByLocationId(long locationId) {
+    public List<LocationImage> findByLocationId(int locationId) {
         final Optional<List<LocationImage>> allByLocationId = repository.findAllByLocationId(locationId);
         if (allByLocationId.isPresent() && !allByLocationId.get().isEmpty()) {
             return allByLocationId.get();

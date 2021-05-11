@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface LocationImageRepository extends JpaRepository<LocationImage, Long> {
 
-    Optional<List<LocationImage>> findAllByLocationId(long locationId);
+    Optional<List<LocationImage>> findAllByLocationId(Integer locationId);
 }

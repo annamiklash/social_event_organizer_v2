@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.common;
+package pjatk.socialeventorganizer.social_event_support.common.constants;
 
 public class RegexConstants {
 

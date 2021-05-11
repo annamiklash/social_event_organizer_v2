@@ -16,7 +16,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Table(name = "customer")
 @Entity(name = "customer")
-public class Customer implements Serializable {
+public class Customer extends User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,14 +32,15 @@ public class Customer implements Serializable {
     @Column
     LocalDate birthdate;
 
-    @Column
-    String email;
-
     @Column(name = "phone_number")
     BigInteger phoneNumber;
 
     @Column(name = "hashed_password")
     String password;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_customer_address")
+    Address address;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_customer")

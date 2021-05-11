@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.model.dto.LocationImage;
@@ -25,6 +26,7 @@ public class LocationImageController {
 
     private final LocationImageService service;
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
             value = "/add",
@@ -35,13 +37,13 @@ public class LocationImageController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/location/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LocationImage>> getImagesByLocationId(@PathVariable Long id) {
+    public ResponseEntity<List<LocationImage>> getImagesByLocationId(@PathVariable Integer id) {
         try {
             final List<LocationImage> response = service.findByLocationId(id);
             return ResponseEntity.status(HttpStatus.OK).body(response);

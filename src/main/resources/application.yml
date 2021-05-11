@@ -12,6 +12,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 
+
 #spring:
 #  jpa:
 #    database: POSTGRESQL
@@ -25,12 +26,6 @@ spring:
 #      maximum-pool-size: 5
 #    initialization-mode: never
 #
-#spring:
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://queenie.db.elephantsql.com:5432/lrdprxfv
-#    username: lrdprxfv
-#    password: uqayR_O688sYaR8Sm9yqnaNUc4381zXy
 
 
 logbook:
