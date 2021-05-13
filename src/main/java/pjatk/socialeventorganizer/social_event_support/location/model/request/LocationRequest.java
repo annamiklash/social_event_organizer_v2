@@ -61,11 +61,6 @@ public class LocationRequest implements Serializable {
     @NumberFormat(style = NumberFormat.Style.NUMBER)
     private Integer sizeSqMeters;
 
-    @NotNull
-    @NumberFormat(style = NumberFormat.Style.NUMBER)
-    private Integer businessId;
-
-
 
 
 }

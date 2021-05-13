@@ -13,16 +13,14 @@ import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessM
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.Business;
 import pjatk.socialeventorganizer.social_event_support.business.model.request.CreateBusinessAccountRequest;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
-import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
-import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginRequest;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -49,10 +47,13 @@ public class BusinessService {
 
     @Transactional
     public void createBusinessAccount(CreateBusinessAccountRequest businessRequest) {
+        final UserCredentials userCredentials = securityService.getUserCredentials();
+
+        if (!userCredentials.getIsNewAccount()) {
+            throw new ForbiddenAccessException("Cannot access");
+        }
         final AddressRequest addressRequest = businessRequest.getAddressRequest();
         final Address address = addressMapper.mapToDTO(addressRequest);
-
-        final UserCredentials userCredentials = securityService.getUserCredentials();
 
         final User userById = userService.getUserById(userCredentials.getUserId());
 
@@ -64,22 +65,5 @@ public class BusinessService {
 
         userCredentials.setIsNewAccount(false);
     }
-
-    public Business getBusinessByEmailAndPassword(LoginRequest loginRequest) {
-        final Optional<Business> optionalBusiness = businessRepository.findBusinessByUser_EmailAndUser_Password(loginRequest.getEmail(), loginRequest.getPassword());
-        if (optionalBusiness.isPresent()) {
-            return optionalBusiness.get();
-        }
-        throw new InvalidCredentialsException("Please check log in credentials");
-    }
-
-//    public Business getBusinessById(long id) {
-//        final Optional<Business> businessOptional = businessRepository.findByUser_Id(id);
-//        if (businessOptional.isPresent()) {
-//            return businessOptional.get();
-//        }
-//        throw new IllegalArgumentException("Business with ID " + id + " DOES NOT EXIST");
-//
-//    }
 
 }

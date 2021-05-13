@@ -29,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/api/catering/all",
                 "/api/catering/city/*",
                 "/api/catering/name/*"
+
+//                "/api/users"
         );
     }
 

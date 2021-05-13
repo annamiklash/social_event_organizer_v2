@@ -41,7 +41,7 @@ public class Customer implements Serializable {
     @JoinColumn(name = "id_customer_address")
     Address address;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_customer_user")
     Set<Guest> guests = new HashSet<>();
 

@@ -18,6 +18,8 @@ import pjatk.socialeventorganizer.social_event_support.location.model.request.Lo
 import pjatk.socialeventorganizer.social_event_support.location.model.request.LocationRequest;
 import pjatk.socialeventorganizer.social_event_support.location.model.response.LocationInformationResponse;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
+import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
+import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -40,13 +42,14 @@ public class LocationService {
 
     CateringRepository cateringRepository;
 
+    SecurityService securityService;
+
     public ImmutableList<LocationInformationResponse> findAll() {
         final List<Location> locationList = locationRepository.findAll();
 
         return locationList.stream()
                 .map(location -> locationMapper.mapDTOtoInformationResponse(location))
                 .collect(ImmutableList.toImmutableList());
-
     }
 
     public ImmutableList<LocationInformationResponse> findByLocationDescription(LocationDescriptionForFilteringLocationsRequest request) {
@@ -98,7 +101,7 @@ public class LocationService {
 
     @Transactional
     public void addNewLocation(LocationRequest locationRequest) {
-
+        final UserCredentials credentials = securityService.getUserCredentials();
         final AddressRequest addressRequest = locationRequest.getAddressRequest();
         final Address address = addressMapper.mapToDTO(addressRequest);
         final Set<LocationDescriptionItemEnum> locationDescriptionEnumSet = locationRequest.getLocationDescription();
@@ -109,7 +112,10 @@ public class LocationService {
                 .collect(Collectors.toSet());
 
         final Location location = locationMapper.mapToDTO(locationRequest, address);
+        long businessId= credentials.getUserId();
+
         location.setDescriptions(descriptions);
+        location.setBusinessId((int) businessId);
 
         //!SERVES_FOOD && OUTSIDE_CATERING_AVAILABLE
         if (!locationDescriptionEnumSet.contains(LocationDescriptionItemEnum.SERVES_FOOD) && locationDescriptionEnumSet.contains(LocationDescriptionItemEnum.OUTSIDE_CATERING_AVAILABLE)) {
@@ -148,5 +154,4 @@ public class LocationService {
         }
         throw new NotFoundException("No location with id " + id);
     }
-
 }

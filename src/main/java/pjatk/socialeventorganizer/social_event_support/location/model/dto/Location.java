@@ -64,7 +64,7 @@ public class Location implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_catering"))
     Set<Catering> caterings = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "location_description",
             joinColumns = @JoinColumn(name = "id_location"),

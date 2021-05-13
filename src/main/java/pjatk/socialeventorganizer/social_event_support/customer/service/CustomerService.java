@@ -13,7 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.dto.Custom
 import pjatk.socialeventorganizer.social_event_support.customer.model.request.CreateCustomerAccountRequest;
 import pjatk.socialeventorganizer.social_event_support.customer.model.response.CustomerInformationResponse;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
-import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
@@ -47,10 +47,12 @@ public class CustomerService {
 
     @Transactional
     public void createCustomerAccount(CreateCustomerAccountRequest customerRequest) {
+        final UserCredentials userCredentials = securityService.getUserCredentials();
+        if (!userCredentials.getIsNewAccount()) {
+            throw new ForbiddenAccessException("Cannot access");
+        }
         final AddressRequest addressRequest = customerRequest.getAddressRequest();
         final Address address = addressMapper.mapToDTO(addressRequest);
-
-        final UserCredentials userCredentials = securityService.getUserCredentials();
 
         final User userById = userService.getUserById(userCredentials.getUserId());
 
@@ -82,15 +84,6 @@ public class CustomerService {
             return Optional.of(customer.getGuests());
         }
         throw new NotFoundException("Cannot find customer with id " + userCredentials.getUserId());
-
-    }
-
-    public Customer getCustomerByEmail(String email) {
-        final Optional<Customer> optionalCustomer = customerRepository.findByUserEmail(email);
-        if (optionalCustomer.isPresent()) {
-            return optionalCustomer.get();
-        }
-        throw new InvalidCredentialsException("Please check log in credentials");
 
     }
 }

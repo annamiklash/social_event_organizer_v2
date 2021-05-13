@@ -24,7 +24,6 @@ public class LocationMapper {
                 .dailyRentCost(Converter.convertPriceString(request.getDailyRentCost()))
                 .sizeSqMeters(request.getSizeSqMeters())
                 .locationAddress(address)
-                .businessId(request.getBusinessId())
                 .descriptions(new HashSet<>())
                 .images(new HashSet<>())
                 .build();

@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
-import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.exceptions.PasswordsDontMatchException;
-import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.*;
 
 import javax.validation.ConstraintViolationException;
+import java.lang.IllegalArgumentException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,5 +85,10 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
         log.error(ex.getMessage(), ex);
     }
 
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public void forbiddenAccessExceptionHandler(Exception ex) {
+        log.error(ex.getMessage(), ex);
+    }
 
 }

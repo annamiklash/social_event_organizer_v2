@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.user.service;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public class UserService {
     PasswordEncoderSecurity passwordEncoderSecurity;
 
     UserMapper userMapper;
+
+    public ImmutableList<User> findALl(){
+        return ImmutableList.copyOf(userRepository.findAll());
+    }
 
     public User getUserByEmail(String email) {
         final Optional<User> optionalUser = userRepository.findByEmail(email);

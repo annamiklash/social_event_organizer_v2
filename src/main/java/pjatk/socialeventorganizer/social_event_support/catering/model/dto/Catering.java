@@ -1,6 +1,5 @@
 package pjatk.socialeventorganizer.social_event_support.catering.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
@@ -58,7 +57,7 @@ public class Catering implements Serializable {
     Set<CateringItem> cateringItems = new HashSet<>();
 
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
-    @JsonIgnore
+//    @JsonIgnore
     Set<Location> locations = new HashSet<>();
 
     public void addLocation(Location location) {

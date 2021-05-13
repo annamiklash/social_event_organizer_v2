@@ -15,6 +15,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @Query(value = "select l.id_location from location_description l where l.name in (:descriptionItems) GROUP BY l.id_location having count (*) = :size", nativeQuery = true)
     List<Integer> filterByDescriptions(@Param("descriptionItems") List<String> descriptionItems, @Param("size") long size);
 
+
     @Modifying
     @Query(value = "insert into catering_location (id_location, id_catering) values (:locationId, :cateringId)", nativeQuery = true)
     void addLocationToCatering(@Param("locationId") Long locationId, @Param("cateringId") Long cateringId);

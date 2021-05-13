@@ -14,7 +14,10 @@ import java.math.BigDecimal;
 public class CateringItemResponse {
 
     private Long id;
+
     private String name;
+
     private BigDecimal price;
+
     private String type;
 }
