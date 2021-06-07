@@ -21,7 +21,7 @@ public class GuestService {
     GuestInfoMapper guestInfoMapper;
 
     public List<GuestInfoResponse> getGuestsByOrganizedEventId(long organizedEventId) {
-        final Optional<List<Guest>> optionalGuestList = guestRepository.findGuestsByOrganizedEventId(organizedEventId);
+        final Optional<List<Guest>> optionalGuestList = guestRepository.findInvitedGuestsByOrganizedEventId(organizedEventId);
         if (!optionalGuestList.isPresent()) {
             return new ArrayList<>();
         }

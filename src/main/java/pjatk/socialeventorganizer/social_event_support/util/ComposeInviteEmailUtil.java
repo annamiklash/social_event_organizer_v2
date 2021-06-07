@@ -1,7 +1,8 @@
-package pjatk.socialeventorganizer.social_event_support.invite;
+package pjatk.socialeventorganizer.social_event_support.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import pjatk.socialeventorganizer.social_event_support.invite.InviteContent;
 import pjatk.socialeventorganizer.social_event_support.invite.response.GuestInfoResponse;
 import pjatk.socialeventorganizer.social_event_support.invite.response.LocationInfoResponse;
 
@@ -25,7 +26,6 @@ public class ComposeInviteEmailUtil implements Serializable {
                 .append(inviteContent.getOrganizerInfo().getFirstAndLastName())
                 .append(". Below you can find a schedule so You are better prepared to the upcoming occasion!")
                 .append("\n\n")
-                .append(inviteContent.getEventInfo().getEventType())
                 .append(inviteContent.getEventInfo().getEventName())
                 .append("\n")
                 .append("Beginning date and time: ")
@@ -58,7 +58,9 @@ public class ComposeInviteEmailUtil implements Serializable {
                 .concat(" at ")
                 .concat(inviteContent.getOrganizerInfo().getEmail())
                 .concat(" or calling at ")
-                .concat(inviteContent.getOrganizerInfo().getPhoneNumber().toString());
+                .concat(inviteContent.getOrganizerInfo().getPhoneNumber().toString())
+                .concat("\n\n\n")
+                .concat("Sent via SocialEventOrganizer app");
 
         log.info("INVITE \n:" + content);
         return content;

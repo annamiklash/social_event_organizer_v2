@@ -9,7 +9,7 @@ public class GuestInfoMapper {
 
     public GuestInfoResponse mapToResponse(Guest guest) {
 
-        final String firstNameAndLastName = guest.getFirstName() + " " + guest.getFirstName();
+        final String firstNameAndLastName = guest.getFirstName() + " " + guest.getLastName();
         return GuestInfoResponse.builder()
                 .guestFirstAndLastName(firstNameAndLastName)
                 .email(guest.getEmail())

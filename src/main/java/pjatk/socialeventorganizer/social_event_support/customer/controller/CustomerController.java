@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.customer.controller;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.Guest;
+import pjatk.socialeventorganizer.social_event_support.customer.model.dto.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.request.CreateCustomerAccountRequest;
 import pjatk.socialeventorganizer.social_event_support.customer.model.response.CustomerInformationResponse;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
@@ -27,15 +29,15 @@ public class CustomerController {
 
     private final CustomerService service;
 
-//    @PreAuthorize("hasAuthority('ADMIN')")
-//    @RequestMapping(
-//            method = RequestMethod.GET,
-//            value = "/all",
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ImmutableList<Customer>> findAll() {
-//        log.info("GET ALL CUSTOMERS");
-//        return ResponseEntity.ok(service.findAll());
-//    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/all",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<Customer>> findAll() {
+        log.info("GET ALL CUSTOMERS");
+        return ResponseEntity.ok(service.findAll());
+    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','NEW_USER')")
     @RequestMapping(
@@ -77,7 +79,6 @@ public class CustomerController {
         }
     }
 
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,
@@ -86,7 +87,7 @@ public class CustomerController {
     public ResponseEntity<Void> sendScheduleToAllGuests(@RequestParam("orgEventId") long orgEventId) {
         log.info("SEND INVITE TO GUEST");
         service.sendInvitationToGuest(orgEventId);
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
 }
 

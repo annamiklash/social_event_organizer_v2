@@ -11,10 +11,6 @@ import java.util.Optional;
 @Repository
 public interface GuestRepository extends JpaRepository<Guest, Long> {
 
-    @Query("select g " +
-            "from guest g " +
-            "join customer c on c.id = g.customerId " +
-            "join organized_event oe on oe.customer.id = c.id " +
-            "where oe.id=:id")
-    Optional<List<Guest>> findGuestsByOrganizedEventId(@Param("id") Long id);
+    @Query(value = "select g.id_guest, g.first_name, g.last_name, g.email, g.id_customer from customer c join guest g on g.id_customer = c.id_customer_user join organized_event oe on oe.id_customer = c.id_customer_user join organized_event_guest oeg on g.id_guest = oeg.id_guest where oe.id_organized_event=:id", nativeQuery = true)
+    Optional<List<Guest>> findInvitedGuestsByOrganizedEventId(@Param("id") Long id);
 }

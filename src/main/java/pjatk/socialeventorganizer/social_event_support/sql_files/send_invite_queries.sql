@@ -4,6 +4,7 @@ select concat(g.first_name, ' ', g.last_name), g.email
 from customer c
          join guest g on g.id_customer = c.id_customer_user
          join organized_event oe on oe.id_customer = c.id_customer_user
+
 where oe.id_organized_event = 1;
 
 --organizer info

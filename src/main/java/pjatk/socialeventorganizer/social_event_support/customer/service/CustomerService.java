@@ -20,7 +20,6 @@ import pjatk.socialeventorganizer.social_event_support.event.dto.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.invite.ComposeInviteEmailUtil;
 import pjatk.socialeventorganizer.social_event_support.invite.InviteContent;
 import pjatk.socialeventorganizer.social_event_support.invite.mapper.EventInfoMapper;
 import pjatk.socialeventorganizer.social_event_support.invite.mapper.OrganizerInfoMapper;
@@ -34,6 +33,7 @@ import pjatk.socialeventorganizer.social_event_support.security.service.Security
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
+import pjatk.socialeventorganizer.social_event_support.util.ComposeInviteEmailUtil;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
@@ -49,13 +49,11 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    private final CustomerMapper customerMapper;
-
-    private final AddressMapper addressMapper;
-
     private final SecurityService securityService;
 
     private final UserService userService;
+
+    private final EmailService emailService;
 
     private final AddressService addressService;
 
@@ -63,13 +61,16 @@ public class CustomerService {
 
     private final OrganizedEventService organizedEventService;
 
+    private final LocationForEventService locationForEventService;
+
     private final EventInfoMapper eventInfoMapper;
 
-    private final LocationForEventService locationForEventService;
+    private final CustomerMapper customerMapper;
+
+    private final AddressMapper addressMapper;
 
     private final OrganizerInfoMapper organizerInfoMapper;
 
-    private final EmailService emailService;
 
     public ImmutableList<Customer> findAll() {
         final List<Customer> customerList = customerRepository.findAll();
@@ -142,16 +143,16 @@ public class CustomerService {
         for (GuestInfoResponse guest : guestsInfo) {
             final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, inviteContent);
 
-            final SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
-            passwordResetEmail.setSentDate(Date.from(Instant.now()));
-            passwordResetEmail.setFrom("testsocialeventorg@gmail.com");
-            passwordResetEmail.setTo(guest.getEmail());
-            passwordResetEmail.setSubject("Invitation From " + organizerInfo.getFirstAndLastName());
-            passwordResetEmail.setText(emailContent);
+            final SimpleMailMessage inviteEmail = new SimpleMailMessage();
+            inviteEmail.setSentDate(Date.from(Instant.now()));
+            inviteEmail.setFrom("testsocialeventorg@gmail.com");
+            inviteEmail.setTo(guest.getEmail());
+            inviteEmail.setSubject("Invitation From " + organizerInfo.getFirstAndLastName());
+            inviteEmail.setText(emailContent);
 
-            log.info("EMAIL: " + passwordResetEmail.toString());
+            log.info("EMAIL: " + inviteEmail.toString());
 
-            emailService.sendEmail(passwordResetEmail);
+            emailService.sendEmail(inviteEmail);
         }
     }
 
@@ -166,7 +167,6 @@ public class CustomerService {
                 .locationInfo(locationsInfo)
                 .build();
     }
-
 
 
 }
