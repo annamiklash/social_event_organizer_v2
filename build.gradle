@@ -36,7 +36,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	compileOnly 'org.projectlombok:lombok'
-
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.5.0'
 
 	/* LOGGER */
 	compile 'ch.qos.logback:logback-classic:1.2.3'

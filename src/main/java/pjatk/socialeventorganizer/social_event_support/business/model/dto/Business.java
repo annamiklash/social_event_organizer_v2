@@ -45,11 +45,11 @@ public class Business implements Serializable {
     Address address;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "id_business_user")
+    @JoinColumn(name = "id_business")
     Set<Catering> caterings = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "id_business_user")
+    @JoinColumn(name = "id_business")
     Set<Location> locations = new HashSet<>();
 
     @PrimaryKeyJoinColumn

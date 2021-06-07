@@ -39,7 +39,6 @@ public class BusinessService {
 
     UserService userService;
 
-
     public ImmutableList<Business> findAll() {
         final List<Business> businessList = businessRepository.findAll();
         return ImmutableList.copyOf(businessList);

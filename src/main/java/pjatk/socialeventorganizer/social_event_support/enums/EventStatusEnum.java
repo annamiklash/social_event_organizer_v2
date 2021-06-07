@@ -1,5 +1,9 @@
 package pjatk.socialeventorganizer.social_event_support.enums;
 
 public enum EventStatusEnum {
-    finished, in_progress, confirmed, canceled
+    FINISHED,
+    IN_PROGRESS,
+    CONFIRMED,
+    CANCELLED,
+    READY
 }

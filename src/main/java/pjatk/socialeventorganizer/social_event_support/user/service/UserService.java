@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.user.service;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.PasswordsDontMatchException;
@@ -10,32 +11,43 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsExce
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
+import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.RegisterRequest;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class UserService {
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    PasswordEncoderSecurity passwordEncoderSecurity;
+    private final PasswordEncoderSecurity passwordEncoderSecurity;
 
-    UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    public ImmutableList<User> findALl(){
+    private final EmailService emailService;
+
+    public ImmutableList<User> findALl() {
         return ImmutableList.copyOf(userRepository.findAll());
     }
 
     public User getUserByEmail(String email) {
-        final Optional<User> optionalUser = userRepository.findByEmail(email);
+        final Optional<User> optionalUser = userRepository.findUserByEmail(email);
         if (optionalUser.isPresent()) {
             return optionalUser.get();
         }
-        throw new InvalidCredentialsException("Please check log in credentials");
+        throw new InvalidCredentialsException("Please check credentials");
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
     }
 
     public User getUserById(Long id) {
@@ -61,6 +73,42 @@ public class UserService {
         //TODO: SEND EMAIL WITH CONF LINK
     }
 
+    public User getByResetPasswordToken(String token) {
+        return userRepository.findUserByResetPasswordToken(token);
+    }
+
+    @Transactional
+    public void sendResetEmailLink(String email, String appUrl) {
+        final User user = getUserByEmail(email);
+        user.setResetPasswordToken(UUID.randomUUID().toString());
+        save(user);
+
+        final SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
+        passwordResetEmail.setSentDate(Date.from(Instant.now()));
+        passwordResetEmail.setFrom("testsocialeventorg@gmail.com");
+        passwordResetEmail.setTo(user.getEmail());
+        passwordResetEmail.setSubject("Password Reset Request");
+        passwordResetEmail.setText("To reset your password, click the link below:\n" + appUrl
+                + "/reset?token=" + user.getResetPasswordToken());
+
+        log.info("EMAIL: " + passwordResetEmail.toString());
+
+        emailService.sendEmail(passwordResetEmail);
+    }
+
+    @Transactional
+    public void setNewPassword(String token, NewPasswordRequest newPasswordRequest) {
+        final User user = getByResetPasswordToken(token);
+
+        if (!passwordsMatch(newPasswordRequest.getPassword(), newPasswordRequest.getConfirmPassword())) {
+            throw new PasswordsDontMatchException("Passwords provided dont match");
+        }
+
+        user.setPassword(passwordEncoderSecurity.bcryptEncryptor(newPasswordRequest.getPassword()));
+        user.setResetPasswordToken(null);
+        save(user);
+    }
+
     private boolean passwordsMatch(String password, String passwordConfirmation) {
         return password.equals(passwordConfirmation);
     }
@@ -68,5 +116,4 @@ public class UserService {
     private boolean userExists(String email) {
         return userRepository.existsByEmail(email);
     }
-
 }

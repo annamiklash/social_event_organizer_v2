@@ -20,19 +20,19 @@ public class Address implements Serializable {
     private Long id;
 
     @Column
-    String country;
+    private String country;
 
     @Column
-    String city;
+    private String city;
 
     @Column(name = "street_name")
-    String streetName;
+    private String streetName;
 
     @Column(name = "street_number")
-    int streetNumber;
+    private int streetNumber;
 
     @Column(name = "zip_code")
-    String zipCode;
+    private String zipCode;
 
 
 

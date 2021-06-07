@@ -45,7 +45,7 @@ public class Catering implements Serializable {
     @Column
     String description;
 
-    @Column(name = "id_business_user")
+    @Column(name = "id_business")
     Integer businessId;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -54,10 +54,10 @@ public class Catering implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_catering")
+
     Set<CateringItem> cateringItems = new HashSet<>();
 
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
-//    @JsonIgnore
     Set<Location> locations = new HashSet<>();
 
     public void addLocation(Location location) {

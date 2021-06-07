@@ -28,4 +28,8 @@ public class AddressService {
         log.info("CHECKING IF ADDRESS WITH ID " + id + " EXISTS");
         return repository.existsById(id);
     }
+
+    public void save(Address address) {
+        repository.save(address);
+    }
 }

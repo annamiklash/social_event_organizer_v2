@@ -73,6 +73,9 @@ public class Location implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_location")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
     Set<LocationImage> images = new HashSet<>();
 
 

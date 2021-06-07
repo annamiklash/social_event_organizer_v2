@@ -1,32 +1,31 @@
 spring:
+  mail:
+    host: smtp.gmail.com
+    username: testsocialeventorg@gmail.com
+    password: PRO_password1!
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  #  datasource:
+  #    driver-class-name: org.postgresql.Driver
+  #    url: jdbc:postgresql://172.21.40.109:5432/test_db
+  #    username: postgres
+  #    password: SocEventOrgDB
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://172.21.40.109:5432/test_db
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: SocEventOrgDB
+    password: postgres
   jpa:
-#    hibernate:
-#      ddl-auto: none
+    #    hibernate:
+    #      ddl-auto: none
     database: POSTGRESQL
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-
-
-#spring:
-#  jpa:
-#    database: POSTGRESQL
-#    show-sql: true
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://dumbo.db.elephantsql.com:5432/cvaicqxj
-#    username: cvaicqxj
-#    password: zapf132i7C5CgeONjPgaA5xlUIJfYeF-
-#    hikari:
-#      maximum-pool-size: 5
-#    initialization-mode: never
-#
-
 
 logbook:
   filter.enabled: true

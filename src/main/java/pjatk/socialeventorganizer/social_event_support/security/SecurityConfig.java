@@ -28,7 +28,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 "/api/catering/all",
                 "/api/catering/city/*",
-                "/api/catering/name/*"
+                "/api/catering/name/*",
+
+                "/api/reset_password",
+                "/api/reset"
 
 //                "/api/users"
         );

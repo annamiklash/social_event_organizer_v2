@@ -1,8 +1,10 @@
 package pjatk.socialeventorganizer.social_event_support.customer.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.Guest;
+import pjatk.socialeventorganizer.social_event_support.event.dto.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 
 import javax.persistence.*;
@@ -37,13 +39,19 @@ public class Customer implements Serializable {
     @Column(name = "phone_number")
     BigInteger phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_customer_address")
     Address address;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_customer_user")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_customer")
+    @JsonIgnore
     Set<Guest> guests = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_customer")
+    @JsonIgnore
+    Set<OrganizedEvent> events = new HashSet<>();
 
     @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL, optional = false)

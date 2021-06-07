@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.request.AddressRequest;
+import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.Customer;
@@ -40,6 +41,8 @@ public class CustomerService {
 
     UserService userService;
 
+    AddressService addressService;
+
     public ImmutableList<Customer> findAll() {
         final List<Customer> customerList = customerRepository.findAll();
         return ImmutableList.copyOf(customerList);
@@ -53,6 +56,7 @@ public class CustomerService {
         }
         final AddressRequest addressRequest = customerRequest.getAddressRequest();
         final Address address = addressMapper.mapToDTO(addressRequest);
+        addressService.save(address);
 
         final User userById = userService.getUserById(userCredentials.getUserId());
 
