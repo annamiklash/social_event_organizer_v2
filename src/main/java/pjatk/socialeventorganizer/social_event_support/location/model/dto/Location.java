@@ -1,9 +1,11 @@
 package pjatk.socialeventorganizer.social_event_support.location.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.Catering;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
+import pjatk.socialeventorganizer.social_event_support.locationforevent.LocationForEvent;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -50,7 +52,7 @@ public class Location implements Serializable {
     @Column(name = "size_in_sq_meters")
     Integer sizeSqMeters;
 
-    @Column(name = "id_business_user")
+    @Column(name = "id_business")
     Integer businessId;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -78,6 +80,10 @@ public class Location implements Serializable {
     @Builder.Default
     Set<LocationImage> images = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_location")
+    @JsonIgnore
+    Set<LocationForEvent> locationForEvent = new HashSet<>();
 
     public void addCatering(Catering catering) {
         if (catering == null) {

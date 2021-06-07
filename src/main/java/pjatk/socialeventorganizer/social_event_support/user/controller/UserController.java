@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -19,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
 
     private final UserService userService;
-
-    private final PasswordEncoderSecurity passwordEncoderSecurity;
 
     @PostMapping("/reset_password")
     public ResponseEntity<Void> sendResetPasswordEmail(HttpServletRequest request, @RequestParam String email) {

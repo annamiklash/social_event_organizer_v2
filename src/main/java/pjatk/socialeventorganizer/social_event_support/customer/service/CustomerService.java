@@ -3,25 +3,41 @@ package pjatk.socialeventorganizer.social_event_support.customer.service;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.request.AddressRequest;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.Guest;
+import pjatk.socialeventorganizer.social_event_support.customer.guest.GuestService;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.request.CreateCustomerAccountRequest;
 import pjatk.socialeventorganizer.social_event_support.customer.model.response.CustomerInformationResponse;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
+import pjatk.socialeventorganizer.social_event_support.event.dto.OrganizedEvent;
+import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.invite.ComposeInviteEmailUtil;
+import pjatk.socialeventorganizer.social_event_support.invite.InviteContent;
+import pjatk.socialeventorganizer.social_event_support.invite.mapper.EventInfoMapper;
+import pjatk.socialeventorganizer.social_event_support.invite.mapper.OrganizerInfoMapper;
+import pjatk.socialeventorganizer.social_event_support.invite.response.EventInfoResponse;
+import pjatk.socialeventorganizer.social_event_support.invite.response.GuestInfoResponse;
+import pjatk.socialeventorganizer.social_event_support.invite.response.LocationInfoResponse;
+import pjatk.socialeventorganizer.social_event_support.invite.response.OrganizerInfoResponse;
+import pjatk.socialeventorganizer.social_event_support.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
+import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,17 +47,29 @@ import java.util.Set;
 @Slf4j
 public class CustomerService {
 
-    CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    CustomerMapper customerMapper;
+    private final CustomerMapper customerMapper;
 
-    AddressMapper addressMapper;
+    private final AddressMapper addressMapper;
 
-    SecurityService securityService;
+    private final SecurityService securityService;
 
-    UserService userService;
+    private final UserService userService;
 
-    AddressService addressService;
+    private final AddressService addressService;
+
+    private final GuestService guestService;
+
+    private final OrganizedEventService organizedEventService;
+
+    private final EventInfoMapper eventInfoMapper;
+
+    private final LocationForEventService locationForEventService;
+
+    private final OrganizerInfoMapper organizerInfoMapper;
+
+    private final EmailService emailService;
 
     public ImmutableList<Customer> findAll() {
         final List<Customer> customerList = customerRepository.findAll();
@@ -90,4 +118,55 @@ public class CustomerService {
         throw new NotFoundException("Cannot find customer with id " + userCredentials.getUserId());
 
     }
+
+    @Transactional
+    public void sendInvitationToGuest(long orgEventId) {
+        final UserCredentials userCredentials = securityService.getUserCredentials();
+        final Optional<Customer> optionalCustomer = customerRepository.findByUser_Id(userCredentials.getUserId());
+        if (!optionalCustomer.isPresent()) {
+            throw new NotFoundException("Cannot find customer with id " + userCredentials.getUserId());
+        }
+        final Customer customer = optionalCustomer.get();
+        final OrganizerInfoResponse organizerInfo = organizerInfoMapper.mapToResponse(customer);
+
+        final List<GuestInfoResponse> guestsInfo = guestService.getGuestsByOrganizedEventId(orgEventId);
+
+        final OrganizedEvent organizedEvent = organizedEventService.getByOrganizedEventId(orgEventId);
+
+        final EventInfoResponse eventInfo = eventInfoMapper.mapToResponse(organizedEvent);
+
+        final List<LocationInfoResponse> locationsInfo = locationForEventService.getLocationInfoByOrganizedEventId(orgEventId);
+
+        InviteContent inviteContent = createInviteContent(organizerInfo, guestsInfo, eventInfo, locationsInfo);
+
+        for (GuestInfoResponse guest : guestsInfo) {
+            final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, inviteContent);
+
+            final SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
+            passwordResetEmail.setSentDate(Date.from(Instant.now()));
+            passwordResetEmail.setFrom("testsocialeventorg@gmail.com");
+            passwordResetEmail.setTo(guest.getEmail());
+            passwordResetEmail.setSubject("Invitation From " + organizerInfo.getFirstAndLastName());
+            passwordResetEmail.setText(emailContent);
+
+            log.info("EMAIL: " + passwordResetEmail.toString());
+
+            emailService.sendEmail(passwordResetEmail);
+        }
+    }
+
+    private InviteContent createInviteContent(OrganizerInfoResponse organizerInfo,
+                                              List<GuestInfoResponse> guestsInfo,
+                                              EventInfoResponse eventInfo,
+                                              List<LocationInfoResponse> locationsInfo) {
+        return InviteContent.builder()
+                .organizerInfo(organizerInfo)
+                .guestInfo(guestsInfo)
+                .eventInfo(eventInfo)
+                .locationInfo(locationsInfo)
+                .build();
+    }
+
+
+
 }

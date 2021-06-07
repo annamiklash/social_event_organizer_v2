@@ -54,7 +54,6 @@ public class Catering implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_catering")
-
     Set<CateringItem> cateringItems = new HashSet<>();
 
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)

@@ -31,4 +31,5 @@ public class Guest implements Serializable {
     @Column(name = "id_customer")
     Integer customerId;
 
+
 }
