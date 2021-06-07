@@ -14,10 +14,9 @@ import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.RegisterRequest;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
+import pjatk.socialeventorganizer.social_event_support.util.EmailUtil;
 
 import javax.transaction.Transactional;
-import java.time.Instant;
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -83,13 +82,10 @@ public class UserService {
         user.setResetPasswordToken(UUID.randomUUID().toString());
         save(user);
 
-        final SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
-        passwordResetEmail.setSentDate(Date.from(Instant.now()));
-        passwordResetEmail.setFrom("testsocialeventorg@gmail.com");
-        passwordResetEmail.setTo(user.getEmail());
-        passwordResetEmail.setSubject("Password Reset Request");
-        passwordResetEmail.setText("To reset your password, click the link below:\n" + appUrl
-                + "/reset?token=" + user.getResetPasswordToken());
+        final String emailSubject = "Password Reset Request";
+        final String content = "To reset your password, click the link below:\n" + appUrl
+                + "/reset?token=" + user.getResetPasswordToken() + "\n\nSent via SocialEventOrganizer app";
+        final SimpleMailMessage passwordResetEmail = EmailUtil.emailBuilder(content, email, emailSubject);
 
         log.info("EMAIL: " + passwordResetEmail.toString());
 

@@ -21,6 +21,5 @@ public class InviteContent {
     private OrganizerInfoResponse organizerInfo;
     private EventInfoResponse eventInfo;
     private List<LocationInfoResponse> locationInfo;
-//    private CateringPlaceInfoResponse cateringPlaceInfo;
 //    private List<ServicesInfoResponse> serviceInfo;
 }

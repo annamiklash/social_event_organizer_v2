@@ -28,6 +28,7 @@ public class LocationInfoMapper {
                 .locationAddress(locationAddressString)
                 .dateTimeFrom(locationForEvent.getDateTimeFrom())
                 .dateTimeTo(locationForEvent.getDatTimeTo())
+                .locationId(locationForEvent.getLocation().getId())
                 .build();
     }
 }

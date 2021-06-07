@@ -32,10 +32,9 @@ from organized_event oe
 where oe.id_organized_event = 1;
 
 --catering place
-select ca.name, cfcl.date_time, l.name
+select ca.name, cfcl.date_time
 from organized_event oe
          join location_for_event lfe on oe.id_organized_event = lfe.id_organized_event
-         join location l on lfe.id_location = l.id_location
          left join catering_for_chosen_location cfcl
                    on cfcl.id_catering_for_chosen_location = lfe.id_catering_for_chosen_location
          join catering ca on ca.id_catering = cfcl.id_catering

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,10 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 public class LocationInfoResponse {
 
+
+    private Long locationId;
     private LocalDateTime dateTimeFrom;
     private LocalDateTime dateTimeTo;
     private String locationName;
     private String locationAddress;
 
-    private CateringPlaceInfoResponse cateringInfo;
+    private List<CateringPlaceInfoResponse> cateringOrders = new ArrayList<>();
 }
