@@ -15,11 +15,16 @@ spring:
   #    url: jdbc:postgresql://172.21.40.109:5432/test_db
   #    username: postgres
   #    password: SocEventOrgDB
+  #  datasource:
+  #    driver-class-name: org.postgresql.Driver
+  #    url: jdbc:postgresql://localhost:5432/postgres
+  #    username: postgres
+  #    password: postgres
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: postgres
+    password: admin
   jpa:
     #    hibernate:
     #      ddl-auto: none
