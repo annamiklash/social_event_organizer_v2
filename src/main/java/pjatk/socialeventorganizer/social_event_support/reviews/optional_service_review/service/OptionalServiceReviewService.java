@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.OptionalServiceReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.request.OptionalServiceReviewRequest;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.response.OptionalServiceReviewInformationResponse;
@@ -16,6 +17,7 @@ import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -47,6 +49,15 @@ public class OptionalServiceReviewService {
 
         mapper.mapToResponse(savedOptionalServiceReview);
     }
+
+    public OptionalServiceReview findById(Long id) {
+        final Optional<OptionalServiceReview> optionalOptionalServiceReview = repository.findById(id);
+        if (optionalOptionalServiceReview.isPresent()) {
+            return optionalOptionalServiceReview.get();
+        }
+        throw new NotFoundException("No optional Service with id " + id);
+    }
+    
 
     public ImmutableList<OptionalServiceReviewInformationResponse> getOptionalServiceReviewByOptionalServiceId(Long optionalServiceId) {
         log.info("FETCHING CATERING REVIEWS OF CATERING WITH ID " + optionalServiceId);

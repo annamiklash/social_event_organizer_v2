@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.response.LocationReviewInformationResponse;
 import pjatk.socialeventorganizer.social_event_support.reviews.location_review.mapper.LocationReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.dto.LocationReview;
@@ -16,6 +17,7 @@ import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -46,6 +48,13 @@ public class LocationReviewService {
         final LocationReview savedLocationReview = saveLocationReview(locationReview);
 
         mapper.mapToResponse(savedLocationReview);
+    }
+    public LocationReview findById(Long id) {
+        final Optional<LocationReview> optionalLocationReview = repository.findById(id);
+        if (optionalLocationReview.isPresent()) {
+            return optionalLocationReview.get();
+        }
+        throw new NotFoundException("No optional Service with id " + id);
     }
 
     public ImmutableList<LocationReviewInformationResponse> getLocationReviewByLocationId(Long locationId) {

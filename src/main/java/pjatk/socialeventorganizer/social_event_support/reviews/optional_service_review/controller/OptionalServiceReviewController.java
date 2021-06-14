@@ -32,6 +32,14 @@ public class OptionalServiceReviewController {
         log.info("GET ALL REVIEWS");
         return ResponseEntity.ok(service.findAll());
     }
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/id/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity findById(@PathVariable Long id) {
+        log.info("GET " + id);
+        return ResponseEntity.ok(service.findById(id));
+    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     @RequestMapping(
