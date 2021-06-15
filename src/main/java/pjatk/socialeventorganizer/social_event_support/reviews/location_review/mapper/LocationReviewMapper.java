@@ -13,6 +13,7 @@ public class LocationReviewMapper {
         return LocationReview.builder()
                 .title(request.getTitle())
                 .comment(request.getComment())
+                .starRating(request.getStarRating())
                 .locationId(request.getLocationId())
                 .customerId(costumerId)
                 .build();
@@ -23,6 +24,7 @@ public class LocationReviewMapper {
                 .id(locationReview.getId())
                 .title(locationReview.getTitle())
                 .comment(locationReview.getComment())
+                .starRating(locationReview.getStarRating())
                 .build();
     }
 
@@ -31,6 +33,7 @@ public class LocationReviewMapper {
                 .title(LocationReview.getTitle())
                 .comment(LocationReview.getComment())
                 .customerId(LocationReview.getCustomerId())
+                .starRating(LocationReview.getStarRating())
                 .locationId(LocationReview.getLocationId())
                 .build();
     }

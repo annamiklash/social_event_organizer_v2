@@ -28,6 +28,9 @@ public class LocationReview implements Serializable {
     @Column(name = "id_location")
     Integer locationId;
 
+    @Column(name = "star_review")
+    Integer starRating;
+
     @Column(name = "id_customer")
     Integer customerId;
 

@@ -13,6 +13,7 @@ public class OptionalServiceReviewMapper {
         return OptionalServiceReview.builder()
                 .title(request.getTitle())
                 .comment(request.getComment())
+                .starRating(request.getStarRating())
                 .optionalServiceId(request.getOptionalServiceId())
                 .customerId(costumerId)
                 .build();
@@ -22,6 +23,7 @@ public class OptionalServiceReviewMapper {
         return OptionalServiceReviewResponse.builder()
                 .id(optionalServiceReview.getId())
                 .title(optionalServiceReview.getTitle())
+                .starRating(optionalServiceReview.getStarRating())
                 .comment(optionalServiceReview.getComment())
                 .build();
     }
@@ -30,6 +32,7 @@ public class OptionalServiceReviewMapper {
         return OptionalServiceReviewInformationResponse.builder()
                 .title(OptionalServiceReview.getTitle())
                 .comment(OptionalServiceReview.getComment())
+                .starRating(OptionalServiceReview.getStarRating())
                 .customerId(OptionalServiceReview.getCustomerId())
                 .optionalServiceId(OptionalServiceReview.getOptionalServiceId())
                 .build();

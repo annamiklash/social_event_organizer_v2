@@ -28,6 +28,9 @@ public class OptionalServiceReview implements Serializable {
     @Column(name = "id_optional_service")
     Integer optionalServiceId;
 
+    @Column(name = "star_review")
+    Integer starRating;
+
     @Column(name = "id_customer")
     Integer customerId;
 

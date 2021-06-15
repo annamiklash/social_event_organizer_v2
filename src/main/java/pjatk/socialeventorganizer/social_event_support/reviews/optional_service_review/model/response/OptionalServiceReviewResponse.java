@@ -14,6 +14,7 @@ public class OptionalServiceReviewResponse {
     private Long id;
     private String title;
     private String comment;
+    private Integer starRating;
 }
 
 

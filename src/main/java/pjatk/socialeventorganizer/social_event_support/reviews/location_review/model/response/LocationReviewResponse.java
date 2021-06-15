@@ -14,6 +14,7 @@ public class LocationReviewResponse {
     private Long id;
     private String title;
     private String comment;
+    private Integer starRating;
 }
 
 

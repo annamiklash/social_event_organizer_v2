@@ -17,5 +17,7 @@ public class LocationReviewInformationResponse {
 
     private Integer locationId;
 
+    private Integer starRating;
+
     private Integer customerId;
 }
