@@ -13,9 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 public class ServicesInfoResponse {
 
-    private String firstAndLastName;
-    private String type;
-    private String alias;
+    private Long optionalServiceId;
+    private String comment;
+    private String serviceType;
+    private String serviceAlias;
     private LocalDateTime dateTimeFrom;
     private LocalDateTime dateTimeTo;
 }
