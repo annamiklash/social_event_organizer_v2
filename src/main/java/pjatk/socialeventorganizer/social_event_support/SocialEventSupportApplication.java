@@ -32,4 +32,5 @@ public class SocialEventSupportApplication {
 
 		return mailSender;
 	}
+
 }
