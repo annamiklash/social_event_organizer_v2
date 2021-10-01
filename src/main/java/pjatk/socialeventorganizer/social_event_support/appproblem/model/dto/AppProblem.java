@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
+@Data
 @Getter
 @Setter
 @AllArgsConstructor
@@ -36,6 +37,4 @@ public class AppProblem implements Serializable {
     @JoinColumn(name = "id_user")
     @Fetch(FetchMode.JOIN)
     private User userId;
-//    @Column(name = "id_user")
-//    Long userId;
 }

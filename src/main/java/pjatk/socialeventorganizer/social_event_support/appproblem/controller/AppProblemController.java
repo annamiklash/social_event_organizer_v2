@@ -28,7 +28,7 @@ public class AppProblemController {
 
     private final AppProblemService service;
 
-   // @PreAuthorize("hasAnyAuthority('ADMIN')")
+   @PreAuthorize("hasAnyAuthority('ADMIN')")
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/all",
@@ -40,7 +40,7 @@ public class AppProblemController {
         return ResponseEntity.ok(service.findAll());
     }
 
-    //@PreAuthorize("hasAnyAuthority('ADMIN','NEW_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER','BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
             value = "/add",

@@ -19,13 +19,11 @@ public class AppProblemRequest implements Serializable {
     @NotBlank(message = "Concern name is mandatory")
     @Size(min = 1, max = 100, message
             = "The concern should be a sentence between 1 and 100 characters")
-    //@Pattern(regexp = RegexConstants.FIRST_NAME_REGEX)
     private String concern;
 
     @NotBlank(message = "Description is mandatory")
     @Size(min = 1, max = 500, message
             = "The name should be between 1 and 500 characters")
-    //@Pattern(regexp = RegexConstants.LAST_NAME_REGEX)
     private String description;
 
 }

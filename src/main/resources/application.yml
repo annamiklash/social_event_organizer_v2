@@ -22,9 +22,9 @@ spring:
   #    password: postgres
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres2
+    url: jdbc:postgresql://localhost:5432/socialEvent
     username: postgres
-    password: admin
+    password: toor
   jpa:
     #    hibernate:
     #      ddl-auto: none
