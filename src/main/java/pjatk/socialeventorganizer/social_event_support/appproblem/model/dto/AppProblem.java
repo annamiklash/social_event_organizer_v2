@@ -1,6 +1,9 @@
-package pjatk.socialeventorganizer.social_event_support.appproblem;
+package pjatk.socialeventorganizer.social_event_support.appproblem.model.dto;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import pjatk.socialeventorganizer.social_event_support.user.model.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,6 +32,10 @@ public class AppProblem implements Serializable {
     @Column
     String description;
 
-    @Column(name = "id_user")
-    Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user")
+    @Fetch(FetchMode.JOIN)
+    private User userId;
+//    @Column(name = "id_user")
+//    Long userId;
 }

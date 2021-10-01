@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 
 import javax.validation.Valid;
 
+//@CrossOrigin(origins = "http://localhost:3000")
 @Slf4j
 @AllArgsConstructor
 @Validated

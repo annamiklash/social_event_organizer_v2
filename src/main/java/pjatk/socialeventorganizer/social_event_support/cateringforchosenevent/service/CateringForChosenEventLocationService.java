@@ -33,7 +33,6 @@ public class CateringForChosenEventLocationService {
         return cateringList.stream()
                 .map(cateringForEventLocationInfoMapper::mapToResponse)
                 .collect(Collectors.toList());
-
     }
 
 
