@@ -5,7 +5,6 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppP
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.request.AppProblemRequest;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.response.AppProblemInformationResponse;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.response.AppProblemResponse;
-import pjatk.socialeventorganizer.social_event_support.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -13,13 +12,13 @@ import java.time.LocalDateTime;
 @Component
 public class AppProblemMapper {
 
-    public AppProblem mapToDTO(AppProblemRequest appProblemRequest, User user) {
+    public AppProblem mapToDTO(AppProblemRequest appProblemRequest, Integer userId) {
 
         return AppProblem.builder()
                 .concern(appProblemRequest.getConcern())
                 .dateTime(LocalDateTime.now())
                 .description(appProblemRequest.getDescription())
-                .userId(user)
+                .userId(userId)
                 .build();
     }
 
@@ -29,6 +28,14 @@ public class AppProblemMapper {
                 .concern(appProblem.getConcern())
                 .build();
     }
+    public void updateDTO(AppProblemRequest appProblemRequest, AppProblem fetchedAppProblem) {
+
+        fetchedAppProblem.setConcern(appProblemRequest.getConcern());
+        fetchedAppProblem.setDescription(appProblemRequest.getDescription());
+        //fetchedAppProblem.setDateTime(LocalDateTime.now());
+        //fetchedAppProblem.setUserId(fetchedAppProblem.getUserId());
+
+    }
 
     public AppProblemInformationResponse mapDTOtoAppProblemInformationResponse(AppProblem appProblem) {
         return AppProblemInformationResponse.builder()
@@ -36,7 +43,7 @@ public class AppProblemMapper {
                 .concern(appProblem.getConcern())
                 .description(appProblem.getDescription())
                 .dateTime(appProblem.getDateTime())
-                .userId(Math.toIntExact(appProblem.getUserId().getId()))
+                .userId(appProblem.getUserId())
                 .build();
     }
 }

@@ -1,6 +1,9 @@
 package pjatk.socialeventorganizer.social_event_support.business.model.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.Catering;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.Location;
@@ -14,8 +17,6 @@ import java.util.Set;
 
 @Builder
 @Data
-@Getter
-@Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity(name = "business")

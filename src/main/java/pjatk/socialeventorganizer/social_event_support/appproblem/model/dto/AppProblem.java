@@ -33,8 +33,11 @@ public class AppProblem implements Serializable {
     @Column
     String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user")
-    @Fetch(FetchMode.JOIN)
-    private User userId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_user")
+//    @Fetch(FetchMode.JOIN)
+//    private User userId;
+
+    @Column(name = "id_user")
+    Integer userId;
 }
