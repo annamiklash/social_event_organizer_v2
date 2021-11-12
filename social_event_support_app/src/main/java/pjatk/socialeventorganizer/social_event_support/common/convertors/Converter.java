@@ -1,0 +1,60 @@
+package pjatk.socialeventorganizer.social_event_support.common.convertors;
+
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
+@Slf4j
+@UtilityClass
+public class Converter {
+
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+
+    public BigDecimal convertPriceString(String inputPrice) {
+        final String format = String.format("%.2f", Double.parseDouble(inputPrice));
+        return new BigDecimal(format);
+    }
+
+    public BigInteger convertPhoneNumberString(String phoneNumber) {
+        return new BigInteger(phoneNumber);
+    }
+
+    public String convertDescriptionsString(String description) {
+        final Optional<String> optional = Optional.ofNullable(description)
+                .filter(s -> !s.isEmpty());
+        return optional.orElse(null);
+    }
+
+    public LocalDateTime fromStringToFormattedDateTime(String date) {
+        if (date == null || date.equals("null")) {
+            return null;
+        }
+        log.info(date);
+
+        if (date.contains("T")) {
+            date = date.replace("T", " ");
+        }
+
+        if (date.length() > DATE_TIME_FORMAT.length()) {
+            date = date.substring(0, DATE_TIME_FORMAT.length());
+        }
+        return LocalDateTime.parse(date, DATE_TIME_FORMATTER);
+
+    }
+
+    public String toStringFromLocalDateTime(LocalDateTime dateTime) {
+        log.info(String.valueOf(dateTime));
+
+        return dateTime.format(DATE_TIME_FORMATTER);
+    }
+
+    public String capitalizeToEnum(String input) {
+        return input.toUpperCase().replace(" ", "_");
+    }
+}
