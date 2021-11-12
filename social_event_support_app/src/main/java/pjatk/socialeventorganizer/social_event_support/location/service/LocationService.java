@@ -113,7 +113,7 @@ public class LocationService {
                 .map(item -> locationDescriptionItemService.getByName(item))
                 .collect(Collectors.toList());
 
-        final List<Location> locations = locationRepository.search(dto.getLocation(), dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
+        final List<Location> locations = locationRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
 
         return ImmutableList.copyOf(locations.stream()
                 .filter(location -> location.getDescriptions().containsAll(filters))

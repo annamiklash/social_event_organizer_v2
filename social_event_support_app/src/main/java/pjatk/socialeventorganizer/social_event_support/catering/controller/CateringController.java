@@ -47,11 +47,9 @@ public class CateringController {
                         .collect(Collectors.toList())));
     }
 
-    //TODO: change to visible to everybody
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
-            params = {"id: \\d+"},
+            params = {"id"},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringDto> get(@RequestParam long id) {
         log.info("GET " + id);
@@ -60,11 +58,9 @@ public class CateringController {
         return ResponseEntity.ok(CateringMapper.toDto(catering));
     }
 
-    //TODO: change to visible to everybody
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{id: \\d+}/detail",
+            value = "/{id}/detail",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringDto> getWithDetail(@PathVariable long id) {
         log.info("GET " + id);

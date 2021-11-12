@@ -47,7 +47,6 @@ public class LocationController {
                         .collect(Collectors.toList())));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
             params = {"id"},
@@ -60,7 +59,6 @@ public class LocationController {
         return ResponseEntity.ok(LocationMapper.toDto(location));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/{id}/detail",

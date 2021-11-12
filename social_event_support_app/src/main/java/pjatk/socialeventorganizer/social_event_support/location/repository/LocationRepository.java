@@ -24,23 +24,33 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     void addLocationToCatering(@Param("locationId") Long locationId, @Param("cateringId") Long cateringId);
 
     @Query("SELECT l FROM location l left join fetch l.caterings lc where lc.id = :cateringId")
-    List<Location> findAllByCateringId(@Param("cateringId") long cateringId);
+    List<Integer> findAllByCateringId(@Param("cateringId") long cateringId);
 
-//    @Query("SELECT l from location l left join fetch l.descriptions ld " +
-//            "WHERE ld.id IN :ids AND l.name LIKE %:location% " +
-//            "OR l.locationAddress.city LIKE %:location% OR l.locationAddress.country LIKE %:location%")
-//    List<Location> search(@Param("ids") List<String> ids, @Param("location") String location);
 
-    @Query("SELECT l from location l " +
-            "left join fetch l.descriptions ls " +
-            "left join fetch l.locationAvailability la " +
-            "where (:location is null or l.name LIKE %:location%) " +
-            " OR (:location is null or l.locationAddress.city LIKE %:location%) " +
-            " OR (:location is null or l.locationAddress.country LIKE %:location%) " +
-            " AND (:date is null or la.date = to_timestamp(:date, 'YYYY-MM-DD HH:mi'))" +
-            "AND (:timeFrom is null or la.timeFrom = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi')) " +
-            "AND (:timeTo  is null or la.timeTo = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi'))")
-    List<Location> search(@Param("location") String location, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+//    @Query("SELECT l from location l " +
+//            "left join fetch l.descriptions ls " +
+//            "left join fetch l.locationAvailability la " +
+//            "where (:location is null or l.name LIKE %:location%) " +
+//            " OR (:location is null or l.locationAddress.city LIKE %:location%) " +
+//            " OR (:location is null or l.locationAddress.country LIKE %:location%) " +
+//            " AND (:date is null or la.date = to_timestamp(:date, 'YYYY-MM-DD HH:mi'))" +
+//            "AND (:timeFrom is null or la.timeFrom = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi')) " +
+//            "AND (:timeTo  is null or la.timeTo = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi'))")
+//    List<Location> search(@Param("location") String location, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+
+    @Query(value = "SELECT distinct l.* from location l " +
+            "left join location_availability la on la.id_location = l.id_location " +
+            "left join location_description ld on l.id_location = ld.id_location " +
+            "left join description_item di on ld.name = di.name " +
+            "WHERE la.date = CAST(:date as timestamp) " +
+            "AND la.time_from <= CAST(:timeFrom as timestamp ) " +
+            "AND la.time_to >= CAST(:timeTo as timestamp) "
+
+            , nativeQuery = true)
+//            "AND (:timeFrom is null or la.timeFrom = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi')) " +
+//            "AND (:timeTo  is null or la.timeTo = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi'))")
+    List<Location> search(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+
 
     @Query("SELECT l FROM location l " +
             "left join fetch l.business lb " +

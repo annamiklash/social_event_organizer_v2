@@ -21,14 +21,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/api/login*",
                 "/api/logout*",
 
-                "/api/location/all",
-                "/api/location/description",
-                "/api/location/name/*",
-                "/api/location/city/*",
+                "/api/locations",
+                "/api/locations**",
+                "/api/locations/**",
 
-                "/api/catering/all",
-                "/api/catering/city/*",
-                "/api/catering/name/*",
+                "/api/caterings",
+                "/api/caterings*",
+                "/api/caterings/**",
 
                 "/api/reset_password",
                 "/api/reset"
