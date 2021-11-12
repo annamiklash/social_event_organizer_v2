@@ -34,7 +34,7 @@ public class CateringController {
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<CateringDto>> findAll(@RequestParam(required = false) String keyword,
+    public ResponseEntity<ImmutableList<CateringDto>> list(@RequestParam(required = false) String keyword,
                                                               @RequestParam(defaultValue = "0") Integer firstResult,
                                                               @RequestParam(defaultValue = "50") Integer maxResult,
                                                               @RequestParam(defaultValue = "id") String sort,

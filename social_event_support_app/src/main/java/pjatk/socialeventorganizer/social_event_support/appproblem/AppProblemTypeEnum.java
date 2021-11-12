@@ -1,0 +1,36 @@
+package pjatk.socialeventorganizer.social_event_support.appproblem;
+
+import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Getter
+public enum AppProblemTypeEnum {
+
+    FUNCTIONALITY_ERROR("Functionality error"),
+
+    ERROR_1("error_1"),
+
+    ERROR_2("error_2"),
+
+    ERROR_3("error_3");
+
+    public final String value;
+
+    AppProblemTypeEnum(String value) {
+        this.value = value;
+    }
+
+    private static final Map<String, AppProblemTypeEnum> VALUES = new HashMap<>();
+
+    static {
+        for (AppProblemTypeEnum e : values()) {
+            VALUES.put(e.value, e);
+        }
+    }
+
+    public static AppProblemTypeEnum valueOfLabel(String label) {
+        return VALUES.get(label);
+    }
+}

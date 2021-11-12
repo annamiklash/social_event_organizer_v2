@@ -22,4 +22,11 @@ public class AppProblemMapper {
         appProblemDto.setUser(UserMapper.toDto(appProblem.getUser()));
         return appProblemDto;
     }
+
+    public AppProblem fromDto(AppProblemDto dto) {
+        return AppProblem.builder()
+                .concern(dto.getConcern())
+                .description(dto.getDescription())
+                .build();
+    }
 }

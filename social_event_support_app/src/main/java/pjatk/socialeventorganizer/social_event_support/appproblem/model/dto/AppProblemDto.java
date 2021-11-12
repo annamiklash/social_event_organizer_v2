@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -18,8 +19,10 @@ public class AppProblemDto implements Serializable {
 
     private String createdAt;
 
+    @NotNull
     private String concern;
 
+    @NotNull
     private String description;
 
     private UserDto user;

@@ -5,10 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
+import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
+import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
+import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
@@ -34,6 +39,10 @@ public class UserService {
     private final PasswordEncoderSecurity passwordEncoderSecurity;
 
     private final EmailService emailService;
+
+    private final SecurityService securityService;
+
+    private final AppProblemService appProblemService;
 
     public ImmutableList<User> findALl() {
         return ImmutableList.copyOf(userRepository.findAll());
@@ -128,5 +137,15 @@ public class UserService {
         //TODO: invalidate users session
 
         save(user);
+    }
+
+    public AppProblem reportProblem(AppProblemDto dto) {
+        final UserCredentials userCredentials = securityService.getUserCredentials();
+
+        final User user = getById(userCredentials.getUserId());
+
+        //TODO: check if correctly saves
+        return appProblemService.create(dto, user);
+
     }
 }

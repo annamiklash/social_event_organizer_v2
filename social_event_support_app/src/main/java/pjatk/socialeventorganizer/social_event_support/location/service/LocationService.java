@@ -113,12 +113,36 @@ public class LocationService {
                 .map(item -> locationDescriptionItemService.getByName(item))
                 .collect(Collectors.toList());
 
-        final List<Location> locations = locationRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
+        List<Location> locations = locationRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
 
-        return ImmutableList.copyOf(locations.stream()
+        locations = locations.stream()
                 .filter(location -> location.getDescriptions().containsAll(filters))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
 
+
+        if (dto.getIsSeated() == null && dto.getGuestCount() != null) {
+            return ImmutableList.copyOf(
+                    locations.stream()
+                            .filter(location -> dto.getGuestCount() <= location.getSeatingCapacity() + location.getStandingCapacity())
+                            .collect(Collectors.toList()));
+        } else if (dto.getIsSeated() != null && dto.getIsSeated() != null) {
+
+            if (dto.getIsSeated()) {
+                return ImmutableList.copyOf(
+                        locations.stream()
+                                .filter(location -> dto.getGuestCount() <= location.getSeatingCapacity())
+                                .collect(Collectors.toList()));
+            }
+
+            if (!dto.getIsSeated()) {
+                return ImmutableList.copyOf(
+                        locations.stream()
+                                .filter(location -> dto.getGuestCount() <= location.getStandingCapacity())
+                                .collect(Collectors.toList()));
+            }
+        }
+
+        return ImmutableList.copyOf(locations);
     }
 
     public ImmutableList<Location> findByCityWithId(String city) {
