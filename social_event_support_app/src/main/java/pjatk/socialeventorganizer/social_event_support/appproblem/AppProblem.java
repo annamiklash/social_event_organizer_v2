@@ -23,8 +23,8 @@ public class AppProblem implements Serializable {
     @Column(name = "id_app_problem")
     private Long id;
 
-    @Column(name = "dateTime", nullable = false)
-    private LocalDateTime dateTime;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private String concern;

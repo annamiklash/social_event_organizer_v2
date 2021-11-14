@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.common.config;
+package pjatk.socialeventorganizer.social_event_support.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

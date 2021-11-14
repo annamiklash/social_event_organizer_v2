@@ -42,4 +42,8 @@ public class OrganizedEventService {
         }
         throw new NotFoundException("No organized event with id " + orgEventId);
     }
+
+    public void save(OrganizedEvent organizedEvent) {
+        organizedEventRepository.save(organizedEvent);
+    }
 }

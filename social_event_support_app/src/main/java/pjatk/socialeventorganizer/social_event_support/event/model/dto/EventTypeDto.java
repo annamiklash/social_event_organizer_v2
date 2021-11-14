@@ -18,9 +18,5 @@ public class EventTypeDto implements Serializable {
 
     private String type;
 
-    private String description;
-
-    private String createdAt;
-
     private Set<OrganizedEventDto> events;
 }

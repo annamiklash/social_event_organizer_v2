@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT u from users u left join business b on b.id = u.id where u.id = :id AND u.type = :type")
+    @Query("SELECT u from users u right join business b on b.id = u.id where u.id = :id AND u.type = :type")
     Optional<User> isNewAccount(@Param("id") long id, @Param("type") char type);
 
     Optional<User> findUserByEmail(String email);

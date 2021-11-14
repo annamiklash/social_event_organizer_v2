@@ -3,7 +3,6 @@ package pjatk.socialeventorganizer.social_event_support.business.controller;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,7 +54,7 @@ public class BusinessController {
         return ResponseEntity.ok(BusinessMapper.toDto(business));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/{id}/detail",
@@ -72,14 +71,14 @@ public class BusinessController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> create(@Valid @RequestBody BusinessDto dto) {
+    public ResponseEntity<BusinessDto> create(@Valid @RequestBody BusinessDto dto) {
         log.info("SAVE BUSINESS");
-        businessService.createBusinessAccount(dto);
+        final Business business = businessService.createBusinessAccount(dto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(BusinessMapper.toDtoWithDetail(business));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN','NEW_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
             params = {"id"},
@@ -102,6 +101,5 @@ public class BusinessController {
 
         return ResponseEntity.ok(BusinessMapper.toDto(business));
     }
-
 
 }

@@ -3,7 +3,10 @@ package pjatk.socialeventorganizer.social_event_support.event.mapper;
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
+import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
+import pjatk.socialeventorganizer.social_event_support.locationforevent.mapper.LocationForEventMapper;
+import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
 
 @UtilityClass
 public class OrganizedEventMapper {
@@ -31,5 +34,16 @@ public class OrganizedEventMapper {
                 .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()))
                 .customer(CustomerMapper.toDto(organizedEvent.getCustomer()))
                 .build();
+    }
+
+    public OrganizedEventConfirmationDto toOrganizedConfirmationDto(LocationForEvent locationForEvent) {
+        return OrganizedEventConfirmationDto.builder()
+                .id(locationForEvent.getId())
+                .name(locationForEvent.getEvent().getName())
+                .eventType(locationForEvent.getEvent().getEventType().getType())
+                .eventStatus(locationForEvent.getEvent().getEventStatus())
+                .locationForEvent(LocationForEventMapper.toDto(locationForEvent))
+                .build();
+
     }
 }

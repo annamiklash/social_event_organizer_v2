@@ -9,6 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEven
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -30,7 +31,13 @@ public class LocationForEvent implements Serializable {
     private LocalDateTime dateTimeFrom;
 
     @Column(name = "time_to")
-    private LocalDateTime datTimeTo;
+    private LocalDateTime dateTimeTo;
+
+    @Min(1)
+    private int guests;
+
+    @Column(nullable = false)
+    private String confirmationStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location", nullable = false)

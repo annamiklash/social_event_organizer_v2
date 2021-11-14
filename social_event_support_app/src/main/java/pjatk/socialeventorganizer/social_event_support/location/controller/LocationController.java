@@ -31,6 +31,7 @@ public class LocationController {
 
     @RequestMapping(
             method = RequestMethod.GET,
+            path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationDto>> list(@RequestParam(required = false) String keyword,
                                                            @RequestParam(defaultValue = "0") Integer firstResult,
@@ -49,7 +50,7 @@ public class LocationController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            params = {"id"},
+            path = "allowed",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationDto> get(@RequestParam long id) {
         log.info("GET " + id);
@@ -61,7 +62,7 @@ public class LocationController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{id}/detail",
+            path = "allowed/{id}/detail",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationDto> getWithDetail(@PathVariable long id) {
         log.info("GET " + id);
@@ -74,11 +75,12 @@ public class LocationController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
+            params = {"userId"},
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto) {
+    public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto, long userId) {
 
-        final Location location = locationService.create(dto);
+        final Location location = locationService.create(dto, userId);
 
         return ResponseEntity.ok(LocationMapper.toDtoWithDetail(location));
     }
@@ -98,7 +100,7 @@ public class LocationController {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/search",
+            path = "allowed/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationDto>> searchByAppliedFilters(@Valid @RequestBody FilterLocationsDto dto) {
         log.info("GET LOCATIONS BY DESCRIPTION");
@@ -113,17 +115,6 @@ public class LocationController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/{id}/availability",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LocationDto> getWithAvailability(@PathVariable long id) {
-        Location location = locationService.getWithAvailability(id);
-
-        return ResponseEntity.ok(LocationMapper.toDtoWithAvailability(location));
-    }
-
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-    @RequestMapping(
             method = RequestMethod.POST,
             value = "/{id}/availability",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -132,5 +123,31 @@ public class LocationController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/availability",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LocationDto> getWithAvailability(@PathVariable long id, @RequestParam String date) {
+        Location location = locationService.getWithAvailability(id, date);
+
+        return ResponseEntity.ok(LocationMapper.toDtoWithAvailability(location));
+    }
+
+    //TODO: edit availability
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.DELETE,
+            params = "{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> delete(@RequestParam long id) {
+        locationService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
 }
 

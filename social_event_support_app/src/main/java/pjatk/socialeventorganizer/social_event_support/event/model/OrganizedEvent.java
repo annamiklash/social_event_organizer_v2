@@ -24,14 +24,17 @@ public class OrganizedEvent implements Serializable {
     @Column(name = "id_organized_event")
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private LocalDate startDate;
 
     private LocalDate endDate;
 
     private Boolean isPredefined;
 
+    @Column(nullable = false)
     private String eventStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)

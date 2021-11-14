@@ -1,11 +1,11 @@
 package pjatk.socialeventorganizer.social_event_support.invite.mapper;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.invite.response.LocationInfoResponse;
 import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
 
-@Component
+@UtilityClass
 public class LocationInfoMapper {
 
     public LocationInfoResponse mapToResponse(LocationForEvent locationForEvent) {
@@ -27,7 +27,7 @@ public class LocationInfoMapper {
                 .locationName(locationForEvent.getLocation().getName())
                 .locationAddress(locationAddressString)
                 .dateTimeFrom(locationForEvent.getDateTimeFrom())
-                .dateTimeTo(locationForEvent.getDatTimeTo())
+                .dateTimeTo(locationForEvent.getDateTimeTo())
                 .locationId(locationForEvent.getLocation().getId())
                 .build();
     }

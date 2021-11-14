@@ -58,7 +58,7 @@ public class AppProblemService {
         final AppProblem appProblem = AppProblemMapper.fromDto(appProblemDto);
 
         appProblem.setUser(user);
-        appProblem.setDateTime(LocalDateTime.now());
+        appProblem.setCreatedAt(LocalDateTime.now());
 
         save(appProblem);
 

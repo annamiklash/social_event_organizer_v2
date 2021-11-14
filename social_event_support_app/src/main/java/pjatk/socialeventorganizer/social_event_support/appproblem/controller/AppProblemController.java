@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
+import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
 import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Validated
 @RestController
-@RequestMapping("api/app_problems")
+@RequestMapping("api/problems")
 public class AppProblemController {
 
     private AppProblemService appProblemService;
@@ -57,6 +58,17 @@ public class AppProblemController {
 
         return ResponseEntity.ok(AppProblemMapper.toDtoWithUser(appProblem));
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/types",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<AppProblemTypeEnum>> concerns() {
+
+        return ResponseEntity.ok(ImmutableList.copyOf(List.of(AppProblemTypeEnum.values())));
+    }
+
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(

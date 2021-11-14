@@ -27,28 +27,13 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Integer> findAllByCateringId(@Param("cateringId") long cateringId);
 
 
-//    @Query("SELECT l from location l " +
-//            "left join fetch l.descriptions ls " +
-//            "left join fetch l.locationAvailability la " +
-//            "where (:location is null or l.name LIKE %:location%) " +
-//            " OR (:location is null or l.locationAddress.city LIKE %:location%) " +
-//            " OR (:location is null or l.locationAddress.country LIKE %:location%) " +
-//            " AND (:date is null or la.date = to_timestamp(:date, 'YYYY-MM-DD HH:mi'))" +
-//            "AND (:timeFrom is null or la.timeFrom = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi')) " +
-//            "AND (:timeTo  is null or la.timeTo = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi'))")
-//    List<Location> search(@Param("location") String location, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
-
     @Query(value = "SELECT distinct l.* from location l " +
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
             "WHERE la.date = CAST(:date as timestamp) " +
             "AND la.time_from <= CAST(:timeFrom as timestamp ) " +
-            "AND la.time_to >= CAST(:timeTo as timestamp) "
-
-            , nativeQuery = true)
-//            "AND (:timeFrom is null or la.timeFrom = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi')) " +
-//            "AND (:timeTo  is null or la.timeTo = to_timestamp(:timeFrom, 'YYYY-MM-DD HH:mi'))")
+            "AND la.time_to >= CAST(:timeTo as timestamp)", nativeQuery = true)
     List<Location> search(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
 
@@ -56,7 +41,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join fetch l.business lb " +
             "left join fetch l.caterings lc " +
             "left join fetch l.descriptions ld " +
-            "left join fetch l.locationAvailability la where l.id = :id")
+            "left join fetch l.LocationAvailability la where l.id = :id")
     Optional<Location> getByIdWithDetail(@Param("id") Long id);
 
     List<Location> findByLocationAddress_City(String city);
@@ -64,7 +49,9 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @Query("SELECT l FROM location AS l WHERE LOWER(l.name) LIKE %:keyword% OR LOWER(l.description) LIKE %:keyword%")
     Page<Location> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
-    @Query("SELECT l from location l left join fetch l.locationAvailability la WHERE l.id = :id")
-    Optional<Location> getByIdWithAvailability(@Param("id") long id);
+    @Query(value = "SELECT distinct l.* from location l " +
+            "left join location_availability la on la.id_location = l.id_location " +
+            "WHERE l.id_location = :id AND la.date = CAST(:date as timestamp)", nativeQuery = true)
+    Optional<Location> getByIdWithAvailability(@Param("id") long id, @Param("date") String date);
 
 }

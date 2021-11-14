@@ -7,7 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 public class EmailUtil {
 
     private final static String fromEmail = "testsocialeventorg@gmail.com";
-//TODO: extract methods here
+    //TODO: extract methods here
 
     public SimpleMailMessage emailBuilder(String content, String sendTo, String subject) {
 

@@ -33,12 +33,13 @@ public class CateringController {
 
     @RequestMapping(
             method = RequestMethod.GET,
+            path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<CateringDto>> list(@RequestParam(required = false) String keyword,
-                                                              @RequestParam(defaultValue = "0") Integer firstResult,
-                                                              @RequestParam(defaultValue = "50") Integer maxResult,
-                                                              @RequestParam(defaultValue = "id") String sort,
-                                                              @RequestParam(defaultValue = "desc") String order) {
+    public ResponseEntity<ImmutableList<CateringDto>> list(@RequestParam(defaultValue = "0") Integer firstResult,
+                                                           @RequestParam(defaultValue = "50") Integer maxResult,
+                                                           @RequestParam(defaultValue = "id") String sort,
+                                                           @RequestParam(defaultValue = "desc") String order,
+                                                           @RequestParam(required = false) String keyword) {
         log.info("GET ALL CATERING");
         final List<Catering> cateringList = cateringService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
         return ResponseEntity.ok(
@@ -49,7 +50,7 @@ public class CateringController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            params = {"id"},
+            path = "allowed",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringDto> get(@RequestParam long id) {
         log.info("GET " + id);
@@ -60,7 +61,7 @@ public class CateringController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{id}/detail",
+            path = "allowed/{id}/detail",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringDto> getWithDetail(@PathVariable long id) {
         log.info("GET " + id);
@@ -72,7 +73,7 @@ public class CateringController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
-            params = {"id"})
+            path = "delete")
     public ResponseEntity<Void> delete(@RequestParam long id) {
         try {
             cateringService.deleteCatering(id);
@@ -85,7 +86,7 @@ public class CateringController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
-            params = {"locationId"},
+            path = "new",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringDto> create(@Valid @RequestBody CateringDto dto, @RequestParam long locationId) {
@@ -97,7 +98,7 @@ public class CateringController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT,
-            params = {"id"},
+            path = "edit",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringDto> edit(@Valid @RequestBody CateringDto dto, @RequestParam long id) {
         try {

@@ -17,8 +17,10 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
+import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.EventBookDateDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationAvailabilityMapper;
@@ -31,16 +33,15 @@ import pjatk.socialeventorganizer.social_event_support.location.model.dto.Locati
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
-import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
-import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static pjatk.socialeventorganizer.social_event_support.location.enums.LocationAvailabilityEnum.AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.location.enums.LocationAvailabilityEnum.NOT_AVAILABLE;
 
 @Service
 @AllArgsConstructor
@@ -53,13 +54,12 @@ public class LocationService {
 
     private CateringRepository cateringRepository;
 
-    private SecurityService securityService;
-
     private AddressService addressService;
 
     private BusinessService businessService;
 
     private LocationAvailabilityRepository locationAvailabilityRepository;
+
 
     public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -88,20 +88,6 @@ public class LocationService {
         throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
     }
 
-    public ImmutableList<Location> findByLocationDescription(FilterLocationsDto request) {
-        final List<LocationDescriptionItemEnum> descriptionItems = request.getDescriptionItems();
-
-        final Set<LocationDescriptionItem> filters = descriptionItems.stream()
-                .map(locationDescriptionItemEnum -> locationDescriptionItemEnum.value)
-                .map(value -> locationDescriptionItemService.getById(value))
-                .collect(Collectors.toSet());
-
-        final List<Location> allLocations = locationRepository.findAll();
-
-        return allLocations.stream()
-                .filter(location -> location.getDescriptions().containsAll(filters))
-                .collect(ImmutableList.toImmutableList());
-    }
 
     public boolean exists(long id) {
         return locationRepository.existsById(id);
@@ -155,10 +141,8 @@ public class LocationService {
     }
 
     @Transactional
-    public Location create(LocationDto dto) {
-        final UserCredentials credentials = securityService.getUserCredentials();
-
-        final Business business = businessService.get(credentials.getUserId());
+    public Location create(LocationDto dto, long userId) {
+        final Business business = businessService.get(userId);
 
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
@@ -176,7 +160,7 @@ public class LocationService {
         final Location location = LocationMapper.fromDto(dto);
 
         location.setLocationAddress(address);
-        location.setBusiness(businessService.get(credentials.getUserId()));
+        location.setBusiness(business);
         location.setDescriptions(descriptions);
         location.setCreatedAt(LocalDateTime.now());
         location.setModifiedAt(LocalDateTime.now());
@@ -192,9 +176,9 @@ public class LocationService {
         return location;
     }
 
-    public Location saveLocation(Location location) {
+    public void saveLocation(Location location) {
         log.info("TRYING TO SAVE LOCATION " + location.toString());
-        return locationRepository.save(location);
+        locationRepository.save(location);
     }
 
     @Transactional
@@ -209,8 +193,9 @@ public class LocationService {
 
     }
 
-    public Location getWithAvailability(long locationId) {
-        final Optional<Location> optionalLocation = locationRepository.getByIdWithAvailability(locationId);
+    public Location getWithAvailability(long locationId, String date) {
+        final LocalDate localDate = DateTimeUtil.fromStringToFormattedDate(date);
+        final Optional<Location> optionalLocation = locationRepository.getByIdWithAvailability(locationId, date);
 
         if (optionalLocation.isPresent()) {
             return optionalLocation.get();
@@ -235,6 +220,7 @@ public class LocationService {
         saveLocation(location);
     }
 
+    @Transactional
     public Location edit(LocationDto dto, long id) {
         final Location location = get(id);
 
@@ -274,10 +260,74 @@ public class LocationService {
 
     //TODO: FINISH
     public void delete(long id) {
+        //cannot delete when there are reservations pending
 
         //remove location description
         //remove caterings
         //delete address
         //set deletedAt
     }
+
+    public void modifyAvailabilityAfterBooking(Location location, EventBookDateDto details) {
+
+        final Set<LocationAvailability> locationAvailability = location.getLocationAvailability();
+
+        final LocalDate date = DateTimeUtil.fromStringToFormattedDate(details.getDate());
+        final LocalDateTime timeFrom = DateTimeUtil.fromStringToFormattedDateTime(details.getStartTime());
+        final LocalDateTime timeTo = DateTimeUtil.fromStringToFormattedDateTime(details.getEndTime());
+
+        final List<LocationAvailability> availabilityForDate = locationAvailability.stream()
+                .filter(availability -> availability.getDate().equals(date))
+                .filter(availability -> (timeFrom.isEqual(availability.getTimeFrom()) || timeFrom.isAfter(availability.getTimeFrom()))
+                        && (timeTo.isEqual(availability.getTimeTo()) || timeTo.isBefore(availability.getTimeTo()))
+                        && (availability.getStatus().equals("available")))
+                .collect(Collectors.toList());
+
+        final LocationAvailability availability = availabilityForDate.get(0);
+
+        List<LocationAvailability> modified = modify(availability, date, timeFrom, timeTo);
+
+        locationAvailabilityRepository.delete(availability);
+
+        modified.forEach(modifiedAvailability -> locationAvailabilityRepository.saveAndFlush(modifiedAvailability));
+
+
+    }
+
+    private List<LocationAvailability> modify(LocationAvailability availability, LocalDate bookingDate, LocalDateTime bookingTimeFrom, LocalDateTime bookingTimeTo) {
+
+        final List<LocationAvailability> modified = new ArrayList<>();
+
+        modified.add(LocationAvailability.builder()
+                .status(NOT_AVAILABLE.toString())
+                .date(bookingDate)
+                .timeFrom(bookingTimeFrom)
+                .timeTo(bookingTimeTo)
+                .location(availability.getLocation())
+                .build());
+
+        if (availability.getTimeFrom().isBefore(bookingTimeFrom)) {
+            modified.add(LocationAvailability.builder()
+                    .status(AVAILABLE.toString())
+                    .date(bookingDate)
+                    .timeFrom(availability.getTimeFrom())
+                    .timeTo(bookingTimeFrom)
+                    .location(availability.getLocation())
+                    .build());
+        }
+
+        if (availability.getTimeTo().isAfter(bookingTimeTo)) {
+            modified.add(LocationAvailability.builder()
+                    .status(AVAILABLE.toString())
+                    .date(bookingDate)
+                    .timeFrom(bookingTimeTo)
+                    .timeTo(availability.getTimeTo())
+                    .location(availability.getLocation())
+                    .build());
+        }
+
+        return modified;
+    }
+
+
 }

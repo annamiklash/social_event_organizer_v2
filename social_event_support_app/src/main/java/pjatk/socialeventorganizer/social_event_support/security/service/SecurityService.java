@@ -48,7 +48,6 @@ public class SecurityService {
 
     public void buildSecurityContext(LoginDto loginDto, HttpServletRequest request) {
         final User user = userService.getUserByEmail(loginDto.getEmail());
-        log.info(user.toString());
         final UserCredentials userCredentials = UserCredentials.builder()
                 .login(loginDto.getEmail())
                 .userId(user.getId())
@@ -69,8 +68,9 @@ public class SecurityService {
         context.setAuthentication(authenticationToken);
 
         final HttpSession session = request.getSession(true);
-        log.info("SESSION ID" + session.getId());
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+
+
     }
 
     private boolean isNewAccount(Long id, char type) {

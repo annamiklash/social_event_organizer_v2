@@ -21,12 +21,9 @@ public class DateTimeUtil {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
     public LocalDateTime fromStringToFormattedDateTime(String date) {
-        log.info(date);
-
         if (date == null || date.equals("null")) {
             return null;
         }
-        log.info(date);
 
         if (date.contains("T")) {
             date = date.replace("T", " ");
@@ -48,6 +45,10 @@ public class DateTimeUtil {
     }
 
     public String toStringFromLocalDateTime(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+
         log.info(String.valueOf(dateTime));
 
         return dateTime.format(DATE_TIME_FORMATTER);

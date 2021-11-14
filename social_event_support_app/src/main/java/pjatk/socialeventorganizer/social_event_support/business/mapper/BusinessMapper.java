@@ -15,14 +15,12 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class BusinessMapper {
 
-    //TODO: VERIFICATION STATUS
     public Business fromDto(BusinessDto dto) {
         return Business.builder()
                 .id(dto.getUser().getId())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .businessName(dto.getBusinessName())
-                .verificationStatus(dto.getVerificationStatus())
                 .phoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()))
                 .user(UserMapper.fromDto(dto.getUser()))
                 .build();

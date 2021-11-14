@@ -121,7 +121,7 @@ CREATE TABLE catering_review
     comment            varchar(300) NOT NULL,
     created_at         timestamp    NOT NULL,
     id_catering        int          NOT NULL,
-    star_review        int          NOT NULL,
+    star_rating        int          NOT NULL,
     id_customer        int          NOT NULL,
     CONSTRAINT catering_review_pk PRIMARY KEY (id_catering_review)
 );
@@ -149,12 +149,13 @@ CREATE TABLE description_item
 -- Table: event_type
 CREATE TABLE event_type
 (
-    id_event_type serial       NOT NULL,
-    type          varchar(30)  NOT NULL,
-    description   varchar(200) NULL,
-    created_at    timestamp    NOT NULL,
+    id_event_type serial      NOT NULL,
+    type          varchar(30) NOT NULL,
     CONSTRAINT event_type_pk PRIMARY KEY (id_event_type)
 );
+
+create unique index event_type_type_uindex
+    on event_type (type);
 
 -- Table: guest
 CREATE TABLE guest
@@ -203,6 +204,8 @@ CREATE TABLE location_for_event
     id_location_for_event serial    NOT NULL,
     time_from             timestamp NOT NULL,
     time_to               timestamp NULL,
+    guests                int       not null,
+    confirmation_status   varchar   not null,
     id_organized_event    int       NOT NULL,
     id_location           int       NOT NULL,
     CONSTRAINT location_for_event_pk PRIMARY KEY (id_location_for_event)
@@ -224,7 +227,7 @@ CREATE TABLE location_review
     id_location_review serial       NOT NULL,
     title              varchar(100) NOT NULL,
     comment            varchar(300) NOT NULL,
-    created_at         timestamp    NOT NULL,
+    star_rating        int          NOT NULL,
     id_location        int          NOT NULL,
     id_customer        int          NOT NULL,
     CONSTRAINT location_review_pk PRIMARY KEY (id_location_review)
@@ -259,17 +262,17 @@ CREATE TABLE optional_service_image
 -- Table: organized_event
 CREATE TABLE organized_event
 (
-    id_organized_event serial            NOT NULL,
-    name               varchar(50)       NOT NULL,
-    start_date         date              NOT NULL,
-    end_date           date              NULL,
-    is_predefined      boolean           NOT NULL,
-    event_status       event_status_enum NOT NULL,
-    created_at         timestamp         NOT NULL,
-    modified_at        timestamp         NOT NULL,
-    deleted_at         timestamp         NULL,
-    id_event_type      int               NOT NULL,
-    id_customer        int               NOT NULL,
+    id_organized_event serial      NOT NULL,
+    name               varchar(50) NOT NULL,
+    start_date         date        NOT NULL,
+    end_date           date        NULL,
+    is_predefined      boolean     NOT NULL,
+    event_status       varchar(30) NOT NULL,
+    created_at         timestamp   NOT NULL,
+    modified_at        timestamp   NOT NULL,
+    deleted_at         timestamp   NULL,
+    id_event_type      int         NOT NULL,
+    id_customer        int         NOT NULL,
     CONSTRAINT organized_event_pk PRIMARY KEY (id_organized_event)
 );
 
@@ -1087,17 +1090,17 @@ VALUES (1, 1),
        (5, 5);
 
 
-insert into location_for_event(time_from, time_to, id_organized_event, id_location)
-values ('2021-09-01 00:00:00', '2021-09-01 23:59:59', 1, 1),
-       ('2021-09-02 00:00:00', '2021-09-02 23:59:59', 2, 2),
-       ('2021-09-03 00:00:00', '2021-09-03 23:59:59', 3, 3),
-       ('2021-09-04 00:00:00', '2021-09-04 23:59:59', 4, 3),
-       ('2021-09-05 00:00:00', '2021-09-05 23:59:59', 5, 4),
-       ('2021-09-06 00:00:00', '2021-09-06 23:59:59', 1, 5),
-       ('2021-09-07 00:00:00', '2021-09-07 23:59:59', 2, 2),
-       ('2021-09-08 00:00:00', '2021-09-08 23:59:59', 3, 1),
-       ('2021-09-09 00:00:00', '2021-09-09 23:59:59', 4, 3),
-       ('2021-09-10 00:00:00', '2021-09-10 23:59:59', 5, 4);
+insert into location_for_event(time_from, time_to, id_organized_event, id_location, guests, confirmation_status)
+values ('2021-09-01 00:00:00', '2021-09-01 23:59:59', 1, 1, 10, 'CONFIRMED'),
+       ('2021-09-02 00:00:00', '2021-09-02 23:59:59', 2, 2, 10, 'CONFIRMED'),
+       ('2021-09-03 00:00:00', '2021-09-03 23:59:59', 3, 3, 10, 'CONFIRMED'),
+       ('2021-09-04 00:00:00', '2021-09-04 23:59:59', 4, 3, 10, 'CONFIRMED'),
+       ('2021-09-05 00:00:00', '2021-09-05 23:59:59', 5, 4, 10, 'CONFIRMED'),
+       ('2021-09-06 00:00:00', '2021-09-06 23:59:59', 1, 5, 10, 'CONFIRMED'),
+       ('2021-09-07 00:00:00', '2021-09-07 23:59:59', 2, 2, 10, 'CONFIRMED'),
+       ('2021-09-08 00:00:00', '2021-09-08 23:59:59', 3, 1, 10, 'CONFIRMED'),
+       ('2021-09-09 00:00:00', '2021-09-09 23:59:59', 4, 3, 10, 'CONFIRMED'),
+       ('2021-09-10 00:00:00', '2021-09-10 23:59:59', 5, 4, 10, 'CONFIRMED');
 
 
 insert into service_for_event(time_from, time_to, comment, id_optional_service, id_location_for_event)
@@ -1124,11 +1127,11 @@ VALUES (5, 3, 1),
 
 create table location_availability
 (
-    id_location_availability serial NOT NULL,
-    date timestamp NOT NULL,
-    time_from timestamp NOT NULL,
-    time_to timestamp NOT NULL,
-    id_location int NOT NULL,
+    id_location_availability serial    NOT NULL,
+    date                     timestamp NOT NULL,
+    time_from                timestamp NOT NULL,
+    time_to                  timestamp NOT NULL,
+    id_location              int       NOT NULL,
     CONSTRAINT location_availability_pk PRIMARY KEY (id_location_availability)
 );
 

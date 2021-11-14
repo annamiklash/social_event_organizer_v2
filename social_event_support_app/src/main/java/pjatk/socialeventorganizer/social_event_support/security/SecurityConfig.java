@@ -5,10 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-@EnableWebSecurity
+import static pjatk.socialeventorganizer.social_event_support.security.enums.AllowedUrlsEnum.*;
+
+
 @AllArgsConstructor
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -17,22 +18,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity webSecurity) {
         webSecurity.ignoring().antMatchers(
-                "/api/register",
-                "/api/login*",
-                "/api/logout*",
-
-                "/api/locations",
-                "/api/locations**",
-                "/api/locations/**",
-
-                "/api/caterings",
-                "/api/caterings*",
-                "/api/caterings/**",
-
-                "/api/reset_password",
-                "/api/reset"
-
-//                "/api/users"
+                REGISTER.value,
+                LOGIN.value,
+                LOGOUT.value,
+                LOCATIONS.value,
+                CATERINGS.value,
+                SERVICES.value,
+                RESET_PASSWORD.value,
+                RESET.value
         );
     }
 
@@ -43,4 +36,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated();
     }
+
 }

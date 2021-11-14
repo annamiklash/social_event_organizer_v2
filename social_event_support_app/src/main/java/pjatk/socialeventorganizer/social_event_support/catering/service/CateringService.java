@@ -73,7 +73,6 @@ public class CateringService {
         throw new NotFoundException("Address with id " + id + " DOES NOT EXIST");
     }
 
-    //TODO: finish
     public Catering getWithDetail(long id) {
         final Optional<Catering> optionalCatering = cateringRepository.findByIdWithDetail(id);
         if (optionalCatering.isPresent()) {
@@ -85,8 +84,9 @@ public class CateringService {
 
     @Transactional
     public Catering create(CateringDto dto, long locationId) {
-        final UserCredentials credentials = securityService.getUserCredentials();
-        final Business business = businessService.get(credentials.getUserId());
+        final UserCredentials userCredentials = securityService.getUserCredentials();
+
+        final Business business = businessService.get(userCredentials.getUserId());
 
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
@@ -98,7 +98,7 @@ public class CateringService {
 
         final Location location = locationService.getWithDetail(locationId);
 
-        if (!business.getId().equals(location.getBusiness().getId())){
+        if (!business.getId().equals(location.getBusiness().getId())) {
             throw new InvalidCredentialsException(InvalidCredentialsException.Enum.INCORRECT_CREDENTIALS);
         }
 
@@ -107,7 +107,7 @@ public class CateringService {
         final Catering catering = CateringMapper.fromDto(dto);
 
         catering.setCateringAddress(address);
-        catering.setBusiness(businessService.get(credentials.getUserId()));
+        catering.setBusiness(business);
         catering.setCreatedAt(LocalDateTime.now());
         catering.setModifiedAt(LocalDateTime.now());
 

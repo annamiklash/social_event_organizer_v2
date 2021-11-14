@@ -11,9 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppPro
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
-import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
-import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
@@ -39,8 +37,6 @@ public class UserService {
     private final PasswordEncoderSecurity passwordEncoderSecurity;
 
     private final EmailService emailService;
-
-    private final SecurityService securityService;
 
     private final AppProblemService appProblemService;
 
@@ -82,8 +78,6 @@ public class UserService {
         user.setModifiedAt(LocalDateTime.now());
 
         userRepository.save(user);
-
-        //TODO: SEND EMAIL WITH CONF LINK
     }
 
     public User getByResetPasswordToken(String token) {
@@ -118,9 +112,9 @@ public class UserService {
     public boolean isNewAccount(long id, char type) {
         final Optional<User> optionalUser = userRepository.isNewAccount(id, type);
         if (optionalUser.isPresent()) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     private boolean userExists(String email) {
@@ -139,12 +133,9 @@ public class UserService {
         save(user);
     }
 
-    public AppProblem reportProblem(AppProblemDto dto) {
-        final UserCredentials userCredentials = securityService.getUserCredentials();
+    public AppProblem reportProblem(AppProblemDto dto, long id) {
+        final User user = getById(id);
 
-        final User user = getById(userCredentials.getUserId());
-
-        //TODO: check if correctly saves
         return appProblemService.create(dto, user);
 
     }

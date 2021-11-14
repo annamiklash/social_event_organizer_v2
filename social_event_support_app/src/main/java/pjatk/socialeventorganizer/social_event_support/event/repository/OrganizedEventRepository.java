@@ -15,6 +15,4 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
 
 //    List<OrganizedEvent> getAllWithCustomerAndLocation();
 
-
-
 }

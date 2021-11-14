@@ -1,11 +1,11 @@
 package pjatk.socialeventorganizer.social_event_support.invite.mapper;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.invite.response.EventInfoResponse;
 
-@Component
-public class EventInfoMapper {
+@UtilityClass
+public class OrganizedEventMapper {
 
     public EventInfoResponse mapToResponse(OrganizedEvent organizedEvent) {
 
@@ -16,4 +16,5 @@ public class EventInfoMapper {
                 .endDate(organizedEvent.getEndDate())
                 .build();
     }
+
 }

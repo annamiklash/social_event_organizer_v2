@@ -21,13 +21,15 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAcces
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
-import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum.NOT_VERIFIED;
 
 @Service
 @AllArgsConstructor
@@ -44,7 +46,6 @@ public class BusinessService {
 
     public ImmutableList<Business> list(CustomPage customPage) {
 
-        //TODO: resolve sorting order
         final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
         final Page<Business> page = businessRepository.findAll(paging);
 
@@ -52,7 +53,7 @@ public class BusinessService {
     }
 
     @Transactional
-    public void createBusinessAccount(BusinessDto businessDto) {
+    public Business createBusinessAccount(BusinessDto businessDto) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
 
         if (!userService.isNewAccount(userCredentials.getUserId(), userCredentials.getUserType())) {
@@ -62,15 +63,19 @@ public class BusinessService {
         final Address address = addressService.create(businessDto.getAddress());
         final User user = userService.getById(userCredentials.getUserId());
 
-        businessDto.setUser(UserMapper.toDto(user));
-        businessDto.setVerificationStatus(String.valueOf(BusinessVerificationStatusEnum.NOT_VERIFIED));
-
         final Business business = BusinessMapper.fromDto(businessDto);
-
+        business.setVerificationStatus(NOT_VERIFIED.toString());
+        business.setUser(user);
         business.setAddress(address);
 
         log.info("TRYING TO SAVE BUSINESS");
         businessRepository.save(business);
+
+        //TODO: verify
+        user.setModifiedAt(LocalDateTime.now());
+        userService.save(user);
+
+        return business;
 
     }
 
@@ -94,10 +99,11 @@ public class BusinessService {
         final Business business = getWithDetail(id);
 
 
-        //TODO: delete address
-        //TODO: delete caterings is exist
-        //TODO: delete locations if exist
-        //TODO: delete caterings if exist
+        //TODO: finish
+        //delete address
+        //delete caterings is exist
+        //delete locations if exist
+        //delete caterings if exist
 
     }
 

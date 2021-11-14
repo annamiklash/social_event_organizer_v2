@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
-import pjatk.socialeventorganizer.social_event_support.location.model.Location;
+import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
+import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
 @Data
 @AllArgsConstructor
@@ -15,13 +15,17 @@ public class LocationForEventDto {
 
     private Long id;
 
-    private String dateTimeFrom;
+    private String timeFrom;
 
-    private String dateTimeTo;
+    private String timeTo;
 
-    private Location location;
+    private int guests;
 
-    private OrganizedEvent event;
+    private String confirmationStatus;
+
+    private LocationDto location;
+
+    private OrganizedEventDto event;
 
 //    private Set<CateringForChosenEventLocation> cateringsForEventLocation;
 }

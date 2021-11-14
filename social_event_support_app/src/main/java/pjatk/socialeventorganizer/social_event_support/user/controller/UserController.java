@@ -47,15 +47,15 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
-            method = RequestMethod.PUT,
-            value = "/report",
+            method = RequestMethod.POST,
+            value = "{id}/report",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AppProblemDto> reportProblem(@Valid @RequestBody AppProblemDto dto) {
+    public ResponseEntity<AppProblemDto> reportProblem(@Valid @RequestBody AppProblemDto dto, @PathVariable long id) {
 
-        final AppProblem appProblem = userService.reportProblem(dto);
+        final AppProblem appProblem = userService.reportProblem(dto, id);
 
         return ResponseEntity.ok(AppProblemMapper.toDtoWithUser(appProblem));
     }

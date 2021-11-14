@@ -11,7 +11,7 @@ public class AppProblemMapper {
     public AppProblemDto toDto(AppProblem appProblem) {
         return AppProblemDto.builder()
                 .id(appProblem.getId())
-                .createdAt(String.valueOf(appProblem.getDateTime()))
+                .createdAt(String.valueOf(appProblem.getCreatedAt()))
                 .concern(appProblem.getConcern())
                 .description(appProblem.getDescription())
                 .build();

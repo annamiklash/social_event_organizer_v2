@@ -97,10 +97,19 @@ public class Location implements Serializable {
     @JsonIgnore
     private Set<LocationForEvent> locationForEvent = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_location")
     @JsonIgnore
-    private Set<LocationAvailability> locationAvailability;
+    private Set<LocationAvailability> LocationAvailability;
+
+
+    public void addAvailability(LocationAvailability locationAvailability) {
+        LocationAvailability.add(locationAvailability);
+    }
+
+    public void removeAvailability(LocationAvailability locationAvailability) {
+        LocationAvailability.remove(locationAvailability);
+    }
 
     public void addDescriptionItem(LocationDescriptionItem locationDescriptionItem) {
         if (locationDescriptionItem == null) {
