@@ -62,7 +62,7 @@ public class LocationForEventService {
         locationForEventRepository.save(locationForEvent);
     }
 
-    private LocationForEvent findByLocationIdAndEventId(long id, long eventId) {
+    public LocationForEvent findByLocationIdAndEventId(long id, long eventId) {
 
         final Optional<LocationForEvent> optionalLocationForEvent = locationForEventRepository.findByEventIdAndLocationId(eventId, id);
 

@@ -51,4 +51,12 @@ public class GuestService {
         return ImmutableList.copyOf(page.get().map(GuestMapper::toDto).collect(Collectors.toList()));
     }
 
+    public List<Guest> getGuestsByIds(List<Long> guestIds) {
+        return guestIds.stream()
+                .map(id -> guestRepository.findById(id))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
 }

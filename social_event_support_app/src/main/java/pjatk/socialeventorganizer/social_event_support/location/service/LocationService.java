@@ -187,9 +187,15 @@ public class LocationService {
 
         dtos.forEach(dto -> dto.setStatus("available"));
         final List<LocationAvailability> availabilities = dtos.stream().map(LocationAvailabilityMapper::fromDto).collect(Collectors.toList());
-        availabilities.forEach(availability -> availability.setLocation(location));
+//        availabilities.forEach(availability -> availability.set);
+//        availabilities.forEach(availability -> availability.setLocation(location));
 
-        availabilities.forEach(availability -> locationAvailabilityRepository.save(availability));
+        availabilities.stream()
+                .peek(availability -> availability.setStatus(AVAILABLE.toString()))
+                .peek(availability -> availability.setLocation(location))
+                .forEach(availability -> locationAvailabilityRepository.save(availability));
+
+//        availabilities.forEach(availability -> locationAvailabilityRepository.save(availability));
 
     }
 
@@ -280,7 +286,7 @@ public class LocationService {
                 .filter(availability -> availability.getDate().equals(date))
                 .filter(availability -> (timeFrom.isEqual(availability.getTimeFrom()) || timeFrom.isAfter(availability.getTimeFrom()))
                         && (timeTo.isEqual(availability.getTimeTo()) || timeTo.isBefore(availability.getTimeTo()))
-                        && (availability.getStatus().equals("available")))
+                        && (availability.getStatus().equals(AVAILABLE.toString())))
                 .collect(Collectors.toList());
 
         final LocationAvailability availability = availabilityForDate.get(0);

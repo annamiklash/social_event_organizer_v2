@@ -1,11 +1,15 @@
 package pjatk.socialeventorganizer.social_event_support.customer.guest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -40,5 +44,7 @@ public class Guest implements Serializable {
     @JoinColumn(name = "id_customer")
     private Customer customer;
 
-
+    @ManyToMany(mappedBy = "guests")
+    @JsonIgnore
+    Set<LocationForEvent> locations = new HashSet<>();
 }

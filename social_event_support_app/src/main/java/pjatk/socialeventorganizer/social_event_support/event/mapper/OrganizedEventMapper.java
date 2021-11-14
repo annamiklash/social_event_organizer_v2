@@ -38,7 +38,7 @@ public class OrganizedEventMapper {
 
     public OrganizedEventConfirmationDto toOrganizedConfirmationDto(LocationForEvent locationForEvent) {
         return OrganizedEventConfirmationDto.builder()
-                .id(locationForEvent.getId())
+                .id(locationForEvent.getEvent().getId())
                 .name(locationForEvent.getEvent().getName())
                 .eventType(locationForEvent.getEvent().getEventType().getType())
                 .eventStatus(locationForEvent.getEvent().getEventStatus())

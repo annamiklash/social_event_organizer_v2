@@ -14,7 +14,7 @@ public class LocationForEventMapper {
                 .id(location.getId())
                 .timeFrom(String.valueOf(location.getDateTimeFrom()))
                 .timeTo(String.valueOf(location.getDateTimeTo()))
-                .guests(location.getGuests())
+                .guests(location.getGuestCount())
                 .confirmationStatus(location.getConfirmationStatus())
                 .location(LocationMapper.toDto(location.getLocation()))
                 .build();

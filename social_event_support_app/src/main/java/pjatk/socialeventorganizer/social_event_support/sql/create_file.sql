@@ -228,6 +228,7 @@ CREATE TABLE location_review
     title              varchar(100) NOT NULL,
     comment            varchar(300) NOT NULL,
     star_rating        int          NOT NULL,
+    created_at         timestamp    NOT NULL,
     id_location        int          NOT NULL,
     id_customer        int          NOT NULL,
     CONSTRAINT location_review_pk PRIMARY KEY (id_location_review)
@@ -277,11 +278,11 @@ CREATE TABLE organized_event
 );
 
 -- Table: organized_event_guest
-CREATE TABLE organized_event_guest
+CREATE TABLE location_for_event_guest
 (
-    id_guest           int NOT NULL,
-    id_organized_event int NOT NULL,
-    CONSTRAINT organized_event_guest_pk PRIMARY KEY (id_guest, id_organized_event)
+    id_guest              int NOT NULL,
+    id_location_for_event int NOT NULL,
+    CONSTRAINT location_for_event_guest_pk PRIMARY KEY (id_guest, id_location_for_event)
 );
 
 -- Table: service_for_event
@@ -302,6 +303,7 @@ CREATE TABLE service_review
     id_service_review   serial       NOT NULL,
     title               varchar(100) NOT NULL,
     comment             varchar(300) NOT NULL,
+    star_rating         int          NOT NULL,
     created_at          timestamp    NOT NULL,
     id_optional_service int          NOT NULL,
     id_customer         int          NOT NULL,
@@ -550,6 +552,7 @@ ALTER TABLE location_for_event
                 INITIALLY IMMEDIATE
 ;
 
+
 -- Reference: location_image_location (table: location_image)
 ALTER TABLE location_image
     ADD CONSTRAINT location_image_location
@@ -613,20 +616,20 @@ ALTER TABLE organized_event
                 INITIALLY IMMEDIATE
 ;
 
--- Reference: organized_event_guest_guest (table: organized_event_guest)
-ALTER TABLE organized_event_guest
-    ADD CONSTRAINT organized_event_guest_guest
+-- Reference: organized_event_guest_guest (table: location_for_event_guest)
+ALTER TABLE location_for_event_guest
+    ADD CONSTRAINT location_for_event_guest_guest
         FOREIGN KEY (id_guest)
             REFERENCES guest (id_guest)
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
 
--- Reference: organized_event_guest_organized_event (table: organized_event_guest)
-ALTER TABLE organized_event_guest
-    ADD CONSTRAINT organized_event_guest_organized_event
-        FOREIGN KEY (id_organized_event)
-            REFERENCES organized_event (id_organized_event)
+-- Reference: organized_event_guest_organized_event (table: location_for_event_guest)
+ALTER TABLE location_for_event_guest
+    ADD CONSTRAINT location_for_event_guest_location_for_event
+        FOREIGN KEY (id_location_for_event)
+            REFERENCES location_for_event (id_location_for_event)
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
@@ -1025,20 +1028,20 @@ values ('img1', 'alt1', 1),
        ('img10', 'alt10', 10);
 
 
-insert into service_review(title, comment, id_optional_service, id_customer, created_at)
-values ('title1', 'comment1', 1, 9, (select current_timestamp)),
-       ('title2', 'comment2', 2, 10, (select current_timestamp)),
-       ('title3', 'comment3', 3, 11, (select current_timestamp)),
-       ('title4', 'comment4', 4, 12, (select current_timestamp)),
-       ('title5', 'comment5', 5, 13, (select current_timestamp)),
-       ('title6', 'comment6', 6, 9, (select current_timestamp)),
-       ('title7', 'comment7', 7, 10, (select current_timestamp)),
-       ('title8', 'comment8', 8, 11, (select current_timestamp)),
-       ('title9', 'comment9', 9, 12, (select current_timestamp)),
-       ('title10', 'comment10', 10, 13, (select current_timestamp));
+insert into service_review(title, comment, star_rating, id_optional_service, id_customer, created_at)
+values ('title1', 'comment1', 5, 1, 9, (select current_timestamp)),
+       ('title2', 'comment2', 5, 2, 10, (select current_timestamp)),
+       ('title3', 'comment3', 5, 3, 11, (select current_timestamp)),
+       ('title4', 'comment4', 5, 4, 12, (select current_timestamp)),
+       ('title5', 'comment5', 5, 5, 13, (select current_timestamp)),
+       ('title6', 'comment6', 5, 6, 9, (select current_timestamp)),
+       ('title7', 'comment7', 5, 7, 10, (select current_timestamp)),
+       ('title8', 'comment8', 5, 8, 11, (select current_timestamp)),
+       ('title9', 'comment9', 5, 9, 12, (select current_timestamp)),
+       ('title10', 'comment10', 4, 10, 13, (select current_timestamp));
 
 
-insert into catering_review(title, comment, id_customer, id_catering, star_review, created_at)
+insert into catering_review(title, comment, id_customer, id_catering, star_rating, created_at)
 values ('title1', 'comment1', 9, 1, 1, (select current_timestamp)),
        ('title2', 'comment2', 10, 2, 2, (select current_timestamp)),
        ('title3', 'comment3', 11, 3, 3, (select current_timestamp)),
@@ -1051,22 +1054,25 @@ values ('title1', 'comment1', 9, 1, 1, (select current_timestamp)),
        ('title10', 'comment10', 13, 5, 2, (select current_timestamp));
 
 
-INSERT INTO location_review (title, comment, id_location, id_customer, created_at)
+INSERT INTO location_review (title, comment, id_location, id_customer, created_at, star_rating)
 VALUES ('False advertisement', 'Location was alright but it simply was not as big as advertised.', 1, 9,
-        (select current_timestamp)),
-       ('Great place!', 'I cannot recommend it enough. I love it, will come again.', 2, 10, (select current_timestamp)),
-       ('Horrible shack.', 'Location was alright but not fit to my tastes.', 3, 11, (select current_timestamp)),
-       ('It was so-so', 'It was ok, but not great.', 4, 12, (select current_timestamp)),
+        (select current_timestamp), 5),
+       ('Great place!', 'I cannot recommend it enough. I love it, will come again.', 2, 10, (select current_timestamp),
+        5),
+       ('Horrible shack.', 'Location was alright but not fit to my tastes.', 3, 11, (select current_timestamp), 5),
+       ('It was so-so', 'It was ok, but not great.', 4, 12, (select current_timestamp), 5),
        ('Just perfect.', 'Clean, spacious and with great customer service. You will not be dissapointed!', 5, 13,
-        (select current_timestamp));
+        (select current_timestamp), 5);
 
 
-INSERT INTO event_type (type, description, created_at)
-VALUES ('Wedding', 'Description1', (select current_timestamp)),
-       ('Conference', 'Description2', (select current_timestamp)),
-       ('Seminar', 'Description3', (select current_timestamp)),
-       ('Birthday', 'Description4', (select current_timestamp)),
-       ('Party', 'Description5', (select current_timestamp));
+INSERT INTO event_type (type)
+VALUES ('WEDDING'),
+       ('CONFERENCE'),
+       ('SEMINAR'),
+       ('BIRTHDAY'),
+       ('FAMILY_CELEBRATION'),
+       ('PARTY'),
+       ('OTHER');
 
 INSERT INTO organized_event (start_date, is_predefined, event_status, id_customer, id_event_type, created_at,
                              modified_at, deleted_at, name)
@@ -1080,14 +1086,6 @@ VALUES ('2021-03-23', false, 'READY', 9, 1, (select current_timestamp), (select 
         'CELEBRATION'),
        ('2021-05-01', false, 'FINISHED', 13, 5, (select current_timestamp), (select current_timestamp), null,
         'CELEBRATION');
-
-
-INSERT INTO organized_event_guest (id_guest, id_organized_event)
-VALUES (1, 1),
-       (2, 2),
-       (3, 3),
-       (4, 4),
-       (5, 5);
 
 
 insert into location_for_event(time_from, time_to, id_organized_event, id_location, guests, confirmation_status)
@@ -1124,14 +1122,14 @@ VALUES (5, 3, 1),
        (6, 3, 1);
 
 
-
 create table location_availability
 (
-    id_location_availability serial    NOT NULL,
-    date                     timestamp NOT NULL,
-    time_from                timestamp NOT NULL,
-    time_to                  timestamp NOT NULL,
-    id_location              int       NOT NULL,
+    id_location_availability serial      NOT NULL,
+    date                     timestamp   NOT NULL,
+    time_from                timestamp   NOT NULL,
+    time_to                  timestamp   NOT NULL,
+    status                   varchar(30) not null,
+    id_location              int         NOT NULL,
     CONSTRAINT location_availability_pk PRIMARY KEY (id_location_availability)
 );
 

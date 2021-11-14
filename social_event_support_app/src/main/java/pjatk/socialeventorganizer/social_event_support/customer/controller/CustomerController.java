@@ -130,7 +130,7 @@ public class CustomerController {
     public ResponseEntity<CustomerDto> getWithAllEvents(@PathVariable long id) {
         log.info("GET CUSTOMER ALL EVENTS");
         try {
-            return ResponseEntity.ok(customerService.getWithAllEvents(id));
+            return ResponseEntity.ok(CustomerMapper.toDtoWithEvents(customerService.getWithAllEvents(id)));
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -251,14 +251,26 @@ public class CustomerController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrganizedEventConfirmationDto> bookLocationForEvent(@RequestParam long id,
-                                                                       @RequestParam long locId,
-                                                                       @Valid @RequestBody InitialEventBookingDto dto) {
+                                                                              @RequestParam long locId,
+                                                                              @Valid @RequestBody InitialEventBookingDto dto) {
 
         final LocationForEvent locationForEvent = customerService.bookEvent(id, locId, dto);
         return ResponseEntity.ok(OrganizedEventMapper.toOrganizedConfirmationDto(locationForEvent));
 
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            path = "guests/invite")
+    public ResponseEntity<Void> addGuestsToLocationEvent(@RequestParam long id, @RequestParam long eventId,
+                                                         @RequestParam long locId,
+                                                         @RequestParam long[] guestIds) {
+
+        customerService.addGuestsToEvent(id, eventId, locId, guestIds);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+    }
 
 }
 

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.dto.CateringForChosenEventLocation;
+import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 
@@ -34,7 +35,8 @@ public class LocationForEvent implements Serializable {
     private LocalDateTime dateTimeTo;
 
     @Min(1)
-    private int guests;
+    @Column(name = "guests")
+    private int guestCount;
 
     @Column(nullable = false)
     private String confirmationStatus;
@@ -50,4 +52,11 @@ public class LocationForEvent implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_location_dor_event")
     private Set<CateringForChosenEventLocation> cateringsForEventLocation = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "location_for_event_guest",
+            joinColumns = @JoinColumn(name = "id_location_for_event"),
+            inverseJoinColumns = @JoinColumn(name = "id_guest"))
+    private Set<Guest> guests = new HashSet<>();
 }

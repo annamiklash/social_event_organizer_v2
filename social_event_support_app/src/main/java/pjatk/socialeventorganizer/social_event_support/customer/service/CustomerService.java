@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
@@ -33,6 +35,7 @@ import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_b
 import pjatk.socialeventorganizer.social_event_support.event.service.EventTypeService;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.invite.InviteDto;
 import pjatk.socialeventorganizer.social_event_support.invite.mapper.LocationInfoMapper;
@@ -62,11 +65,14 @@ import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS;
+import static pjatk.socialeventorganizer.social_event_support.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
 import static pjatk.socialeventorganizer.social_event_support.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @Service
@@ -168,11 +174,10 @@ public class CustomerService {
 
     }
 
-    public CustomerDto getWithAllEvents(long id) {
+    public Customer getWithAllEvents(long id) {
         final Optional<Customer> optionalCustomer = customerRepository.getByIdWithEvents(id);
         if (optionalCustomer.isPresent()) {
-            final Customer customer = optionalCustomer.get();
-            return CustomerMapper.toDtoWithEvents(customer);
+            return optionalCustomer.get();
         }
         throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
 
@@ -216,6 +221,27 @@ public class CustomerService {
     public Customer getWithEventByEventId(long id, long eventId) {
 
         return null;
+    }
+
+    public void addGuestsToEvent(long id, long eventId, long locationId, long[] guestIds) {
+
+//        Optional<Customer> customerRepository.getById(id);
+        final List<Guest> guests = guestService.getGuestsByIds(Arrays.asList(ArrayUtils.toObject(guestIds)));
+        final LocationForEvent locationForEvent = locationForEventService.findByLocationIdAndEventId(locationId, eventId);
+
+        if (!locationForEvent.getConfirmationStatus().equals(CONFIRMED.toString())) {
+            throw new IllegalArgumentException("Cannot invite guests while reservation for location is not confirmed");
+        }
+
+        locationForEvent.setGuests(new HashSet<>(guests));
+
+        locationForEventService.save(locationForEvent);
+
+        final OrganizedEvent organizedEvent = organizedEventService.getByOrganizedEventId(eventId);
+        organizedEvent.setModifiedAt(LocalDateTime.now());
+
+        organizedEventService.save(organizedEvent);
+
     }
 
 
@@ -321,7 +347,7 @@ public class CustomerService {
         final Location location = locationService.getWithAvailability(locId, dto.getDetails().getDate());
         final EventBookDateDto details = dto.getDetails();
 
-         locationService.modifyAvailabilityAfterBooking(location, details);
+        locationService.modifyAvailabilityAfterBooking(location, details);
 
         final OrganizedEvent organizedEvent = OrganizedEvent.builder()
                 .customer(customer)
@@ -339,7 +365,7 @@ public class CustomerService {
 
         final LocationForEvent locationForEvent = LocationForEvent.builder()
                 .location(location)
-                .guests(details.getGuests())
+                .guestCount(details.getGuests())
                 .dateTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(details.getStartTime()))
                 .dateTimeTo(DateTimeUtil.fromStringToFormattedDateTime(details.getEndTime()))
                 .confirmationStatus(NOT_CONFIRMED.toString())
