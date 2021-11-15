@@ -2,7 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.common.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import pjatk.socialeventorganizer.social_event_support.invite.InviteDto;
+import pjatk.socialeventorganizer.social_event_support.invite.EventInvitationDto;
 import pjatk.socialeventorganizer.social_event_support.invite.response.CateringPlaceInfoResponse;
 import pjatk.socialeventorganizer.social_event_support.invite.response.GuestInfoResponse;
 import pjatk.socialeventorganizer.social_event_support.invite.response.LocationInfoResponse;
@@ -15,32 +15,32 @@ import java.util.List;
 @UtilityClass
 public class ComposeInviteEmailUtil implements Serializable {
 
-    public String composeEmail(GuestInfoResponse guest, InviteDto inviteDto) {
+    public String composeEmail(GuestInfoResponse guest, EventInvitationDto eventInvitationDto) {
 
         String content = new StringBuilder()
                 .append("Dear ")
                 .append(guest.getGuestFirstAndLastName())
                 .append(",\n")
                 .append("We are pleased to inform that You have been invited to a ")
-                .append(inviteDto.getEventInfo().getEventType())
+                .append(eventInvitationDto.getEventInfo().getEventType())
                 .append(" organized by ")
-                .append(inviteDto.getOrganizerInfo().getFirstAndLastName())
+                .append(eventInvitationDto.getOrganizerInfo().getFirstAndLastName())
                 .append(". Below You can find a schedule so You are better prepared to the upcoming occasion!")
                 .append("\n\n")
-                .append(inviteDto.getEventInfo().getEventName())
+                .append(eventInvitationDto.getEventInfo().getEventName())
                 .append("\n")
                 .append("Beginning date and time: ")
-                .append(inviteDto.getEventInfo().getStartDate())
+                .append(eventInvitationDto.getEventInfo().getStartDate())
                 .append("\n")
                 .toString();
-        boolean isOneDay = isOneDayEvent(inviteDto.getEventInfo().getEndDate());
+        boolean isOneDay = isOneDayEvent(eventInvitationDto.getEventInfo().getEndDate());
         if (!isOneDay) {
             content = content.concat("Ending date and time: ")
-                    .concat(inviteDto.getEventInfo().getEndDate().toString())
+                    .concat(eventInvitationDto.getEventInfo().getEndDate().toString())
                     .concat("\n");
         }
 
-        final List<LocationInfoResponse> locations = inviteDto.getLocationInfo();
+        final List<LocationInfoResponse> locations = eventInvitationDto.getLocationInfo();
         for (LocationInfoResponse location : locations) {
             content = content
                     .concat("When and where: ")
@@ -67,11 +67,11 @@ public class ComposeInviteEmailUtil implements Serializable {
         }
 
         content = content.concat("\nIn case of any questions do not hesitate to ask ")
-                .concat(inviteDto.getOrganizerInfo().getFirstAndLastName())
+                .concat(eventInvitationDto.getOrganizerInfo().getFirstAndLastName())
                 .concat(" at ")
-                .concat(inviteDto.getOrganizerInfo().getEmail())
+                .concat(eventInvitationDto.getOrganizerInfo().getEmail())
                 .concat(" or calling at ")
-                .concat(inviteDto.getOrganizerInfo().getPhoneNumber().toString())
+                .concat(eventInvitationDto.getOrganizerInfo().getPhoneNumber().toString())
                 .concat("\n\n\n")
                 .concat("Sent via SocialEventOrganizer app");
 

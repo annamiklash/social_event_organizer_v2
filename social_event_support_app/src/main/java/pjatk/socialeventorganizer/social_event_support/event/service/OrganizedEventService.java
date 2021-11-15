@@ -35,7 +35,7 @@ public class OrganizedEventService {
         return page.get().map(OrganizedEventMapper::toDtoWithCustomer).collect(ImmutableList.toImmutableList());
     }
 
-    public OrganizedEvent getByOrganizedEventId(long orgEventId) {
+    public OrganizedEvent get(long orgEventId) {
         final Optional<OrganizedEvent> optionalEvent = organizedEventRepository.findById(orgEventId);
         if (optionalEvent.isPresent()) {
             return optionalEvent.get();
@@ -45,5 +45,14 @@ public class OrganizedEventService {
 
     public void save(OrganizedEvent organizedEvent) {
         organizedEventRepository.save(organizedEvent);
+    }
+
+    public OrganizedEvent getWithAllInformationForSendingInvitations(long id) {
+        final Optional<OrganizedEvent> organizedEvent = organizedEventRepository.getWithAllInformationForSendingInvitations(id);
+
+        if (organizedEvent.isPresent()) {
+            return organizedEvent.get();
+        }
+        throw new NotFoundException("No organized event with id " + id);
     }
 }

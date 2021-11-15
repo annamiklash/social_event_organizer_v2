@@ -7,10 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
@@ -18,6 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppP
 import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +44,7 @@ public class AppProblemController {
                         .map(AppProblemMapper::toDtoWithUser)
                         .collect(Collectors.toList())));
     }
+
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
@@ -81,5 +80,18 @@ public class AppProblemController {
 
         return ResponseEntity.ok(AppProblemMapper.toDto(appProblem));
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AppProblemDto> reportProblem(@Valid @RequestBody AppProblemDto dto, @PathVariable long id) {
+
+        final AppProblem appProblem = appProblemService.create(dto, id);
+
+        return ResponseEntity.ok(AppProblemMapper.toDtoWithUser(appProblem));
+    }
+
 
 }

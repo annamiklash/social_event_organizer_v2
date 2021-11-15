@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
-import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
-import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
@@ -37,8 +34,6 @@ public class UserService {
     private final PasswordEncoderSecurity passwordEncoderSecurity;
 
     private final EmailService emailService;
-
-    private final AppProblemService appProblemService;
 
     public ImmutableList<User> findALl() {
         return ImmutableList.copyOf(userRepository.findAll());
@@ -133,10 +128,4 @@ public class UserService {
         save(user);
     }
 
-    public AppProblem reportProblem(AppProblemDto dto, long id) {
-        final User user = getById(id);
-
-        return appProblemService.create(dto, user);
-
-    }
 }

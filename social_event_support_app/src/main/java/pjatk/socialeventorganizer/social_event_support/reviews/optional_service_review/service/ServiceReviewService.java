@@ -3,8 +3,16 @@ package pjatk.socialeventorganizer.social_event_support.reviews.optional_service
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
+import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.OptionalServiceReview;
+import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.ServiceReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.repository.ServiceReviewRepository;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -13,7 +21,27 @@ public class ServiceReviewService {
 
     private final ServiceReviewRepository serviceReviewRepository;
 
+    private final CustomerService customerService;
+
+    private final OptionalServiceService optionalServiceService;
+
     public void save(OptionalServiceReview optionalServiceReview) {
         serviceReviewRepository.save(optionalServiceReview);
+    }
+
+
+    public OptionalServiceReview leaveServiceReview(long id, long serviceId, ServiceReviewDto dto) {
+        final Customer customer = customerService.get(id);
+
+        final OptionalService optionalService = optionalServiceService.get(serviceId);
+
+        final OptionalServiceReview optionalServiceReview = ReviewMapper.fromServiceReviewDto(dto);
+        optionalServiceReview.setOptionalService(optionalService);
+        optionalServiceReview.setCustomer(customer);
+        optionalServiceReview.setCreatedAt(LocalDateTime.now());
+
+        save(optionalServiceReview);
+
+        return optionalServiceReview;
     }
 }
