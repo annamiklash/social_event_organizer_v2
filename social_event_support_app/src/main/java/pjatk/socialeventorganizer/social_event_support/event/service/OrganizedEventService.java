@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
@@ -17,6 +18,8 @@ import pjatk.socialeventorganizer.social_event_support.event.repository.Organize
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.Optional;
+
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
 
 @Service
 @AllArgsConstructor
@@ -54,5 +57,40 @@ public class OrganizedEventService {
             return organizedEvent.get();
         }
         throw new NotFoundException("No organized event with id " + id);
+    }
+
+    public OrganizedEvent changeStatus(long customerId, long eventId, EventStatusEnum status) {
+        if (!eventWithIdAndCustomerIdExists(customerId, eventId)) {
+            throw new NotFoundException("Event with id " + eventId + " and customer id " + customerId + " does not exist");
+        }
+        final OrganizedEvent organizedEvent = get(eventId);
+
+        switch (status) {
+            case IN_PROGRESS:
+                organizedEvent.setEventStatus(IN_PROGRESS.toString());
+                break;
+            case CONFIRMED:
+                organizedEvent.setEventStatus(CONFIRMED.toString());
+                break;
+            case READY:
+                organizedEvent.setEventStatus(READY.toString());
+                break;
+            case CANCELLED:
+                //TODO: check if possible to cancel
+                organizedEvent.setEventStatus(CANCELLED.toString());
+                break;
+            case FINISHED:
+                organizedEvent.setEventStatus(FINISHED.toString());
+                break;
+        }
+
+        save(organizedEvent);
+
+        return organizedEvent;
+    }
+
+
+    private boolean eventWithIdAndCustomerIdExists(long customerId, long eventId) {
+        return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(customerId, eventId);
     }
 }

@@ -48,12 +48,6 @@ public class Converter {
 
     }
 
-    public String toStringFromLocalDateTime(LocalDateTime dateTime) {
-        log.info(String.valueOf(dateTime));
-
-        return dateTime.format(DATE_TIME_FORMATTER);
-    }
-
     public String capitalizeToEnum(String input) {
         return input.toUpperCase().replace(" ", "_");
     }

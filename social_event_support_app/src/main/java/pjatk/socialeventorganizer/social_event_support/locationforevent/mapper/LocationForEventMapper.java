@@ -1,7 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.locationforevent.mapper;
 
 import lombok.experimental.UtilityClass;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper;
+import pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.mapper.CateringForChosenLocationMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;

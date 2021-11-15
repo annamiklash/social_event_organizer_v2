@@ -86,12 +86,11 @@ public class AppProblemController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AppProblemDto> reportProblem(@Valid @RequestBody AppProblemDto dto, @PathVariable long id) {
+    public ResponseEntity<AppProblemDto> reportProblem(@Valid @RequestBody AppProblemDto dto, @RequestParam long userId) {
 
-        final AppProblem appProblem = appProblemService.create(dto, id);
+        final AppProblem appProblem = appProblemService.create(dto, userId);
 
         return ResponseEntity.ok(AppProblemMapper.toDtoWithUser(appProblem));
     }
-
 
 }

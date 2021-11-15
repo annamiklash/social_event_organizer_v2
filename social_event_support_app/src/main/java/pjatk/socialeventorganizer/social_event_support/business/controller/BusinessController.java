@@ -72,7 +72,7 @@ public class BusinessController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BusinessDto> create(@Valid @RequestBody BusinessDto dto) {
-        log.info("SAVE BUSINESS");
+
         final Business business = businessService.createBusinessAccount(dto);
 
         return ResponseEntity.ok(BusinessMapper.toDtoWithDetail(business));

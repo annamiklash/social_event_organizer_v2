@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.catering_review.controller;
 
+import com.google.common.collect.ImmutableList;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,8 @@ import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.s
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CateringReviewController {
 
@@ -29,5 +32,19 @@ public class CateringReviewController {
 
         final CateringReview review = cateringReviewService.leaveCateringReview(id, cateringId, dto);
         return ResponseEntity.ok(ReviewMapper.toCateringReviewDto(review));
+    }
+
+    @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<CateringReviewDto>> listAllByCateringId(@RequestParam long id) {
+
+        final List<CateringReview> review = cateringReviewService.getByCateringId(id);
+        return ResponseEntity.ok(ImmutableList.copyOf(
+                review.stream()
+                .map(ReviewMapper::toCateringReviewDto)
+                .collect(Collectors.toList())
+        ));
     }
 }

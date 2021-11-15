@@ -185,17 +185,12 @@ public class LocationService {
     public void addAvailability(List<LocationAvailabilityDto> dtos, long locationId) {
         final Location location = get(locationId);
 
-        dtos.forEach(dto -> dto.setStatus("available"));
         final List<LocationAvailability> availabilities = dtos.stream().map(LocationAvailabilityMapper::fromDto).collect(Collectors.toList());
-//        availabilities.forEach(availability -> availability.set);
-//        availabilities.forEach(availability -> availability.setLocation(location));
 
         availabilities.stream()
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setLocation(location))
                 .forEach(availability -> locationAvailabilityRepository.save(availability));
-
-//        availabilities.forEach(availability -> locationAvailabilityRepository.save(availability));
 
     }
 
@@ -291,12 +286,11 @@ public class LocationService {
 
         final LocationAvailability availability = availabilityForDate.get(0);
 
-        List<LocationAvailability> modified = modify(availability, date, timeFrom, timeTo);
+        final List<LocationAvailability> modified = modify(availability, date, timeFrom, timeTo);
 
         locationAvailabilityRepository.delete(availability);
 
         modified.forEach(modifiedAvailability -> locationAvailabilityRepository.saveAndFlush(modifiedAvailability));
-
 
     }
 
@@ -334,6 +328,5 @@ public class LocationService {
 
         return modified;
     }
-
 
 }

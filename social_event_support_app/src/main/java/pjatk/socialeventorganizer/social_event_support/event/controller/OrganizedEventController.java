@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
+import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
+import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 
@@ -35,5 +38,18 @@ public class OrganizedEventController {
                                                                     @RequestParam(defaultValue = "desc") String order) {
         log.info("GET ALL ORG EVENTS");
         return ResponseEntity.ok(organizedEventService.list(new CustomPage(maxResult, firstResult, sort, order), keyword));
+    }
+
+    //TODO: test
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            params = {"id"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OrganizedEventDto> changeEventStatus(@RequestParam long customerId, @RequestParam long eventId, @RequestParam EventStatusEnum status) {
+        final OrganizedEvent organizedEvent = organizedEventService.changeStatus(customerId, eventId, status);
+
+        return ResponseEntity.ok(OrganizedEventMapper.toDto(organizedEvent));
     }
 }

@@ -1,10 +1,10 @@
-package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository;
+package pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
+import pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.model.CateringForChosenEventLocation;
 
 import java.util.List;
 import java.util.Optional;

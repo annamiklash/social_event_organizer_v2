@@ -19,4 +19,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     @Query("SELECT g FROM guest g WHERE LOWER(g.firstName) LIKE %:keyword% OR LOWER(g.lastName) LIKE %:keyword% OR LOWER(g.email) LIKE %:keyword%")
     Page<Guest> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
+
+    List<Guest> getAllByCustomer_Id(long id);
 }

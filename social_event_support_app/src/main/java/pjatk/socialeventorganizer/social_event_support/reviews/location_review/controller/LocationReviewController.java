@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.location_review.controller;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -13,6 +14,8 @@ import pjatk.socialeventorganizer.social_event_support.reviews.location_review.s
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -27,7 +30,6 @@ public class LocationReviewController {
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,
-            path = "",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationReviewDto> reviewLocation(@RequestParam long customerId,
@@ -38,6 +40,18 @@ public class LocationReviewController {
         return ResponseEntity.ok(ReviewMapper.toLocationReviewDto(review));
     }
 
+    @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<LocationReviewDto>> listAllByLocationId(@RequestParam long locationId) {
 
+        final List<LocationReview> review = locationReviewService.getByLocationId(locationId);
+        return ResponseEntity.ok(ImmutableList.copyOf(
+                review.stream()
+                        .map(ReviewMapper::toLocationReviewDto)
+                        .collect(Collectors.toList())
+        ));
+    }
 
 }

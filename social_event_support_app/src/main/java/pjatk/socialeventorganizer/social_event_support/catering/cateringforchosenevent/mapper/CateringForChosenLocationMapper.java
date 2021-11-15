@@ -1,9 +1,9 @@
-package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper;
+package pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.mapper;
 
 import lombok.experimental.UtilityClass;
+import pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.model.CateringForChosenEventLocation;
+import pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 
 @UtilityClass
 public class CateringForChosenLocationMapper {

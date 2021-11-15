@@ -15,8 +15,8 @@ import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMap
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
+import pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
@@ -254,7 +254,6 @@ public class CustomerService {
     private OrganizedEventDto createInvitationContent(OrganizedEvent organizedEvent) {
         return OrganizedEventMapper.toDtoForInvite(organizedEvent);
     }
-
 
 
     @Transactional
