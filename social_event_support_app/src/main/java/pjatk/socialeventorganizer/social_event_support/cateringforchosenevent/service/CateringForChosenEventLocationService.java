@@ -3,7 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.s
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.dto.CateringForChosenEventLocation;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringForLocationRepository;
 import pjatk.socialeventorganizer.social_event_support.invite.mapper.CateringForEventLocationInfoMapper;
 import pjatk.socialeventorganizer.social_event_support.invite.response.CateringPlaceInfoResponse;

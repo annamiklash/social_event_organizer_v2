@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.dto;
+package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

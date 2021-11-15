@@ -31,7 +31,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
-            "WHERE la.date = CAST(:date as timestamp) " +
+            "WHERE la.status = 'AVAILABLE' " +
+            "AND la.date = CAST(:date as timestamp) " +
             "AND la.time_from <= CAST(:timeFrom as timestamp ) " +
             "AND la.time_to >= CAST(:timeTo as timestamp)", nativeQuery = true)
     List<Location> search(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);

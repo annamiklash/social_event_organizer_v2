@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.dto.CateringForChosenEventLocation;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;

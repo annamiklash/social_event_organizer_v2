@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
@@ -18,7 +19,9 @@ import pjatk.socialeventorganizer.social_event_support.catering.service.Catering
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
@@ -238,37 +241,13 @@ public class CustomerService {
 
         final List<GuestDto> guests = invitationContent.getLocations().get(0).getGuests();
 
+        for (GuestDto guest : guests) {
+            final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, invitationContent);
+            final String emailSubject = "Invitation From " + invitationContent.getCustomer().getFirstName() + " " + invitationContent.getCustomer().getLastName();
+            final SimpleMailMessage inviteEmail = EmailUtil.emailBuilder(emailContent, guest.getEmail(), emailSubject);
 
-//        final Customer customer = get(id);
-//
-//        final OrganizerInfoResponse organizerInfo = OrganizerInfoMapper.mapToDto(customer);
-//
-//        final List<GuestInfoResponse> guestsInfo = guestService.getGuestsByOrganizedEventId(eventId);
-//
-//        final EventInfoResponse eventInfo = OrganizedEventMapper.mapToResponse(organizedEvent);
-//
-//        final List<LocationForEvent> locationForEvent = locationForEventService.getLocationInfoByOrganizedEventId(eventId);
-//
-//        final List<LocationInfoResponse> locationsInfo = locationForEvent.stream()
-//                .map(LocationInfoMapper::mapToResponse)
-//                .collect(Collectors.toList());
-//
-//        for (LocationInfoResponse locationInfoResponse : locationsInfo) {
-//            final List<CateringPlaceInfoResponse> cateringList =
-//                    cateringForChosenEventLocationService.getCateringForLocationInfoByOrganizedEventIdAndLocationId(eventId, locationInfoResponse.getLocationId());
-//            locationInfoResponse.setCateringOrders(cateringList);
-//        }
-//
-//        final InviteDto inviteDto = createInviteContent(organizerInfo, guestsInfo, eventInfo, locationsInfo);
-//
-//        for (GuestInfoResponse guest : guestsInfo) {
-//            final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, inviteDto);
-//            final String emailSubject = "Invitation From " + organizerInfo.getFirstAndLastName();
-//            final SimpleMailMessage inviteEmail = EmailUtil.emailBuilder(emailContent, guest.getEmail(), emailSubject);
-//
-//            log.info("EMAIL: " + inviteEmail.toString());
-//
-//            emailService.sendEmail(inviteEmail);
+            emailService.sendEmail(inviteEmail);
+        }
     }
 
 

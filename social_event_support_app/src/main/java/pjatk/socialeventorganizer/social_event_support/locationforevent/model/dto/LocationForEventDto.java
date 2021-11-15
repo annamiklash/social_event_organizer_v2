@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.dto.CateringForChosenEventLocation;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
@@ -33,5 +33,5 @@ public class LocationForEventDto {
 
     private List<GuestDto> guests;
 
-    private List<CateringForChosenEventLocation> catering;
+    private List<CateringForChosenEventLocationDto> catering;
 }

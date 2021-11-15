@@ -15,20 +15,13 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
     @Query("SELECT oe from organized_event oe " +
             "left join fetch oe.eventType et " +
             "left join fetch oe.customer c " +
+            "left join fetch c.user cu " +
             "left join fetch oe.locationsForEvent lfe " +
             "left join fetch lfe.cateringsForEventLocation cfl " +
-            "left join fetch cfl.catering cflc "
-            "left join fetch lfe.location l "+
+            "left join fetch cfl.catering cflc " +
+            "left join fetch lfe.location l " +
             "left join fetch l.locationAddress la " +
             "left join fetch lfe.guests g WHERE oe.id = :id")
     Optional<OrganizedEvent> getWithAllInformationForSendingInvitations(@Param("id") long id);
-
-//    @Query("SELECT oe FROM organized_event oe " +
-//            "LEFT JOIN fetch oe.customer oec " +
-//            "LEFT JOIN fetch oec.user u " +
-//            "WHERE LOWER(oe.name) LIKE %:keyword%")
-//    Page<OrganizedEvent> findAllWithKeyword(Pageable pageable);
-
-//    List<OrganizedEvent> getAllWithCustomerAndLocation();
 
 }
