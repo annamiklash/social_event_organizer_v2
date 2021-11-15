@@ -32,7 +32,7 @@ public class CateringReview {
     @Column(name = "star_review")
     private Integer starRating;
 
-    @Column
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

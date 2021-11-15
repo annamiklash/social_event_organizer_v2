@@ -1,5 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.user.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     User findUserByResetPasswordToken(String resetPasswordToken);
+
+    @Query("SELECT u FROM users AS u WHERE LOWER(u.email) LIKE %:keyword% OR LOWER(u.type) LIKE %:keyword%")
+    Page<User> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
+
 }

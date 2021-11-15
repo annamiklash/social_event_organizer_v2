@@ -29,7 +29,7 @@ public class LocationReview {
     @Column
     private String comment;
 
-    @Column
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "star_rating")

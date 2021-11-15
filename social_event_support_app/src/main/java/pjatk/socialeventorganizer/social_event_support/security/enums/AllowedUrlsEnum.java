@@ -12,7 +12,10 @@ public enum AllowedUrlsEnum {
     CATERINGS("/api/caterings/allowed/**"),
     SERVICES("/api/services/allowed/**"),
     RESET_PASSWORD("/api/reset_password"),
+    USERS("/api/users/all"),
+    BLOCK("/api/*/block"),
     RESET( "/api/reset");
+
 
     public final String value;
 

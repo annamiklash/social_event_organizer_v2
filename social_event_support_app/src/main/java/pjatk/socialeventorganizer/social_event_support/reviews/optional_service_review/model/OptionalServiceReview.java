@@ -32,7 +32,7 @@ public class OptionalServiceReview {
     @Column(name = "star_rating")
     private int starRating;
 
-    @Column
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
