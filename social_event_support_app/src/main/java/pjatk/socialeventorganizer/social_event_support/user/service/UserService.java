@@ -139,6 +139,16 @@ public class UserService {
 
         save(user);
     }
+    public void delete(long id) {
+
+        final User user = getById(id);
+        user.setActive(false);
+        user.setDeletedAt(LocalDateTime.now());
+
+        //TODO: invalidate users session
+
+        save(user);
+    }
     public ImmutableList<User> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 

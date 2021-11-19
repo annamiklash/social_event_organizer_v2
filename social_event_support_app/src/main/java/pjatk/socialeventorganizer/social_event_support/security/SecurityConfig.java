@@ -27,7 +27,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 RESET_PASSWORD.value,
                 RESET.value,
                 USERS.value,
-                BLOCK.value
+                BLOCK.value,
+                DELETE.value,
+                DELETE_2.value,
+                CAT_REVIEW.value,
+                CAT_REVIEW2.value
         );
     }
 

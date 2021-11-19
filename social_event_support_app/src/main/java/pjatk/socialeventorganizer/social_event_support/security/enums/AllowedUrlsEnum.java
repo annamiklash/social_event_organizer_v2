@@ -14,8 +14,11 @@ public enum AllowedUrlsEnum {
     RESET_PASSWORD("/api/reset_password"),
     USERS("/api/users/all"),
     BLOCK("/api/*/block"),
-    RESET( "/api/reset");
-
+    DELETE("/api/*/delete"),
+    DELETE_2("/api/**/delete"),
+    RESET( "/api/reset"),
+    CAT_REVIEW2("/api/catering_review/by_catering**"),
+    CAT_REVIEW("/api/catering_review/by_catering*");
 
     public final String value;
 

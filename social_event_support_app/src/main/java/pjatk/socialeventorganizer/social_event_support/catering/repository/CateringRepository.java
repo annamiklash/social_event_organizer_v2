@@ -19,9 +19,9 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     List<Catering> findByCateringAddress_City(String city);
 
-    @Modifying
-    @Query(value = "insert into catering_location (id_catering, id_location) values (:cateringId, :locationId)", nativeQuery = true)
-    void addCateringToLocation(@Param("locationId") Long locationId, @Param("cateringId") Long cateringId);
+//    @Modifying
+//    @Query(value = "insert into catering_location (id_catering, id_location) values (:cateringId, :locationId)", nativeQuery = true)
+//    void addCateringToLocation(@Param("locationId") Long locationId, @Param("cateringId") Long cateringId);
 
     @Query("SELECT c FROM catering AS c join c.business cb join cb.user cbu " +
             "WHERE LOWER(c.name) LIKE %:keyword% " +

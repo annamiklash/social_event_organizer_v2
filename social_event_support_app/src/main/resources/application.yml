@@ -17,7 +17,7 @@ spring:
   #    password: SocEventOrgDB
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/project_DB
+    url: jdbc:postgresql://localhost:5432/Project_DB_2
     username: postgres
     password: admin
   jpa:

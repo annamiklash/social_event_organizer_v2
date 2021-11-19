@@ -29,7 +29,7 @@ public class CateringReview {
     @Column
     private String comment;
 
-    @Column(name = "star_review")
+    @Column(name = "star_rating")
     private Integer starRating;
 
     @Column(name = "created_at", nullable = false)

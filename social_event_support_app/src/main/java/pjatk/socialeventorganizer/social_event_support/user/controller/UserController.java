@@ -53,6 +53,16 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @RequestMapping(
+            method = RequestMethod.DELETE,
+            value = "{id}/delete")
+    public ResponseEntity<Void> delete(@PathVariable long id) {
+        userService.delete(id);
+
+
+        return ResponseEntity.ok().build();
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,
