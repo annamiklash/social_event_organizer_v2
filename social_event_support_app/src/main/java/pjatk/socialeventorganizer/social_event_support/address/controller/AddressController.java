@@ -56,11 +56,4 @@ public class AddressController {
         return ResponseEntity.ok(AddressMapper.toDto(address));
     }
 
-
-//    @GetMapping
-//    public ResponseEntity<Page<AddressDto>> getEmployees(TestSortPage page,
-//                                                         AddressSearchCriteria criteria) {
-//        addressService.findAll(page, criteria);
-//        return new ResponseEntity<>()
-//    }
 }

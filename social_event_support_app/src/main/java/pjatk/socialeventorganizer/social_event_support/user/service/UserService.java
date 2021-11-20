@@ -9,6 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
+import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
@@ -128,4 +129,7 @@ public class UserService {
         save(user);
     }
 
+    public boolean isBlocked(LoginDto loginDto) {
+        return userRepository.isBlocked(loginDto.getEmail());
+    }
 }

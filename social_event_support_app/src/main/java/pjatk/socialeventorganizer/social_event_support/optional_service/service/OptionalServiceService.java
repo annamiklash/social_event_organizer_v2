@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
+import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
@@ -24,6 +26,8 @@ import pjatk.socialeventorganizer.social_event_support.security.service.Security
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,6 +41,8 @@ public class OptionalServiceService {
     private BusinessService businessService;
 
     private SecurityService securityService;
+
+    private OptionalServiceBusinessService optionalServiceBusinessService;
 
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -67,16 +73,19 @@ public class OptionalServiceService {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
 
+        final List<OptionalServiceBusinessHours> businessHours = optionalServiceBusinessService.create(dto.getBusinessHours());
+
         final OptionalService optionalService = OptionalServiceMapper.fromDto(dto);
 
+
+        optionalService.setBusiness(business);
+        optionalService.setOptionalServiceBusinessHours(new HashSet<>(businessHours));
         optionalService.setCreatedAt(LocalDateTime.now());
         optionalService.setModifiedAt(LocalDateTime.now());
-        optionalService.setBusiness(business);
 
         save(optionalService);
 
         return optionalService;
-
     }
 
     public void save(OptionalService optionalService) {

@@ -13,6 +13,8 @@ import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
+import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.businesshours.location.service.LocationBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -23,16 +25,19 @@ import pjatk.socialeventorganizer.social_event_support.enums.LocationDescription
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.EventBookDateDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationAvailabilityMapper;
+import pjatk.socialeventorganizer.social_event_support.location.availability.mapper.LocationAvailabilityMapper;
+import pjatk.socialeventorganizer.social_event_support.location.availability.model.LocationAvailability;
+import pjatk.socialeventorganizer.social_event_support.location.availability.model.dto.LocationAvailabilityDto;
+import pjatk.socialeventorganizer.social_event_support.location.availability.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
-import pjatk.socialeventorganizer.social_event_support.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.location.model.LocationDescriptionItem;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
-import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationAvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
-import pjatk.socialeventorganizer.social_event_support.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
+import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
+import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
+import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -40,8 +45,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static pjatk.socialeventorganizer.social_event_support.location.enums.LocationAvailabilityEnum.AVAILABLE;
-import static pjatk.socialeventorganizer.social_event_support.location.enums.LocationAvailabilityEnum.NOT_AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.location.availability.LocationAvailabilityEnum.AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.location.availability.LocationAvailabilityEnum.NOT_AVAILABLE;
 
 @Service
 @AllArgsConstructor
@@ -59,6 +64,12 @@ public class LocationService {
     private BusinessService businessService;
 
     private LocationAvailabilityRepository locationAvailabilityRepository;
+
+    private LocationBusinessHoursService locationBusinessHoursService;
+
+    private SecurityService securityService;
+
+    private UserService userService;
 
 
     public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
@@ -141,14 +152,18 @@ public class LocationService {
     }
 
     @Transactional
-    public Location create(LocationDto dto, long userId) {
-        final Business business = businessService.get(userId);
+    public Location create(LocationDto dto) {
+        final UserCredentials userCredentials = securityService.getUserCredentials();
+
+        final Business business = businessService.get(userCredentials.getUserId());
 
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
 
         final Address address = addressService.create(dto.getAddress());
+
+        final List<LocationBusinessHours> businessHours = locationBusinessHoursService.create(dto.getBusinessHours());
 
         final Set<LocationDescriptionItemEnum> locationDescriptionEnumSet = dto.getDescriptions();
 
@@ -162,6 +177,7 @@ public class LocationService {
         location.setLocationAddress(address);
         location.setBusiness(business);
         location.setDescriptions(descriptions);
+        location.setLocationBusinessHours(new HashSet<>(businessHours));
         location.setCreatedAt(LocalDateTime.now());
         location.setModifiedAt(LocalDateTime.now());
 
@@ -195,7 +211,6 @@ public class LocationService {
     }
 
     public Location getWithAvailability(long locationId, String date) {
-        final LocalDate localDate = DateTimeUtil.fromStringToFormattedDate(date);
         final Optional<Location> optionalLocation = locationRepository.getByIdWithAvailability(locationId, date);
 
         if (optionalLocation.isPresent()) {

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.dto.LocationForEventDto;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
 import java.io.Serializable;
 import java.util.List;

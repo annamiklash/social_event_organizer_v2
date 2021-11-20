@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.NumberFormat;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
+import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
+import pjatk.socialeventorganizer.social_event_support.location.availability.model.dto.LocationAvailabilityDto;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -60,6 +62,15 @@ public class LocationDto implements Serializable {
     @NumberFormat(style = NumberFormat.Style.NUMBER)
     private Integer sizeInSqMeters;
 
+    @NotNull
+    private Set<LocationDescriptionItemEnum> descriptions;
+
+    @NotNull
+    private AddressDto address;
+
+    @NotNull
+    private List<BusinessHoursDto> businessHours;
+
     private String createdAt;
 
     private String modifiedAt;
@@ -68,15 +79,8 @@ public class LocationDto implements Serializable {
 
     private BusinessDto business;
 
-    @NotNull
-    private Set<LocationDescriptionItemEnum> descriptions;
-
-    @NotNull
-    private AddressDto address;
-
     private Set<CateringDto> caterings;
 
     private List<LocationAvailabilityDto> locationAvailability;
-
 
 }

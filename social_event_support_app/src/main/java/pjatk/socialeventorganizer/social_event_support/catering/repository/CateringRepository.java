@@ -30,7 +30,11 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "AND cbu.isActive = true")
     Page<Catering> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
-    @Query("SELECT c from catering c left join fetch c.cateringItems ci WHERE c.id = :id")
+    @Query("SELECT c from catering c " +
+            "left join fetch c.cateringItems ci " +
+            "left join fetch c.cateringBusinessHours cbh " +
+            "left join fetch c.locations cl " +
+            "WHERE c.id = :id")
     Optional<Catering> findByIdWithDetail(@Param("id") long id);
 
 

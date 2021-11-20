@@ -15,8 +15,8 @@ import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMap
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
-import pjatk.socialeventorganizer.social_event_support.catering.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
@@ -39,10 +39,10 @@ import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEv
 import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
@@ -59,8 +59,8 @@ import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS;
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.READY;
-import static pjatk.socialeventorganizer.social_event_support.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
-import static pjatk.socialeventorganizer.social_event_support.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @Service
 @AllArgsConstructor
@@ -257,7 +257,7 @@ public class CustomerService {
 
 
     @Transactional
-    public LocationForEvent bookEvent(long id, long locId, InitialEventBookingDto dto) {
+    public LocationForEvent bookInitialLocationForEvent(long id, long locId, InitialEventBookingDto dto) {
 
         final Customer customer = get(id);
         final Location location = locationService.getWithAvailability(locId, dto.getDetails().getDate());

@@ -2,7 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.event.model;
 
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.persistence.*;
 import java.io.Serializable;

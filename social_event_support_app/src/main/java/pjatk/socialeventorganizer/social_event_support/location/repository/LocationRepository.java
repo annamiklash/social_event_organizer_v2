@@ -42,6 +42,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join fetch l.business lb " +
             "left join fetch l.caterings lc " +
             "left join fetch l.descriptions ld " +
+            "left join fetch l.locationBusinessHours lbh " +
             "left join fetch l.LocationAvailability la where l.id = :id")
     Optional<Location> getByIdWithDetail(@Param("id") Long id);
 

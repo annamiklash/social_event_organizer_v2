@@ -329,6 +329,39 @@ CREATE TABLE catering_order_choice
     CONSTRAINT catering_order_choice_pk PRIMARY KEY (id_catering_item)
 );
 
+create table location_business_hours
+(
+
+    id_business_hours serial      NOT NULL,
+    day               varchar(20) NOT NULL,
+    time_from         time   NOT NULL,
+    time_to           time   NOT NULL,
+    id_location       int         NULL,
+    CONSTRAINT location_business_hours_pk PRIMARY KEY (id_business_hours)
+);
+
+create table catering_business_hours
+(
+
+    id_business_hours serial      NOT NULL,
+    day               varchar(20) NOT NULL,
+    time_from         time   NOT NULL,
+    time_to           time   NOT NULL,
+    id_catering       int         NULL,
+    CONSTRAINT catering_business_hours_pk PRIMARY KEY (id_business_hours)
+);
+
+create table optional_service_business_hours
+(
+
+    id_business_hours   serial      NOT NULL,
+    day                 varchar(20) NOT NULL,
+    time_from           time   NOT NULL,
+    time_to             time   NOT NULL,
+    id_optional_service int         NULL,
+    CONSTRAINT optional_service_business_hours_pk PRIMARY KEY (id_business_hours)
+);
+
 
 --REFERENCES
 ALTER TABLE catering_for_chosen_location
@@ -669,6 +702,31 @@ ALTER TABLE service_review
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
+
+ALTER TABLE location_business_hours
+    ADD CONSTRAINT location_location_business_hours
+        FOREIGN KEY (id_location)
+            REFERENCES location (id_location)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+ALTER TABLE catering_business_hours
+    ADD CONSTRAINT catering_catering_business_hours
+        FOREIGN KEY (id_catering)
+            REFERENCES catering (id_catering)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+ALTER TABLE optional_service_business_hours
+    ADD CONSTRAINT optional_service_optional_service_business_hours
+        FOREIGN KEY (id_optional_service)
+            REFERENCES optional_service (id_optional_service)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
 
 -- End of file.
 

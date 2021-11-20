@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
+import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
+import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringItemDto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -32,11 +35,16 @@ public class OptionalServiceDto implements Serializable {
     @NotNull
     private String serviceCost;
 
+    @NotNull
+    private List<BusinessHoursDto> businessHours;
+
     private String createdAt;
 
     private String modifiedAt;
 
     private String deletedAt;
+
+    private List<CateringItemDto> cateringItems;
 
     private BusinessDto business;
 }

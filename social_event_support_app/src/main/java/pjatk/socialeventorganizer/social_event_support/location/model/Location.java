@@ -1,12 +1,13 @@
 package pjatk.socialeventorganizer.social_event_support.location.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
+import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.availability.model.LocationAvailability;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -87,21 +88,19 @@ public class Location implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_location")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @Builder.Default
     private Set<LocationImage> images = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
-    @JsonIgnore
     private Set<LocationForEvent> locationForEvent = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_location")
-    @JsonIgnore
     private Set<LocationAvailability> LocationAvailability;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id_location")
+    private Set<LocationBusinessHours> locationBusinessHours;
 
     public void addAvailability(LocationAvailability locationAvailability) {
         LocationAvailability.add(locationAvailability);

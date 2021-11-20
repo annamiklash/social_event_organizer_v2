@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationAvailabilityMapper;
-import pjatk.socialeventorganizer.social_event_support.location.model.LocationAvailability;
-import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationAvailabilityDto;
-import pjatk.socialeventorganizer.social_event_support.location.service.LocationAvailabilityService;
+import pjatk.socialeventorganizer.social_event_support.location.availability.mapper.LocationAvailabilityMapper;
+import pjatk.socialeventorganizer.social_event_support.location.availability.model.LocationAvailability;
+import pjatk.socialeventorganizer.social_event_support.location.availability.model.dto.LocationAvailabilityDto;
+import pjatk.socialeventorganizer.social_event_support.location.availability.service.LocationAvailabilityService;
 
 import java.util.List;
 import java.util.stream.Collectors;

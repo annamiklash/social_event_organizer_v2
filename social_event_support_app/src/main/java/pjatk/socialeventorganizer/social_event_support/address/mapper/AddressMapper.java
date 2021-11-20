@@ -1,10 +1,10 @@
 package pjatk.socialeventorganizer.social_event_support.address.mapper;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 
-@Component
+@UtilityClass
 public class AddressMapper {
 
     public static AddressDto toDto(Address address) {

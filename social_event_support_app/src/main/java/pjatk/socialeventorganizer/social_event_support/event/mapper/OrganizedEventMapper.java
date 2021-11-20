@@ -6,8 +6,8 @@ import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerM
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.mapper.LocationForEventMapper;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import java.util.stream.Collectors;
 

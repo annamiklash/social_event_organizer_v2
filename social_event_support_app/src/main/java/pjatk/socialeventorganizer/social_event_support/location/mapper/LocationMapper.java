@@ -2,8 +2,10 @@ package pjatk.socialeventorganizer.social_event_support.location.mapper;
 
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
+import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.location.availability.mapper.LocationAvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
@@ -68,6 +70,10 @@ public class LocationMapper {
 
         dto.setLocationAvailability(location.getLocationAvailability().stream()
                 .map(LocationAvailabilityMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setBusinessHours(location.getLocationBusinessHours().stream()
+                .map(BusinessHoursMapper::toDto)
                 .collect(Collectors.toList()));
 
         return dto;

@@ -19,7 +19,7 @@ import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEve
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.InitialEventBookingDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
@@ -190,7 +190,7 @@ public class CustomerController {
                                                                               @RequestParam long locId,
                                                                               @Valid @RequestBody InitialEventBookingDto dto) {
 
-        final LocationForEvent locationForEvent = customerService.bookEvent(id, locId, dto);
+        final LocationForEvent locationForEvent = customerService.bookInitialLocationForEvent(id, locId, dto);
         return ResponseEntity.ok(OrganizedEventMapper.toOrganizedConfirmationDto(locationForEvent));
 
     }

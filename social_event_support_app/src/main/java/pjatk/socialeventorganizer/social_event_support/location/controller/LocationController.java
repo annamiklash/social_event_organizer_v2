@@ -9,10 +9,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.location.availability.model.dto.LocationAvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
-import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationAvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 
@@ -75,14 +75,13 @@ public class LocationController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
-            params = {"userId"},
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto, long userId) {
+    public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto) {
 
-        final Location location = locationService.create(dto, userId);
+        final Location location = locationService.create(dto);
 
-        return ResponseEntity.ok(LocationMapper.toDtoWithDetail(location));
+        return ResponseEntity.ok(LocationMapper.toDto(location));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")

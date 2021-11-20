@@ -35,6 +35,9 @@ public class LoginController {
     ResponseEntity<Void> login(@RequestBody @Valid LoginDto loginDto, HttpServletRequest request) {
         request.getSession().invalidate();
 
+        if (userService.isBlocked(loginDto)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         if (securityService.isPasswordMatch(loginDto)) {
             securityService.buildSecurityContext(loginDto, request);
             return ResponseEntity.ok().build();

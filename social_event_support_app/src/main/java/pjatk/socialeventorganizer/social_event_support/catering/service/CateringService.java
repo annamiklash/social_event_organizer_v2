@@ -14,6 +14,8 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
+import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.businesshours.catering.service.CateringBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem;
@@ -55,6 +57,8 @@ public class CateringService {
     private SecurityService securityService;
 
     private BusinessService businessService;
+
+    private CateringBusinessHoursService cateringBusinessHoursService;
 
     public ImmutableList<Catering> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -104,16 +108,18 @@ public class CateringService {
 
         final Address address = addressService.create(dto.getAddress());
 
+        final List<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
+
         final Catering catering = CateringMapper.fromDto(dto);
 
         catering.setCateringAddress(address);
         catering.setBusiness(business);
+        catering.setCateringBusinessHours(new HashSet<>(businessHours));
         catering.setCreatedAt(LocalDateTime.now());
         catering.setModifiedAt(LocalDateTime.now());
-
         catering.setLocations(new HashSet<>());
-        saveCatering(catering);
 
+        saveCatering(catering);
 
         if (dto.isOffersOutsideCatering()) {
             addCateringToLocationsWithSameCity(catering);

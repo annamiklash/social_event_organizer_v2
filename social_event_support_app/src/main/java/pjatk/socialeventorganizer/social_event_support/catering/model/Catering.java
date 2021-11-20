@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.catering.model;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
+import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 
@@ -68,11 +69,14 @@ public class Catering implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
-    private Set<CateringItem> cateringItems = new HashSet<>();
+    private Set<CateringItem> cateringItems;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id_catering")
+    private Set<CateringBusinessHours> cateringBusinessHours;
 
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
     private Set<Location> locations = new HashSet<>();
-
 
     public void addCateringItem(CateringItem cateringItem) {
         if (cateringItem == null) {
