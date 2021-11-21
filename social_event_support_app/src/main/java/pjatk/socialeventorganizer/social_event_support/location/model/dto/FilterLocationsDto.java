@@ -29,6 +29,4 @@ public class FilterLocationsDto implements Serializable {
 
     private Boolean isSeated;
 
-
-
 }

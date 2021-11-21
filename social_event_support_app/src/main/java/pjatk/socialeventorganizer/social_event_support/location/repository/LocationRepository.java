@@ -15,13 +15,15 @@ import java.util.Optional;
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query(value = "SELECT distinct l.* from location l " +
+            "left join address a on l.id_location_address = a.id_address " +
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
             "WHERE la.status = 'AVAILABLE' " +
-            "AND la.date = CAST(:date as timestamp) " +
-            "AND la.time_from <= CAST(:timeFrom as timestamp ) " +
-            "AND la.time_to >= CAST(:timeTo as timestamp)", nativeQuery = true)
+            "AND l.deleted_at IS NOT NULL " +
+            "AND (:date is null or la.date = CAST(:date as timestamp)) " +
+            "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
+            "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
     List<Location> search(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query("SELECT l FROM location l " +
@@ -34,7 +36,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
 
     @Query("SELECT l FROM location AS l " +
-            "WHERE LOWER(l.name) LIKE %:keyword% OR LOWER(l.description) LIKE %:keyword%")
+            "WHERE (:keyword is null or l.name LIKE %:keyword%) " +
+            "OR (:keyword is null or l.description LIKE %:keyword%)")
     Page<Location> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
     @Query(value = "SELECT distinct l.* from location l " +

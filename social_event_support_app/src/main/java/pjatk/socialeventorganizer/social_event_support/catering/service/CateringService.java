@@ -24,10 +24,13 @@ import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringM
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
+import pjatk.socialeventorganizer.social_event_support.catering.model.dto.FilterCateringsDto;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
+import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
@@ -43,6 +46,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
@@ -68,6 +72,8 @@ public class CateringService {
 
     private final CateringAvailabilityRepository cateringAvailabilityRepository;
 
+    private final CuisineService cuisineService;
+
     public ImmutableList<Catering> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -76,6 +82,42 @@ public class CateringService {
         final Page<Catering> page = cateringRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
+    }
+
+    public ImmutableList<Catering> search(FilterCateringsDto dto) {
+        final Set<Long> cuisines = dto.getCuisines().stream()
+                .map(cuisineService::getByName)
+                .map(Cuisine::getId)
+                .collect(Collectors.toSet());
+
+        List<Catering> caterings = cateringRepository.search(cuisines, dto.getKeyword());
+
+        caterings = filterByPrice(dto.getPriceNotLessThen(), dto.getPriceNotMoreThan(), caterings);
+
+        return ImmutableList.copyOf(caterings);
+    }
+
+    private List<Catering> filterByPrice(String priceNotLessThen, String priceNotMoreThan, List<Catering> caterings) {
+        if (priceNotLessThen == null && priceNotMoreThan == null) {
+            return caterings;
+        } else if (priceNotLessThen != null && priceNotMoreThan == null) {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else if (priceNotLessThen == null) {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        }
     }
 
     public Catering get(long id) {
@@ -226,10 +268,10 @@ public class CateringService {
         throw new NotFoundException("No catering with id " + id + " found.");
     }
 
-    public Catering saveCatering(Catering catering) {
+    public void saveCatering(Catering catering) {
         log.info("TRYING TO SAVE" + catering.toString());
 
-        return cateringRepository.saveAndFlush(catering);
+        cateringRepository.saveAndFlush(catering);
     }
 
     public Catering getWithAvailability(long id, String date) {
@@ -252,7 +294,7 @@ public class CateringService {
         availabilities.stream()
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setCatering(catering))
-                .forEach(availability -> cateringAvailabilityRepository.save(availability));
+                .forEach(cateringAvailabilityRepository::save);
 
     }
 

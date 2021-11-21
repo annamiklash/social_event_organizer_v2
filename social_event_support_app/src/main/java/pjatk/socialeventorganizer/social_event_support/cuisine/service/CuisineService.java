@@ -33,6 +33,10 @@ public class CuisineService {
         return cuisine;
     }
 
+    public Cuisine getByName(String name) {
+        return cuisineRepository.findByName(name);
+    }
+
     private boolean exists(String name) {
         return cuisineRepository.existsByName(name);
     }
@@ -40,4 +44,6 @@ public class CuisineService {
     private void save(Cuisine cuisine) {
         cuisineRepository.save(cuisine);
     }
+
+
 }

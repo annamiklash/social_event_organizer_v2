@@ -15,6 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.dto.Availabi
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
+import pjatk.socialeventorganizer.social_event_support.catering.model.dto.FilterCateringsDto;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
@@ -46,6 +47,20 @@ public class CateringController {
         final List<Catering> cateringList = cateringService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
         return ResponseEntity.ok(
                 ImmutableList.copyOf(cateringList.stream()
+                        .map(CateringMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "allowed/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<CateringDto>> searchByAppliedFilters(@RequestBody FilterCateringsDto dto) {
+
+        final ImmutableList<Catering> list = cateringService.search(dto);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(list.stream()
                         .map(CateringMapper::toDto)
                         .collect(Collectors.toList())));
     }

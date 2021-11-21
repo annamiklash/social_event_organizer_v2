@@ -8,4 +8,6 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 public interface CuisineRepository extends JpaRepository<Cuisine, Long> {
 
     boolean existsByName(String name);
+
+    Cuisine findByName(String name);
 }
