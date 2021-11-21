@@ -7,6 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.dto.Availabi
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
+import pjatk.socialeventorganizer.social_event_support.availability.validator.AvailabilityDatesValidator;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
@@ -41,6 +42,7 @@ public class OptionalServiceAvailabilityService {
         final OptionalService optionalService = optionalServiceService.get(id);
 
         return dtos.stream()
+                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getTimeFrom(),dto.getTimeTo()))
                 .map(AvailabilityMapper::fromDtoToOptionalServiceAvailability)
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setOptionalService(optionalService))

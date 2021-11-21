@@ -7,6 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.catering.mod
 import pjatk.socialeventorganizer.social_event_support.availability.catering.repository.CateringAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
+import pjatk.socialeventorganizer.social_event_support.availability.validator.AvailabilityDatesValidator;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
@@ -41,6 +42,7 @@ public class CateringAvailabilityService {
         final Catering catering = cateringService.get(cateringId);
 
         return dtos.stream()
+                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getTimeFrom(),dto.getTimeTo()))
                 .map(AvailabilityMapper::fromDtoToCateringAvailability)
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setCatering(catering))

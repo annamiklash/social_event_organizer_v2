@@ -7,6 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.dto.Availabi
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
+import pjatk.socialeventorganizer.social_event_support.availability.validator.AvailabilityDatesValidator;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
@@ -36,12 +37,12 @@ public class LocationAvailabilityService {
         throw new NotFoundException("No date " + date + " for location " + locId);
     }
 
-
     @Transactional
     public List<LocationAvailability> create(List<AvailabilityDto> dtos, long locationId) {
         final Location location = locationService.get(locationId);
 
         return dtos.stream()
+                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getTimeFrom(),dto.getTimeTo()))
                 .map(AvailabilityMapper::fromDtoToLocationAvailability)
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setLocation(location))
