@@ -121,8 +121,6 @@ public class LocationController {
         return ResponseEntity.ok(LocationMapper.toDtoWithAvailability(location));
     }
 
-    //TODO: edit availability
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
@@ -133,7 +131,6 @@ public class LocationController {
 
         return ResponseEntity.noContent().build();
     }
-
 
 }
 

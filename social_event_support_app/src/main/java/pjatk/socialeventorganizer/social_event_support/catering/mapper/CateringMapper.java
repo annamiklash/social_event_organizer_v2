@@ -9,6 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.Busi
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.cuisine.mapper.CuisineMapper;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 
 import java.math.BigDecimal;
@@ -58,6 +59,9 @@ public class CateringMapper {
                 .modifiedAt(String.valueOf(catering.getModifiedAt()))
                 .deletedAt(String.valueOf(catering.getDeletedAt()))
                 .address(AddressMapper.toDto(catering.getCateringAddress()))
+                .cuisines(catering.getCuisines().stream()
+                        .map(CuisineMapper::toDto)
+                        .collect(Collectors.toList()))
                 .build();
     }
 

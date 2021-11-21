@@ -11,6 +11,7 @@ public enum AllowedUrlsEnum {
     LOCATIONS("/api/locations/allowed/**"),
     CATERINGS("/api/caterings/allowed/**"),
     SERVICES("/api/services/allowed/**"),
+    CUISINES("/api/cuisines/allowed/**"),
     RESET_PASSWORD("/api/reset_password"),
     RESET( "/api/reset");
 

@@ -15,15 +15,14 @@ import java.util.Optional;
 @Repository
 public interface CateringRepository extends JpaRepository<Catering, Long> {
 
-    List<Catering> findByNameContaining(String name);
-
     List<Catering> findByCateringAddress_City(String city);
 
     @Modifying
     @Query(value = "insert into catering_location (id_catering, id_location) values (:cateringId, :locationId)", nativeQuery = true)
     void addCateringToLocation(@Param("locationId") Long locationId, @Param("cateringId") Long cateringId);
 
-    @Query("SELECT c FROM catering AS c join c.business cb join cb.user cbu " +
+    @Query("SELECT c FROM catering AS c " +
+            "join c.business cb join cb.user cbu " +
             "WHERE LOWER(c.name) LIKE %:keyword% " +
             "OR LOWER(c.description) LIKE %:keyword% " +
             "AND c.deletedAt IS NOT NULL " +
@@ -41,7 +40,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     @Query(value = "SELECT distinct c.* from catering c " +
             "left join catering_availability ca on ca.id_catering = c.id_catering " +
-            "where c.id = :id AND ca.date = CAST(:date as timestamp)", nativeQuery = true)
+            "where c.id_catering = :id AND ca.date = CAST(:date as timestamp)", nativeQuery = true)
     Optional<Catering> getByIdWithAvailability(@Param("id") long id, @Param("date") String date);
 
 }

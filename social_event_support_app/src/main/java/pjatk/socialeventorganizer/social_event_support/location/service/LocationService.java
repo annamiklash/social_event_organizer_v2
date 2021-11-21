@@ -102,7 +102,7 @@ public class LocationService {
     public ImmutableList<Location> search(FilterLocationsDto dto) {
 
         final List<LocationDescriptionItem> filters = dto.getDescriptionItems().stream()
-                .map(item -> locationDescriptionItemService.getByName(item))
+                .map(locationDescriptionItemService::getByName)
                 .collect(Collectors.toList());
 
         List<Location> locations = locationRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
@@ -261,7 +261,9 @@ public class LocationService {
         //cannot delete when there are reservations pending
 
         //remove location description
-        //remove caterings
+        //remove business hours description
+        //remove availability
+        //remove caterings connection
         //delete address
         //set deletedAt
     }

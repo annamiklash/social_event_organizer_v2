@@ -52,21 +52,21 @@ import static pjatk.socialeventorganizer.social_event_support.availability.Avail
 @Slf4j
 public class CateringService {
 
-    private CateringRepository cateringRepository;
+    private final CateringRepository cateringRepository;
 
-    private CateringItemRepository cateringItemRepository;
+    private final CateringItemRepository cateringItemRepository;
 
-    private LocationService locationService;
+    private final LocationService locationService;
 
-    private AddressService addressService;
+    private final AddressService addressService;
 
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
-    private BusinessService businessService;
+    private final BusinessService businessService;
 
-    private CateringBusinessHoursService cateringBusinessHoursService;
+    private final CateringBusinessHoursService cateringBusinessHoursService;
 
-    private CateringAvailabilityRepository cateringAvailabilityRepository;
+    private final CateringAvailabilityRepository cateringAvailabilityRepository;
 
     public ImmutableList<Catering> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();

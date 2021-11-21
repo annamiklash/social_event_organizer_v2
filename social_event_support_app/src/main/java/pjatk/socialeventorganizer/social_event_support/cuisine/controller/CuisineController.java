@@ -1,0 +1,56 @@
+package pjatk.socialeventorganizer.social_event_support.cuisine.controller;
+
+import com.google.common.collect.ImmutableList;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import pjatk.socialeventorganizer.social_event_support.cuisine.mapper.CuisineMapper;
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto;
+import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@AllArgsConstructor
+@Validated
+@RestController
+@RequestMapping("api/cuisines")
+public class CuisineController {
+
+    private final CuisineService cuisineService;
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "allowed/all",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<CuisineDto>> list() {
+
+        final List<Cuisine> list = cuisineService.list();
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(list.stream()
+                        .map(CuisineMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CuisineDto> list(@Valid @RequestBody CuisineDto dto) {
+
+        final Cuisine cuisine = cuisineService.create(dto);
+
+        return ResponseEntity.ok(CuisineMapper.toDto(cuisine));
+    }
+}

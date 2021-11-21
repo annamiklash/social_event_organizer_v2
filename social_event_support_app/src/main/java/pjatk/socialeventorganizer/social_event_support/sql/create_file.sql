@@ -1240,3 +1240,64 @@ ALTER TABLE optional_service_availability
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
+
+-- Table: catering_cuisine
+CREATE TABLE catering_cuisine
+(
+    id_catering int NOT NULL,
+    id_cuisine  int NOT NULL,
+    CONSTRAINT catering_cuisine_pk PRIMARY KEY (id_catering, id_cuisine)
+);
+
+-- Table: cuisine
+CREATE TABLE cuisine
+(
+    id_cuisine serial      NOT NULL,
+    name       varchar(50) NOT NULL,
+    CONSTRAINT cuisine_pk PRIMARY KEY (id_cuisine)
+);
+
+-- foreign keys
+-- Reference: catering_cuisine_catering (table: catering_cuisine)
+ALTER TABLE catering_cuisine
+    ADD CONSTRAINT catering_cuisine_catering
+        FOREIGN KEY (id_catering)
+            REFERENCES catering (id_catering)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+insert into cuisine (name)
+VALUES ('Mexican'),
+       ('Italian'),
+       ('Greek'),
+       ('French'),
+       ('Thai'),
+       ('Spanish'),
+       ('Indian'),
+       ('Mediterranean'),
+       ('Polish'),
+       ('Russian'),
+       ('Vietnamese'),
+       ('Japanese'),
+       ('Chinese'),
+       ('Vegan'),
+       ('Fusion'),
+       ('Vegetarian'),
+       ('Turkish');
+
+insert into catering_cuisine (id_catering, id_cuisine)
+VALUES (1, 3),
+       (1, 16),
+       (1, 6),
+       (2, 4),
+       (2, 1),
+       (2, 2),
+       (3, 17),
+       (3, 14),
+       (3, 10),
+       (4, 9),
+       (4, 11),
+       (5, 15),
+       (5, 1),
+       (5, 7);

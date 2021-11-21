@@ -5,6 +5,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.availability.catering.model.CateringAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 
@@ -78,6 +79,13 @@ public class Catering implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_catering")
     private Set<CateringAvailability> availability;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "catering_cuisine",
+            joinColumns = @JoinColumn(name = "id_catering"),
+            inverseJoinColumns = @JoinColumn(name = "id_cuisine"))
+    private Set<Cuisine> cuisines = new HashSet<>();
 
     public void addCateringItem(CateringItem cateringItem) {
         if (cateringItem == null) {
