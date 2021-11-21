@@ -15,7 +15,6 @@ import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMap
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
-import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -24,12 +23,15 @@ import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInvite
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
+import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
+import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
+import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.EventBookDateDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.InitialEventBookingDto;
 import pjatk.socialeventorganizer.social_event_support.event.service.EventTypeService;
@@ -37,27 +39,11 @@ import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEv
 import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.invite.InviteDto;
-import pjatk.socialeventorganizer.social_event_support.invite.mapper.LocationInfoMapper;
-import pjatk.socialeventorganizer.social_event_support.invite.mapper.OrganizedEventMapper;
-import pjatk.socialeventorganizer.social_event_support.invite.mapper.OrganizerInfoMapper;
-import pjatk.socialeventorganizer.social_event_support.invite.response.*;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.service.LocationForEventService;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.CateringReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.dto.CateringReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.service.CateringReviewService;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.LocationReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.dto.LocationReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.service.LocationReviewService;
-import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.OptionalServiceReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.ServiceReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.ServiceReviewService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
@@ -72,8 +58,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS;
-import static pjatk.socialeventorganizer.social_event_support.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
-import static pjatk.socialeventorganizer.social_event_support.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.READY;
+import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @Service
 @AllArgsConstructor
@@ -104,12 +91,6 @@ public class CustomerService {
 
     private final OptionalServiceService optionalServiceService;
 
-    private final CateringReviewService cateringReviewService;
-
-    private final LocationReviewService locationReviewService;
-
-    private final ServiceReviewService serviceReviewService;
-
     private final EventTypeService eventTypeService;
 
     public ImmutableList<Customer> list(CustomPage customPagination, String keyword) {
@@ -121,6 +102,7 @@ public class CustomerService {
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
+
 
     @Transactional
     public Customer create(CustomerDto dto) {
@@ -237,7 +219,7 @@ public class CustomerService {
 
         locationForEventService.save(locationForEvent);
 
-        final OrganizedEvent organizedEvent = organizedEventService.getByOrganizedEventId(eventId);
+        final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
         organizedEvent.setModifiedAt(LocalDateTime.now());
 
         organizedEventService.save(organizedEvent);
@@ -247,101 +229,35 @@ public class CustomerService {
 
     @Transactional
     public void sendInvitationToGuest(long eventId, long id) {
-        final Customer customer = get(id);
+        final OrganizedEvent event = organizedEventService.get(eventId);
 
-        final OrganizerInfoResponse organizerInfo = OrganizerInfoMapper.mapToDto(customer);
-
-        final List<GuestInfoResponse> guestsInfo = guestService.getGuestsByOrganizedEventId(eventId);
-
-        final OrganizedEvent organizedEvent = organizedEventService.getByOrganizedEventId(eventId);
-
-        final EventInfoResponse eventInfo = OrganizedEventMapper.mapToResponse(organizedEvent);
-
-        final List<LocationForEvent> locationForEvent = locationForEventService.getLocationInfoByOrganizedEventId(eventId);
-
-        final List<LocationInfoResponse> locationsInfo = locationForEvent.stream()
-                .map(LocationInfoMapper::mapToResponse)
-                .collect(Collectors.toList());
-
-        for (LocationInfoResponse locationInfoResponse : locationsInfo) {
-            final List<CateringPlaceInfoResponse> cateringList =
-                    cateringForChosenEventLocationService.getCateringForLocationInfoByOrganizedEventIdAndLocationId(eventId, locationInfoResponse.getLocationId());
-            locationInfoResponse.setCateringOrders(cateringList);
+        if (!event.getEventStatus().equals(READY.toString())) {
+            throw new IllegalArgumentException("Cannot send invitations while event status is not READY");
         }
 
-        final InviteDto inviteDto = createInviteContent(organizerInfo, guestsInfo, eventInfo, locationsInfo);
+        final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(id);
 
-        for (GuestInfoResponse guest : guestsInfo) {
-            final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, inviteDto);
-            final String emailSubject = "Invitation From " + organizerInfo.getFirstAndLastName();
+        final OrganizedEventDto invitationContent = createInvitationContent(organizedEvent);
+
+        final List<GuestDto> guests = invitationContent.getLocations().get(0).getGuests();
+
+        for (GuestDto guest : guests) {
+            final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, invitationContent);
+            final String emailSubject = "Invitation From " + invitationContent.getCustomer().getFirstName() + " " + invitationContent.getCustomer().getLastName();
             final SimpleMailMessage inviteEmail = EmailUtil.emailBuilder(emailContent, guest.getEmail(), emailSubject);
-
-            log.info("EMAIL: " + inviteEmail.toString());
 
             emailService.sendEmail(inviteEmail);
         }
     }
 
-    private InviteDto createInviteContent(OrganizerInfoResponse organizerInfo,
-                                          List<GuestInfoResponse> guestsInfo,
-                                          EventInfoResponse eventInfo,
-                                          List<LocationInfoResponse> locationsInfo) {
-        return InviteDto.builder()
-                .organizerInfo(organizerInfo)
-                .guestInfo(guestsInfo)
-                .eventInfo(eventInfo)
-                .locationInfo(locationsInfo)
-                .build();
+
+    private OrganizedEventDto createInvitationContent(OrganizedEvent organizedEvent) {
+        return OrganizedEventMapper.toDtoForInvite(organizedEvent);
     }
 
-    public LocationReview leaveLocationReview(long id, long locationId, LocationReviewDto dto) {
-        final Customer customer = get(id);
-
-        final Location location = locationService.get(locationId);
-
-        final LocationReview locationReview = ReviewMapper.fromLocationReviewDto(dto);
-        locationReview.setLocation(location);
-        locationReview.setCustomer(customer);
-        locationReview.setCreatedAt(LocalDateTime.now());
-
-        locationReviewService.save(locationReview);
-
-        return locationReview;
-
-    }
-
-    public CateringReview leaveCateringReview(long id, long cateringId, CateringReviewDto dto) {
-        final Customer customer = get(id);
-
-        final Catering catering = cateringService.get(cateringId);
-
-        final CateringReview cateringReview = ReviewMapper.fromCateringReviewDto(dto);
-        cateringReview.setCatering(catering);
-        cateringReview.setCustomer(customer);
-        cateringReview.setCreatedAt(LocalDateTime.now());
-
-        cateringReviewService.save(cateringReview);
-
-        return cateringReview;
-    }
-
-    public OptionalServiceReview leaveServiceReview(long id, long serviceId, ServiceReviewDto dto) {
-        final Customer customer = get(id);
-
-        final OptionalService optionalService = optionalServiceService.get(serviceId);
-
-        final OptionalServiceReview optionalServiceReview = ReviewMapper.fromServiceReviewDto(dto);
-        optionalServiceReview.setOptionalService(optionalService);
-        optionalServiceReview.setCustomer(customer);
-        optionalServiceReview.setCreatedAt(LocalDateTime.now());
-
-        serviceReviewService.save(optionalServiceReview);
-
-        return optionalServiceReview;
-    }
 
     @Transactional
-    public LocationForEvent bookEvent(long id, long locId, InitialEventBookingDto dto) {
+    public LocationForEvent bookInitialLocationForEvent(long id, long locId, InitialEventBookingDto dto) {
 
         final Customer customer = get(id);
         final Location location = locationService.getWithAvailability(locId, dto.getDetails().getDate());

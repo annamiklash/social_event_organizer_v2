@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
+import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Builder
 @Data
@@ -50,5 +53,13 @@ public class OptionalService {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id_optional_service")
+    private Set<OptionalServiceBusinessHours> optionalServiceBusinessHours;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id_optional_service")
+    private Set<OptionalServiceAvailability> availability;
 
 }

@@ -71,7 +71,7 @@ public class OptionalServiceController {
 
         final OptionalService optionalService = optionalServiceService.create(dto);
 
-        return ResponseEntity.ok(OptionalServiceMapper.toDtoWithBusiness(optionalService));
+        return ResponseEntity.ok(OptionalServiceMapper.toDto(optionalService));
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")

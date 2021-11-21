@@ -11,8 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
+import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
+import pjatk.socialeventorganizer.social_event_support.availability.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
+import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.businesshours.location.service.LocationBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -23,16 +27,14 @@ import pjatk.socialeventorganizer.social_event_support.enums.LocationDescription
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.EventBookDateDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationAvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
-import pjatk.socialeventorganizer.social_event_support.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.location.model.LocationDescriptionItem;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
-import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationAvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
-import pjatk.socialeventorganizer.social_event_support.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
+import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
+import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -40,31 +42,35 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static pjatk.socialeventorganizer.social_event_support.location.enums.LocationAvailabilityEnum.AVAILABLE;
-import static pjatk.socialeventorganizer.social_event_support.location.enums.LocationAvailabilityEnum.NOT_AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.NOT_AVAILABLE;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class LocationService {
 
-    private LocationRepository locationRepository;
+    private final LocationRepository locationRepository;
 
-    private LocationDescriptionItemService locationDescriptionItemService;
+    private final LocationDescriptionItemService locationDescriptionItemService;
 
-    private CateringRepository cateringRepository;
+    private final CateringRepository cateringRepository;
 
-    private AddressService addressService;
+    private final AddressService addressService;
 
-    private BusinessService businessService;
+    private final BusinessService businessService;
 
-    private LocationAvailabilityRepository locationAvailabilityRepository;
+    private final LocationAvailabilityRepository locationAvailabilityRepository;
 
+    private final LocationBusinessHoursService locationBusinessHoursService;
+
+    private final SecurityService securityService;
 
     public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
+                Sort.by(customPagination.getSort()).descending());
         final Page<Location> page = locationRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
@@ -96,7 +102,7 @@ public class LocationService {
     public ImmutableList<Location> search(FilterLocationsDto dto) {
 
         final List<LocationDescriptionItem> filters = dto.getDescriptionItems().stream()
-                .map(item -> locationDescriptionItemService.getByName(item))
+                .map(locationDescriptionItemService::getByName)
                 .collect(Collectors.toList());
 
         List<Location> locations = locationRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
@@ -141,14 +147,18 @@ public class LocationService {
     }
 
     @Transactional
-    public Location create(LocationDto dto, long userId) {
-        final Business business = businessService.get(userId);
+    public Location create(LocationDto dto) {
+        final UserCredentials userCredentials = securityService.getUserCredentials();
+
+        final Business business = businessService.get(userCredentials.getUserId());
 
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
 
         final Address address = addressService.create(dto.getAddress());
+
+        final List<LocationBusinessHours> businessHours = locationBusinessHoursService.create(dto.getBusinessHours());
 
         final Set<LocationDescriptionItemEnum> locationDescriptionEnumSet = dto.getDescriptions();
 
@@ -162,6 +172,7 @@ public class LocationService {
         location.setLocationAddress(address);
         location.setBusiness(business);
         location.setDescriptions(descriptions);
+        location.setLocationBusinessHours(new HashSet<>(businessHours));
         location.setCreatedAt(LocalDateTime.now());
         location.setModifiedAt(LocalDateTime.now());
 
@@ -181,26 +192,7 @@ public class LocationService {
         locationRepository.save(location);
     }
 
-    @Transactional
-    public void addAvailability(List<LocationAvailabilityDto> dtos, long locationId) {
-        final Location location = get(locationId);
-
-        dtos.forEach(dto -> dto.setStatus("available"));
-        final List<LocationAvailability> availabilities = dtos.stream().map(LocationAvailabilityMapper::fromDto).collect(Collectors.toList());
-//        availabilities.forEach(availability -> availability.set);
-//        availabilities.forEach(availability -> availability.setLocation(location));
-
-        availabilities.stream()
-                .peek(availability -> availability.setStatus(AVAILABLE.toString()))
-                .peek(availability -> availability.setLocation(location))
-                .forEach(availability -> locationAvailabilityRepository.save(availability));
-
-//        availabilities.forEach(availability -> locationAvailabilityRepository.save(availability));
-
-    }
-
     public Location getWithAvailability(long locationId, String date) {
-        final LocalDate localDate = DateTimeUtil.fromStringToFormattedDate(date);
         final Optional<Location> optionalLocation = locationRepository.getByIdWithAvailability(locationId, date);
 
         if (optionalLocation.isPresent()) {
@@ -269,14 +261,16 @@ public class LocationService {
         //cannot delete when there are reservations pending
 
         //remove location description
-        //remove caterings
+        //remove business hours description
+        //remove availability
+        //remove caterings connection
         //delete address
         //set deletedAt
     }
 
     public void modifyAvailabilityAfterBooking(Location location, EventBookDateDto details) {
 
-        final Set<LocationAvailability> locationAvailability = location.getLocationAvailability();
+        final Set<LocationAvailability> locationAvailability = location.getAvailability();
 
         final LocalDate date = DateTimeUtil.fromStringToFormattedDate(details.getDate());
         final LocalDateTime timeFrom = DateTimeUtil.fromStringToFormattedDateTime(details.getStartTime());
@@ -291,12 +285,11 @@ public class LocationService {
 
         final LocationAvailability availability = availabilityForDate.get(0);
 
-        List<LocationAvailability> modified = modify(availability, date, timeFrom, timeTo);
+        final List<LocationAvailability> modified = modify(availability, date, timeFrom, timeTo);
 
         locationAvailabilityRepository.delete(availability);
 
         modified.forEach(modifiedAvailability -> locationAvailabilityRepository.saveAndFlush(modifiedAvailability));
-
 
     }
 
@@ -334,6 +327,5 @@ public class LocationService {
 
         return modified;
     }
-
 
 }

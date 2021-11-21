@@ -12,9 +12,9 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.Op
 public interface OptionalServiceRepository extends JpaRepository<OptionalService, Long> {
 
     @Query("SELECT os from optional_service os " +
-            "WHERE os.type LIKE %:keyword% " +
-            "OR os.description LIKE %:keyword% " +
-            "OR os.alias LIKE %:keyword%")
+            "WHERE (:keyword is null or os.type LIKE %:keyword%) " +
+            "OR (:keyword is null or os.description LIKE %:keyword%) " +
+            "OR (:keyword is null or os.alias LIKE %:keyword%)")
     Page<OptionalService> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
 }

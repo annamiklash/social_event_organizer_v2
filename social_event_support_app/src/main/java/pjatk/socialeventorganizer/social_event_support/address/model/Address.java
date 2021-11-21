@@ -1,7 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.address.model;
 
 import lombok.*;
-import pjatk.socialeventorganizer.social_event_support.common.SortField;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,10 +14,6 @@ import java.io.Serializable;
 @Table(name = "address")
 public class Address implements Serializable {
 
-    public static class Sort {
-        public static final SortField CITY = SortField.unique("city");
-        public static final SortField COUNTRY = SortField.unique("country");
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

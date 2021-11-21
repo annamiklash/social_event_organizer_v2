@@ -12,12 +12,10 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
-import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationAvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -75,14 +73,13 @@ public class LocationController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
-            params = {"userId"},
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto, long userId) {
+    public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto) {
 
-        final Location location = locationService.create(dto, userId);
+        final Location location = locationService.create(dto);
 
-        return ResponseEntity.ok(LocationMapper.toDtoWithDetail(location));
+        return ResponseEntity.ok(LocationMapper.toDto(location));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -103,7 +100,6 @@ public class LocationController {
             path = "allowed/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationDto>> searchByAppliedFilters(@Valid @RequestBody FilterLocationsDto dto) {
-        log.info("GET LOCATIONS BY DESCRIPTION");
 
         final ImmutableList<Location> list = locationService.search(dto);
 
@@ -111,17 +107,6 @@ public class LocationController {
                 ImmutableList.copyOf(list.stream()
                         .map(LocationMapper::toDto)
                         .collect(Collectors.toList())));
-    }
-
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/{id}/availability",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> addAvailability(@Valid @RequestBody LocationAvailabilityDto[] dtos, @PathVariable long id) {
-        locationService.addAvailability(Arrays.asList(dtos), id);
-
-        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
@@ -135,8 +120,6 @@ public class LocationController {
         return ResponseEntity.ok(LocationMapper.toDtoWithAvailability(location));
     }
 
-    //TODO: edit availability
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
@@ -147,7 +130,6 @@ public class LocationController {
 
         return ResponseEntity.noContent().build();
     }
-
 
 }
 

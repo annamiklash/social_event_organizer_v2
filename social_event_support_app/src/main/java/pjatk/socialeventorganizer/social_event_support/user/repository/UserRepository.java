@@ -22,7 +22,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findUserByResetPasswordToken(String resetPasswordToken);
 
+
     @Query("SELECT u FROM users AS u WHERE LOWER(u.email) LIKE %:keyword% OR LOWER(u.type) LIKE %:keyword%")
     Page<User> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
+
+    @Query("SELECT u.isActive from users u where u.email = :email")
+    boolean isActive(@Param("email") String email);
 
 }

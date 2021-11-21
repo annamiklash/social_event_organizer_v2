@@ -13,10 +13,10 @@ import java.util.List;
 @Repository
 public interface CateringItemRepository extends JpaRepository<CateringItem, Long> {
 
-    @Query("SELECT ci from catering_item ci WHERE ci.name " +
-            "LIKE %:keyword% or ci.itemType " +
-            "LIKE %:keyword% OR ci.description " +
-            "LIKE %:keyword%")
+    @Query("SELECT ci from catering_item ci " +
+            "WHERE (:keyword is null or ci.name LIKE %:keyword%) " +
+            "OR (:keyword is null or ci.itemType LIKE %:keyword%) " +
+            "OR (:keyword is null or ci.description LIKE %:keyword%)")
     Page<CateringItem> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
     List<CateringItem> findAllByCatering_Id(long id);

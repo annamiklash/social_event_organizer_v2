@@ -24,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 LOCATIONS.value,
                 CATERINGS.value,
                 SERVICES.value,
+                CUISINES.value,
                 RESET_PASSWORD.value,
                 RESET.value,
                 USERS.value,

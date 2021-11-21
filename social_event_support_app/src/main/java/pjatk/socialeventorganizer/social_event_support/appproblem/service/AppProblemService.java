@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.repository.App
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
+import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 public class AppProblemService {
 
     private AppProblemRepository appProblemRepository;
+
+    private UserService userService;
 
     public List<AppProblem> list(CustomPage customPage, String keyword) {
 
@@ -54,8 +57,17 @@ public class AppProblemService {
         return null;
     }
 
-    public AppProblem create(AppProblemDto appProblemDto, User user) {
-        final AppProblem appProblem = AppProblemMapper.fromDto(appProblemDto);
+
+    public void save(AppProblem appProblem) {
+        appProblemRepository.save(appProblem);
+    }
+
+
+    public AppProblem create(AppProblemDto dto, long id) {
+
+        final User user = userService.getById(id);
+
+        final AppProblem appProblem = AppProblemMapper.fromDto(dto);
 
         appProblem.setUser(user);
         appProblem.setCreatedAt(LocalDateTime.now());
@@ -65,7 +77,4 @@ public class AppProblemService {
         return appProblem;
     }
 
-    public void save(AppProblem appProblem) {
-        appProblemRepository.save(appProblem);
-    }
 }

@@ -14,10 +14,10 @@ import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.Gue
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.repository.GuestRepository;
-import pjatk.socialeventorganizer.social_event_support.invite.mapper.GuestInfoMapper;
-import pjatk.socialeventorganizer.social_event_support.invite.response.GuestInfoResponse;
+import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,20 +27,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GuestService {
 
-    GuestRepository guestRepository;
+    private GuestRepository guestRepository;
 
-    GuestInfoMapper guestInfoMapper;
-
-    public List<GuestInfoResponse> getGuestsByOrganizedEventId(long organizedEventId) {
-        final Optional<List<Guest>> optionalGuestList = guestRepository.findInvitedGuestsByOrganizedEventId(organizedEventId);
-        if (!optionalGuestList.isPresent()) {
-            return new ArrayList<>();
-        }
-        final List<Guest> guestList = optionalGuestList.get();
-        return guestList.stream()
-                .map(guest -> guestInfoMapper.mapToResponse(guest))
-                .collect(Collectors.toList());
-    }
+    private CustomerRepository customerRepository;
 
     public ImmutableList<GuestDto> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -51,6 +40,15 @@ public class GuestService {
         return ImmutableList.copyOf(page.get().map(GuestMapper::toDto).collect(Collectors.toList()));
     }
 
+    public List<Guest> listAllByCustomerId(long id) {
+        final Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isEmpty()) {
+            throw new NotFoundException("No customer with id " + id);
+        }
+
+        return guestRepository.getAllByCustomer_Id(id);
+    }
+
     public List<Guest> getGuestsByIds(List<Long> guestIds) {
         return guestIds.stream()
                 .map(id -> guestRepository.findById(id))
@@ -59,4 +57,12 @@ public class GuestService {
                 .collect(Collectors.toList());
     }
 
+    public Guest get(long id) {
+        final Optional<Guest> optionalGuest = guestRepository.findById(id);
+
+        if (optionalGuest.isPresent()) {
+            return optionalGuest.get();
+        }
+        throw new NotFoundException("No guest with id " + id);
+    }
 }

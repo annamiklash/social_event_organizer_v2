@@ -18,6 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
+import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
@@ -44,8 +45,6 @@ public class UserService {
     private final PasswordEncoderSecurity passwordEncoderSecurity;
 
     private final EmailService emailService;
-
-    private final AppProblemService appProblemService;
 
     public ImmutableList<User> findALl() {
         return ImmutableList.copyOf(userRepository.findAll());
@@ -158,10 +157,7 @@ public class UserService {
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
 
-    public AppProblem reportProblem(AppProblemDto dto, long id) {
-        final User user = getById(id);
-
-        return appProblemService.create(dto, user);
-
+    public boolean isActive(LoginDto loginDto) {
+        return userRepository.isActive(loginDto.getEmail());
     }
 }

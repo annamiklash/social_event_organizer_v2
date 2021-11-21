@@ -329,6 +329,39 @@ CREATE TABLE catering_order_choice
     CONSTRAINT catering_order_choice_pk PRIMARY KEY (id_catering_item)
 );
 
+create table location_business_hours
+(
+
+    id_business_hours serial      NOT NULL,
+    day               varchar(20) NOT NULL,
+    time_from         time        NOT NULL,
+    time_to           time        NOT NULL,
+    id_location       int         NULL,
+    CONSTRAINT location_business_hours_pk PRIMARY KEY (id_business_hours)
+);
+
+create table catering_business_hours
+(
+
+    id_business_hours serial      NOT NULL,
+    day               varchar(20) NOT NULL,
+    time_from         time        NOT NULL,
+    time_to           time        NOT NULL,
+    id_catering       int         NULL,
+    CONSTRAINT catering_business_hours_pk PRIMARY KEY (id_business_hours)
+);
+
+create table optional_service_business_hours
+(
+
+    id_business_hours   serial      NOT NULL,
+    day                 varchar(20) NOT NULL,
+    time_from           time        NOT NULL,
+    time_to             time        NOT NULL,
+    id_optional_service int         NULL,
+    CONSTRAINT optional_service_business_hours_pk PRIMARY KEY (id_business_hours)
+);
+
 
 --REFERENCES
 ALTER TABLE catering_for_chosen_location
@@ -668,6 +701,31 @@ ALTER TABLE service_review
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
+
+ALTER TABLE location_business_hours
+    ADD CONSTRAINT location_location_business_hours
+        FOREIGN KEY (id_location)
+            REFERENCES location (id_location)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+ALTER TABLE catering_business_hours
+    ADD CONSTRAINT catering_catering_business_hours
+        FOREIGN KEY (id_catering)
+            REFERENCES catering (id_catering)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+ALTER TABLE optional_service_business_hours
+    ADD CONSTRAINT optional_service_optional_service_business_hours
+        FOREIGN KEY (id_optional_service)
+            REFERENCES optional_service (id_optional_service)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
 
 -- End of file.
 
@@ -1129,12 +1187,13 @@ VALUES (5, 3, 1),
 
 create table location_availability
 (
-    id_location_availability serial    NOT NULL,
-    date                     timestamp NOT NULL,
-    time_from                timestamp NOT NULL,
-    time_to                  timestamp NOT NULL,
-    id_location              int       NOT NULL,
-    CONSTRAINT location_availability_pk PRIMARY KEY (id_location_availability)
+    id_availability serial      NOT NULL,
+    date            timestamp   NOT NULL,
+    time_from       timestamp   NOT NULL,
+    time_to         timestamp   NOT NULL,
+    status          varchar(30) not null,
+    id_location     int         NOT NULL,
+    CONSTRAINT location_availability_pk PRIMARY KEY (id_availability)
 );
 
 -- Reference: location_location_availability (table: location_availability)
@@ -1145,3 +1204,105 @@ ALTER TABLE location_availability
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
+
+create table catering_availability
+(
+    id_availability serial      NOT NULL,
+    status          varchar(30) NOT NULL,
+    date            timestamp   NOT NULL,
+    time_from       timestamp   NOT NULL,
+    time_to         timestamp   NOT NULL,
+    id_catering     int         NOT NULL,
+    CONSTRAINT catering_availability_pk PRIMARY KEY (id_availability)
+);
+
+-- Reference: catering_catering_availability (table: catering_availability)
+ALTER TABLE catering_availability
+    ADD CONSTRAINT catering_catering_availability
+        FOREIGN KEY (id_catering)
+            REFERENCES catering (id_catering)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+
+create table optional_service_availability
+(
+    id_availability     serial      NOT NULL,
+    status              varchar(30) NOT NULL,
+    date                timestamp   NOT NULL,
+    time_from           timestamp   NOT NULL,
+    time_to             timestamp   NOT NULL,
+    id_optional_service int         NOT NULL,
+    CONSTRAINT optional_service_availability_pk PRIMARY KEY (id_availability)
+);
+
+-- Reference: catering_catering_availability (table: catering_availability)
+ALTER TABLE optional_service_availability
+    ADD CONSTRAINT optional_service_optional_service_availability
+        FOREIGN KEY (id_optional_service)
+            REFERENCES optional_service (id_optional_service)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+-- Table: catering_cuisine
+CREATE TABLE catering_cuisine
+(
+    id_catering int NOT NULL,
+    id_cuisine  int NOT NULL,
+    CONSTRAINT catering_cuisine_pk PRIMARY KEY (id_catering, id_cuisine)
+);
+
+-- Table: cuisine
+CREATE TABLE cuisine
+(
+    id_cuisine serial      NOT NULL,
+    name       varchar(50) NOT NULL,
+    CONSTRAINT cuisine_pk PRIMARY KEY (id_cuisine)
+);
+
+-- foreign keys
+-- Reference: catering_cuisine_catering (table: catering_cuisine)
+ALTER TABLE catering_cuisine
+    ADD CONSTRAINT catering_cuisine_catering
+        FOREIGN KEY (id_catering)
+            REFERENCES catering (id_catering)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+insert into cuisine (name)
+VALUES ('Mexican'),
+       ('Italian'),
+       ('Greek'),
+       ('French'),
+       ('Thai'),
+       ('Spanish'),
+       ('Indian'),
+       ('Mediterranean'),
+       ('Polish'),
+       ('Russian'),
+       ('Vietnamese'),
+       ('Japanese'),
+       ('Chinese'),
+       ('Vegan'),
+       ('Fusion'),
+       ('Vegetarian'),
+       ('Turkish');
+
+insert into catering_cuisine (id_catering, id_cuisine)
+VALUES (1, 3),
+       (1, 16),
+       (1, 6),
+       (2, 4),
+       (2, 1),
+       (2, 2),
+       (3, 17),
+       (3, 14),
+       (3, 10),
+       (4, 9),
+       (4, 11),
+       (5, 15),
+       (5, 1),
+       (5, 7);

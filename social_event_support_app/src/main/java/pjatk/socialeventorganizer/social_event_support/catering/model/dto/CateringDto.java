@@ -5,8 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
+import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
+import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto;
+import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -16,9 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-/*
-FIELDS NAMES AND TYPES  MUST MATCH THE KEY VALUES IN JSON BODY.
- */
 public class CateringDto implements Serializable {
 
     private Long id;
@@ -48,6 +49,14 @@ public class CateringDto implements Serializable {
     @NotNull
     private boolean offersOutsideCatering;
 
+    @NotNull
+    private List<BusinessHoursDto> businessHours;
+
+    @NotNull
+    private List<CuisineDto> cuisines;
+
+    private List<AvailabilityDto> availability;
+
     private String createdAt;
 
     private String modifiedAt;
@@ -63,6 +72,6 @@ public class CateringDto implements Serializable {
     private List<CateringItemDto> cateringItems;
 
     private BusinessDto business;
+
+    private List<LocationDto> locations;
 }
-
-

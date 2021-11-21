@@ -5,8 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -30,14 +32,14 @@ public class OrganizedEventDto implements Serializable {
 
     private EventTypeDto eventType;
 
-    private CustomerDto customer;
-
     private String createdAt;
 
     private String modifiedAt;
 
     private String deletedAt;
 
-//    private Set<LocationForEvent> locationsForEvent;
+    private CustomerDto customer;
+
+    private List<LocationForEventDto> locations;
 
 }

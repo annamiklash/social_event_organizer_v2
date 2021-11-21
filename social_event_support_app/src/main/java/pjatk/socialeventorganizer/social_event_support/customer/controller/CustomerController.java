@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
@@ -20,14 +19,7 @@ import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEve
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.InitialEventBookingDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.locationforevent.model.LocationForEvent;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.CateringReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.dto.CateringReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.LocationReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.dto.LocationReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.OptionalServiceReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.ServiceReviewDto;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
@@ -136,30 +128,17 @@ public class CustomerController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
-    @RequestMapping(
-            method = RequestMethod.GET,
-            path = "guests",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<GuestDto>> listGuests(@RequestParam(required = false) String keyword,
-                                                              @RequestParam(defaultValue = "0") Integer firstResult,
-                                                              @RequestParam(defaultValue = "50") Integer maxResult,
-                                                              @RequestParam(defaultValue = "id") String sort,
-                                                              @RequestParam(defaultValue = "desc") String order) {
-        log.info("GET GUESTS");
-        return ResponseEntity.ok(guestService.list(new CustomPage(maxResult, firstResult, sort, order), keyword));
-    }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'NEW_USER')")
     @RequestMapping(
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerDto> create(@RequestBody @Valid CustomerDto dto) {
-        log.info("CREATE CUSTOMER ACCOUNT");
-        customerService.create(dto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        final Customer customer = customerService.create(dto);
+
+        return ResponseEntity.ok(CustomerMapper.toDto(customer));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
@@ -170,10 +149,9 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerDto> edit(@RequestBody @Valid CustomerDto dto,
                                             @RequestParam long id) {
-        log.info("CREATE CUSTOMER ACCOUNT");
-        customerService.edit(dto, id);
+        final Customer customer = customerService.edit(dto, id);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(CustomerMapper.toDto(customer));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
@@ -184,14 +162,14 @@ public class CustomerController {
         log.info("CREATE CUSTOMER ACCOUNT");
         customerService.delete(id);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok().build();
     }
 
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,
-            path = "invite",
+            path = "invite/send",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendScheduleToAllGuests(@RequestParam long id,
@@ -201,48 +179,6 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
-    //TODO: add verification if location/catering/service was booked
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            path = "location",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LocationReviewDto> reviewLocation(@RequestParam long id,
-                                                            @RequestParam long locationId,
-                                                            @Valid @RequestBody LocationReviewDto dto) {
-
-        final LocationReview review = customerService.leaveLocationReview(id, locationId, dto);
-        return ResponseEntity.ok(ReviewMapper.toLocationReviewDto(review));
-    }
-
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            path = "catering",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CateringReviewDto> reviewCatering(@RequestParam long id,
-                                                            @RequestParam long cateringId,
-                                                            @Valid @RequestBody CateringReviewDto dto) {
-
-        final CateringReview review = customerService.leaveCateringReview(id, cateringId, dto);
-        return ResponseEntity.ok(ReviewMapper.toCateringReviewDto(review));
-    }
-
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            path = "service",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServiceReviewDto> reviewService(@RequestParam long id,
-                                                          @RequestParam long serviceId,
-                                                          @Valid @RequestBody ServiceReviewDto dto) {
-
-        final OptionalServiceReview review = customerService.leaveServiceReview(id, serviceId, dto);
-        return ResponseEntity.ok(ReviewMapper.toServiceReviewDto(review));
-    }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(
@@ -254,7 +190,7 @@ public class CustomerController {
                                                                               @RequestParam long locId,
                                                                               @Valid @RequestBody InitialEventBookingDto dto) {
 
-        final LocationForEvent locationForEvent = customerService.bookEvent(id, locId, dto);
+        final LocationForEvent locationForEvent = customerService.bookInitialLocationForEvent(id, locId, dto);
         return ResponseEntity.ok(OrganizedEventMapper.toOrganizedConfirmationDto(locationForEvent));
 
     }

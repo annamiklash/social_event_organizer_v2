@@ -15,6 +15,7 @@ public class DateTimeUtil {
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String TIME_FORMAT = "HH:mm";
+    private static final String TIME_FORMAT_WITH_SECONDS = "HH:mm:ss";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -67,5 +68,15 @@ public class DateTimeUtil {
         final LocalTime localTime = dateTime.toLocalTime();
 
         return localTime.format(TIME_FORMATTER);
+    }
+
+    public String toTomeOnlyFromLocalTime(LocalTime localTime) {
+
+        return localTime.format(TIME_FORMATTER);
+    }
+
+    public LocalTime test (String time) {
+        return LocalTime.parse(time,
+                DateTimeFormatter.ofPattern(TIME_FORMAT_WITH_SECONDS));
     }
 }

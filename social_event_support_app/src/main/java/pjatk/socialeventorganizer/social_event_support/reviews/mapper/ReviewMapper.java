@@ -1,6 +1,10 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.mapper;
 
 import lombok.experimental.UtilityClass;
+import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
+import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
+import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
+import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.CateringReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.dto.CateringReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.LocationReview;
@@ -35,31 +39,36 @@ public class ReviewMapper {
                 .build();
     }
 
-
-    public LocationReviewDto toLocationReviewDto(LocationReview dto) {
+    public LocationReviewDto toLocationReviewDto(LocationReview locationReview) {
         return LocationReviewDto.builder()
-                .id(dto.getId())
-                .title(dto.getTitle())
-                .comment(dto.getComment())
-                .starRating(dto.getStarRating())
+                .id(locationReview.getId())
+                .title(locationReview.getTitle())
+                .comment(locationReview.getComment())
+                .starRating(locationReview.getStarRating())
+                .location(LocationMapper.toDto(locationReview.getLocation()))
+                .customer(CustomerMapper.toDto(locationReview.getCustomer()))
                 .build();
     }
 
-    public CateringReviewDto toCateringReviewDto(CateringReview dto) {
+    public CateringReviewDto toCateringReviewDto(CateringReview cateringReview) {
         return CateringReviewDto.builder()
-                .id(dto.getId())
-                .title(dto.getTitle())
-                .comment(dto.getComment())
-                .starRating(dto.getStarRating())
+                .id(cateringReview.getId())
+                .title(cateringReview.getTitle())
+                .comment(cateringReview.getComment())
+                .starRating(cateringReview.getStarRating())
+                .customer(CustomerMapper.toDto(cateringReview.getCustomer()))
+                .catering(CateringMapper.toDto(cateringReview.getCatering()))
                 .build();
     }
 
-    public ServiceReviewDto toServiceReviewDto(OptionalServiceReview dto) {
+    public ServiceReviewDto toServiceReviewDto(OptionalServiceReview optionalServiceReview) {
         return ServiceReviewDto.builder()
-                .id(dto.getId())
-                .title(dto.getTitle())
-                .comment(dto.getComment())
-                .starRating(dto.getStarRating())
+                .id(optionalServiceReview.getId())
+                .title(optionalServiceReview.getTitle())
+                .comment(optionalServiceReview.getComment())
+                .starRating(optionalServiceReview.getStarRating())
+                .customer(CustomerMapper.toDto(optionalServiceReview.getCustomer()))
+                .service(OptionalServiceMapper.toDto(optionalServiceReview.getOptionalService()))
                 .build();
     }
 

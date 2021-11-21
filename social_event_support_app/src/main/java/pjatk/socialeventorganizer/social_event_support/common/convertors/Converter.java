@@ -17,7 +17,12 @@ public class Converter {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     public BigDecimal convertPriceString(String inputPrice) {
-        final String format = String.format("%.2f", Double.parseDouble(inputPrice));
+       String format = "";
+        try {
+            format = String.format("%.2f", Double.parseDouble(inputPrice));
+        } catch (NullPointerException e) {
+            return null;
+        }
         return new BigDecimal(format);
     }
 
@@ -46,12 +51,6 @@ public class Converter {
         }
         return LocalDateTime.parse(date, DATE_TIME_FORMATTER);
 
-    }
-
-    public String toStringFromLocalDateTime(LocalDateTime dateTime) {
-        log.info(String.valueOf(dateTime));
-
-        return dateTime.format(DATE_TIME_FORMATTER);
     }
 
     public String capitalizeToEnum(String input) {

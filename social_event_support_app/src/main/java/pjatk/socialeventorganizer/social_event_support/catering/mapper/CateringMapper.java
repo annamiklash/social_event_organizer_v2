@@ -4,9 +4,13 @@ package pjatk.socialeventorganizer.social_event_support.catering.mapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
+import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
+import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.cuisine.mapper.CuisineMapper;
+import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -55,12 +59,39 @@ public class CateringMapper {
                 .modifiedAt(String.valueOf(catering.getModifiedAt()))
                 .deletedAt(String.valueOf(catering.getDeletedAt()))
                 .address(AddressMapper.toDto(catering.getCateringAddress()))
+                .cuisines(catering.getCuisines().stream()
+                        .map(CuisineMapper::toDto)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
     public static CateringDto toDtoWithDetail(Catering catering) {
         final CateringDto dto = toDto(catering);
-        dto.setCateringItems(catering.getCateringItems().stream().map(CateringItemMapper::toDto).collect(Collectors.toList()));
+
+        dto.setCateringItems(catering.getCateringItems().stream()
+                .map(CateringItemMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setBusinessHours(catering.getCateringBusinessHours().stream()
+                .map(BusinessHoursMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setLocations(catering.getLocations().stream()
+                .map(LocationMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setAvailability(catering.getAvailability().stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(Collectors.toList()));
+
+        return dto;
+    }
+
+    public static CateringDto toDtoWithAvailability(Catering catering) {
+        final CateringDto dto = toDto(catering);
+        dto.setAvailability(catering.getAvailability().stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(Collectors.toList()));
 
         return dto;
     }
