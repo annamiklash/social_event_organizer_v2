@@ -2,11 +2,11 @@ package pjatk.socialeventorganizer.social_event_support.location.model;
 
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
+import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
-import pjatk.socialeventorganizer.social_event_support.location.availability.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.persistence.*;
@@ -96,18 +96,18 @@ public class Location implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_location")
-    private Set<LocationAvailability> LocationAvailability;
+    private Set<LocationAvailability> availability;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_location")
     private Set<LocationBusinessHours> locationBusinessHours;
 
     public void addAvailability(LocationAvailability locationAvailability) {
-        LocationAvailability.add(locationAvailability);
+        availability.add(locationAvailability);
     }
 
     public void removeAvailability(LocationAvailability locationAvailability) {
-        LocationAvailability.remove(locationAvailability);
+        availability.remove(locationAvailability);
     }
 
     public void addDescriptionItem(LocationDescriptionItem locationDescriptionItem) {

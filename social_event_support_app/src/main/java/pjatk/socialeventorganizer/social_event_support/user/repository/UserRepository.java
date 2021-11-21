@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findUserByResetPasswordToken(String resetPasswordToken);
 
     @Query("SELECT u.isActive from users u where u.email = :email")
-    boolean isBlocked(@Param("email") String email);
+    boolean isActive(@Param("email") String email);
 
 }

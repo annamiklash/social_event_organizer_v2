@@ -23,23 +23,6 @@ public class BusinessHoursMapper {
                 .build();
     }
 
-    public BusinessHoursDto toDto(LocationBusinessHours locationBusinessHours) {
-        return BusinessHoursDto.builder()
-                .id(locationBusinessHours.getId())
-                .day(DayEnum.valueOf(locationBusinessHours.getDay()))
-                .timeFrom(DateTimeUtil.toTomeOnlyFromLocalTime(locationBusinessHours.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTomeOnlyFromLocalTime(locationBusinessHours.getTimeTo()))
-                .build();
-    }
-
-    public BusinessHoursDto toDto(CateringBusinessHours cateringBusinessHours) {
-        return BusinessHoursDto.builder().build();
-    }
-
-    public BusinessHoursDto toDto(OptionalServiceBusinessHours optionalServiceBusinessHours) {
-        return BusinessHoursDto.builder().build();
-    }
-
     public LocationBusinessHours fromDtoToLocation(BusinessHoursDto dto) {
         return LocationBusinessHours.builder()
                 .day(dto.getDay().name())

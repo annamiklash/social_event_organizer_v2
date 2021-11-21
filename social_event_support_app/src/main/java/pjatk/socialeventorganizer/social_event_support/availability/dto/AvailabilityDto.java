@@ -1,10 +1,12 @@
-package pjatk.socialeventorganizer.social_event_support.location.availability.model.dto;
+package pjatk.socialeventorganizer.social_event_support.availability.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -14,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LocationAvailabilityDto implements Serializable {
+public class AvailabilityDto implements Serializable {
 
     private Long id;
 
@@ -27,9 +29,12 @@ public class LocationAvailabilityDto implements Serializable {
     @NotNull
     private String timeTo;
 
-
     private String status;
 
     private LocationDto location;
+
+    private CateringDto catering;
+
+    private OptionalServiceDto optionalService;
 
 }

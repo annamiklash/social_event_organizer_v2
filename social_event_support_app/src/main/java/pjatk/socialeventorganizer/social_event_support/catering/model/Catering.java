@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.catering.model;
 
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
+import pjatk.socialeventorganizer.social_event_support.availability.catering.model.CateringAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
@@ -22,10 +23,6 @@ import static pjatk.socialeventorganizer.social_event_support.common.constants.C
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-/*
-NAMING AS IN DB (tables and attributes)
- or with annotation @Column(name="column_name)/@Entity(name="table_name)
- */
 @Table(name = "catering")
 @Entity(name = "catering")
 public class Catering implements Serializable {
@@ -71,12 +68,16 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_catering")
     private Set<CateringItem> cateringItems;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_catering")
     private Set<CateringBusinessHours> cateringBusinessHours;
 
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
     private Set<Location> locations = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id_catering")
+    private Set<CateringAvailability> availability;
 
     public void addCateringItem(CateringItem cateringItem) {
         if (cateringItem == null) {

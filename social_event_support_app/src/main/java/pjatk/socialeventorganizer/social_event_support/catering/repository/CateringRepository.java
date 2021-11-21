@@ -32,22 +32,16 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     @Query("SELECT c from catering c " +
             "left join fetch c.cateringItems ci " +
+            "left join fetch c.availability ca " +
             "left join fetch c.cateringBusinessHours cbh " +
             "left join fetch c.locations cl " +
             "WHERE c.id = :id")
     Optional<Catering> findByIdWithDetail(@Param("id") long id);
 
 
-//    @Query("SELECT c FROM catering AS c WHERE c.name LIKE %:keyword% OR c.description LIKE %:keyword%")
-//    List<Catering> search(@Param("keyword") String keyword);
-
-//
-//    @Query(value = "SELECT e FROM EmployeeProjectView as e WHERE e.employeeId=:employeeId and (:inputString is null or e.lastName like %:inputString% ) and " +
-//            "(:inputString is null or e.firstName like %:inputString%) and (:inputString is null or concat(e.projectId,'') like %:inputString%) and " +
-//            " (:inputString is null or e.projectName like %:inputString%) and  (:inputString is null or concat(e.projectBudget,'') like %:inputString%) and "+
-//            " (:inputString is null or e.projectLocation like %:inputString%)"
-//    )
-//    Page<EmployeeProjectView> findAllByInputString(Long employeeId, String inputString, Pageable pageable);
-
+    @Query(value = "SELECT distinct c.* from catering c " +
+            "left join catering_availability ca on ca.id_catering = c.id_catering " +
+            "where c.id = :id AND ca.date = CAST(:date as timestamp)", nativeQuery = true)
+    Optional<Catering> getByIdWithAvailability(@Param("id") long id, @Param("date") String date);
 
 }

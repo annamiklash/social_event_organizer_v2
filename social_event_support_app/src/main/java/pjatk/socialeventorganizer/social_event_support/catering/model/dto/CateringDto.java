@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
+import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
@@ -49,6 +50,8 @@ public class CateringDto implements Serializable {
 
     @NotNull
     private List<BusinessHoursDto> businessHours;
+
+    private List<AvailabilityDto> availability;
 
     private String createdAt;
 

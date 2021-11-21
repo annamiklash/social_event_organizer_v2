@@ -2,10 +2,13 @@ package pjatk.socialeventorganizer.social_event_support.optional_service.mapper;
 
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessMapper;
+import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
+
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class OptionalServiceMapper {
@@ -34,9 +37,13 @@ public class OptionalServiceMapper {
                 .build();
     }
 
-    public OptionalServiceDto toDtoWithBusiness(OptionalService optionalService) {
+    public OptionalServiceDto toDtoWithDetails(OptionalService optionalService) {
         final OptionalServiceDto dto = toDto(optionalService);
         dto.setBusiness(BusinessMapper.toDto(optionalService.getBusiness()));
+
+        dto.setBusinessHours(optionalService.getOptionalServiceBusinessHours().stream()
+                .map(BusinessHoursMapper::toDto)
+                .collect(Collectors.toList()));
 
         return dto;
     }

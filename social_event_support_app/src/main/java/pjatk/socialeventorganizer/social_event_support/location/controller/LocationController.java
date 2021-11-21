@@ -9,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.location.availability.model.dto.LocationAvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
@@ -17,7 +16,6 @@ import pjatk.socialeventorganizer.social_event_support.location.model.dto.Locati
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -110,17 +108,6 @@ public class LocationController {
                 ImmutableList.copyOf(list.stream()
                         .map(LocationMapper::toDto)
                         .collect(Collectors.toList())));
-    }
-
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/{id}/availability",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> addAvailability(@Valid @RequestBody LocationAvailabilityDto[] dtos, @PathVariable long id) {
-        locationService.addAvailability(Arrays.asList(dtos), id);
-
-        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")

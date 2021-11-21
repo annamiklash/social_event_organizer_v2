@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
+import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
+import pjatk.socialeventorganizer.social_event_support.availability.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
@@ -25,10 +27,6 @@ import pjatk.socialeventorganizer.social_event_support.enums.LocationDescription
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.EventBookDateDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.location.availability.mapper.LocationAvailabilityMapper;
-import pjatk.socialeventorganizer.social_event_support.location.availability.model.LocationAvailability;
-import pjatk.socialeventorganizer.social_event_support.location.availability.model.dto.LocationAvailabilityDto;
-import pjatk.socialeventorganizer.social_event_support.location.availability.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.LocationDescriptionItem;
@@ -37,7 +35,6 @@ import pjatk.socialeventorganizer.social_event_support.location.model.dto.Locati
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
-import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -45,37 +42,35 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static pjatk.socialeventorganizer.social_event_support.location.availability.LocationAvailabilityEnum.AVAILABLE;
-import static pjatk.socialeventorganizer.social_event_support.location.availability.LocationAvailabilityEnum.NOT_AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.NOT_AVAILABLE;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class LocationService {
 
-    private LocationRepository locationRepository;
+    private final LocationRepository locationRepository;
 
-    private LocationDescriptionItemService locationDescriptionItemService;
+    private final LocationDescriptionItemService locationDescriptionItemService;
 
-    private CateringRepository cateringRepository;
+    private final CateringRepository cateringRepository;
 
-    private AddressService addressService;
+    private final AddressService addressService;
 
-    private BusinessService businessService;
+    private final BusinessService businessService;
 
-    private LocationAvailabilityRepository locationAvailabilityRepository;
+    private final LocationAvailabilityRepository locationAvailabilityRepository;
 
-    private LocationBusinessHoursService locationBusinessHoursService;
+    private final LocationBusinessHoursService locationBusinessHoursService;
 
-    private SecurityService securityService;
-
-    private UserService userService;
-
+    private final SecurityService securityService;
 
     public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
+                Sort.by(customPagination.getSort()).descending());
         final Page<Location> page = locationRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
@@ -197,19 +192,6 @@ public class LocationService {
         locationRepository.save(location);
     }
 
-    @Transactional
-    public void addAvailability(List<LocationAvailabilityDto> dtos, long locationId) {
-        final Location location = get(locationId);
-
-        final List<LocationAvailability> availabilities = dtos.stream().map(LocationAvailabilityMapper::fromDto).collect(Collectors.toList());
-
-        availabilities.stream()
-                .peek(availability -> availability.setStatus(AVAILABLE.toString()))
-                .peek(availability -> availability.setLocation(location))
-                .forEach(availability -> locationAvailabilityRepository.save(availability));
-
-    }
-
     public Location getWithAvailability(long locationId, String date) {
         final Optional<Location> optionalLocation = locationRepository.getByIdWithAvailability(locationId, date);
 
@@ -286,7 +268,7 @@ public class LocationService {
 
     public void modifyAvailabilityAfterBooking(Location location, EventBookDateDto details) {
 
-        final Set<LocationAvailability> locationAvailability = location.getLocationAvailability();
+        final Set<LocationAvailability> locationAvailability = location.getAvailability();
 
         final LocalDate date = DateTimeUtil.fromStringToFormattedDate(details.getDate());
         final LocalDateTime timeFrom = DateTimeUtil.fromStringToFormattedDateTime(details.getStartTime());

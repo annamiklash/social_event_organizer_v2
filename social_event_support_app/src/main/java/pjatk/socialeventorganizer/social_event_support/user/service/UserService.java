@@ -129,7 +129,7 @@ public class UserService {
         save(user);
     }
 
-    public boolean isBlocked(LoginDto loginDto) {
-        return userRepository.isBlocked(loginDto.getEmail());
+    public boolean isActive(LoginDto loginDto) {
+        return userRepository.isActive(loginDto.getEmail());
     }
 }

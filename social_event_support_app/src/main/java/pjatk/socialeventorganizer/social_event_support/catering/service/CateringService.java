@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
+import pjatk.socialeventorganizer.social_event_support.availability.catering.model.CateringAvailability;
+import pjatk.socialeventorganizer.social_event_support.availability.catering.repository.CateringAvailabilityRepository;
+import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
+import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
@@ -41,6 +45,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -60,10 +66,13 @@ public class CateringService {
 
     private CateringBusinessHoursService cateringBusinessHoursService;
 
+    private CateringAvailabilityRepository cateringAvailabilityRepository;
+
     public ImmutableList<Catering> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
+                Sort.by(customPagination.getSort()).descending());
         final Page<Catering> page = cateringRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
@@ -223,11 +232,28 @@ public class CateringService {
         return cateringRepository.saveAndFlush(catering);
     }
 
-//    public ImmutableList<CateringDto> searchByKeyword(String keyword) {
-//        final List<Catering> cateringList = cateringRepository.search(keyword);
-//        return cateringList.stream()
-//                .map(CateringMapper::toDto)
-//                .collect(ImmutableList.toImmutableList());
-//    }
+    public Catering getWithAvailability(long id, String date) {
+        final Optional<Catering> optionalCatering = cateringRepository.getByIdWithAvailability(id, date);
+
+        if (optionalCatering.isPresent()) {
+            return optionalCatering.get();
+        }
+        throw new NotFoundException("Catering with id " + id + " DOES NOT EXIST");
+    }
+
+    @Transactional
+    public void addAvailability(List<AvailabilityDto> dtos, long cateringId) {
+        final Catering catering = get(cateringId);
+
+        final List<CateringAvailability> availabilities = dtos.stream()
+                .map(AvailabilityMapper::fromDtoToCateringAvailability)
+                .collect(Collectors.toList());
+
+        availabilities.stream()
+                .peek(availability -> availability.setStatus(AVAILABLE.toString()))
+                .peek(availability -> availability.setCatering(catering))
+                .forEach(availability -> cateringAvailabilityRepository.save(availability));
+
+    }
 
 }

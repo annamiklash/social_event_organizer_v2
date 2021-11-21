@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
+import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
@@ -19,6 +20,7 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,6 +112,29 @@ public class CateringController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/{id}/availability",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> addAvailability(@Valid @RequestBody AvailabilityDto[] dtos, @PathVariable long id) {
+        cateringService.addAvailability(Arrays.asList(dtos), id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/availability",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CateringDto> getWithAvailability(@PathVariable long id, @RequestParam String date) {
+        Catering catering = cateringService.getWithAvailability(id, date);
+
+        return ResponseEntity.ok(CateringMapper.toDtoWithAvailability(catering));
+    }
+
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(

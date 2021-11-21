@@ -1,10 +1,10 @@
-package pjatk.socialeventorganizer.social_event_support.location.availability.repository;
+package pjatk.socialeventorganizer.social_event_support.availability.location.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pjatk.socialeventorganizer.social_event_support.location.availability.model.LocationAvailability;
+import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 
 import java.util.List;
 import java.util.Optional;
