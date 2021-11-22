@@ -73,8 +73,8 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(PasswordsDontMatchException.class)
-    public void passwordsDontMatchExceptionHandler(Exception ex) {
+    @ExceptionHandler(InvalidFileExtensionException.class)
+    public void invalidFileExtensionExceptionHandler(Exception ex) {
         log.error(ex.getMessage(), ex);
     }
 

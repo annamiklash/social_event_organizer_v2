@@ -22,10 +22,13 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.service.CustomerAvatarService;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
+import pjatk.socialeventorganizer.social_event_support.customer.message.dto.MessageDto;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
@@ -46,6 +49,7 @@ import pjatk.socialeventorganizer.social_event_support.location.service.Location
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
+import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -83,6 +87,8 @@ public class CustomerService {
 
     private final LocationForEventService locationForEventService;
 
+    private final CustomerAvatarService customerAvatarService;
+
     private final CateringForChosenEventLocationService cateringForChosenEventLocationService;
 
     private final LocationService locationService;
@@ -114,15 +120,31 @@ public class CustomerService {
         final Address address = AddressMapper.fromDto(addressDto);
         addressService.save(address);
 
-//        final User userById = userService.getUserById(userCredentials.getUserId());
-
         final Customer customer = CustomerMapper.fromDto(dto);
+        final User userById = userService.getById(userCredentials.getUserId());
+        if (dto.getAvatar() != null) {
+            final CustomerAvatar avatar = customerAvatarService.create(dto.getAvatar());
+            customer.setAvatar(avatar);
+        }
+
+        customer.setId(userById.getId());
+        customer.setUser(userById);
         customer.setAddress(address);
+        userService.activate(userCredentials.getLogin());
 
         log.info("TRYING TO SAVE CUSTOMER");
         customerRepository.save(customer);
 
         return customer;
+
+    }
+
+    public void writeEmail(long customerId, long locationId, MessageDto messageDto) {
+        final Customer customer = get(customerId);
+        final Location location = locationService.get(locationId);
+
+        messageDto.setReceiverEmail(location.getEmail());
+//        messageDto.setSenderEmail(customer.getEmail());
 
     }
 
@@ -134,7 +156,6 @@ public class CustomerService {
         throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
 
     }
-
 
     public CustomerDto getWithGuests(long id) {
         final Optional<Customer> optionalCustomer = customerRepository.getByIdWithAllGuests(id);
@@ -254,7 +275,6 @@ public class CustomerService {
     private OrganizedEventDto createInvitationContent(OrganizedEvent organizedEvent) {
         return OrganizedEventMapper.toDtoForInvite(organizedEvent);
     }
-
 
     @Transactional
     public LocationForEvent bookInitialLocationForEvent(long id, long locId, InitialEventBookingDto dto) {

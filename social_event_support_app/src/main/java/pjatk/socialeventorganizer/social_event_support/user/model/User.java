@@ -1,6 +1,5 @@
 package pjatk.socialeventorganizer.social_event_support.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 
@@ -52,13 +51,7 @@ public class User implements Serializable {
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    private
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_user")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @Builder.Default
-    @JsonIgnore
     Set<AppProblem> appProblems = new HashSet<>();
 }
