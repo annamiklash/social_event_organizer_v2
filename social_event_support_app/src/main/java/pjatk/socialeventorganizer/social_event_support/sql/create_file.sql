@@ -1306,3 +1306,24 @@ VALUES (1, 3),
        (5, 15),
        (5, 1),
        (5, 7);
+
+
+CREATE TABLE customer_avatar
+(
+    id_avatar serial NOT NULL,
+    image     bytea  NOT NULL,
+    CONSTRAINT customer_avatar_pk PRIMARY KEY (id_avatar)
+);
+
+alter table customer
+    add id_avatar int default null;
+
+-- Reference: user_user_avatar (table: user)
+ALTER TABLE customer
+    ADD CONSTRAINT user_user_avatar
+        FOREIGN KEY (id_avatar)
+            REFERENCES customer_avatar (id_avatar)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+

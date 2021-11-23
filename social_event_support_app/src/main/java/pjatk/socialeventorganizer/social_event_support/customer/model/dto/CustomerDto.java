@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
@@ -49,6 +50,8 @@ public class CustomerDto {
 
     @NotNull
     private AddressDto address;
+
+    private CustomerAvatarDto avatar;
 
     private Set<GuestDto> guests;
 

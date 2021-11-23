@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.customer.mapper;
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
@@ -20,7 +21,7 @@ public class CustomerMapper {
                 .lastName(customer.getLastName())
                 .phoneNumber(String.valueOf(customer.getPhoneNumber()))
                 .birthdate(customer.getBirthdate().toString())
-                .user(UserMapper.toDto(customer.getUser()))
+//                .user(UserMapper.toDto(customer.getUser()))
                 .build();
     }
 
@@ -76,9 +77,9 @@ public class CustomerMapper {
 
     public Customer fromDto(CustomerDto customer) {
         return Customer.builder()
-                .id(customer.getUser().getId())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
+                .birthdate(DateTimeUtil.fromStringToFormattedDate(customer.getBirthdate()))
                 .phoneNumber(Converter.convertPhoneNumberString(customer.getPhoneNumber()))
                 .address(AddressMapper.fromDto(customer.getAddress()))
                 .build();

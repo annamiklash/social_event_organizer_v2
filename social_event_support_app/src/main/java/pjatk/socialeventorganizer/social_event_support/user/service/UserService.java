@@ -63,6 +63,14 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void activate(String email) {
+        final User user = getUserByEmail(email);
+        user.setActive(true);
+        user.setModifiedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+    }
+
     public User getById(Long id) {
         final Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
@@ -160,4 +168,9 @@ public class UserService {
     public boolean isActive(LoginDto loginDto) {
         return userRepository.isActive(loginDto.getEmail());
     }
+
+//    public boolean userForbiddenToLogin(LoginDto loginDto) {
+//        final User user = getUserByEmail(loginDto.getEmail());
+//        return isActive(user.getEmail(), user.getType());
+//    }
 }

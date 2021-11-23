@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.customer.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
@@ -56,6 +57,10 @@ public class Customer implements Serializable {
     @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
     User user;
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id_avatar")
+    private CustomerAvatar avatar;
 
 
 }
