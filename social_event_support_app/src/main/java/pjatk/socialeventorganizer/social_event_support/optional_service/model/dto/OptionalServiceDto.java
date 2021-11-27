@@ -10,6 +10,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.dto.Busines
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -36,6 +37,20 @@ public class OptionalServiceDto implements Serializable {
 
     @NotNull
     private List<BusinessHoursDto> businessHours;
+
+    private Set<MusicStyleDto> musicStyle;
+
+    private String instrument;
+
+    private Set<TranslationLanguageDto> translationLanguages;
+
+    private Integer musicBandPeopleCount;
+
+    private String kidPerformerType;
+
+    private Integer kidAgeFrom;
+
+    private Integer kidAgeTo;
 
     private String createdAt;
 

@@ -85,7 +85,7 @@ public class Catering implements Serializable {
             name = "catering_cuisine",
             joinColumns = @JoinColumn(name = "id_catering"),
             inverseJoinColumns = @JoinColumn(name = "id_cuisine"))
-    private Set<Cuisine> cuisines = new HashSet<>();
+    private Set<Cuisine> cuisines;
 
     public void addCateringItem(CateringItem cateringItem) {
         if (cateringItem == null) {

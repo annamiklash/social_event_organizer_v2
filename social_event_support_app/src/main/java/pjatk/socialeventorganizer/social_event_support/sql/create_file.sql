@@ -245,9 +245,46 @@ CREATE TABLE optional_service
     service_cost        decimal(8, 2) NOT NULL,
     created_at          timestamp     NOT NULL,
     modified_at         timestamp     NOT NULL,
+    kids_performer_type varchar(40)   NULL,
+    age_from            int           NULL,
+    age_to              int           NULL,
+    people_count        int           NULL,
+    instrument          varchar(40)   NULL,
     deleted_at          timestamp     NULL,
     id_business         int           NOT NULL,
     CONSTRAINT optional_service_pk PRIMARY KEY (id_optional_service)
+);
+
+-- Table: service_translator_language
+CREATE TABLE service_translator_language
+(
+    id_optional_service int NOT NULL,
+    id_language         int NOT NULL,
+    CONSTRAINT service_translator_language_pk PRIMARY KEY (id_optional_service, id_language)
+);
+
+-- Table: translation_language
+CREATE TABLE translation_language
+(
+    id_language serial      NOT NULL,
+    name        varchar(40) NOT NULL,
+    CONSTRAINT translation_language_pk PRIMARY KEY (id_language)
+);
+
+-- Table: music_style
+CREATE TABLE music_style
+(
+    id_music_style serial      NOT NULL,
+    name           varchar(40) NOT NULL,
+    CONSTRAINT music_style_pk PRIMARY KEY (id_music_style)
+);
+
+-- Table: service_music_style
+CREATE TABLE service_music_style
+(
+    id_optional_service int NOT NULL,
+    id_music_style      int NOT NULL,
+    CONSTRAINT service_music_style_pk PRIMARY KEY (id_optional_service, id_music_style)
 );
 
 -- Table: optional_service_image
@@ -727,6 +764,41 @@ ALTER TABLE optional_service_business_hours
                 INITIALLY IMMEDIATE
 ;
 
+-- Reference: service_translator_language_optional_service (table: service_translator_language)
+ALTER TABLE service_translator_language
+    ADD CONSTRAINT service_translator_language_optional_service
+        FOREIGN KEY (id_optional_service)
+            REFERENCES optional_service (id_optional_service)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+-- Reference: service_translator_language_translation_language (table: service_translator_language)
+ALTER TABLE service_translator_language
+    ADD CONSTRAINT service_translator_language_translation_language
+        FOREIGN KEY (id_language)
+            REFERENCES translation_language (id_language)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+-- Reference: service_music_style_music_style (table: service_music_style)
+ALTER TABLE service_music_style
+    ADD CONSTRAINT service_music_style_music_style
+        FOREIGN KEY (id_music_style)
+            REFERENCES music_style (id_music_style)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
+
+-- Reference: service_translator_language_optional_service (table: service_music_style)
+ALTER TABLE service_music_style
+    ADD CONSTRAINT service_translator_language_optional_service
+        FOREIGN KEY (id_optional_service)
+            REFERENCES optional_service (id_optional_service)
+            NOT DEFERRABLE
+                INITIALLY IMMEDIATE
+;
 
 -- End of file.
 
@@ -1050,28 +1122,70 @@ VALUES ('Else', 'Ryan', 'Ryan12@gmail.com', 9, (select current_timestamp), (sele
 
 
 insert into optional_service(alias, type, email, description, service_cost, id_business, created_at, modified_at,
-                             deleted_at)
-values ('alias1', 'Singer', 'email@gmail.com', 'description1', '100.00', 8, (select current_timestamp),
-        (select current_timestamp), null),
+                             deleted_at, kids_performer_type, age_from, age_to, instrument, people_count)
+values ('alias1', 'SINGER', 'email@gmail.com', 'description1', '100.00', 8, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, null, null),
        ('alias2', 'DJ', 'email@gmail.com', 'description2', '200.00', 6, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alias3', 'Music Band', 'email@gmail.com', 'description3', '300.00', 3, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alias4', 'Translator', 'email@gmail.com', 'description4', '400.00', 4, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alia5', 'Singer', 'email@gmail.com', 'description5', '250.00', 5, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alias6', 'Kids Performer', 'email@gmail.com', 'description6', '160.00', 6, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alias7', 'Musician', 'email@gmail.com', 'description7', '70.00', 7, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alias8', 'Photographer', 'email@gmail.com', 'description8', '180.00', 4, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alias9', 'Host', 'email@gmail.com', 'description9', '290.00', 4, (select current_timestamp),
-        (select current_timestamp), null),
-       ('alias10', 'Photographer', 'email@gmail.com', 'description10', '140.00', 4, (select current_timestamp),
-        (select current_timestamp), null);
+        (select current_timestamp), null, null, null, null, null, null),
+       ('alias3', 'MUSIC BAND', 'email@gmail.com', 'description3', '300.00', 3, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, null, 4),
+       ('alias4', 'INTERPRETER', 'email@gmail.com', 'description4', '400.00', 4, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, null, null),
+       ('alia5', 'SINGER', 'email@gmail.com', 'description5', '250.00', 5, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, null, null),
+       ('alias6', 'KIDS PERFORMER', 'email@gmail.com', 'description6', '160.00', 6, (select current_timestamp),
+        (select current_timestamp), null, 'CLOWN', 5, 12, null, null),
+       ('alias7', 'MUSICIAN', 'email@gmail.com', 'description7', '70.00', 7, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, 'GUITAR', null),
+       ('alias8', 'MUSICIAN', 'email@gmail.com', 'description8', '180.00', 4, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, 'PIANO', null),
+       ('alias9', 'HOST', 'email@gmail.com', 'description9', '290.00', 4, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, null, null),
+       ('alias10', 'INTERPRETER', 'email@gmail.com', 'description10', '140.00', 4, (select current_timestamp),
+        (select current_timestamp), null, null, null, null, null, null);
 
+insert into translation_language(name)
+VALUES ('SPANISH'),
+       ('ENGLISH'),
+       ('POLISH'),
+       ('RUSSIAN'),
+       ('GERMAN'),
+       ('JAPANESE'),
+       ('ASL');
+
+insert into music_style(name)
+values ('POP'),
+       ('ROCK'),
+       ('R''N''B'),
+       ('TECHNO'),
+       ('A CAPELLA'),
+       ('PUNK'),
+       ('JAZZ'),
+       ('SOUL'),
+       ('COVER'),
+       ('ELECTRONIC');
+
+
+insert into service_music_style (id_optional_service, id_music_style)
+VALUES (1, 1),
+       (1, 5),
+       (1, 8),
+       (8, 2),
+       (8, 6),
+       (3, 1),
+       (3, 3),
+       (5, 9),
+       (7, 8),
+       (7, 7),
+       (2, 5),
+       (2, 10);
+
+insert into service_translator_language (id_optional_service, id_language)
+VALUES (4,7),
+       (4,2),
+       (10,1),
+       (10,5),
+       (10,7);
 
 insert into optional_service_image(image, alt, id_optional_service)
 values ('img1', 'alt1', 1),

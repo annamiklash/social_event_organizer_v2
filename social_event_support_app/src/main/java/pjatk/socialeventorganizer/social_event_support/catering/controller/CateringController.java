@@ -103,11 +103,23 @@ public class CateringController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
-            path = "new",
+            path = "new/location",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringDto> create(@Valid @RequestBody CateringDto dto, @RequestParam long locationId) {
         final Catering catering = cateringService.create(dto, locationId);
+
+        return ResponseEntity.ok(CateringMapper.toDto(catering));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "new",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CateringDto> createStandalone(@Valid @RequestBody CateringDto dto) {
+        final Catering catering = cateringService.create(dto, null);
 
         return ResponseEntity.ok(CateringMapper.toDto(catering));
     }
@@ -182,6 +194,5 @@ public class CateringController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
 }

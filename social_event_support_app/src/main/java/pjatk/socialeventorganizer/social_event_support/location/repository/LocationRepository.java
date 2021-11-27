@@ -36,8 +36,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
 
     @Query("SELECT l FROM location AS l " +
-            "WHERE (:keyword is null or l.name LIKE %:keyword%) " +
-            "OR (:keyword is null or l.description LIKE %:keyword%)")
+            "WHERE l.name LIKE %:keyword% " +
+            "OR  l.description LIKE %:keyword%")
     Page<Location> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
     @Query(value = "SELECT distinct l.* from location l " +

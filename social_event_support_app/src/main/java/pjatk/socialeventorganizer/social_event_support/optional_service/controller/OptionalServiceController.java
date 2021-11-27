@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.optional_service.enums.KidPerformerTypeEnum;
+import pjatk.socialeventorganizer.social_event_support.optional_service.enums.MusicStyleEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
@@ -37,7 +39,7 @@ public class OptionalServiceController {
                                                                   @RequestParam(defaultValue = "50") Integer maxResult,
                                                                   @RequestParam(defaultValue = "id") String sort,
                                                                   @RequestParam(defaultValue = "desc") String order) {
-        log.info("GET ALL LOCATIONS");
+        log.info("GET ALL SERVICES");
 
         final ImmutableList<OptionalService> list = optionalServiceService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
 
@@ -107,5 +109,22 @@ public class OptionalServiceController {
         return ResponseEntity.ok(ImmutableList.copyOf(List.of(OptionalServiceTypeEnum.values())));
     }
 
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "allowed/kid/performer/types",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<KidPerformerTypeEnum>> kidPerformerTypes() {
+
+        return ResponseEntity.ok(ImmutableList.copyOf(List.of(KidPerformerTypeEnum.values())));
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "allowed/music/styles",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<MusicStyleEnum>> musicStyles() {
+
+        return ResponseEntity.ok(ImmutableList.copyOf(List.of(MusicStyleEnum.values())));
+    }
 
 }

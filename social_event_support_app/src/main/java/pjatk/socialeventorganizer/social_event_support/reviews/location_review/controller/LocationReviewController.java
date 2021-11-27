@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/reviews/location")
 public class LocationReviewController {
 
-    private LocationReviewService locationReviewService;
+    private  LocationReviewService locationReviewService;
 
     //TODO: add verification if location/catering/service was booked
     @PreAuthorize("hasAuthority('CUSTOMER')")

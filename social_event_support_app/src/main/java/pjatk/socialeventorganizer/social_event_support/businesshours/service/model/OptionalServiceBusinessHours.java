@@ -15,8 +15,8 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Entity(name = "service_business_hours")
-@Table(name = "service_business_hours")
+@Entity(name = "optional_service_business_hours")
+@Table(name = "optional_service_business_hours")
 public class OptionalServiceBusinessHours extends BusinessHours {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

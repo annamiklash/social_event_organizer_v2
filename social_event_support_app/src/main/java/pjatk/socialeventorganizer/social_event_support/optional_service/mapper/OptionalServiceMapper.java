@@ -5,8 +5,14 @@ import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessM
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.kidperformer.KidsPerformer;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.MusicBand;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.Musician;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.Interpreter;
+import pjatk.socialeventorganizer.social_event_support.optional_service.validator.Validator;
 
 import java.util.stream.Collectors;
 
@@ -14,7 +20,7 @@ import java.util.stream.Collectors;
 public class OptionalServiceMapper {
 
     public OptionalServiceDto toDto(OptionalService optionalService) {
-        return OptionalServiceDto.builder()
+        final OptionalServiceDto dto = OptionalServiceDto.builder()
                 .id(optionalService.getId())
                 .type(optionalService.getType())
                 .alias(optionalService.getAlias())
@@ -25,16 +31,110 @@ public class OptionalServiceMapper {
                 .modifiedAt(DateTimeUtil.toStringFromLocalDateTime(optionalService.getModifiedAt()))
                 .deletedAt(DateTimeUtil.toStringFromLocalDateTime(optionalService.getDeletedAt()))
                 .build();
+
+        final OptionalServiceTypeEnum type = OptionalServiceTypeEnum.valueOfLabel(optionalService.getType());
+
+        switch (type) {
+            case KIDS_PERFORMER:
+                dto.setKidAgeFrom(((KidsPerformer) optionalService).getAgeFrom());
+                dto.setKidAgeTo(((KidsPerformer) optionalService).getAgeFrom());
+                dto.setKidPerformerType(dto.getKidPerformerType());
+                return dto;
+
+            case INTERPRETER:
+                dto.setTranslationLanguages(((Interpreter) optionalService).getLanguages()
+                        .stream()
+                        .map(TranslationLanguageMapper::toDto)
+                        .collect(Collectors.toSet()));
+                return dto;
+
+            case MUSIC_BAND:
+                dto.setMusicBandPeopleCount(((MusicBand) optionalService).getPeopleCount());
+                dto.setMusicStyle(optionalService.getStyles()
+                        .stream()
+                        .map(MusicStyleMapper::toDto)
+                        .collect(Collectors.toSet()));
+                return dto;
+
+            case MUSICIAN:
+                dto.setMusicStyle(optionalService.getStyles()
+                        .stream()
+                        .map(MusicStyleMapper::toDto)
+                        .collect(Collectors.toSet()));
+                dto.setInstrument(((Musician) optionalService).getInstrument());
+                return dto;
+
+            case DJ:
+            case SINGER:
+                dto.setMusicStyle(optionalService.getStyles()
+                        .stream()
+                        .map(MusicStyleMapper::toDto)
+                        .collect(Collectors.toSet()));
+                return dto;
+
+            case HOST:
+            case OTHER:
+            default:
+                return dto;
+        }
     }
 
     public OptionalService fromDto(OptionalServiceDto dto) {
-        return OptionalService.builder()
+        OptionalService optionalService = OptionalService.builder()
                 .type(dto.getType())
                 .alias(dto.getAlias())
                 .description(dto.getDescription())
                 .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
                 .email(dto.getEmail())
                 .build();
+
+        final OptionalServiceTypeEnum type = OptionalServiceTypeEnum.valueOfLabel(dto.getType());
+
+        Validator.validateType(dto);
+
+        switch (type) {
+            case KIDS_PERFORMER:
+                ((KidsPerformer) optionalService).setAgeFrom(dto.getKidAgeFrom());
+                ((KidsPerformer) optionalService).setAgeTo(dto.getKidAgeTo());
+                ((KidsPerformer) optionalService).setKidsPerformerType(dto.getKidPerformerType());
+                return optionalService;
+
+            case INTERPRETER:
+                ((Interpreter) optionalService).setLanguages(
+                        dto.getTranslationLanguages().stream()
+                                .map(TranslationLanguageMapper::fromDto)
+                                .collect(Collectors.toSet()));
+                return optionalService;
+
+            case MUSIC_BAND:
+                ((MusicBand) optionalService).setPeopleCount(dto.getMusicBandPeopleCount());
+                optionalService.setStyles(
+                        dto.getMusicStyle().stream()
+                                .map(MusicStyleMapper::fromDto)
+                                .collect(Collectors.toSet()));
+                return optionalService;
+
+            case MUSICIAN:
+                optionalService.setStyles(
+                        dto.getMusicStyle().stream()
+                                .map(MusicStyleMapper::fromDto)
+                                .collect(Collectors.toSet()));
+                ((Musician) optionalService).setInstrument(dto.getInstrument());
+                return optionalService;
+
+            case DJ:
+            case SINGER:
+                optionalService.setStyles(
+                        dto.getMusicStyle().stream()
+                                .map(MusicStyleMapper::fromDto)
+                                .collect(Collectors.toSet()));
+                return optionalService;
+
+            case HOST:
+            case OTHER:
+            default:
+                return optionalService;
+        }
     }
 
     public OptionalServiceDto toDtoWithDetails(OptionalService optionalService) {

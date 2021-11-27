@@ -1,6 +1,37 @@
 package pjatk.socialeventorganizer.social_event_support.optional_service.enums;
 
+import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Getter
 public enum OptionalServiceTypeEnum {
 
-    KIDS_PERFORMER, MUSICIAN, DJ, MUSIC_BAND, TRANSLATOR, HOST
+    DJ("DJ"),
+    HOST("HOST"),
+    KIDS_PERFORMER("KIDS PERFORMER"),
+    MUSICIAN("MUSICIAN"),
+    MUSIC_BAND("MUSIC BAND"),
+    OTHER("OTHER"),
+    SINGER("SINGER"),
+    INTERPRETER("INTERPRETER");
+
+    private final String value;
+
+    OptionalServiceTypeEnum(String value) {
+        this.value = value;
+    }
+
+    private static final Map<String, OptionalServiceTypeEnum> VALUES = new HashMap<>();
+
+    static {
+        for (OptionalServiceTypeEnum e : values()) {
+            VALUES.put(e.value, e);
+        }
+    }
+
+    public static OptionalServiceTypeEnum valueOfLabel(String label) {
+        return VALUES.get(label);
+    }
 }

@@ -1,24 +1,29 @@
 package pjatk.socialeventorganizer.social_event_support.optional_service.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
-@Builder
+@SuperBuilder
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "optional_service")
 @Entity(name = "optional_service")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type",
+        discriminatorType = DiscriminatorType.STRING)
 public class OptionalService {
 
     @Id
@@ -29,7 +34,7 @@ public class OptionalService {
     @Column
     private String alias;
 
-    @Column
+    @Column(insertable = false, updatable = false)
     private String type;
 
     @Column
@@ -61,5 +66,12 @@ public class OptionalService {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceAvailability> availability;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "service_music_style",
+            joinColumns = @JoinColumn(name = "id_optional_service"),
+            inverseJoinColumns = @JoinColumn(name = "id_music_style"))
+    private Set<MusicStyle> styles = new HashSet<>();
 
 }

@@ -85,12 +85,15 @@ public class CateringService {
     }
 
     public ImmutableList<Catering> search(FilterCateringsDto dto) {
+        String keyword = dto.getKeyword();
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+
         final Set<Long> cuisines = dto.getCuisines().stream()
                 .map(cuisineService::getByName)
                 .map(Cuisine::getId)
                 .collect(Collectors.toSet());
 
-        List<Catering> caterings = cateringRepository.search(cuisines, dto.getKeyword());
+        List<Catering> caterings = cateringRepository.search(cuisines, keyword);
 
         caterings = filterByPrice(dto.getPriceNotLessThen(), dto.getPriceNotMoreThan(), caterings);
 
@@ -138,7 +141,7 @@ public class CateringService {
     }
 
     @Transactional
-    public Catering create(CateringDto dto, long locationId) {
+    public Catering create(CateringDto dto, Long locationId) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
 
         final Business business = businessService.get(userCredentials.getUserId());
@@ -147,38 +150,14 @@ public class CateringService {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
 
-        if (!locationService.exists(locationId)) {
-            throw new IllegalArgumentException("Location does not exist");
+        if (locationId == null) {
+            return createStandaloneCatering(dto, business);
         }
 
-        final Location location = locationService.getWithDetail(locationId);
+        return createCateringWithLocation(dto, locationId, business);
 
-        if (!business.getId().equals(location.getBusiness().getId())) {
-            throw new InvalidCredentialsException(InvalidCredentialsException.Enum.INCORRECT_CREDENTIALS);
-        }
-
-        final Address address = addressService.create(dto.getAddress());
-
-        final List<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
-
-        final Catering catering = CateringMapper.fromDto(dto);
-
-        catering.setCateringAddress(address);
-        catering.setBusiness(business);
-        catering.setCateringBusinessHours(new HashSet<>(businessHours));
-        catering.setCreatedAt(LocalDateTime.now());
-        catering.setModifiedAt(LocalDateTime.now());
-        catering.setLocations(new HashSet<>());
-
-        saveCatering(catering);
-
-        if (dto.isOffersOutsideCatering()) {
-            addCateringToLocationsWithSameCity(catering);
-        } else {
-            addCateringToGivenLocation(catering, locationId);
-        }
-        return catering;
     }
+
 
     @Transactional
     public void addCateringToGivenLocation(Catering catering, long locationId) {
@@ -296,6 +275,62 @@ public class CateringService {
                 .peek(availability -> availability.setCatering(catering))
                 .forEach(cateringAvailabilityRepository::save);
 
+    }
+
+    private Catering createCateringWithLocation(CateringDto dto, Long locationId, Business business) {
+        if (!locationService.exists(locationId)) {
+            throw new IllegalArgumentException("Location does not exist");
+        }
+
+        final Location location = locationService.getWithDetail(locationId);
+
+        if (!business.getId().equals(location.getBusiness().getId())) {
+            throw new InvalidCredentialsException(InvalidCredentialsException.Enum.INCORRECT_CREDENTIALS);
+        }
+
+        final Address address = addressService.create(dto.getAddress());
+
+        final List<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
+
+        final Catering catering = CateringMapper.fromDto(dto);
+
+        catering.setCateringAddress(address);
+        catering.setBusiness(business);
+        catering.setCateringBusinessHours(new HashSet<>(businessHours));
+        catering.setCreatedAt(LocalDateTime.now());
+        catering.setModifiedAt(LocalDateTime.now());
+        catering.setLocations(new HashSet<>());
+
+        saveCatering(catering);
+
+        if (dto.isOffersOutsideCatering()) {
+            addCateringToLocationsWithSameCity(catering);
+        } else {
+            addCateringToGivenLocation(catering, locationId);
+        }
+        return catering;
+    }
+
+    private Catering createStandaloneCatering(CateringDto dto, Business business) {
+        if (!dto.isOffersOutsideCatering()) {
+            throw new IllegalArgumentException("Standalone catering must offer outside catering");
+        }
+        final Address address = addressService.create(dto.getAddress());
+
+        final List<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
+
+        final Catering catering = CateringMapper.fromDto(dto);
+
+        catering.setCateringAddress(address);
+        catering.setBusiness(business);
+        catering.setCateringBusinessHours(new HashSet<>(businessHours));
+        catering.setCreatedAt(LocalDateTime.now());
+        catering.setModifiedAt(LocalDateTime.now());
+        catering.setLocations(new HashSet<>());
+
+        addCateringToLocationsWithSameCity(catering);
+        saveCatering(catering);
+        return catering;
     }
 
 }

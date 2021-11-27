@@ -19,8 +19,8 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     @Query("SELECT c FROM catering AS c " +
             "JOIN c.business cb join cb.user cbu " +
-            "WHERE (:keyword is null or c.name LIKE %:keyword%) " +
-            "OR (:keyword is null or c.description LIKE %:keyword%) " +
+            "WHERE  c.name LIKE %:keyword% " +
+            "OR c.description LIKE %:keyword% " +
             "AND c.deletedAt IS NOT NULL " +
             "AND cbu.isActive = true")
     Page<Catering> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
@@ -40,7 +40,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     Optional<Catering> getByIdWithAvailability(@Param("id") long id, @Param("date") String date);
 
     @Query("SELECT distinct c from catering c left join c.cuisines cu " +
-            "WHERE (:keyword is null or c.name LIKE %:keyword%) " +
+            "WHERE  c.name LIKE %:keyword% " +
             "AND (cu.id IN :cuisines)")
     List<Catering> search(@Param("cuisines") Set<Long> cuisines, @Param("keyword") String keyword);
 }

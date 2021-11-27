@@ -20,6 +20,8 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundExcept
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.Interpreter;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.service.TranslationLanguageService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
@@ -30,6 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
 
 @Service
 @AllArgsConstructor
@@ -44,13 +48,24 @@ public class OptionalServiceService {
 
     private OptionalServiceBusinessService optionalServiceBusinessService;
 
+    private TranslationLanguageService translationLanguageService;
+
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
         final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
         final Page<OptionalService> page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
 
-        return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
+        final List<OptionalService> result = page.get().collect(Collectors.toList());
+        for (OptionalService optionalService : result) {
+            if (optionalService.getType().equals(INTERPRETER.getValue())) {
+                ((Interpreter) optionalService).setLanguages(
+                        new HashSet<>(translationLanguageService.getAllByInterpreterId(optionalService.getId()))
+                );
+            }
+        }
+
+        return ImmutableList.copyOf(result);
 
     }
 
@@ -76,7 +91,6 @@ public class OptionalServiceService {
         final List<OptionalServiceBusinessHours> businessHours = optionalServiceBusinessService.create(dto.getBusinessHours());
 
         final OptionalService optionalService = OptionalServiceMapper.fromDto(dto);
-
 
         optionalService.setBusiness(business);
         optionalService.setOptionalServiceBusinessHours(new HashSet<>(businessHours));
