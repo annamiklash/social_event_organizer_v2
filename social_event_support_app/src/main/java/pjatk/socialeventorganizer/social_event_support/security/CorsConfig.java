@@ -7,6 +7,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig {
+
+    private final long MAX_AGE_SECS = 3600;
+
     /**
      * Disabling CORS
      * Solution from: https://stackoverflow.com/questions/44697883/can-you-completely-disable-cors-support-in-spring
@@ -24,7 +27,6 @@ public class CorsConfig {
 //            }
 //        };
 //    }
-
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -33,7 +35,10 @@ public class CorsConfig {
                 registry
                         .addMapping("/**")
                         .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS")
-                        .allowedOrigins("http://localhost:8080", "http://localhost:3000");
+                        .allowedOrigins("http://localhost:8080", "http://localhost:3000")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(MAX_AGE_SECS);
             }
         };
     }
