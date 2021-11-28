@@ -21,8 +21,8 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
             "left join fetch cfl.catering cflc " +
             "left join fetch lfe.location l " +
             "left join fetch l.locationAddress la " +
-            "left join fetch oe.guests g WHERE oe.id = :id")
-    Optional<OrganizedEvent> getWithAllInformationForSendingInvitations(@Param("id") long id);
+            "left join fetch oe.guests g WHERE oe.id = :id AND oe.customer.id = :customerId")
+    Optional<OrganizedEvent> getWithAllInformationForSendingInvitations(@Param("id") long id, @Param("customerId") long customerId);
 
 
     boolean existsOrganizedEventByIdAndCustomer_Id(long eventId, long customerId);

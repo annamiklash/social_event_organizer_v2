@@ -109,7 +109,15 @@ public class LocationService {
                 .map(locationDescriptionItemService::getByName)
                 .collect(Collectors.toList());
 
-        List<Location> locations = locationRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
+        List<Location> locations;
+
+        if (dto.getDate() != null && dto.getTimeFrom() != null && dto.getTimeTo() != null) {
+            locations = locationRepository.searchWithDateAndTimeFromTimeTo(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
+        } else if (dto.getDate() != null && (dto.getTimeFrom() == null || dto.getTimeTo() == null)) {
+            locations = locationRepository.searchWithDate(dto.getDate());
+        } else {
+            locations = getAll();
+        }
 
         locations = locations.stream()
                 .filter(location -> location.getDescriptions().containsAll(filters))
@@ -221,6 +229,11 @@ public class LocationService {
         location.setCaterings(new HashSet<>(cateringList));
         saveLocation(location);
     }
+
+    private ImmutableList<Location> getAll() {
+        return ImmutableList.copyOf(locationRepository.getAll());
+    }
+
 
     @Transactional(rollbackOn = Exception.class)
     public Location edit(LocationDto dto, long id) {

@@ -277,14 +277,14 @@ public class CustomerService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void sendInvitationToGuest(long eventId, long id) {
+    public void sendInvitationToGuest(long eventId, long customerId) {
         final OrganizedEvent event = organizedEventService.get(eventId);
 
         if (!event.getEventStatus().equals(READY.toString())) {
             throw new IllegalArgumentException("Cannot send invitations while event status is not READY");
         }
 
-        final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(eventId);
+        final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(eventId, customerId);
 
         final OrganizedEventDto invitationContent = createInvitationContent(organizedEvent);
 

@@ -18,8 +18,8 @@ public class BusinessHoursMapper {
         return BusinessHoursDto.builder()
                 .id(businessHours.getId())
                 .day(DayEnum.valueOf(businessHours.getDay()))
-                .timeFrom(DateTimeUtil.toTomeOnlyFromLocalTime(businessHours.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTomeOnlyFromLocalTime(businessHours.getTimeTo()))
+                .timeFrom(DateTimeUtil.toTimeOnlyFromLocalTime(businessHours.getTimeFrom()))
+                .timeTo(DateTimeUtil.toTimeOnlyFromLocalTime(businessHours.getTimeTo()))
                 .build();
     }
 

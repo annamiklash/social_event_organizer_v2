@@ -20,11 +20,21 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
             "WHERE la.status = 'AVAILABLE' " +
-            "AND l.deleted_at IS NOT NULL " +
-            "AND (:date is null or la.date = CAST(:date as timestamp)) " +
-            "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
-            "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
-    List<Location> search(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+            "AND l.deleted_at IS NULL " +
+            "AND la.date = CAST(:date as timestamp) " +
+            "AND la.time_from <= CAST(:timeFrom as timestamp) " +
+            "AND la.time_to >= CAST(:timeTo as timestamp)", nativeQuery = true)
+    List<Location> searchWithDateAndTimeFromTimeTo(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+
+    @Query(value = "SELECT distinct l.* from location l " +
+            "left join address a on l.id_location_address = a.id_address " +
+            "left join location_availability la on la.id_location = l.id_location " +
+            "left join location_description ld on l.id_location = ld.id_location " +
+            "left join description_item di on ld.name = di.name " +
+            "WHERE la.status = 'AVAILABLE' " +
+            "AND l.deleted_at IS NULL " +
+            "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
+    List<Location> searchWithDate(@Param("date") String date);
 
     @Query("SELECT l FROM location l " +
             "left join fetch l.business lb " +
@@ -46,6 +56,16 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     Optional<Location> getByIdWithAvailability(@Param("id") long id, @Param("date") String date);
 
     List<Location> findByLocationAddress_City(String city);
+
+    @Query(value = "SELECT distinct l.* from location l " +
+            "left join address a on l.id_location_address = a.id_address " +
+            "left join location_availability la on la.id_location = l.id_location " +
+            "left join location_description ld on l.id_location = ld.id_location " +
+            "left join description_item di on ld.name = di.name " +
+            "WHERE la.status = 'AVAILABLE' " +
+            "AND l.deleted_at IS NULL",nativeQuery =true)
+    List<Location> getAll();
+
 
 
     @Query(value = "SELECT distinct l.* from location l " +

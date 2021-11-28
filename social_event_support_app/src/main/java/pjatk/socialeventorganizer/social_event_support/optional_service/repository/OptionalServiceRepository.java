@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
+import java.util.List;
+
 @Repository
 public interface OptionalServiceRepository extends JpaRepository<OptionalService, Long> {
 
@@ -17,4 +19,19 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "OR os.alias LIKE %:keyword%")
     Page<OptionalService> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
+
+    @Query(value = "SELECT os from optional_service os " +
+            "left join optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
+            "WHERE sa.date = CAST(:date as timestamp)" +
+            "AND sa.time_from <= CAST(:timeFrom as timestamp) " +
+            "AND sa.time_to >= CAST(:timeTo as timestamp) " +
+            "AND (:type is null or os.type = :type)", nativeQuery = true)
+    List<OptionalService> search(@Param("date") String date, @Param("timeFrom") String timeFrom,
+                                 @Param("timeTo") String timeTo,
+                                 @Param("type") String type);
+
+    @Query(value = "SELECT os from optional_service os " +
+            "left join optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
+            "WHERE (:type is null or os.type = :type)", nativeQuery = true)
+    List<OptionalService> searchWithoutDateTime(@Param("type") String type);
 }

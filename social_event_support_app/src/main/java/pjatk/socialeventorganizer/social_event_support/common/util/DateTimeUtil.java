@@ -3,6 +3,10 @@ package pjatk.socialeventorganizer.social_event_support.common.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -70,13 +74,41 @@ public class DateTimeUtil {
         return localTime.format(TIME_FORMATTER);
     }
 
-    public String toTomeOnlyFromLocalTime(LocalTime localTime) {
+    public String toTimeOnlyFromLocalTime(LocalTime localTime) {
 
         return localTime.format(TIME_FORMATTER);
     }
 
-    public LocalTime test (String time) {
+    public LocalTime test(String time) {
+        if (time == null) {
+            return null;
+        }
         return LocalTime.parse(time,
                 DateTimeFormatter.ofPattern(TIME_FORMAT_WITH_SECONDS));
+    }
+
+    public Time toTimeFromString(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+        Time formattedTime = null;
+        try {
+            if (time != null) {
+                long ms = sdf.parse(time).getTime();
+                formattedTime = new Time(ms);
+                return formattedTime;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String fromTimeToString(Time time) {
+        String pattern = "HH:mm:ss";
+
+        DateFormat df = new SimpleDateFormat(pattern);
+
+// Using DateFormat format method we can create a string
+// representation of a date with the defined format.
+        return df.format(time);
     }
 }
