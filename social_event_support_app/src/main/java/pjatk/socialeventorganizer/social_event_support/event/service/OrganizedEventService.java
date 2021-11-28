@@ -66,21 +66,21 @@ public class OrganizedEventService {
         final OrganizedEvent organizedEvent = get(eventId);
 
         switch (status) {
-            case IN_PROGRESS:
-                organizedEvent.setEventStatus(IN_PROGRESS.toString());
+            case IN_PROGRESS: //possible only when current status = CONFIRMED
+                organizedEvent.setEventStatus(IN_PROGRESS.name());
                 break;
-            case CONFIRMED:
-                organizedEvent.setEventStatus(CONFIRMED.toString());
+            case CONFIRMED: //if current IN_PROGRESS or READY
+                organizedEvent.setEventStatus(CONFIRMED.name());
                 break;
-            case READY:
-                organizedEvent.setEventStatus(READY.toString());
+            case READY: //IF CONFIRMED
+                organizedEvent.setEventStatus(READY.name());
                 break;
-            case CANCELLED:
+            case CANCELLED:  //any stage except for FINISHED
                 //TODO: check if possible to cancel
-                organizedEvent.setEventStatus(CANCELLED.toString());
+                organizedEvent.setEventStatus(CANCELLED.name());
                 break;
             case FINISHED:
-                organizedEvent.setEventStatus(FINISHED.toString());
+                organizedEvent.setEventStatus(FINISHED.name());
                 break;
         }
 
@@ -91,6 +91,6 @@ public class OrganizedEventService {
 
 
     private boolean eventWithIdAndCustomerIdExists(long customerId, long eventId) {
-        return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(customerId, eventId);
+        return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId);
     }
 }

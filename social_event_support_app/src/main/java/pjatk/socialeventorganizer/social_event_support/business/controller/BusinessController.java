@@ -75,7 +75,7 @@ public class BusinessController {
 
         final Business business = businessService.createBusinessAccount(dto);
 
-        return ResponseEntity.ok(BusinessMapper.toDtoWithDetail(business));
+        return ResponseEntity.ok(BusinessMapper.toDto(business));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','BUSINESS')")
@@ -93,10 +93,10 @@ public class BusinessController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             method = RequestMethod.PUT,
-            value = "/{id}/verify",
+            value = "verify",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BusinessDto> verify(@PathVariable long id) {
+    public ResponseEntity<BusinessDto> verify(@RequestParam long id) {
         final Business business = businessService.verify(id);
 
         return ResponseEntity.ok(BusinessMapper.toDto(business));

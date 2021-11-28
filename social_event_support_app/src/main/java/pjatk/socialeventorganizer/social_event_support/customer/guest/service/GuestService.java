@@ -18,6 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,4 +66,35 @@ public class GuestService {
         }
         throw new NotFoundException("No guest with id " + id);
     }
+
+    public Guest create(long customerId, GuestDto dto) {
+        final Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        if (optionalCustomer.isEmpty()) {
+            throw new NotFoundException("No optionalCustomer with id " + customerId);
+        }
+        final Customer customer = optionalCustomer.get();
+        final Guest guest = GuestMapper.fromDto(dto);
+
+        guest.setCustomer(customer);
+        guest.setCreatedAt(LocalDateTime.now());
+        guest.setModifiedAt(LocalDateTime.now());
+        save(guest);
+
+        return guest;
+    }
+
+    public void delete(long customerId, long guestId) {
+        final Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        if (optionalCustomer.isEmpty()) {
+            throw new NotFoundException("No optionalCustomer with id " + customerId);
+        }
+        final Guest guest = get(guestId);
+        guestRepository.delete(guest);
+    }
+
+
+    private void save(Guest guest) {
+        guestRepository.save(guest);
+    }
+
 }

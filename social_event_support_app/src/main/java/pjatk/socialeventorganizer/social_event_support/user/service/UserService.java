@@ -97,7 +97,7 @@ public class UserService {
         final String emailSubject = "Password Reset Request";
         final String content = "To reset your password, click the link below:\n" + appUrl
                 + "/reset?token=" + user.getResetPasswordToken() + "\n\nSent via SocialEventOrganizer app";
-        final SimpleMailMessage passwordResetEmail = EmailUtil.emailBuilder(content, email, emailSubject);
+        final SimpleMailMessage passwordResetEmail = EmailUtil.buildEmail(content, email, emailSubject);
 
         log.info("EMAIL: " + passwordResetEmail.toString());
 
@@ -138,11 +138,7 @@ public class UserService {
     }
 
     public boolean isActive(LoginDto loginDto) {
-        return userRepository.isActive(loginDto.getEmail());
+        return userRepository.active(loginDto.getEmail()).isPresent();
     }
 
-//    public boolean userForbiddenToLogin(LoginDto loginDto) {
-//        final User user = getUserByEmail(loginDto.getEmail());
-//        return isActive(user.getEmail(), user.getType());
-//    }
 }

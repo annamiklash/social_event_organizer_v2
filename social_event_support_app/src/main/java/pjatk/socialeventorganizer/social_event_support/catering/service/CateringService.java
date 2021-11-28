@@ -30,6 +30,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.repository.Cater
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto;
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
@@ -168,7 +169,6 @@ public class CateringService {
         saveCatering(catering);
     }
 
-    @Transactional
     public void addCateringToLocationsWithSameCity(Catering savedCatering) {
         final String city = savedCatering.getCateringAddress().getCity();
         final ImmutableList<Location> locations = locationService.findByCityWithId(city);
@@ -222,7 +222,7 @@ public class CateringService {
                 .map(cateringItem -> cateringItemRepository.getById(cateringItem.getId()))
                 .collect(Collectors.toList());
 
-        items.forEach(cateringItem -> cateringItemRepository.delete(cateringItem));
+        items.forEach(cateringItemRepository::delete);
 
         addressService.delete(catering.getCateringAddress().getId());
 
@@ -303,11 +303,21 @@ public class CateringService {
 
         saveCatering(catering);
 
+        final List<CuisineDto> cuisineDtos = dto.getCuisines();
+
+        final Set<Cuisine> cuisines = cuisineDtos.stream()
+                .map(CuisineDto::getName)
+                .map(cuisineService::getByName)
+                .collect(Collectors.toSet());
+
+        catering.setCuisines(cuisines);
+
         if (dto.isOffersOutsideCatering()) {
             addCateringToLocationsWithSameCity(catering);
         } else {
             addCateringToGivenLocation(catering, locationId);
         }
+        cateringRepository.save(catering);
         return catering;
     }
 
@@ -328,8 +338,20 @@ public class CateringService {
         catering.setModifiedAt(LocalDateTime.now());
         catering.setLocations(new HashSet<>());
 
-        addCateringToLocationsWithSameCity(catering);
         saveCatering(catering);
+
+        final List<CuisineDto> cuisineDtos = dto.getCuisines();
+
+        final Set<Cuisine> cuisines = cuisineDtos.stream()
+                .map(CuisineDto::getName)
+                .map(cuisineService::getByName)
+                .collect(Collectors.toSet());
+
+        catering.setCuisines(cuisines);
+
+        addCateringToLocationsWithSameCity(catering);
+        cateringRepository.save(catering);
+
         return catering;
     }
 

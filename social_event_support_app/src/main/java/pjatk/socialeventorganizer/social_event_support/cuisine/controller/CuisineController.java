@@ -46,8 +46,9 @@ public class CuisineController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CuisineDto> list(@Valid @RequestBody CuisineDto dto) {
+    public ResponseEntity<CuisineDto> create(@Valid @RequestBody CuisineDto dto) {
 
         final Cuisine cuisine = cuisineService.create(dto);
 

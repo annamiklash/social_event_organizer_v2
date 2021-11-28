@@ -21,7 +21,9 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAcces
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
+import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
+import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
@@ -59,24 +61,27 @@ public class BusinessService {
         if (!userService.isNewAccount(userCredentials.getUserId(), userCredentials.getUserType())) {
             throw new ForbiddenAccessException("Cannot access");
         }
-
         final Address address = addressService.create(businessDto.getAddress());
+
         final User user = userService.getById(userCredentials.getUserId());
+        final UserDto userDto = UserMapper.toDto(user);
+        businessDto.setUser(userDto);
 
         final Business business = BusinessMapper.fromDto(businessDto);
+
+        business.setId(user.getId());
         business.setVerificationStatus(NOT_VERIFIED.toString());
         business.setUser(user);
         business.setAddress(address);
+        userService.activate(userCredentials.getLogin());
 
         log.info("TRYING TO SAVE BUSINESS");
         businessRepository.save(business);
 
-        //TODO: verify
         user.setModifiedAt(LocalDateTime.now());
         userService.save(user);
 
         return business;
-
     }
 
     public Business getWithDetail(long id) {

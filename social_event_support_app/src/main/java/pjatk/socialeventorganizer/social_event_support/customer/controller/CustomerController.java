@@ -9,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
+import pjatk.socialeventorganizer.social_event_support.customer.message.dto.MessageDto;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
@@ -20,6 +22,8 @@ import pjatk.socialeventorganizer.social_event_support.event.model.dto.Organized
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.InitialEventBookingDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.model.Location;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
@@ -175,10 +179,46 @@ public class CustomerController {
     public ResponseEntity<Void> sendScheduleToAllGuests(@RequestParam long id,
                                                         @RequestParam long eventId) {
         log.info("SEND INVITE TO GUEST");
-        customerService.sendInvitationToGuest(id, eventId);
+        customerService.sendInvitationToGuest(eventId, id);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "message/location/send",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> sendMessageLocation(@RequestParam long customerId,
+                                                    @RequestParam long locationId, @Valid @RequestBody MessageDto dto) {
+        log.info("SEND MESSAGE");
+        customerService.sendMessage(customerId, locationId, dto, Location.class);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "message/catering/send",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> sendMessageCatering(@RequestParam long customerId,
+                                                    @RequestParam long cateringId, @Valid @RequestBody MessageDto dto) {
+        log.info("SEND MESSAGE");
+        customerService.sendMessage(customerId, cateringId, dto, Catering.class);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "message/service/send",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> sendMessageService(@RequestParam long customerId,
+                                                   @RequestParam long serviceId, @Valid @RequestBody MessageDto dto) {
+        log.info("SEND MESSAGE");
+        customerService.sendMessage(customerId, serviceId, dto, OptionalService.class);
+        return ResponseEntity.ok().build();
+    }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(

@@ -80,7 +80,7 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_catering")
     private Set<CateringAvailability> availability;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "catering_cuisine",
             joinColumns = @JoinColumn(name = "id_catering"),

@@ -44,10 +44,9 @@ public class OrganizedEventController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.PUT,
-            params = {"id"},
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrganizedEventDto> changeEventStatus(@RequestParam long customerId, @RequestParam long eventId, @RequestParam EventStatusEnum status) {
+    public ResponseEntity<OrganizedEventDto> changeEventStatus(@RequestParam long customerId, @RequestParam long eventId,
+                                                               @RequestParam EventStatusEnum status) {
         final OrganizedEvent organizedEvent = organizedEventService.changeStatus(customerId, eventId, status);
 
         return ResponseEntity.ok(OrganizedEventMapper.toDto(organizedEvent));

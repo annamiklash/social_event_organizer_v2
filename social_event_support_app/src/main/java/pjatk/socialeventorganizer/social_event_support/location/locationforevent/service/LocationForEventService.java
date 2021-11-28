@@ -34,8 +34,8 @@ public class LocationForEventService {
 
     }
 
-    public LocationForEvent confirmReservation(long id, long eventId) {
-        final LocationForEvent locationForEvent = findByLocationIdAndEventId(id, eventId);
+    public LocationForEvent confirmReservation(long locationId, long eventId) {
+        final LocationForEvent locationForEvent = findByLocationIdAndEventId(locationId, eventId);
 
         locationForEvent.setConfirmationStatus(CONFIRMED.toString());
         save(locationForEvent);

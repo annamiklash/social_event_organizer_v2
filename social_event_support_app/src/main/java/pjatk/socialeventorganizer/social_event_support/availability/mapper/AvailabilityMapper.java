@@ -24,8 +24,8 @@ public class AvailabilityMapper {
     public LocationAvailability fromDtoToLocationAvailability(AvailabilityDto dto) {
         return LocationAvailability.builder()
                 .date(DateTimeUtil.parseFromString(dto.getDate()))
-                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(dto.getDate() + " " + dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(dto.getDate() + " " + dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(dto.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(dto.getTimeTo()))
                 .status(dto.getStatus())
                 .build();
     }

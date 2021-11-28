@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMap
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -46,6 +48,7 @@ import pjatk.socialeventorganizer.social_event_support.location.locationforevent
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
@@ -139,12 +142,45 @@ public class CustomerService {
 
     }
 
-    public void writeEmail(long customerId, long locationId, MessageDto messageDto) {
+    public void sendMessage(long customerId, long receiverId, MessageDto messageDto, Class clazz) {
+        final User user = userService.getById(customerId);
         final Customer customer = get(customerId);
-        final Location location = locationService.get(locationId);
 
-        messageDto.setReceiverEmail(location.getEmail());
-//        messageDto.setSenderEmail(customer.getEmail());
+        String className = clazz.getName();
+        className = className.substring(className.lastIndexOf(".") + 1);
+
+        switch (className) {
+            case "Location":
+                final Location location = locationService.get(receiverId);
+                messageDto.setReceiverEmail(location.getEmail());
+                break;
+
+            case "Catering":
+                final Catering catering = cateringService.get(receiverId);
+                messageDto.setReceiverEmail(catering.getEmail());
+                break;
+
+            case "OptionalService":
+                final OptionalService optionalService = optionalServiceService.get(receiverId);
+                messageDto.setReceiverEmail(optionalService.getEmail());
+                break;
+
+            default:
+                throw new IllegalArgumentException("Incorrect receiver type");
+        }
+
+        String content = messageDto.getContent();
+        content = new StringBuilder()
+                .append("Message send from user ")
+                .append(customer.getFirstName()).append(" ").append(customer.getLastName()).append(" ")
+                .append("with email").append(" ").append(user.getEmail())
+                .append("\n\n")
+                .append(content).toString();
+
+        final SimpleMailMessage inviteEmail = EmailUtil.buildEmail(content,
+                messageDto.getReceiverEmail(), messageDto.getSubject());
+
+        emailService.sendEmail(inviteEmail);
 
     }
 
@@ -256,16 +292,20 @@ public class CustomerService {
             throw new IllegalArgumentException("Cannot send invitations while event status is not READY");
         }
 
-        final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(id);
+        final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(eventId);
 
         final OrganizedEventDto invitationContent = createInvitationContent(organizedEvent);
 
         final List<GuestDto> guests = invitationContent.getLocations().get(0).getGuests();
 
+        if (CollectionUtils.isEmpty(guests)) {
+            throw new IllegalArgumentException("There are no guests invited to the event");
+        }
+
         for (GuestDto guest : guests) {
             final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, invitationContent);
             final String emailSubject = "Invitation From " + invitationContent.getCustomer().getFirstName() + " " + invitationContent.getCustomer().getLastName();
-            final SimpleMailMessage inviteEmail = EmailUtil.emailBuilder(emailContent, guest.getEmail(), emailSubject);
+            final SimpleMailMessage inviteEmail = EmailUtil.buildEmail(emailContent, guest.getEmail(), emailSubject);
 
             emailService.sendEmail(inviteEmail);
         }

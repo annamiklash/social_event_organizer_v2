@@ -14,9 +14,11 @@ import javax.validation.constraints.NotNull;
 public class MessageDto {
 
     @NotNull
+    private String subject;
+
+    @NotNull
+    private String content;
+
     private String receiverEmail;
 
-    private String senderEmail;
-
-    private String content;
 }

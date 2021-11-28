@@ -17,7 +17,6 @@ public class BusinessMapper {
 
     public Business fromDto(BusinessDto dto) {
         return Business.builder()
-                .id(dto.getUser().getId())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .businessName(dto.getBusinessName())
@@ -25,6 +24,8 @@ public class BusinessMapper {
                 .user(UserMapper.fromDto(dto.getUser()))
                 .build();
     }
+
+
 
     public BusinessDto toDto(Business business) {
         return BusinessDto.builder()

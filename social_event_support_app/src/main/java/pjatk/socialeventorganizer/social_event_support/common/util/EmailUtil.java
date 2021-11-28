@@ -8,7 +8,7 @@ import static pjatk.socialeventorganizer.social_event_support.common.constants.C
 @UtilityClass
 public class EmailUtil {
 
-    public SimpleMailMessage emailBuilder(String content, String sendTo, String subject) {
+    public SimpleMailMessage buildEmail(String content, String sendTo, String subject) {
 
         final SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setFrom(APP_EMAIL);
@@ -19,4 +19,5 @@ public class EmailUtil {
         return simpleMailMessage;
 
     }
+
 }
