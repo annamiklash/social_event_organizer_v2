@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.enums.Mu
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 
@@ -125,6 +126,20 @@ public class OptionalServiceController {
     public ResponseEntity<ImmutableList<MusicStyleEnum>> musicStyles() {
 
         return ResponseEntity.ok(ImmutableList.copyOf(List.of(MusicStyleEnum.values())));
+    }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "allowed/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<OptionalServiceDto>> searchByAppliedFilters(@RequestBody FilterOptionalServiceDto dto) {
+
+        final ImmutableList<OptionalService> list = optionalServiceService.search(dto);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(list.stream()
+                        .map(OptionalServiceMapper::toDto)
+                        .collect(Collectors.toList())));
     }
 
 }

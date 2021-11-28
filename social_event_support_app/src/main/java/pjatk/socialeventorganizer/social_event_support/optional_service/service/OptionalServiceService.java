@@ -19,6 +19,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerifi
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.Interpreter;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.service.TranslationLanguageService;
@@ -26,6 +27,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.reposito
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -49,6 +51,8 @@ public class OptionalServiceService {
     private OptionalServiceBusinessService optionalServiceBusinessService;
 
     private TranslationLanguageService translationLanguageService;
+
+    private EntityManager em;
 
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -119,6 +123,22 @@ public class OptionalServiceService {
         return optionalService;
     }
 
+    public ImmutableList<OptionalService> search(FilterOptionalServiceDto dto) {
+        String keyword = dto.getKeyword();
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+
+        List<OptionalService> optionalServices;
+        if (dto.getDate() != null && dto.getTimeFrom() != null && dto.getTimeTo() != null) {
+            optionalServices = optionalServiceRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo(), dto.getType());
+        }
+        if (dto.getDate() != null && (dto.getTimeFrom() == null || dto.getTimeTo() == null)) {
+            optionalServices = optionalServiceRepository.searchWithoutDateTime(dto.getType());
+
+        }
+        //TODO: FINISH
+        return null;
+    }
+
     //TODO: FINISH
     public void delete(long id) {
         //cannot delete when there are reservations pending
@@ -128,4 +148,6 @@ public class OptionalServiceService {
 
 
     }
+
+
 }

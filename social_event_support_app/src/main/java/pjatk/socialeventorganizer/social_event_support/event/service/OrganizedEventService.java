@@ -50,13 +50,13 @@ public class OrganizedEventService {
         organizedEventRepository.save(organizedEvent);
     }
 
-    public OrganizedEvent getWithAllInformationForSendingInvitations(long id) {
-        final Optional<OrganizedEvent> organizedEvent = organizedEventRepository.getWithAllInformationForSendingInvitations(id);
+    public OrganizedEvent getWithAllInformationForSendingInvitations(long eventId, long customerId) {
+        final Optional<OrganizedEvent> organizedEvent = organizedEventRepository.getWithAllInformationForSendingInvitations(eventId, customerId);
 
         if (organizedEvent.isPresent()) {
             return organizedEvent.get();
         }
-        throw new NotFoundException("No organized event with id " + id);
+        throw new NotFoundException("No organized event with eventId " + eventId);
     }
 
     public OrganizedEvent changeStatus(long customerId, long eventId, EventStatusEnum status) {

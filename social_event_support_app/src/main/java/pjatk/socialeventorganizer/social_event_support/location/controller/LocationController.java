@@ -99,7 +99,8 @@ public class LocationController {
             method = RequestMethod.POST,
             path = "allowed/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<LocationDto>> searchByAppliedFilters(@Valid @RequestBody FilterLocationsDto dto) {
+    public ResponseEntity<ImmutableList<LocationDto>> searchByAppliedFilters(
+            @Valid @RequestBody FilterLocationsDto dto) {
 
         final ImmutableList<Location> list = locationService.search(dto);
 

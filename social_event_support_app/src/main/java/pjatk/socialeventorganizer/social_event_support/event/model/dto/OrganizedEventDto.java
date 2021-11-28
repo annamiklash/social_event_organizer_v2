@@ -16,8 +16,6 @@ import java.util.List;
 @Builder
 public class OrganizedEventDto implements Serializable {
 
-
-    ///TODO: refactor
     private Long id;
 
     private String name;

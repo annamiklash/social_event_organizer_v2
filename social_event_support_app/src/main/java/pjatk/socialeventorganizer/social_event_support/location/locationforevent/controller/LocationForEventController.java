@@ -45,7 +45,7 @@ public class LocationForEventController {
             method = RequestMethod.GET,
             path = "status",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<LocationForEventDto>> listAllUnconfirmed(@RequestParam String status, @RequestParam long locationId) {
+    public ResponseEntity<ImmutableList<LocationForEventDto>> listAllByStatus(@RequestParam String status, @RequestParam long locationId) {
 
         List<LocationForEvent> locationsForEvent = locationForEventService.listAllByStatus(locationId, status);
 
