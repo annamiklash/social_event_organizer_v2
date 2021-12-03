@@ -1,0 +1,2832 @@
+{
+	"info": {
+		"_postman_id": "005f9874-6400-4df2-8c61-c72395476a2a",
+		"name": "SOCIAL_EVENTS_ORG_APP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "REGISTER",
+			"item": [
+				{
+					"name": "POST api/register business",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"business@email.com\",\r\n    \"password\": \"business!1\",\r\n    \"firstName\": \"TEST\",\r\n    \"lastName\": \"Lastname\",\r\n    \"businessName\": \"Best business\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/register/business",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"register",
+								"business"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/register customer",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"customer1@email.com\",\r\n    \"password\": \"customer\",\r\n    \"firstName\": \"Hanna\",\r\n    \"lastName\": \"Miklash\",\r\n    \"birthdate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Tyszkiewicza\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/register/customer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"register",
+								"customer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LOGIN",
+			"item": [
+				{
+					"name": "POST api/login admin",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n    \"email\" : \"admin@gmail.com\",\r\n    \"password\": \"admin\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/login customer",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n    \"email\" : \"customer1@email.com\",\r\n    \"password\": \"customer\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/login business",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n    \"email\" : \"business8@email.com\",\r\n    \"password\": \"business\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LOGOUT",
+			"item": [
+				{
+					"name": "GET http://localhost:8080/api/logout",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ADDRESS",
+			"item": [
+				{
+					"name": "GET api/address/id/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/address?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"address"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET api/address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/address?maxResult=50&firstResult=0&sort=city&order=desc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"address"
+							],
+							"query": [
+								{
+									"key": "maxResult",
+									"value": "50"
+								},
+								{
+									"key": "firstResult",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "city"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BUSINESS",
+			"item": [
+				{
+					"name": "GET api/business",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/business?firstResult=0&maxResult=50&sort=id&order=desc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"business"
+							],
+							"query": [
+								{
+									"key": "firstResult",
+									"value": "0"
+								},
+								{
+									"key": "maxResult",
+									"value": "50"
+								},
+								{
+									"key": "sort",
+									"value": "id"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET api/business/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "GET api/business/id/detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/bisiness",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\" : \"Firsttt\",\r\n    \"lastName\" : \"Last\",\r\n    \"businessName\" : \"Name\",\r\n    \"phoneNumber\": \"123456789\" ,\r\n     \"address\": {\r\n        \"country\" : \"Poland\",\r\n        \"city\" : \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\" : 23,\r\n        \"zipCode\": \"01-157\"\r\n    } \r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/business",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"business"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /api/bisiness",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\" : \"Firsttt\",\r\n    \"lastName\" : \"Last\",\r\n    \"businessName\" : \"Name\",\r\n    \"phoneNumber\": \"123456789\" ,\r\n     \"address\": {\r\n        \"country\" : \"Poland\",\r\n        \"city\" : \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\" : 23,\r\n        \"zipCode\": \"01-157\"\r\n    } \r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/business?id=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"business"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /api/bisiness/verify",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/business/verify?id=15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"business",
+								"verify"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "15"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CATERING",
+			"item": [
+				{
+					"name": "AVAILABILITY",
+					"item": [
+						{
+							"name": "GET /api/locations/2/availability",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/availability/catering?id=3&date=2021-11-16",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"availability",
+										"catering"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "3"
+										},
+										{
+											"key": "date",
+											"value": "2021-11-16"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /api/locations/2/availability",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/availability/catering?id=3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"",
+										"api",
+										"availability",
+										"catering"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GET api/caterings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/caterings/allowed/all?keyword=uk",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings",
+								"allowed",
+								"all"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "uk"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/caterings?id=2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/caterings/allowed?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings",
+								"allowed"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/caterings/id/detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/caterings/allowed/5/detail",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings",
+								"allowed",
+								"5",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST http://localhost:8080/api/caterings",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    },\r\n    \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ],\r\n    \"name\": \"Name\",\r\n    \"email\": \"email@hello.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"serviceCost\": \"20.3\",\r\n    \"description\": \"\",\r\n    \"offersOutsideCatering\": false\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/caterings/new/location?locationId=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings",
+								"new",
+								"location"
+							],
+							"query": [
+								{
+									"key": "locationId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST http://localhost:8080/api/caterings",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    },\r\n    \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ],\r\n    \"name\": \"Name\",\r\n    \"email\": \"s18458@pjwstk.edu.pl\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"serviceCost\": \"20.3\",\r\n    \"description\": \"\",\r\n    \"offersOutsideCatering\": true,\r\n    \"cuisines\": [\r\n        {\r\n            \"name\": \"Mexican\"\r\n        },\r\n        {\r\n            \"name\": \"Vegetarian\"\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/caterings/new",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST http://localhost:8080/api/catering/{id}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"NameEE\",\r\n    \"email\" : \"email@helloooo.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"serviceCost\": \"100.3\",\r\n    \"description\" : \"BLA BLA BLA LOREM IPSUM\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/caterings/edit?id=11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings",
+								"edit"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE http://localhost:8080/api/catering/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/caterings?id=7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/caterings/search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cuisines\": [\r\n        \"Indian\", \"Thai\", \"Vegetarian\"\r\n    ],\r\n    \"priceNotLessThen\": 100,\r\n    \"priceNotMoreThan\": 300\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/caterings/allowed/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"caterings",
+								"allowed",
+								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CATERING_ITEM",
+			"item": [
+				{
+					"name": "GET /api/catering_items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/catering_items",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"catering_items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/catering_items/cateringId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/catering_items?cateringId=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"catering_items"
+							],
+							"query": [
+								{
+									"key": "cateringId",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST http://localhost:8080/api/catering_item/{id}",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"Test\",\r\n    \"description\": \"Description\",\r\n    \"servingPrice\" : \"20.1\",\r\n    \"isVegan\": false,\r\n    \"isVegetarian\" : true,\r\n    \"isGlutenFree\": true,\r\n    \"type\": \"Soup\",\r\n    \"cateringId\" : 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/catering_items?cateringId=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"catering_items"
+							],
+							"query": [
+								{
+									"key": "cateringId",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT api/catering_item/cateringId",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"Name\",\r\n    \"city\": \"Some City\",\r\n    \"streetName\" : \"Nice\",\r\n    \"streetNumber\": 23,\r\n    \"email\" : \"email@helloooo.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"serviceCost\": \"15.3\",\r\n    \"description\" : \"\",\r\n    \"businessId\" : 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/catering_items?id=15&cateringId=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"catering_items"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "15"
+								},
+								{
+									"key": "cateringId",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE http://localhost:8080/api/catering_item/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/catering_item/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"catering_item",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LOCATION",
+			"item": [
+				{
+					"name": "LOCATION EVENT",
+					"item": [
+						{
+							"name": "GET api/event/location/status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/event/location/status?status=CONFIRMED&locationId=3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"event",
+										"location",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "CONFIRMED"
+										},
+										{
+											"key": "locationId",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT /api/event/location/confirm",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/event/location/confirm?id=3&eventId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"event",
+										"location",
+										"confirm"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "3"
+										},
+										{
+											"key": "eventId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "AVAILABILITY",
+					"item": [
+						{
+							"name": "GET /api/locations/2/availability",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/locations/3/availability?date=2021-11-16",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"locations",
+										"3",
+										"availability"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "2021-11-16"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /api/locations/2/availability",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"date\": \"2021-11-30\",\r\n    \"timeFrom\": \"2021-11-30 10:00:00\",\r\n    \"timeTo\": \"2021-11-30 20:00:00\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/availability/location?id=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"availability",
+										"location"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GET /api/locations?id=5",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/allowed?id=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations",
+								"allowed"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/locations/2/detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/allowed/5/detail",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations",
+								"allowed",
+								"5",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/locations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Streetzzzzzz\",\r\n        \"streetNumber\": 666,\r\n        \"zipCode\": \"66-666\"\r\n    },\r\n    \"descriptions\": [\r\n        \"WHEELCHAIR_ACCESSIBLE\",\r\n        \"OUTSIDE_CATERING_AVAILABLE\",\r\n        \"SERVES_FOOD\"\r\n    ],\r\n    \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ],\r\n    \"name\": \"TestTTTTTT\",\r\n    \"email\": \"email@hello.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"seatingCapacity\": 50,\r\n    \"standingCapacity\": 100,\r\n    \"description\": \"Best of the best\",\r\n    \"dailyRentCost\": \"300.0\",\r\n    \"sizeInSqMeters\": 200\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /api/locations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"descriptions\": [\r\n        \"WHEELCHAIR_ACCESSIBLE\",\r\n        \"OUTSIDE_CATERING_AVAILABLE\",\r\n        \"SERVES_FOOD\"\r\n    ],\r\n    \"name\": \"TestTTTTTT\",\r\n    \"email\": \"email@hello.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"seatingCapacity\": 50,\r\n    \"standingCapacity\": 100,\r\n    \"description\": \"Best of the best\",\r\n    \"dailyRentCost\": \"300.0\",\r\n    \"sizeInSqMeters\": 200\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/locations?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /api/locations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"date\": \"2021-11-30\",\r\n        \"timeFrom\": \"2021-11-30 09:00:00\",\r\n        \"timeTo\": \"2021-11-30 19:00:00\"\r\n    },\r\n    {\r\n        \"date\": \"2021-12-01\",\r\n        \"timeFrom\": \"2021-12-01 09:00:00\",\r\n        \"timeTo\": \"2021-12-01 23:00:00\"\r\n    }\r\n]"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/locations?id=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/locations/search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"descriptionItems\": [\r\n        \"HAS_STAGE\"\r\n    ],\r\n    \"date\": \"2021-12-01\",\r\n    \"timeFrom\": \"2021-12-01 18:00:00\",\r\n    \"timeTo\": \"2021-12-01 19:00:00\",\r\n    \"guestCount\": 10,\r\n    \"isSeated\": true\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/locations/allowed/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations",
+								"allowed",
+								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "OPTIONAL SERVICE",
+			"item": [
+				{
+					"name": "AVAILABILITY",
+					"item": [
+						{
+							"name": "GET /api/availability",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/availability/service?id=3&date=2021-11-16",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"availability",
+										"service"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "3"
+										},
+										{
+											"key": "date",
+											"value": "2021-11-16"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /api/availability",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/availability/service?id=3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"",
+										"api",
+										"availability",
+										"service"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GET api/services",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/services/allowed/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"services",
+								"allowed",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET api/services/types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/services/allowed/types",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"services",
+								"allowed",
+								"types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET api/services/id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/services/allowed?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"services",
+								"allowed"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/services",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"alias\": \"test alias\",\r\n    \"type\": \"Host\",\r\n    \"email\": \"email@gmail.com\",\r\n    \"description\": \"description9 fffsdfsd\",\r\n    \"serviceCost\": \"150.00\",\r\n     \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/services",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT api/services/id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"alias\": \"alias9\",\r\n    \"type\": \"Host\",\r\n    \"email\": \"email@gmail.com\",\r\n    \"description\": \"description9\",\r\n    \"serviceCost\": \"290.00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/services?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"services"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET api/services/allowed/music/styles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/services/allowed/music/styles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"services",
+								"allowed",
+								"music",
+								"styles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET api/services/allowed/kid/performer/types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/services/allowed/kid/performer/types",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"services",
+								"allowed",
+								"kid",
+								"performer",
+								"types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CUSTOMER",
+			"item": [
+				{
+					"name": "MESSAGE",
+					"item": [
+						{
+							"name": "POST api/customers/message/service/send",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"subject\": \"TEST\",\r\n    \"message\" : \"TEST TSEET TESTSTTES\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/customers/message/catering/send?customerId=14&cateringId=10",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"customers",
+										"message",
+										"catering",
+										"send"
+									],
+									"query": [
+										{
+											"key": "customerId",
+											"value": "14"
+										},
+										{
+											"key": "cateringId",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GET /api/customers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/customers?id=13",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers?id=13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/customers/13/detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/13/guests",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"13",
+								"guests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/customers",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Tyszkiewicza\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    },\r\n    \"firstName\": \"Hanna\",\r\n    \"lastName\": \"Miklash\",\r\n    \"birthdate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"avatar\": {\r\n        \"path\": \"C:\\\\Users\\\\Anna\\\\Desktop\\\\image.jpg\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT api/customers",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"addressRequest\": {\r\n        \"county\" : \"Poland\",\r\n        \"city\" : \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\" : 23,\r\n        \"zipCode\": \"01-157\"\r\n    },  \r\n    \"firstName\" : \"First\",\r\n    \"lastName\" : \"Last\",\r\n    \"birthDate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/customers?id=13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/customers book",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Mary and Jon's Wedding\",\r\n    \"eventType\": \"WEDDING\",\r\n    \"details\": {\r\n        \"date\": \"2021-11-16\",\r\n        \"startTime\": \"2021-11-16 14:00:00\",\r\n        \"endTime\": \"2021-11-16 18:00:00\",\r\n        \"guests\": 20\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/customers/book/?id=14&locId=7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"book",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "14"
+								},
+								{
+									"key": "locId",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT api/customers/guests/invite",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/guests/invite?customerId=14&eventId=6&locationId=7&guestIds=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"guests",
+								"invite"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "14"
+								},
+								{
+									"key": "eventId",
+									"value": "6"
+								},
+								{
+									"key": "locationId",
+									"value": "7"
+								},
+								{
+									"key": "guestIds",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/customers send invite",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"addressRequest\": {\r\n        \"county\" : \"Poland\",\r\n        \"city\" : \"Warsaw\",\r\n        \"streetName\": \"Tyszkiewicza\",\r\n        \"streetNumber\" : 23,\r\n        \"zipCode\": \"01-157\"\r\n    },  \r\n    \"firstName\" : \"Hanna\",\r\n    \"lastName\" : \"Miklash\",\r\n    \"birthDate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/customers/invite/send?id=9&eventId=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"invite",
+								"send"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "9"
+								},
+								{
+									"key": "eventId",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EVENT",
+			"item": [
+				{
+					"name": "GET /api/events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT/api/events status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/events?customerId=14&eventId=6&status=READY",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"events"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "14"
+								},
+								{
+									"key": "eventId",
+									"value": "6"
+								},
+								{
+									"key": "status",
+									"value": "READY"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DESCRIPTION_ITEM",
+			"item": [
+				{
+					"name": "GET http://localhost:8080/api/location_description/all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/location_description/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"location_description",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET http://localhost:8080/api/location_description/all Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/location_description/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"location_description",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LOCATION_IMAGE",
+			"item": [
+				{
+					"name": "POST http://localhost:8080/api/location/add",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"details\" : [{\r\n        \"image\" : \"1234566\", \r\n        \"alt\": \"alt1\"\r\n    },\r\n    {\r\n        \"image\" : \"qwerrttyyuii\", \r\n        \"alt\": \"alt2\"\r\n    }],\r\n    \"locationId\" : 14\r\n\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/location_image/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"location_image",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET  http://localhost:8080/api/location_image/location/{id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"details\" : [{\r\n        \"image\" : \"1234566\", \r\n        \"alt\": \"alt1\"\r\n    },\r\n    {\r\n        \"image\" : \"qwerrttyyuii\", \r\n        \"alt\": \"alt2\"\r\n    }],\r\n    \"locationId\" : 14\r\n\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/location_image/location/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"location_image",
+								"location",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "USER",
+			"item": [
+				{
+					"name": "GET http://localhost:8080/api/users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST http://localhost:8080/api/reset_password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/reset_password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"reset_password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST http://localhost:8080/api/reset_password Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/reset_password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"reset_password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "APP PROBLEM",
+			"item": [
+				{
+					"name": "GET /api/problems",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/problems",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"problems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/5/report",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"concern\" : \"TESTTTT\",\r\n    \"description\" : \" description helloooo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/problems?userId=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"problems"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/problems?id=5",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/problems?id=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"problems"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/problems/types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/problems",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"problems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /api/problems/2/resolve",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/problems/2/resolve",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"problems",
+								"2",
+								"resolve"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GUEST",
+			"item": [
+				{
+					"name": "GET http://localhost:8080/api/guests",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/guests/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"guests",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET http://localhost:8080/api/guests Copy",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/guests?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"guests"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET http://localhost:8080/api/guests Copy 2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/guests/customer?customerId=14",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"guests",
+								"customer"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "14"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST  /api/guests/new",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Hanna\",\r\n    \"lastName\": \"Miklash\",\r\n    \"email\": \"aniamiklash@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/guests/new?customerId=14",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"guests",
+								"new"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "14"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELTE api/guests delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/guests?customerId=14&id=8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"guests"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "14"
+								},
+								{
+									"key": "id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "REVIEW",
+			"item": [
+				{
+					"name": "LOCATION",
+					"item": [
+						{
+							"name": "POST api/customers review location",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test title\",\r\n    \"comment\": \"comment goes here\",\r\n    \"starRating\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/reviews/location?customerId=9&locationId=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"reviews",
+										"location"
+									],
+									"query": [
+										{
+											"key": "customerId",
+											"value": "9"
+										},
+										{
+											"key": "locationId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST api/customers review location Copy",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test title\",\r\n    \"comment\": \"comment goes here\",\r\n    \"starRating\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/reviews/location?locationId=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"reviews",
+										"location"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CATERING",
+					"item": [
+						{
+							"name": "POST api/customers review catering",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test title\",\r\n    \"comment\": \"comment goes here\",\r\n    \"starRating\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/reviews/catering?customerId=10&cateringId=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"reviews",
+										"catering"
+									],
+									"query": [
+										{
+											"key": "customerId",
+											"value": "10"
+										},
+										{
+											"key": "cateringId",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST api/customers review location Copy",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test title\",\r\n    \"comment\": \"comment goes here\",\r\n    \"starRating\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/reviews/catering?cateringId=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"reviews",
+										"catering"
+									],
+									"query": [
+										{
+											"key": "cateringId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "SERVICE",
+					"item": [
+						{
+							"name": "POST api/customers review service",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test title\",\r\n    \"comment\": \"comment goes here\",\r\n    \"starRating\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/reviews/service?customerid=10&serviceId=10",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"reviews",
+										"service"
+									],
+									"query": [
+										{
+											"key": "customerid",
+											"value": "10"
+										},
+										{
+											"key": "serviceId",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST api/customers review location Copy",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"test title\",\r\n    \"comment\": \"comment goes here\",\r\n    \"starRating\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/reviews/service?serviceId=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"reviews",
+										"service"
+									],
+									"query": [
+										{
+											"key": "serviceId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "CUISINE",
+			"item": [
+				{
+					"name": "GET api/cuisines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cuisines/allowed/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cuisines",
+								"allowed",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST api/cuisines",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"Indian\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/cuisines",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cuisines"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
