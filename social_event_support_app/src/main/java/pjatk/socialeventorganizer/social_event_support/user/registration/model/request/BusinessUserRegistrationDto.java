@@ -1,31 +1,32 @@
-package pjatk.socialeventorganizer.social_event_support.business.model.dto;
+package pjatk.socialeventorganizer.social_event_support.user.registration.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
-import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
-import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.Set;
+import javax.validation.constraints.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BusinessDto implements Serializable {
+public class BusinessUserRegistrationDto {
 
-    public long id;
+    @NotBlank(message = "Email is mandatory")
+    @Email(message = "Email should be valid")
+    @Size(min = 5, max = 100, message
+            = "Email should be between 5 and 100 characters")
+    private String email;
 
-    private UserDto user;
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 8, max = 100, message
+            = "Password number should be at least 8 characters long")
+    @Pattern(regexp = RegexConstants.PASSWORD_REGEX, message = "Password must contain at least one digit, " +
+            "one uppercase letter and a special character")
+    private String password;
 
     @NotBlank(message = "First name is mandatory")
     @Size(min = 1, max = 30, message
@@ -54,10 +55,11 @@ public class BusinessDto implements Serializable {
     @NotNull
     private AddressDto address;
 
+    private UserDto user;
+
     private String verificationStatus;
 
-    private Set<LocationDto> locations;
+    private final Character type = 'B';
 
-    private Set<CateringDto> caterings;
 
 }

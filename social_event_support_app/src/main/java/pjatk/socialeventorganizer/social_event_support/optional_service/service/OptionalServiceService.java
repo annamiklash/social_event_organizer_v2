@@ -79,7 +79,7 @@ public class OptionalServiceService {
         throw new NotFoundException("Service with id " + id + " DOES NOT EXIST");
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public OptionalService create(OptionalServiceDto dto) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
         final Business business = businessService.get(userCredentials.getUserId());

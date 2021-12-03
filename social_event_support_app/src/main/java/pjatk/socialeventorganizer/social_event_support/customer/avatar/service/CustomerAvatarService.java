@@ -20,7 +20,7 @@ public class CustomerAvatarService {
 
     private CustomerAvatarRepository customerAvatarRepository;
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public CustomerAvatar create(CustomerAvatarDto dto) {
 
         AvatarValidator.validate(dto);

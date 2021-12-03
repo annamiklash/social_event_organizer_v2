@@ -8,6 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringM
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
+import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.BusinessUserRegistrationDto;
 
 import java.util.stream.Collectors;
 
@@ -21,13 +22,34 @@ public class BusinessMapper {
                 .lastName(dto.getLastName())
                 .businessName(dto.getBusinessName())
                 .phoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()))
-                .user(UserMapper.fromDto(dto.getUser()))
+                .build();
+    }
+
+    public BusinessDto fromBusinessUserRegistrationDto(BusinessUserRegistrationDto dto) {
+        return BusinessDto.builder()
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .businessName(dto.getBusinessName())
+                .address(dto.getAddress())
+                .phoneNumber(dto.getPhoneNumber())
+                .user(dto.getUser())
                 .build();
     }
 
 
-
     public BusinessDto toDto(Business business) {
+        return BusinessDto.builder()
+                .id(business.getId())
+                .firstName(business.getFirstName())
+                .lastName(business.getLastName())
+                .businessName(business.getBusinessName())
+                .verificationStatus(business.getVerificationStatus())
+                .phoneNumber(String.valueOf(business.getPhoneNumber()))
+                .address(AddressMapper.toDto(business.getAddress()))
+                .build();
+    }
+
+    public BusinessDto toDtoWithUser(Business business) {
         return BusinessDto.builder()
                 .id(business.getId())
                 .firstName(business.getFirstName())

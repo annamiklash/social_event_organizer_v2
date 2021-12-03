@@ -5,10 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
-import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -19,8 +19,10 @@ public class LocationForEventDto {
 
     private Long id;
 
+    @NotNull
     private String timeFrom;
 
+    @NotNull
     private String timeTo;
 
     private int guestsCount;
@@ -30,8 +32,6 @@ public class LocationForEventDto {
     private LocationDto location;
 
     private OrganizedEventDto event;
-
-    private List<GuestDto> guests;
 
     private List<CateringForChosenEventLocationDto> catering;
 }

@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -16,21 +18,24 @@ import java.util.List;
 @Builder
 public class OrganizedEventDto implements Serializable {
 
-
-    ///TODO: refactor
     private Long id;
 
+    @NotNull
     private String name;
 
-    private String startDate;
+    @NotNull
+    private String startDateTime;
 
-    private String endDate;
+    @NotNull
+    private String endDateTime;
 
-    private Boolean isPredefined;
+    @NotNull
+    private int guestCount;
+
+    @NotNull
+    private String eventType;
 
     private String eventStatus;
-
-    private EventTypeDto eventType;
 
     private String createdAt;
 
@@ -40,6 +45,8 @@ public class OrganizedEventDto implements Serializable {
 
     private CustomerDto customer;
 
-    private List<LocationForEventDto> locations;
+    private List<GuestDto> guests;
+
+    private LocationForEventDto location;
 
 }

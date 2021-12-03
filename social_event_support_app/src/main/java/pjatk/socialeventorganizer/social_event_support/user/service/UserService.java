@@ -13,6 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.user.login.model.request.
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
+import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.BusinessUserRegistrationDto;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
 
@@ -69,7 +70,7 @@ public class UserService {
         throw new InvalidCredentialsException(USER_NOT_EXISTS);
     }
 
-    public void registerUser(UserDto dto) {
+    public User registerUser(UserDto dto) {
         if (userExists(dto.getEmail())) {
             throw new UserExistsException(USER_EXISTS);
         }
@@ -82,13 +83,15 @@ public class UserService {
         user.setModifiedAt(LocalDateTime.now());
 
         userRepository.save(user);
+
+        return user;
     }
 
     public User getByResetPasswordToken(String token) {
         return userRepository.findUserByResetPasswordToken(token);
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void sendResetEmailLink(String email, String appUrl) {
         final User user = getUserByEmail(email);
         user.setResetPasswordToken(UUID.randomUUID().toString());
@@ -104,7 +107,7 @@ public class UserService {
         emailService.sendEmail(passwordResetEmail);
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void setNewPassword(String token, NewPasswordRequest newPasswordRequest) {
         final User user = getByResetPasswordToken(token);
 
@@ -141,4 +144,7 @@ public class UserService {
         return userRepository.active(loginDto.getEmail()).isPresent();
     }
 
+    public void registerBusiness(BusinessUserRegistrationDto dto) {
+
+    }
 }

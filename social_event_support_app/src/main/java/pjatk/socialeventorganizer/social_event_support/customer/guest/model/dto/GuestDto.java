@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
+import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -31,5 +32,7 @@ public class GuestDto implements Serializable {
     private String modifiedAt;
 
     private CustomerDto customer;
+
+    private OrganizedEventDto organizedEvent;
 
 }

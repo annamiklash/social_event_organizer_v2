@@ -9,6 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
+import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.CustomerUserRegistrationDto;
 
 import java.util.stream.Collectors;
 
@@ -22,6 +23,16 @@ public class CustomerMapper {
                 .phoneNumber(String.valueOf(customer.getPhoneNumber()))
                 .birthdate(customer.getBirthdate().toString())
 //                .user(UserMapper.toDto(customer.getUser()))
+                .build();
+    }
+
+    public CustomerDto toDtoWithUser(Customer customer) {
+        return CustomerDto.builder()
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
+                .phoneNumber(String.valueOf(customer.getPhoneNumber()))
+                .birthdate(customer.getBirthdate().toString())
+                .user(UserMapper.toDto(customer.getUser()))
                 .build();
     }
 
@@ -82,6 +93,17 @@ public class CustomerMapper {
                 .birthdate(DateTimeUtil.fromStringToFormattedDate(customer.getBirthdate()))
                 .phoneNumber(Converter.convertPhoneNumberString(customer.getPhoneNumber()))
                 .address(AddressMapper.fromDto(customer.getAddress()))
+                .build();
+    }
+
+    public CustomerDto fromCustomerRegistrationDto(CustomerUserRegistrationDto dto) {
+        return CustomerDto.builder()
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .address(dto.getAddress())
+                .birthdate(dto.getBirthdate())
+                .phoneNumber(dto.getPhoneNumber())
+                .user(dto.getUser())
                 .build();
     }
 }

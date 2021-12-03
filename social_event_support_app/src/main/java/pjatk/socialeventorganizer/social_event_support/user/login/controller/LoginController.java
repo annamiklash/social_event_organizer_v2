@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
+import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
+import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +34,7 @@ public class LoginController {
             method = RequestMethod.POST,
             value = "/login",
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Void> login(@RequestBody @Valid LoginDto loginDto, HttpServletRequest request) {
+    ResponseEntity<UserDto> login(@RequestBody @Valid LoginDto loginDto, HttpServletRequest request) {
         request.getSession().invalidate();
 
         if (!userService.isActive(loginDto)) {
@@ -40,7 +42,8 @@ public class LoginController {
         }
         if (securityService.isPasswordMatch(loginDto)) {
             securityService.buildSecurityContext(loginDto, request);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(
+                    UserMapper.toDto(userService.getUserByEmail(loginDto.getEmail())));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

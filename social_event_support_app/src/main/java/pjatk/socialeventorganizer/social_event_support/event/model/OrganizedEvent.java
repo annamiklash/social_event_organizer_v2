@@ -1,14 +1,13 @@
 package pjatk.socialeventorganizer.social_event_support.event.model;
 
 import lombok.*;
+import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -28,14 +27,16 @@ public class OrganizedEvent implements Serializable {
     private String name;
 
     @Column(nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDateTime;
 
-    private LocalDate endDate;
-
-    private Boolean isPredefined;
+    @Column(nullable = false)
+    private LocalDateTime endDateTime;
 
     @Column(nullable = false)
     private String eventStatus;
+
+    @Column(nullable = false)
+    private int guestCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_event_type", nullable = false)
@@ -54,8 +55,16 @@ public class OrganizedEvent implements Serializable {
     @JoinColumn(name = "id_customer", nullable = false)
     private Customer customer;
 
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_organized_event")
-    private Set<LocationForEvent> locationsForEvent = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_location_address")
+    private LocationForEvent locationForEvent;
+
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "event_guest",
+            joinColumns = @JoinColumn(name = "id_organized_event"),
+            inverseJoinColumns = @JoinColumn(name = "id_guest"))
+    private Set<Guest> guests;
 
 }

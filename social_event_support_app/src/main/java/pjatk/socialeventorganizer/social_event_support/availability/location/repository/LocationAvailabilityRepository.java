@@ -16,4 +16,6 @@ public interface LocationAvailabilityRepository extends JpaRepository<LocationAv
             "where la.id_location=:id AND la.status = 'AVAILABLE' " +
             "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
     Optional<List<LocationAvailability>> findAvailabilitiesByLocationIdAndDate(@Param("id") Long id, @Param("date") String date);
+
+
 }

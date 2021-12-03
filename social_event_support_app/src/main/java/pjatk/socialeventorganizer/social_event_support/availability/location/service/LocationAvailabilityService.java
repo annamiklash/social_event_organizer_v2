@@ -37,7 +37,7 @@ public class LocationAvailabilityService {
         throw new NotFoundException("No date " + date + " for location " + locId);
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public List<LocationAvailability> create(List<AvailabilityDto> dtos, long locationId) {
         final Location location = locationService.get(locationId);
 
@@ -54,4 +54,6 @@ public class LocationAvailabilityService {
     private void save(LocationAvailability locationAvailability) {
         locationAvailabilityRepository.save(locationAvailability);
     }
+
+
 }

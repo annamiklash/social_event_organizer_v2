@@ -2,13 +2,15 @@ package pjatk.socialeventorganizer.social_event_support.location.locationforeven
 
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper;
-import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 
 import java.util.stream.Collectors;
+
+import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @UtilityClass
 public class LocationForEventMapper {
@@ -31,15 +33,22 @@ public class LocationForEventMapper {
         return dto;
     }
 
-    public static LocationForEventDto toDtoWithGuestsAndCatering(LocationForEvent location) {
+    public static LocationForEventDto toDtoWithCatering(LocationForEvent location) {
         final LocationForEventDto dto = toDto(location);
-        dto.setGuests(location.getGuests().stream().map(GuestMapper::toDto).collect(Collectors.toList()));
 
-        //TODO: create DTO for cateringForLocation
         dto.setCatering(location.getCateringsForEventLocation().stream()
                 .map(CateringForChosenLocationMapper::toDto)
                 .collect(Collectors.toList()));
 
         return dto;
+    }
+
+    public LocationForEvent fromDto(LocationForEventDto dto) {
+        return LocationForEvent.builder()
+                .guestCount(dto.getGuestsCount())
+                .dateTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(dto.getTimeFrom()))
+                .dateTimeTo(DateTimeUtil.fromStringToFormattedDateTime(dto.getTimeTo()))
+                .confirmationStatus(NOT_CONFIRMED.toString())
+                .build();
     }
 }

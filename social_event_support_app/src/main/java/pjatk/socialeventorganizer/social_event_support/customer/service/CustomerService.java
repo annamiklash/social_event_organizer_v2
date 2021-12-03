@@ -12,9 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
-import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
@@ -37,20 +35,19 @@ import pjatk.socialeventorganizer.social_event_support.customer.repository.Custo
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
-import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.EventBookDateDto;
-import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.InitialEventBookingDto;
 import pjatk.socialeventorganizer.social_event_support.event.service.EventTypeService;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
-import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
-import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
@@ -64,10 +61,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS;
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.READY;
 import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
-import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @Service
 @AllArgsConstructor
@@ -113,27 +108,26 @@ public class CustomerService {
     }
 
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public Customer create(CustomerDto dto) {
-        final UserCredentials userCredentials = securityService.getUserCredentials();
-        if (!userService.isNewAccount(userCredentials.getUserId(), userCredentials.getUserType())) {
-            throw new ForbiddenAccessException("Cannot access");
-        }
-        final AddressDto addressDto = dto.getAddress();
-        final Address address = AddressMapper.fromDto(addressDto);
-        addressService.save(address);
 
+        final Address address = addressService.create(dto.getAddress());
         final Customer customer = CustomerMapper.fromDto(dto);
-        final User userById = userService.getById(userCredentials.getUserId());
+
         if (dto.getAvatar() != null) {
             final CustomerAvatar avatar = customerAvatarService.create(dto.getAvatar());
             customer.setAvatar(avatar);
         }
+        final User user = userService.getById(dto.getUser().getId());
 
-        customer.setId(userById.getId());
-        customer.setUser(userById);
+        customer.setId(user.getId());
+        customer.setUser(user);
         customer.setAddress(address);
-        userService.activate(userCredentials.getLogin());
+
+        user.setActive(true);
+        user.setModifiedAt(LocalDateTime.now());
+
+        userService.save(user);
 
         log.info("TRYING TO SAVE CUSTOMER");
         customerRepository.save(customer);
@@ -265,26 +259,24 @@ public class CustomerService {
     public void addGuestsToEvent(long id, long eventId, long locationId, long[] guestIds) {
 
 //        Optional<Customer> customerRepository.getById(id);
-        final List<Guest> guests = guestService.getGuestsByIds(Arrays.asList(ArrayUtils.toObject(guestIds)));
         final LocationForEvent locationForEvent = locationForEventService.findByLocationIdAndEventId(locationId, eventId);
 
         if (!locationForEvent.getConfirmationStatus().equals(CONFIRMED.toString())) {
             throw new IllegalArgumentException("Cannot invite guests while reservation for location is not confirmed");
         }
 
-        locationForEvent.setGuests(new HashSet<>(guests));
-
-        locationForEventService.save(locationForEvent);
-
+        final List<Guest> guests = guestService.getGuestsByIds(Arrays.asList(ArrayUtils.toObject(guestIds)));
         final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
+
+        organizedEvent.setGuests(new HashSet<>(guests));
+
         organizedEvent.setModifiedAt(LocalDateTime.now());
 
         organizedEventService.save(organizedEvent);
 
     }
 
-
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void sendInvitationToGuest(long eventId, long id) {
         final OrganizedEvent event = organizedEventService.get(eventId);
 
@@ -296,7 +288,7 @@ public class CustomerService {
 
         final OrganizedEventDto invitationContent = createInvitationContent(organizedEvent);
 
-        final List<GuestDto> guests = invitationContent.getLocations().get(0).getGuests();
+        final List<GuestDto> guests = invitationContent.getGuests();
 
         if (CollectionUtils.isEmpty(guests)) {
             throw new IllegalArgumentException("There are no guests invited to the event");
@@ -316,37 +308,23 @@ public class CustomerService {
         return OrganizedEventMapper.toDtoForInvite(organizedEvent);
     }
 
-    @Transactional
-    public LocationForEvent bookInitialLocationForEvent(long id, long locId, InitialEventBookingDto dto) {
+    @Transactional(rollbackOn = Exception.class)
+    public LocationForEvent bookInitialLocationForEvent(long id, long locId, long eventId, LocationForEventDto dto) {
 
-        final Customer customer = get(id);
-        final Location location = locationService.getWithAvailability(locId, dto.getDetails().getDate());
-        final EventBookDateDto details = dto.getDetails();
+        final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
+        final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getStartDateTime().toLocalDate());
+        final boolean isAvailable = locationService.isAvailable(locId, date, dto.getTimeFrom(), dto.getTimeTo());
 
-        locationService.modifyAvailabilityAfterBooking(location, details);
+        if (!isAvailable) {
+            throw new NotAvailableException("Location not available for selected date and time");
+        }
+        final Location location = locationService.get(locId);
 
-        final OrganizedEvent organizedEvent = OrganizedEvent.builder()
-                .customer(customer)
-                .name(dto.getName())
-                .eventType(eventTypeService.getByType(dto.getEventType()))
-                .eventStatus(IN_PROGRESS.toString())
-                .isPredefined(false)
-                .startDate(DateTimeUtil.fromStringToFormattedDate(details.getDate()))
-                .endDate(DateTimeUtil.fromStringToFormattedDate(details.getDate()))
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(LocalDateTime.now())
-                .build();
+        locationService.modifyAvailabilityAfterBooking(location, date, dto.getTimeFrom(), dto.getTimeTo());
 
-        organizedEventService.save(organizedEvent);
-
-        final LocationForEvent locationForEvent = LocationForEvent.builder()
-                .location(location)
-                .guestCount(details.getGuests())
-                .dateTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(details.getStartTime()))
-                .dateTimeTo(DateTimeUtil.fromStringToFormattedDateTime(details.getEndTime()))
-                .confirmationStatus(NOT_CONFIRMED.toString())
-                .event(organizedEvent)
-                .build();
+        final LocationForEvent locationForEvent = LocationForEventMapper.fromDto(dto);
+        locationForEvent.setLocation(location);
+        locationForEvent.setEvent(organizedEvent);
 
         locationForEventService.save(locationForEvent);
 

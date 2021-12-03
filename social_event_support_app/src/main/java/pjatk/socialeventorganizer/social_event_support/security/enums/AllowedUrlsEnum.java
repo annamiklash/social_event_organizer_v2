@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum AllowedUrlsEnum {
 
-    REGISTER ("/api/register"),
+    REGISTER("/api/register/**"),
     LOGIN("/api/login*"),
     LOGOUT("/api/logout*"),
     LOCATIONS("/api/locations/allowed/**"),

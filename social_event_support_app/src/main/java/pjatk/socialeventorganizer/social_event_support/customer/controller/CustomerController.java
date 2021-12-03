@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.message.dto.MessageDto;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
@@ -19,9 +18,9 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.dto.Custom
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
-import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.InitialEventBookingDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
@@ -36,8 +35,6 @@ import java.util.stream.Collectors;
 public class CustomerController {
 
     private final CustomerService customerService;
-
-    private final GuestService guestService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
@@ -132,18 +129,18 @@ public class CustomerController {
         }
     }
 
-
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'NEW_USER')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CustomerDto> create(@RequestBody @Valid CustomerDto dto) {
-
-        final Customer customer = customerService.create(dto);
-
-        return ResponseEntity.ok(CustomerMapper.toDto(customer));
-    }
+//
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'NEW_USER')")
+//    @RequestMapping(
+//            method = RequestMethod.POST,
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<CustomerDto> create(@RequestBody @Valid CustomerDto dto) {
+//
+//        final Customer customer = customerService.create(dto);
+//
+//        return ResponseEntity.ok(CustomerMapper.toDto(customer));
+//    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
@@ -228,9 +225,10 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrganizedEventConfirmationDto> bookLocationForEvent(@RequestParam long id,
                                                                               @RequestParam long locId,
-                                                                              @Valid @RequestBody InitialEventBookingDto dto) {
+                                                                              @RequestParam long eventId,
+                                                                              @Valid @RequestBody LocationForEventDto dto) {
 
-        final LocationForEvent locationForEvent = customerService.bookInitialLocationForEvent(id, locId, dto);
+        final LocationForEvent locationForEvent = customerService.bookInitialLocationForEvent(id, locId, eventId, dto);
         return ResponseEntity.ok(OrganizedEventMapper.toOrganizedConfirmationDto(locationForEvent));
 
     }

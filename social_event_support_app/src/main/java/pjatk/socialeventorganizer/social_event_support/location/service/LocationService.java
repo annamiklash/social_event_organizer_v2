@@ -24,7 +24,6 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
-import pjatk.socialeventorganizer.social_event_support.event.model.dto.initial_booking.EventBookDateDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
@@ -94,6 +93,11 @@ public class LocationService {
         throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
     }
 
+    public boolean isAvailable(long locationId, String date, String timeFrom, String timeTo) {
+        return locationRepository.available(locationId, date, timeFrom, timeTo).isPresent();
+
+    }
+
 
     public boolean exists(long id) {
         return locationRepository.existsById(id);
@@ -146,7 +150,7 @@ public class LocationService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public Location create(LocationDto dto) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
 
@@ -218,7 +222,7 @@ public class LocationService {
         saveLocation(location);
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public Location edit(LocationDto dto, long id) {
         final Location location = get(id);
 
@@ -268,13 +272,13 @@ public class LocationService {
         //set deletedAt
     }
 
-    public void modifyAvailabilityAfterBooking(Location location, EventBookDateDto details) {
+    public void modifyAvailabilityAfterBooking(Location location, String eventDate, String dateTimeFrom, String dateTimeTo) {
 
         final Set<LocationAvailability> locationAvailability = location.getAvailability();
 
-        final LocalDate date = DateTimeUtil.fromStringToFormattedDate(details.getDate());
-        final LocalDateTime timeFrom = DateTimeUtil.fromStringToFormattedDateTime(details.getStartTime());
-        final LocalDateTime timeTo = DateTimeUtil.fromStringToFormattedDateTime(details.getEndTime());
+        final LocalDate date = DateTimeUtil.fromStringToFormattedDate(eventDate);
+        final LocalDateTime timeFrom = DateTimeUtil.fromStringToFormattedDateTime(dateTimeFrom);
+        final LocalDateTime timeTo = DateTimeUtil.fromStringToFormattedDateTime(dateTimeTo);
 
         final List<LocationAvailability> availabilityForDate = locationAvailability.stream()
                 .filter(availability -> availability.getDate().equals(date))

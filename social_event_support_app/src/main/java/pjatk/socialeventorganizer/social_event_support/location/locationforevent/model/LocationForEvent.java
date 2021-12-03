@@ -2,7 +2,6 @@ package pjatk.socialeventorganizer.social_event_support.location.locationforeven
 
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
-import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 
@@ -42,8 +41,7 @@ public class LocationForEvent implements Serializable {
     @JoinColumn(name = "id_location", nullable = false)
     private Location location;
 
-    @ManyToOne
-    @JoinColumn(name = "id_organized_event", nullable = false)
+    @OneToOne(mappedBy = "locationForEvent", optional = false)
     private OrganizedEvent event;
 
     @EqualsAndHashCode.Exclude
@@ -51,11 +49,5 @@ public class LocationForEvent implements Serializable {
     @JoinColumn(name = "id_location_for_event")
     private Set<CateringForChosenEventLocation> cateringsForEventLocation = new HashSet<>();
 
-    @EqualsAndHashCode.Exclude
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "location_for_event_guest",
-            joinColumns = @JoinColumn(name = "id_location_for_event"),
-            inverseJoinColumns = @JoinColumn(name = "id_guest"))
-    private Set<Guest> guests = new HashSet<>();
+
 }

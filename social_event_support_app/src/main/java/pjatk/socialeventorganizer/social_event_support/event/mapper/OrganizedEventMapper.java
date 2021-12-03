@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.event.mapper;
 
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
@@ -11,6 +12,8 @@ import pjatk.socialeventorganizer.social_event_support.location.locationforevent
 
 import java.util.stream.Collectors;
 
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS;
+
 @UtilityClass
 public class OrganizedEventMapper {
 
@@ -18,11 +21,12 @@ public class OrganizedEventMapper {
         return OrganizedEventDto.builder()
                 .id(organizedEvent.getId())
                 .name(organizedEvent.getName())
-                .startDate(String.valueOf(organizedEvent.getStartDate()))
-                .endDate(String.valueOf(organizedEvent.getEndDate()))
-                .isPredefined(organizedEvent.getIsPredefined())
+                .startDateTime(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
+                .endDateTime(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
                 .eventStatus(organizedEvent.getEventStatus())
-                .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()))
+                .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()).getType())
+                .createdAt(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
+                .modifiedAt(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getModifiedAt()))
                 .build();
     }
 
@@ -30,12 +34,13 @@ public class OrganizedEventMapper {
         return OrganizedEventDto.builder()
                 .id(organizedEvent.getId())
                 .name(organizedEvent.getName())
-                .startDate(String.valueOf(organizedEvent.getStartDate()))
-                .endDate(String.valueOf(organizedEvent.getEndDate()))
-                .isPredefined(organizedEvent.getIsPredefined())
+                .startDateTime(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
+                .endDateTime(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
                 .eventStatus(organizedEvent.getEventStatus())
-                .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()))
+                .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()).getType())
                 .customer(CustomerMapper.toDto(organizedEvent.getCustomer()))
+                .createdAt(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
+                .modifiedAt(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getModifiedAt()))
                 .build();
     }
 
@@ -50,18 +55,27 @@ public class OrganizedEventMapper {
 
     }
 
-    public static OrganizedEventDto toDtoForInvite(OrganizedEvent organizedEvent) {
+    public OrganizedEventDto toDtoForInvite(OrganizedEvent organizedEvent) {
         return OrganizedEventDto.builder()
                 .id(organizedEvent.getId())
                 .name(organizedEvent.getName())
-                .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()))
-                .startDate(DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getStartDate()))
+                .startDateTime(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
+                .endDateTime(DateTimeUtil.toStringFromLocalDateTime(organizedEvent.getStartDateTime()))
+                .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()).getType())
                 .customer(CustomerMapper.toDto(organizedEvent.getCustomer()))
-                .locations(organizedEvent.getLocationsForEvent()
-                        .stream()
-                        .map(LocationForEventMapper::toDtoWithGuestsAndCatering)
-                        .collect(Collectors.toList()))
+                .guests(organizedEvent.getGuests().stream().map(GuestMapper::toDto).collect(Collectors.toList()))
+                .location(LocationForEventMapper.toDtoWithCatering(organizedEvent.getLocationForEvent()))
                 .build();
 
+    }
+
+    public OrganizedEvent fromDto(OrganizedEventDto dto) {
+        return OrganizedEvent.builder()
+                .name(dto.getName())
+                .startDateTime(DateTimeUtil.fromStringToFormattedDateTime(dto.getStartDateTime()))
+                .endDateTime(DateTimeUtil.fromStringToFormattedDateTime(dto.getEndDateTime()))
+                .guestCount(dto.getGuestCount())
+                .eventStatus(IN_PROGRESS.name())
+                .build();
     }
 }

@@ -17,13 +17,9 @@ import pjatk.socialeventorganizer.social_event_support.business.model.dto.Busine
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
-import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
-import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
@@ -54,32 +50,25 @@ public class BusinessService {
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public Business createBusinessAccount(BusinessDto businessDto) {
-        final UserCredentials userCredentials = securityService.getUserCredentials();
 
-        if (!userService.isNewAccount(userCredentials.getUserId(), userCredentials.getUserType())) {
-            throw new ForbiddenAccessException("Cannot access");
-        }
         final Address address = addressService.create(businessDto.getAddress());
-
-        final User user = userService.getById(userCredentials.getUserId());
-        final UserDto userDto = UserMapper.toDto(user);
-        businessDto.setUser(userDto);
-
         final Business business = BusinessMapper.fromDto(businessDto);
+        final User user = userService.getById(businessDto.getUser().getId());
 
         business.setId(user.getId());
-        business.setVerificationStatus(NOT_VERIFIED.toString());
+        business.setVerificationStatus(NOT_VERIFIED.name());
         business.setUser(user);
         business.setAddress(address);
-        userService.activate(userCredentials.getLogin());
+
+        user.setActive(true);
+        user.setModifiedAt(LocalDateTime.now());
+
+        userService.save(user);
 
         log.info("TRYING TO SAVE BUSINESS");
         businessRepository.save(business);
-
-        user.setModifiedAt(LocalDateTime.now());
-        userService.save(user);
 
         return business;
     }

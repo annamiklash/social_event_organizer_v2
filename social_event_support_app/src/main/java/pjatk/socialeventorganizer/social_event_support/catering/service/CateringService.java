@@ -141,7 +141,7 @@ public class CateringService {
 
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public Catering create(CateringDto dto, Long locationId) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
 
@@ -160,7 +160,7 @@ public class CateringService {
     }
 
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void addCateringToGivenLocation(Catering catering, long locationId) {
 
         final Location location = locationService.get(locationId);
@@ -214,7 +214,7 @@ public class CateringService {
     }
 
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void deleteCatering(Long id) {
         final Catering catering = getWithDetail(id);
 
@@ -262,7 +262,7 @@ public class CateringService {
         throw new NotFoundException("Catering with id " + id + " DOES NOT EXIST");
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void addAvailability(List<AvailabilityDto> dtos, long cateringId) {
         final Catering catering = get(cateringId);
 

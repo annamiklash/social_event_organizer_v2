@@ -15,13 +15,10 @@ import javax.validation.constraints.NotNull;
 public class EventBookDateDto {
 
     @NotNull
-    private String date;
+    private String startDateTime;
 
     @NotNull
-    private String startTime;
-
-    @NotNull
-    private String endTime;
+    private String endDateTime;
 
     @NotNull
     private int guests;

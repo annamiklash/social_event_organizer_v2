@@ -7,16 +7,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+
+import javax.validation.Valid;
 
 @Slf4j
 @AllArgsConstructor
@@ -50,5 +49,15 @@ public class OrganizedEventController {
         final OrganizedEvent organizedEvent = organizedEventService.changeStatus(customerId, eventId, status);
 
         return ResponseEntity.ok(OrganizedEventMapper.toDto(organizedEvent));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OrganizedEventDto> create(@RequestBody @Valid OrganizedEventDto dto) {
+        final OrganizedEvent organizedEvent = organizedEventService.create(dto);
+        return ResponseEntity.ok(OrganizedEventMapper.toDtoWithCustomer(organizedEvent));
     }
 }
