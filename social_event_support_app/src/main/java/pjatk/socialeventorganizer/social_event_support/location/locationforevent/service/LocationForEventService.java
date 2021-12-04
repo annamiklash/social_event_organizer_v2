@@ -32,8 +32,6 @@ public class LocationForEventService {
 
     private final LocationForEventRepository locationForEventRepository;
 
-    private final LocationForEventService locationForEventService;
-
     private final OrganizedEventService organizedEventService;
 
     private final CustomerRepository customerRepository;
@@ -67,7 +65,7 @@ public class LocationForEventService {
         locationForEvent.setLocation(location);
         locationForEvent.setEvent(organizedEvent);
 
-        locationForEventService.save(locationForEvent);
+        save(locationForEvent);
 
         return locationForEvent;
     }

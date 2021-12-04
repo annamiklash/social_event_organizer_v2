@@ -29,7 +29,7 @@ public class OrganizedEvent implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "event_date", nullable = false)
     private LocalDate date;
 
     @Column(nullable = false)
@@ -63,7 +63,7 @@ public class OrganizedEvent implements Serializable {
     private Customer customer;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_location_address")
+    @JoinColumn(name = "id_organized_event")
     private LocationForEvent locationForEvent;
 
     @EqualsAndHashCode.Exclude

@@ -44,6 +44,7 @@ public class OrganizedEventController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
+            path = "detail",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrganizedEventDto> get(@RequestParam long eventId) {
@@ -54,6 +55,7 @@ public class OrganizedEventController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
+            path = "customer",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<OrganizedEventDto>> findAllByCustomerIdAndTab(@RequestParam long customerId,
@@ -83,10 +85,10 @@ public class OrganizedEventController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrganizedEventDto> create(@RequestBody @Valid OrganizedEventDto dto) {
-        final OrganizedEvent organizedEvent = organizedEventService.create(dto);
+    public ResponseEntity<OrganizedEventDto> create(@RequestParam long customerId,
+                                                    @RequestBody @Valid OrganizedEventDto dto) {
+        final OrganizedEvent organizedEvent = organizedEventService.create(customerId, dto);
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithCustomer(organizedEvent));
     }
-
 
 }

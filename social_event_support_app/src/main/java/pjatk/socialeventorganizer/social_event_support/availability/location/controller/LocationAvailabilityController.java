@@ -29,10 +29,11 @@ public class LocationAvailabilityController {
     private final LocationAvailabilityService locationAvailabilityService;
 
     @RequestMapping(
+            path = "allowed",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<AvailabilityDto>> list(@RequestParam @NotNull long id,
-                                                               @RequestParam @NotNull String date) {
+    public ResponseEntity<ImmutableList<AvailabilityDto>> list(@RequestParam long id,
+                                                               @RequestParam String date) {
 
         final List<LocationAvailability> availabilities = locationAvailabilityService.findAllByLocationIdAndDate(id, date);
 

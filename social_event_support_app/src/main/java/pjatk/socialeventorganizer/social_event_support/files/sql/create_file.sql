@@ -201,13 +201,13 @@ CREATE TABLE location_description
 -- Table: location_for_event
 CREATE TABLE location_for_event
 (
-    id_location_for_event serial    NOT NULL,
-    time_from             timestamp NOT NULL,
-    time_to               timestamp NULL,
-    guests                int       not null,
-    confirmation_status   varchar   not null,
-    id_organized_event    int       NOT NULL,
-    id_location           int       NOT NULL,
+    id_location_for_event serial  NOT NULL,
+    time_from             time    NOT NULL,
+    time_to               time    NULL,
+    guests                int     NOT null,
+    confirmation_status   varchar NOT null,
+    id_organized_event    int     NOT NULL,
+    id_location           int     NOT NULL,
     CONSTRAINT location_for_event_pk PRIMARY KEY (id_location_for_event)
 );
 
@@ -302,10 +302,11 @@ CREATE TABLE organized_event
 (
     id_organized_event serial      NOT NULL,
     name               varchar(50) NOT NULL,
-    start_date         date        NOT NULL,
-    end_date           date        NULL,
-    is_predefined      boolean     NOT NULL,
+    event_date         date        NOT NULL,
+    start_time         time        NOT NULL,
+    end_time           time        NOT NULL,
     event_status       varchar(30) NOT NULL,
+    guest_count        int         NOT NULL,
     created_at         timestamp   NOT NULL,
     modified_at        timestamp   NOT NULL,
     deleted_at         timestamp   NULL,
@@ -317,8 +318,8 @@ CREATE TABLE organized_event
 -- Table: organized_event_guest
 CREATE TABLE event_guest
 (
-    id_guest              int NOT NULL,
-    id_event             int NOT NULL,
+    id_guest int NOT NULL,
+    id_event int NOT NULL,
     CONSTRAINT event_guest_pk PRIMARY KEY (id_guest, id_event)
 );
 
@@ -1179,11 +1180,11 @@ VALUES (1, 1),
        (2, 10);
 
 insert into service_translator_language (id_optional_service, id_language)
-VALUES (4,7),
-       (4,2),
-       (10,1),
-       (10,5),
-       (10,7);
+VALUES (4, 7),
+       (4, 2),
+       (10, 1),
+       (10, 5),
+       (10, 7);
 
 insert into optional_service_image(image, alt, id_optional_service)
 values ('img1', 'alt1', 1),
@@ -1244,18 +1245,23 @@ VALUES ('WEDDING'),
        ('PARTY'),
        ('OTHER');
 
-INSERT INTO organized_event (start_date, is_predefined, event_status, id_customer, id_event_type, created_at,
-                             modified_at, deleted_at, name)
-VALUES ('2021-03-23', false, 'READY', 9, 1, (select current_timestamp), (select current_timestamp), null,
-        'CELEBRATION'),
-       ('2021-03-29', false, 'IN_PLANNING', 10, 3, (select current_timestamp), (select current_timestamp), null,
-        'CELEBRATION'),
-       ('2021-04-30', false, 'IN_PLANNING', 11, 5, (select current_timestamp), (select current_timestamp), null,
-        'CELEBRATION'),
-       ('2021-05-05', false, 'FINISHED', 12, 2, (select current_timestamp), (select current_timestamp), null,
-        'CELEBRATION'),
-       ('2021-05-01', false, 'FINISHED', 13, 5, (select current_timestamp), (select current_timestamp), null,
-        'CELEBRATION');
+INSERT INTO organized_event (event_date, start_time, end_time, event_status, id_customer, id_event_type, created_at,
+                             modified_at, deleted_at, name, guest_count)
+VALUES ('2021-03-23', '15:00:00', '20:00:00', 'READY', 9, 1, (select current_timestamp), (select current_timestamp),
+        null,
+        'CELEBRATION', 10),
+       ('2021-03-29', '15:00:00', '20:00:00', 'IN_PLANNING', 10, 3, (select current_timestamp),
+        (select current_timestamp), null,
+        'CELEBRATION', 10),
+       ('2021-04-30', '15:00:00', '20:00:00', 'IN_PLANNING', 11, 5, (select current_timestamp),
+        (select current_timestamp), null,
+        'CELEBRATION', 10),
+       ('2021-05-05', '15:00:00', '20:00:00', 'FINISHED', 12, 2, (select current_timestamp), (select current_timestamp),
+        null,
+        'CELEBRATION', 10),
+       ('2021-05-01', '15:00:00', '20:00:00', 'FINISHED', 13, 5, (select current_timestamp), (select current_timestamp),
+        null,
+        'CELEBRATION', 10);
 
 
 insert into location_for_event(time_from, time_to, id_organized_event, id_location, guests, confirmation_status)

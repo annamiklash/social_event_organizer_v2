@@ -9,7 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.optional
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Builder
@@ -25,10 +25,10 @@ public class LocationForEvent implements Serializable {
     private Long id;
 
     @Column(name = "time_from")
-    private LocalDateTime dateTimeFrom;
+    private LocalTime timeFrom;
 
     @Column(name = "time_to")
-    private LocalDateTime dateTimeTo;
+    private LocalTime timeTo;
 
     @Min(1)
     @Column(name = "guests")

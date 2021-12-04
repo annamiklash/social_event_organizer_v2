@@ -18,9 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEve
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
-import pjatk.socialeventorganizer.social_event_support.exceptions.ForbiddenAccessException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -140,13 +138,8 @@ public class OrganizedEventService {
         return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId);
     }
 
-    public OrganizedEvent create(OrganizedEventDto dto) {
-        final UserCredentials userCredentials = securityService.getUserCredentials();
-        if (!userService.isNewAccount(userCredentials.getUserId(), userCredentials.getUserType())) {
-            throw new ForbiddenAccessException("Cannot access");
-        }
-
-        final Customer customer = customerRepository.findById(userCredentials.getUserId())
+    public OrganizedEvent create(long customerId, OrganizedEventDto dto) {
+        final Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         final OrganizedEvent organizedEvent = OrganizedEventMapper.fromDto(dto);
@@ -159,8 +152,6 @@ public class OrganizedEventService {
         save(organizedEvent);
 
         return organizedEvent;
-
     }
-
 
 }
