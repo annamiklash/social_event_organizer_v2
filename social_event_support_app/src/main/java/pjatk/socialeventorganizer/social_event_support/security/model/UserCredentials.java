@@ -17,6 +17,4 @@ public class UserCredentials {
     Long userId;
 
     Character userType;
-
-    Boolean isNewAccount;
 }

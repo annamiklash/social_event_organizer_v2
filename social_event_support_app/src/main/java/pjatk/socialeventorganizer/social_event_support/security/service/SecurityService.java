@@ -54,9 +54,6 @@ public class SecurityService {
                 .userType(user.getType())
                 .build();
 
-        boolean isNew = isNewAccount(user.getId(), user.getType());
-        userCredentials.setIsNewAccount(isNew);
-
         final List<String> authorities = getAuthorities(userCredentials);
         final List<SimpleGrantedAuthority> grantedAuthorities = authorities.stream()
                 .map(SimpleGrantedAuthority::new)
@@ -93,9 +90,6 @@ public class SecurityService {
             authorities.add("ADMIN");
         }
 
-        if (userCredentials.getIsNewAccount()) {
-            authorities.add("NEW_USER");
-        }
         return authorities;
     }
 
