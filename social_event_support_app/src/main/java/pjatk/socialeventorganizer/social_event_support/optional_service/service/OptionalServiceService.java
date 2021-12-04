@@ -54,8 +54,6 @@ public class OptionalServiceService {
 
     private EntityManager em;
 
-    private EntityManager em;
-
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
