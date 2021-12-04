@@ -44,7 +44,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join fetch l.availability la where l.id = :id")
     Optional<Location> getByIdWithDetail(@Param("id") Long id);
 
-
     @Query("SELECT l FROM location AS l " +
             "WHERE l.name LIKE %:keyword% " +
             "OR  l.description LIKE %:keyword%")

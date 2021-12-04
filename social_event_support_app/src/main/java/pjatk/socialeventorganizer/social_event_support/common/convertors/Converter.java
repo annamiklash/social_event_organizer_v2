@@ -17,7 +17,7 @@ public class Converter {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     public BigDecimal convertPriceString(String inputPrice) {
-       String format = "";
+        String format = "";
         try {
             format = String.format("%.2f", Double.parseDouble(inputPrice));
         } catch (NullPointerException e) {
@@ -31,9 +31,8 @@ public class Converter {
     }
 
     public String convertDescriptionsString(String description) {
-        final Optional<String> optional = Optional.ofNullable(description)
-                .filter(s -> !s.isEmpty());
-        return optional.orElse(null);
+        return Optional.ofNullable(description)
+                .filter(s -> !s.isEmpty()).orElse(null);
     }
 
     public LocalDateTime fromStringToFormattedDateTime(String date) {

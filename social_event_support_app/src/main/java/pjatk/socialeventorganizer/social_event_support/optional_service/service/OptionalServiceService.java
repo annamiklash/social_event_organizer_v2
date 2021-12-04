@@ -42,15 +42,15 @@ import static pjatk.socialeventorganizer.social_event_support.optional_service.e
 @Slf4j
 public class OptionalServiceService {
 
-    private OptionalServiceRepository optionalServiceRepository;
+    private final OptionalServiceRepository optionalServiceRepository;
 
-    private BusinessService businessService;
+    private final BusinessService businessService;
 
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
-    private OptionalServiceBusinessService optionalServiceBusinessService;
+    private final OptionalServiceBusinessService optionalServiceBusinessService;
 
-    private TranslationLanguageService translationLanguageService;
+    private final TranslationLanguageService translationLanguageService;
 
     private EntityManager em;
 
@@ -137,6 +137,11 @@ public class OptionalServiceService {
         }
         //TODO: FINISH
         return null;
+    }
+
+    public boolean isAvailable(long serviceId, String date, String timeFrom, String timeTo) {
+        return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
+
     }
 
     //TODO: FINISH

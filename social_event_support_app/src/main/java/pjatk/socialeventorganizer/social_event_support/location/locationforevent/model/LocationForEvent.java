@@ -4,12 +4,12 @@ import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -45,9 +45,14 @@ public class LocationForEvent implements Serializable {
     private OrganizedEvent event;
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location_for_event")
-    private Set<CateringForChosenEventLocation> cateringsForEventLocation = new HashSet<>();
+    private Set<CateringForChosenEventLocation> cateringsForEventLocation;
+
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_location_for_event")
+    private Set<OptionalServiceForChosenLocation> services;
 
 
 }

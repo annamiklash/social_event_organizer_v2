@@ -264,7 +264,6 @@ public class LocationService {
                 location.removeDescriptionItem(locationDescriptionItem);
             }
         }
-
         location.setModifiedAt(LocalDateTime.now());
 
         saveLocation(location);
@@ -306,7 +305,7 @@ public class LocationService {
 
         locationAvailabilityRepository.delete(availability);
 
-        modified.forEach(modifiedAvailability -> locationAvailabilityRepository.saveAndFlush(modifiedAvailability));
+        modified.forEach(locationAvailabilityRepository::saveAndFlush);
 
     }
 

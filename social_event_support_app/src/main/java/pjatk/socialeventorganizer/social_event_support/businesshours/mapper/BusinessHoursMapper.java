@@ -26,8 +26,8 @@ public class BusinessHoursMapper {
     public LocationBusinessHours fromDtoToLocation(BusinessHoursDto dto) {
         return LocationBusinessHours.builder()
                 .day(dto.getDay().name())
-                .timeFrom(DateTimeUtil.test(dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.test(dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeFrom()))
+                .timeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()))
                 .build();
     }
 

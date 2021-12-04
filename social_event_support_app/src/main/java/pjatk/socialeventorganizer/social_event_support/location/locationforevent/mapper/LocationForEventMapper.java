@@ -7,6 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEve
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.mapper.OptionalServiceForLocationMapper;
 
 import java.util.stream.Collectors;
 
@@ -36,8 +37,22 @@ public class LocationForEventMapper {
     public static LocationForEventDto toDtoWithCatering(LocationForEvent location) {
         final LocationForEventDto dto = toDto(location);
 
-        dto.setCatering(location.getCateringsForEventLocation().stream()
+        dto.setCaterings(location.getCateringsForEventLocation().stream()
                 .map(CateringForChosenLocationMapper::toDto)
+                .collect(Collectors.toList()));
+
+        return dto;
+    }
+
+    public static LocationForEventDto toDtoWithDetail(LocationForEvent location) {
+        final LocationForEventDto dto = toDto(location);
+
+        dto.setCaterings(location.getCateringsForEventLocation().stream()
+                .map(CateringForChosenLocationMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setOptionalServices(location.getServices().stream()
+                .map(OptionalServiceForLocationMapper::toDto)
                 .collect(Collectors.toList()));
 
         return dto;

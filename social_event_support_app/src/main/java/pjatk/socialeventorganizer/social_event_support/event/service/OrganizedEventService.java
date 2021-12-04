@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
+import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
@@ -24,6 +25,7 @@ import pjatk.socialeventorganizer.social_event_support.security.service.Security
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
@@ -55,6 +57,15 @@ public class OrganizedEventService {
 
     public OrganizedEvent get(long orgEventId) {
         final Optional<OrganizedEvent> optionalEvent = organizedEventRepository.findById(orgEventId);
+        if (optionalEvent.isPresent()) {
+            return optionalEvent.get();
+        }
+        throw new NotFoundException("No organized event with id " + orgEventId);
+    }
+
+    //TODO: controller method + mapper
+    public OrganizedEvent getWithDetail(long orgEventId) {
+        final Optional<OrganizedEvent> optionalEvent = organizedEventRepository.getWithDetail(orgEventId);
         if (optionalEvent.isPresent()) {
             return optionalEvent.get();
         }
@@ -105,6 +116,26 @@ public class OrganizedEventService {
     }
 
 
+    public List<OrganizedEvent> getAllByCustomerIdAndTab(long customerId, CustomerReservationTabEnum tabEnum) {
+        customerRepository.findById(customerId).orElseThrow(() -> new NotFoundException("No customer with " + customerId));
+
+        switch (tabEnum) {
+            case ALL:
+                return organizedEventRepository.findAllByCustomer_Id(customerId);
+            case PAST:
+                return organizedEventRepository.findAllFinished(customerId);
+            case CURRENT:
+                return organizedEventRepository.findAllCurrent(customerId);
+            default:
+                throw new IllegalArgumentException("Incorrect customer reservation type");
+        }
+    }
+
+    public OrganizedEvent getWithLocation(long eventId) {
+        return organizedEventRepository.getWithLocation(eventId)
+                .orElseThrow(() -> new NotFoundException("No event with id " + eventId));
+    }
+
     private boolean eventWithIdAndCustomerIdExists(long customerId, long eventId) {
         return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId);
     }
@@ -130,4 +161,6 @@ public class OrganizedEventService {
         return organizedEvent;
 
     }
+
+
 }

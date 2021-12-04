@@ -28,7 +28,7 @@ public class ComposeInviteEmailUtil implements Serializable {
                 .append(dto.getName())
                 .append("\n")
                 .append("Beginning date and time: ")
-                .append(dto.getStartDateTime())
+                .append(dto.getDate())
                 .append("\n")
                 .toString();
 
@@ -40,14 +40,14 @@ public class ComposeInviteEmailUtil implements Serializable {
                 .concat(" located at ")
                 .concat(getAddressString(locationForEventDto.getLocation().getAddress()))
                 .concat(" on ")
-                .concat(dto.getStartDateTime().substring(0, 10))
+                .concat(dto.getStartTime())
                 .concat(" from ")
                 .concat(locationForEventDto.getTimeFrom())
                 .concat(" until ")
                 .concat(locationForEventDto.getTimeTo())
                 .concat("\n");
 
-        final List<CateringForChosenEventLocationDto> caterings = locationForEventDto.getCatering();
+        final List<CateringForChosenEventLocationDto> caterings = locationForEventDto.getCaterings();
         if (caterings != null && caterings.size() > 0) {
             for (CateringForChosenEventLocationDto catering : caterings) {
                 content = content.concat("\t")

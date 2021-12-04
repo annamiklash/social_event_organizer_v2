@@ -24,10 +24,13 @@ public class OrganizedEventDto implements Serializable {
     private String name;
 
     @NotNull
-    private String startDateTime;
+    private String date;
 
     @NotNull
-    private String endDateTime;
+    private String startTime;
+
+    @NotNull
+    private String endTime;
 
     @NotNull
     private int guestCount;

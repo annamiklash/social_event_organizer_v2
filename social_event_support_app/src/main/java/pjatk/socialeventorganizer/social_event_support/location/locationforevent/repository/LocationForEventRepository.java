@@ -33,5 +33,5 @@ public interface LocationForEventRepository extends JpaRepository<LocationForEve
             "left join fetch lfe.location l " +
             "left join fetch e.eventType et " +
             "where l.id = :locationId AND lfe.confirmationStatus = :status")
-    Optional<List<LocationForEvent>> findAllByLocationIdAndStatus(@Param("locationId") long locationId, @Param("status") String status);
+    List<LocationForEvent> findAllByLocationIdAndStatus(@Param("locationId") long locationId, @Param("status") String status);
 }

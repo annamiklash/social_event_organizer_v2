@@ -102,6 +102,12 @@ public class GlobalErrorHandler extends ResponseEntityExceptionHandler {
         log.error(ex.getMessage(), ex);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LocationNotBookedException.class)
+    public void locationNotBookedExceptionHandler(Exception ex) {
+        log.error(ex.getMessage(), ex);
+    }
+
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenAccessException.class)
     public void forbiddenAccessExceptionHandler(Exception ex) {

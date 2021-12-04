@@ -79,7 +79,7 @@ public class DateTimeUtil {
         return localTime.format(TIME_FORMATTER);
     }
 
-    public LocalTime test(String time) {
+    public LocalTime toLocalTimeFromTimeString(String time) {
         if (time == null) {
             return null;
         }

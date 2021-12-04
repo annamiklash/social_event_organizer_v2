@@ -4,12 +4,21 @@ package pjatk.socialeventorganizer.social_event_support.location.locationforeven
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.repository.LocationForEventRepository;
+import pjatk.socialeventorganizer.social_event_support.location.model.Location;
+import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +32,13 @@ public class LocationForEventService {
 
     private final LocationForEventRepository locationForEventRepository;
 
+    private final LocationForEventService locationForEventService;
+
     private final OrganizedEventService organizedEventService;
+
+    private final CustomerRepository customerRepository;
+
+    private final LocationService locationService;
 
     public List<LocationForEvent> getLocationInfoByOrganizedEventId(long eventId) {
         final Optional<List<LocationForEvent>> optionalLocationForEvent = locationForEventRepository.findLocationForEventByOrganizedEventId(eventId);
@@ -31,7 +46,30 @@ public class LocationForEventService {
             return optionalLocationForEvent.get();
         }
         throw new NotFoundException("Event with id " + eventId + " does not exist");
+    }
 
+    @Transactional(rollbackOn = Exception.class)
+    public LocationForEvent create(long customerId, long eventId, long locationId, LocationForEventDto dto) {
+        final Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new NotFoundException("No customer with id " + customerId));
+        final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
+        final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getDate());
+        final boolean isAvailable = locationService.isAvailable(locationId, date, dto.getTimeFrom(), dto.getTimeTo());
+
+        if (!isAvailable) {
+            throw new NotAvailableException("Location not available for selected date and time");
+        }
+        final Location location = locationService.get(locationId);
+
+        locationService.modifyAvailabilityAfterBooking(location, date, dto.getTimeFrom(), dto.getTimeTo());
+
+        final LocationForEvent locationForEvent = LocationForEventMapper.fromDto(dto);
+        locationForEvent.setLocation(location);
+        locationForEvent.setEvent(organizedEvent);
+
+        locationForEventService.save(locationForEvent);
+
+        return locationForEvent;
     }
 
     public LocationForEvent confirmReservation(long locationId, long eventId) {
@@ -49,13 +87,8 @@ public class LocationForEventService {
     }
 
     public List<LocationForEvent> listAllByStatus(long locationId, String status) {
+        return locationForEventRepository.findAllByLocationIdAndStatus(locationId, status);
 
-        final Optional<List<LocationForEvent>> optionalList = locationForEventRepository.findAllByLocationIdAndStatus(locationId, status);
-
-        if (optionalList.isPresent()) {
-            return optionalList.get();
-        }
-        throw new NotFoundException("There are no requests");
     }
 
     public void save(LocationForEvent locationForEvent) {

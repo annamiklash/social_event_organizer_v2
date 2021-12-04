@@ -35,7 +35,6 @@ import pjatk.socialeventorganizer.social_event_support.customer.repository.Custo
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
-import pjatk.socialeventorganizer.social_event_support.event.service.EventTypeService;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
@@ -48,7 +47,6 @@ import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
-import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
@@ -70,8 +68,6 @@ import static pjatk.socialeventorganizer.social_event_support.location.locationf
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-
-    private final SecurityService securityService;
 
     private final UserService userService;
 
@@ -95,7 +91,6 @@ public class CustomerService {
 
     private final OptionalServiceService optionalServiceService;
 
-    private final EventTypeService eventTypeService;
 
     public ImmutableList<Customer> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -133,7 +128,6 @@ public class CustomerService {
         customerRepository.save(customer);
 
         return customer;
-
     }
 
     public void sendMessage(long customerId, long receiverId, MessageDto messageDto, Class clazz) {
@@ -250,12 +244,6 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
-    //TODO:REFACTOR
-    public Customer getWithEventByEventId(long id, long eventId) {
-
-        return null;
-    }
-
     public void addGuestsToEvent(long id, long eventId, long locationId, long[] guestIds) {
 
 //        Optional<Customer> customerRepository.getById(id);
@@ -312,7 +300,7 @@ public class CustomerService {
     public LocationForEvent bookInitialLocationForEvent(long id, long locId, long eventId, LocationForEventDto dto) {
 
         final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
-        final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getStartDateTime().toLocalDate());
+        final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getDate());
         final boolean isAvailable = locationService.isAvailable(locId, date, dto.getTimeFrom(), dto.getTimeTo());
 
         if (!isAvailable) {

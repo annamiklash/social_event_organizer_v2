@@ -6,8 +6,11 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Getter
@@ -27,14 +30,18 @@ public class OrganizedEvent implements Serializable {
     private String name;
 
     @Column(nullable = false)
-    private LocalDateTime startDateTime;
+    private LocalDate date;
 
     @Column(nullable = false)
-    private LocalDateTime endDateTime;
+    private LocalTime startTime;
+
+    @Column(nullable = false)
+    private LocalTime endTime;
 
     @Column(nullable = false)
     private String eventStatus;
 
+    @Min(1)
     @Column(nullable = false)
     private int guestCount;
 

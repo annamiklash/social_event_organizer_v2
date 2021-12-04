@@ -16,11 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.message.dto.Mess
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
-import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
-import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
-import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
@@ -129,19 +125,6 @@ public class CustomerController {
         }
     }
 
-//
-//    @PreAuthorize("hasAnyAuthority('ADMIN', 'NEW_USER')")
-//    @RequestMapping(
-//            method = RequestMethod.POST,
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<CustomerDto> create(@RequestBody @Valid CustomerDto dto) {
-//
-//        final Customer customer = customerService.create(dto);
-//
-//        return ResponseEntity.ok(CustomerMapper.toDto(customer));
-//    }
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.PUT,
@@ -215,22 +198,6 @@ public class CustomerController {
         log.info("SEND MESSAGE");
         customerService.sendMessage(customerId, serviceId, dto, OptionalService.class);
         return ResponseEntity.ok().build();
-    }
-
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            path = "book",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrganizedEventConfirmationDto> bookLocationForEvent(@RequestParam long id,
-                                                                              @RequestParam long locId,
-                                                                              @RequestParam long eventId,
-                                                                              @Valid @RequestBody LocationForEventDto dto) {
-
-        final LocationForEvent locationForEvent = customerService.bookInitialLocationForEvent(id, locId, eventId, dto);
-        return ResponseEntity.ok(OrganizedEventMapper.toOrganizedConfirmationDto(locationForEvent));
-
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
