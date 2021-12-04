@@ -37,7 +37,7 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "WHERE (:type is null or os.type = :type)", nativeQuery = true)
     List<OptionalService> searchWithoutDateTime(@Param("type") String type);
     @Query(value = "SELECT distinct os.* from optional_service os " +
-            "LEFT JOIN optional_service_availability osa ON.id_optional_service = os.id_optional_service " +
+            "LEFT JOIN optional_service_availability osa ON osa.id_optional_service = os.id_optional_service " +
             "WHERE os.id_optional_service = :serviceId AND osa.date = CAST(:date as timestamp) " +
             "AND (:timeFrom is null or osa.time_from <= CAST(:timeFrom as timestamp)) " +
             "AND (:timeTo is null or osa.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
