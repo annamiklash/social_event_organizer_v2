@@ -55,7 +55,7 @@ public class BusinessService {
 
         final Address address = addressService.create(businessDto.getAddress());
         final Business business = BusinessMapper.fromDto(businessDto);
-        final User user = userService.getById(businessDto.getUser().getId());
+        final User user = userService.get(businessDto.getUser().getId());
 
         business.setId(user.getId());
         business.setVerificationStatus(NOT_VERIFIED.name());

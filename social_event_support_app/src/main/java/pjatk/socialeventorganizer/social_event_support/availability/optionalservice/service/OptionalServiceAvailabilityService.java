@@ -42,7 +42,7 @@ public class OptionalServiceAvailabilityService {
         final OptionalService optionalService = optionalServiceService.get(id);
 
         return dtos.stream()
-                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getTimeFrom(),dto.getTimeTo()))
+                .peek(dto -> AvailabilityDatesValidator.validate(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo()))
                 .map(AvailabilityMapper::fromDtoToOptionalServiceAvailability)
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setOptionalService(optionalService))

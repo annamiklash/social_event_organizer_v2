@@ -43,7 +43,7 @@ public class Guest implements Serializable {
     @JoinColumn(name = "id_customer")
     private Customer customer;
 
-    @ManyToMany(mappedBy = "guests")
+    @ManyToMany(mappedBy = "guests", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<OrganizedEvent> organizedEvents;
 }

@@ -37,11 +37,8 @@ import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEven
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
-import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
-import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
@@ -113,7 +110,7 @@ public class CustomerService {
             final CustomerAvatar avatar = customerAvatarService.create(dto.getAvatar());
             customer.setAvatar(avatar);
         }
-        final User user = userService.getById(dto.getUser().getId());
+        final User user = userService.get(dto.getUser().getId());
 
         customer.setId(user.getId());
         customer.setUser(user);
@@ -131,7 +128,7 @@ public class CustomerService {
     }
 
     public void sendMessage(long customerId, long receiverId, MessageDto messageDto, Class clazz) {
-        final User user = userService.getById(customerId);
+        final User user = userService.get(customerId);
         final Customer customer = get(customerId);
 
         String className = clazz.getName();
@@ -245,8 +242,8 @@ public class CustomerService {
     }
 
     public void addGuestsToEvent(long id, long eventId, long locationId, long[] guestIds) {
-
-//        Optional<Customer> customerRepository.getById(id);
+        Customer customer  = customerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No customer with id " + id));
         final LocationForEvent locationForEvent = locationForEventService.findByLocationIdAndEventId(locationId, eventId);
 
         if (!locationForEvent.getConfirmationStatus().equals(CONFIRMED.toString())) {
@@ -261,7 +258,6 @@ public class CustomerService {
         organizedEvent.setModifiedAt(LocalDateTime.now());
 
         organizedEventService.save(organizedEvent);
-
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -291,31 +287,8 @@ public class CustomerService {
         }
     }
 
-
     private OrganizedEventDto createInvitationContent(OrganizedEvent organizedEvent) {
         return OrganizedEventMapper.toDtoForInvite(organizedEvent);
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public LocationForEvent bookInitialLocationForEvent(long id, long locId, long eventId, LocationForEventDto dto) {
-
-        final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
-        final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getDate());
-        final boolean isAvailable = locationService.isAvailable(locId, date, dto.getTimeFrom(), dto.getTimeTo());
-
-        if (!isAvailable) {
-            throw new NotAvailableException("Location not available for selected date and time");
-        }
-        final Location location = locationService.get(locId);
-
-        locationService.modifyAvailabilityAfterBooking(location, date, dto.getTimeFrom(), dto.getTimeTo());
-
-        final LocationForEvent locationForEvent = LocationForEventMapper.fromDto(dto);
-        locationForEvent.setLocation(location);
-        locationForEvent.setEvent(organizedEvent);
-
-        locationForEventService.save(locationForEvent);
-
-        return locationForEvent;
-    }
 }

@@ -25,4 +25,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and (u.isActive = true OR u.isActive = false)")
     Optional<User> active(@Param("email") String email);
 
+    @Query("SELECT u from users u " +
+            "left join customer c on c.id = : id")
+    Optional<User> getWithDetailCustomer(@Param("id") long id);
+
+    @Query("SELECT u from users u " +
+            "left join business b on b.id = : id")
+    Optional<User> getWithDetailBusiness(@Param("id") long id);
 }

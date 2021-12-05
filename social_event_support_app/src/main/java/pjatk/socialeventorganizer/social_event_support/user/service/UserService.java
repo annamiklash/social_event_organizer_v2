@@ -5,7 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.business.model.Business;
+import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
@@ -13,7 +17,6 @@ import pjatk.socialeventorganizer.social_event_support.user.login.model.request.
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.BusinessUserRegistrationDto;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
 
@@ -37,7 +40,11 @@ public class UserService {
 
     private final EmailService emailService;
 
-    public ImmutableList<User> findALl() {
+    private final CustomerRepository customerRepository;
+
+    private final BusinessRepository businessRepository;
+
+    public ImmutableList<User> findAll() {
         return ImmutableList.copyOf(userRepository.findAll());
     }
 
@@ -62,10 +69,28 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User getById(Long id) {
+    public User get(long id) {
         final Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             return optionalUser.get();
+        }
+        throw new InvalidCredentialsException(USER_NOT_EXISTS);
+    }
+
+    public UserDto getWithDetail(long id) {
+        final User user = get(id);
+        if (user.getType() == 'C') {
+            final Customer customer = customerRepository.findById(id)
+                    .orElseThrow(() -> new InvalidCredentialsException(USER_NOT_EXISTS));
+            return UserMapper.toDtoWithCustomer(user, customer);
+
+        } else if (user.getType() == 'B') {
+            final Business business = businessRepository.findById(id)
+                    .orElseThrow(() -> new InvalidCredentialsException(USER_NOT_EXISTS));
+            return UserMapper.toDtoWithBusiness(user, business);
+
+        } else if (user.getType() == 'A') {
+            return UserMapper.toDto(user);
         }
         throw new InvalidCredentialsException(USER_NOT_EXISTS);
     }
@@ -118,20 +143,16 @@ public class UserService {
 
     public boolean isNewAccount(long id, char type) {
         final Optional<User> optionalUser = userRepository.isNewAccount(id, type);
-        if (optionalUser.isPresent()) {
-            return false;
-        }
-        return true;
+        return optionalUser.isEmpty();
     }
 
     private boolean userExists(String email) {
         return userRepository.existsByEmail(email);
     }
 
-
     public void block(long id) {
 
-        final User user = getById(id);
+        final User user = get(id);
         user.setActive(false);
         user.setBlockedAt(LocalDateTime.now());
 
@@ -144,7 +165,4 @@ public class UserService {
         return userRepository.active(loginDto.getEmail()).isPresent();
     }
 
-    public void registerBusiness(BusinessUserRegistrationDto dto) {
-
-    }
 }

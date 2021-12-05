@@ -63,6 +63,11 @@ public class DateTimeUtil {
         return LocalDate.parse(date, DATE_FORMATTER);
     }
 
+    public String joinDateAndTime(String date, String time) {
+
+        return date + " " + time;
+    }
+
 
     public String toDateOnlyStringFromLocalDateTime(LocalDate date) {
         return date.format(DATE_FORMATTER);

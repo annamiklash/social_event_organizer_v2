@@ -98,7 +98,6 @@ public class LocationService {
 
     }
 
-
     public boolean exists(long id) {
         return locationRepository.existsById(id);
     }
@@ -284,6 +283,7 @@ public class LocationService {
         //set deletedAt
     }
 
+    @Transactional(rollbackOn = Exception.class)
     public void modifyAvailabilityAfterBooking(Location location, String eventDate, String dateTimeFrom, String dateTimeTo) {
 
         final Set<LocationAvailability> locationAvailability = location.getAvailability();

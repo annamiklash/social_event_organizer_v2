@@ -65,7 +65,7 @@ public class AppProblemService {
 
     public AppProblem create(AppProblemDto dto, long id) {
 
-        final User user = userService.getById(id);
+        final User user = userService.get(id);
 
         final AppProblem appProblem = AppProblemMapper.fromDto(dto);
 

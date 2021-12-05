@@ -42,7 +42,7 @@ public class CateringAvailabilityService {
         final Catering catering = cateringService.get(cateringId);
 
         return dtos.stream()
-                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getTimeFrom(),dto.getTimeTo()))
+                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getDate(), dto.getTimeFrom(),dto.getTimeTo()))
                 .map(AvailabilityMapper::fromDtoToCateringAvailability)
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setCatering(catering))

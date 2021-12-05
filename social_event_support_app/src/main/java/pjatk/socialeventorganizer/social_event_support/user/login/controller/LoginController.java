@@ -1,6 +1,5 @@
 package pjatk.socialeventorganizer.social_event_support.user.login.controller;
 
-import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
-import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -32,8 +30,9 @@ public class LoginController {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/login",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+            path = "login",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<UserDto> login(@RequestBody @Valid LoginDto loginDto, HttpServletRequest request) {
         request.getSession().invalidate();
 
@@ -51,18 +50,10 @@ public class LoginController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/logout")
+            path = "logout")
     ResponseEntity<Void> logout(HttpServletRequest request) {
         request.getSession().invalidate();
         return ResponseEntity.ok().build();
-    }
-
-
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/users")
-    ResponseEntity<ImmutableList<User>> getALlUsers() {
-        return ResponseEntity.ok(userService.findALl());
     }
 
 }

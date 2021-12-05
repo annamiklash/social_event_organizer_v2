@@ -66,8 +66,6 @@ public class SecurityService {
 
         final HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-
-
     }
 
     private boolean isNewAccount(Long id, char type) {

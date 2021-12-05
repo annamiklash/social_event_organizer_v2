@@ -27,7 +27,7 @@ public class LocationForEventDto {
     private String timeTo;
 
     @NotNull
-    private int guestsCount;
+    private int guestCount;
 
     private String confirmationStatus;
 

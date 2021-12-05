@@ -24,8 +24,8 @@ public class AvailabilityMapper {
     public LocationAvailability fromDtoToLocationAvailability(AvailabilityDto dto) {
         return LocationAvailability.builder()
                 .date(DateTimeUtil.parseFromString(dto.getDate()))
-                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
+                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo())))
                 .status(dto.getStatus())
                 .build();
     }
@@ -33,16 +33,16 @@ public class AvailabilityMapper {
     public CateringAvailability fromDtoToCateringAvailability(AvailabilityDto dto) {
         return CateringAvailability.builder()
                 .date(DateTimeUtil.parseFromString(dto.getDate()))
-                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(dto.getDate() + " " + dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(dto.getDate() + " " + dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
+                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo())))
                 .status(dto.getStatus())
                 .build();
     }
     public OptionalServiceAvailability fromDtoToOptionalServiceAvailability(AvailabilityDto dto) {
         return OptionalServiceAvailability.builder()
                 .date(DateTimeUtil.parseFromString(dto.getDate()))
-                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(dto.getDate() + " " + dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(dto.getDate() + " " + dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
+                .timeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo())))
                 .status(dto.getStatus())
                 .build();
     }

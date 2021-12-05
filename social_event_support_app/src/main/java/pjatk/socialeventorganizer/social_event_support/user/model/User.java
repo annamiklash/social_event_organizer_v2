@@ -6,7 +6,6 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -51,7 +50,7 @@ public class User implements Serializable {
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
-    Set<AppProblem> appProblems = new HashSet<>();
+    Set<AppProblem> appProblems;
 }

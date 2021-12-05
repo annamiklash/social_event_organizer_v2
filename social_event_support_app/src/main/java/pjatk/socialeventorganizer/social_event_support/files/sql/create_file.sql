@@ -319,8 +319,8 @@ CREATE TABLE organized_event
 CREATE TABLE event_guest
 (
     id_guest int NOT NULL,
-    id_event int NOT NULL,
-    CONSTRAINT event_guest_pk PRIMARY KEY (id_guest, id_event)
+    id_organized_event int NOT NULL,
+    CONSTRAINT event_guest_pk PRIMARY KEY (id_guest, id_organized_event)
 );
 
 -- Table: service_for_event
@@ -697,7 +697,7 @@ ALTER TABLE event_guest
 
 ALTER TABLE event_guest
     ADD CONSTRAINT event_event_guest
-        FOREIGN KEY (id_event)
+        FOREIGN KEY (id_organized_event)
             REFERENCES organized_event (id_organized_event)
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
@@ -1265,16 +1265,16 @@ VALUES ('2021-03-23', '15:00:00', '20:00:00', 'READY', 9, 1, (select current_tim
 
 
 insert into location_for_event(time_from, time_to, id_organized_event, id_location, guests, confirmation_status)
-values ('2021-09-01 00:00:00', '2021-09-01 23:59:59', 1, 1, 10, 'CONFIRMED'),
-       ('2021-09-02 00:00:00', '2021-09-02 23:59:59', 2, 2, 10, 'CONFIRMED'),
-       ('2021-09-03 00:00:00', '2021-09-03 23:59:59', 3, 3, 10, 'CONFIRMED'),
-       ('2021-09-04 00:00:00', '2021-09-04 23:59:59', 4, 3, 10, 'CONFIRMED'),
-       ('2021-09-05 00:00:00', '2021-09-05 23:59:59', 5, 4, 10, 'CONFIRMED'),
-       ('2021-09-06 00:00:00', '2021-09-06 23:59:59', 1, 5, 10, 'CONFIRMED'),
-       ('2021-09-07 00:00:00', '2021-09-07 23:59:59', 2, 2, 10, 'CONFIRMED'),
-       ('2021-09-08 00:00:00', '2021-09-08 23:59:59', 3, 1, 10, 'CONFIRMED'),
-       ('2021-09-09 00:00:00', '2021-09-09 23:59:59', 4, 3, 10, 'CONFIRMED'),
-       ('2021-09-10 00:00:00', '2021-09-10 23:59:59', 5, 4, 10, 'CONFIRMED');
+values ('10:00:00', '21:59:59', 1, 1, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 2, 2, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 3, 3, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 4, 3, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 5, 4, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 1, 5, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 2, 2, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 3, 1, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 4, 3, 10, 'CONFIRMED'),
+       ('10:00:00', '21:59:59', 5, 4, 10, 'CONFIRMED');
 
 
 insert into service_for_event(time_from, time_to, comment, id_optional_service, id_location_for_event)

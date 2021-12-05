@@ -62,8 +62,9 @@ public class OrganizedEvent implements Serializable {
     @JoinColumn(name = "id_customer", nullable = false)
     private Customer customer;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_organized_event")
+//    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_organized_event")
+    @OneToOne(mappedBy = "event", fetch = FetchType.LAZY)
     private LocationForEvent locationForEvent;
 
     @EqualsAndHashCode.Exclude

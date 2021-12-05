@@ -42,7 +42,7 @@ public class LocationAvailabilityService {
         final Location location = locationService.get(locationId);
 
         return dtos.stream()
-                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getTimeFrom(),dto.getTimeTo()))
+                .peek(dto ->  AvailabilityDatesValidator.validate(dto.getDate(), dto.getTimeFrom(),dto.getTimeTo()))
                 .map(AvailabilityMapper::fromDtoToLocationAvailability)
                 .peek(availability -> availability.setStatus(AVAILABLE.toString()))
                 .peek(availability -> availability.setLocation(location))

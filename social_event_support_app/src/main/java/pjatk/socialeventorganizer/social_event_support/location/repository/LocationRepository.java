@@ -69,7 +69,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query(value = "SELECT distinct l.* from location l " +
             "left join location_availability la on la.id_location = l.id_location " +
-            "WHERE l.id_location = :locationId AND la.date = CAST(:date as timestamp) " +
+            "WHERE l.id_location = :locationId " +
+            "AND la.date = CAST(:date as timestamp) " +
             "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
             "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
     Optional<Location> available(@Param("locationId") long locationId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);

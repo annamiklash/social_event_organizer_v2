@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
+import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
+import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 
 import javax.validation.constraints.*;
 import java.util.Set;
@@ -46,5 +48,9 @@ public class UserDto {
     private boolean isActive;
 
     private Set<AppProblemDto> appProblems;
+
+    private BusinessDto business;
+
+    private CustomerDto customer;
 
 }

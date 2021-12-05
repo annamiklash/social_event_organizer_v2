@@ -51,15 +51,20 @@ public class LocationForEventService {
         final Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new NotFoundException("No customer with id " + customerId));
         final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
+
         final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getDate());
-        final boolean isAvailable = locationService.isAvailable(locationId, date, dto.getTimeFrom(), dto.getTimeTo());
+        final String timeFrom = DateTimeUtil.joinDateAndTime(date, dto.getTimeFrom());
+        final String timeTo = DateTimeUtil.joinDateAndTime(date, dto.getTimeTo());
+
+        final boolean isAvailable = locationService.isAvailable(locationId, date, timeFrom, timeTo);
 
         if (!isAvailable) {
             throw new NotAvailableException("Location not available for selected date and time");
         }
         final Location location = locationService.get(locationId);
 
-        locationService.modifyAvailabilityAfterBooking(location, date, dto.getTimeFrom(), dto.getTimeTo());
+        locationService.modifyAvailabilityAfterBooking(location, date, timeFrom, timeTo);
+
 
         final LocationForEvent locationForEvent = LocationForEventMapper.fromDto(dto);
         locationForEvent.setLocation(location);

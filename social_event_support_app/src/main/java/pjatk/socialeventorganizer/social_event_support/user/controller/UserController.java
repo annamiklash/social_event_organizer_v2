@@ -1,14 +1,21 @@
 package pjatk.socialeventorganizer.social_event_support.user.controller;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
+import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
+import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -26,21 +33,45 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+
     @PostMapping("/reset")
-    public ResponseEntity<Void> setNewPassword(@RequestParam("token") String token, @RequestBody NewPasswordRequest newPasswordRequest) {
+    public ResponseEntity<Void> setNewPassword(@RequestParam("token") String token,
+                                               @RequestBody NewPasswordRequest newPasswordRequest) {
 
         userService.setNewPassword(token, newPasswordRequest);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("{id}/block")
     public ResponseEntity<Void> block(@PathVariable long id) {
         userService.block(id);
 
-
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "users/all",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<ImmutableList<UserDto>> getAllUsers() {
+        final ImmutableList<User> users = userService.findAll();
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(
+                        users.stream()
+                                .map(UserMapper::toDto)
+                                .collect(Collectors.toList())));
+    }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "users",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<UserDto> get(@RequestParam long id) {
+
+        return ResponseEntity.ok(userService.getWithDetail(id));
+    }
 
 }
