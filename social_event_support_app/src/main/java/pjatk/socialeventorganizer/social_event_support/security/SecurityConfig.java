@@ -30,8 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 CATERING_AVAILABILITY.value,
                 SERVICES_AVAILABILITY.value,
                 RESET_PASSWORD.value,
-                RESET.value,
-                "/api/problems/allowed**"
+                RESET.value
+                //"/api/problems/allowed**"
         );
     }
 
