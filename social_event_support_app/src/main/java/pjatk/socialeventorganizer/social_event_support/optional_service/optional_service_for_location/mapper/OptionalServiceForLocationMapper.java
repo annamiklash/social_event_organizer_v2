@@ -8,7 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.O
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.dto.OptionalServiceForChosenLocationDto;
 
-import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @UtilityClass
 public class OptionalServiceForLocationMapper {

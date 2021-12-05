@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -19,20 +20,27 @@ public class Address implements Serializable {
     @Column(name = "id_address")
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String country;
 
-    @Column
+    @Column(nullable = false)
     private String city;
 
-    @Column(name = "street_name")
+    @Column(nullable = false)
     private String streetName;
 
-    @Column(name = "street_number")
+    @Column(nullable = false)
     private int streetNumber;
 
-    @Column(name = "zip_code")
+    @Column(nullable = false)
     private String zipCode;
 
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime modifiedAt;
+
+    private LocalDateTime deletedAt;
 
 }

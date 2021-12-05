@@ -121,13 +121,25 @@ public class LocationController {
         return ResponseEntity.ok(LocationMapper.toDtoWithAvailability(location));
     }
 
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "business",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<LocationDto>> getByBusinessId(@PathVariable long id) {
+        ImmutableList<Location> locations = locationService.getByBusinessId(id);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(locations.stream()
+                        .map(LocationMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
-            method = RequestMethod.DELETE,
-            params = "{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@RequestParam long id) {
-        locationService.delete(id);
+        locationService.deleteLogical(id);
 
         return ResponseEntity.noContent().build();
     }

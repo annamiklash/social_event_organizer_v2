@@ -11,7 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.optional
 
 import java.util.stream.Collectors;
 
-import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @UtilityClass
 public class LocationForEventMapper {

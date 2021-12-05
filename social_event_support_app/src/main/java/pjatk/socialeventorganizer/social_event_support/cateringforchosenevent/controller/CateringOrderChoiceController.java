@@ -25,7 +25,7 @@ public class CateringOrderChoiceController {
 
     private final CateringOrderChoiceService cateringOrderChoiceService;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)

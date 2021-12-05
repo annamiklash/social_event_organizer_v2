@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -48,11 +49,12 @@ public class AddressService {
     }
 
     public Address create(AddressDto dto) {
-
         final Address address = AddressMapper.fromDto(dto);
-        //TODO: add createdAt & modifiedAt
-        save(address);
 
+        address.setModifiedAt(LocalDateTime.now());
+        address.setDeletedAt(LocalDateTime.now());
+
+        save(address);
         return address;
     }
 
@@ -70,6 +72,7 @@ public class AddressService {
         address.setStreetName(dto.getStreetName());
         address.setStreetNumber(dto.getStreetNumber());
         address.setZipCode(dto.getZipCode());
+        address.setModifiedAt(LocalDateTime.now());
 
         save(address);
 
@@ -77,7 +80,12 @@ public class AddressService {
     }
 
     public void delete(long id) {
-        addressRepository.delete(get(id));
+        final Address address = get(id);
+
+        address.setModifiedAt(LocalDateTime.now());
+        address.setDeletedAt(LocalDateTime.now());
+
+        addressRepository.save(get(id));
     }
 
 

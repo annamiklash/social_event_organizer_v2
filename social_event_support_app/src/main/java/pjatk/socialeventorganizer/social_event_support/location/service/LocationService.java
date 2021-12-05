@@ -24,8 +24,10 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.LocationDescriptionItem;
@@ -267,16 +269,45 @@ public class LocationService {
 
     }
 
-    //TODO: FINISH
-    public void delete(long id) {
-        //cannot delete when there are reservations pending
+    @Transactional(rollbackOn = Exception.class)
+    public void deleteLogical(long id) {
+        final Location locationToDelete = locationRepository.getAllLocationInformation(id)
+                .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
 
-        //remove location description
-        //remove business hours description
-        //remove availability
-        //remove caterings connection
-        //delete address
-        //set deletedAt
+        boolean hasPendingReservations = hasPendingReservations(locationToDelete);
+        if (hasPendingReservations) {
+            throw new ActionNotAllowedException("Cannot delete location with reservations pending");
+        }
+
+        final Set<LocationDescriptionItem> descriptions = locationToDelete.getDescriptions();
+        for (LocationDescriptionItem description : descriptions) {
+            locationToDelete.removeDescriptionItem(description);
+        }
+
+        final Set<LocationAvailability> availabilities = locationToDelete.getAvailability();
+        for (LocationAvailability availability : availabilities) {
+            locationToDelete.removeAvailability(availability);
+        }
+
+        final Set<Catering> caterings = locationToDelete.getCaterings();
+        cateringRepository.deleteAll(caterings);
+        cateringRepository.flush();
+//        for (Catering catering : caterings) {
+//            locationToDelete.removeCatering(catering);
+//        }
+        addressService.delete(locationToDelete.getLocationAddress().getId());
+
+        locationToDelete.setModifiedAt(LocalDateTime.now());
+        locationToDelete.setDeletedAt(LocalDateTime.now());
+
+        saveLocation(locationToDelete);
+    }
+
+    private boolean hasPendingReservations(Location locationToDelete) {
+        return locationToDelete.getLocationForEvent().stream()
+                .map(LocationForEvent::getEvent)
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
+
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -340,4 +371,7 @@ public class LocationService {
         return modified;
     }
 
+    public ImmutableList<Location> getByBusinessId(long id) {
+        return ImmutableList.copyOf(locationRepository.findAllByBusiness_Id(id));
+    }
 }

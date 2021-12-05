@@ -62,10 +62,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
             "WHERE la.status = 'AVAILABLE' " +
-            "AND l.deleted_at IS NULL",nativeQuery =true)
+            "AND l.deleted_at IS NULL", nativeQuery = true)
     List<Location> getAll();
-
-
 
     @Query(value = "SELECT distinct l.* from location l " +
             "left join location_availability la on la.id_location = l.id_location " +
@@ -74,4 +72,17 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
             "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
     Optional<Location> available(@Param("locationId") long locationId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+
+    @Query("SELECT l from location l " +
+            "LEFT JOIN FETCH l.locationAddress lad " +
+            "LEFT JOIN FETCH l.descriptions d " +
+            "LEFT JOIN FETCH l.caterings cat " +
+            "LEFT JOIN FETCH l.availability la " +
+            "LEFT JOIN FETCH l.locationBusinessHours bh " +
+            "LEFT JOIN FETCH l.locationForEvent lfe " +
+            "LEFT JOIN FETCH lfe.event " +
+            "WHERE l.id = :locationId")
+    Optional<Location> getAllLocationInformation(@Param("locationId") long locationId);
+
+    List<Location> findAllByBusiness_Id(long id);
 }

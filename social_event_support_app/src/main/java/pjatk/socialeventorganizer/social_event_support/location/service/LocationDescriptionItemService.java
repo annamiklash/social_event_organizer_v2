@@ -27,8 +27,10 @@ public class LocationDescriptionItemService {
     }
 
     public LocationDescriptionItem getByName(LocationDescriptionItemEnum name) {
-
         return repository.getLocationDescriptionItemByName(name.getValue());
     }
 
+    public void delete(LocationDescriptionItem locationDescriptionItem) {
+        repository.delete(locationDescriptionItem);
+    }
 }

@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.address.mapper;
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 
 @UtilityClass
 public class AddressMapper {
@@ -15,6 +16,9 @@ public class AddressMapper {
                 .streetName(address.getStreetName())
                 .streetNumber(address.getStreetNumber())
                 .zipCode(address.getZipCode())
+                .createdAt(DateTimeUtil.toStringFromLocalDateTime(address.getCreatedAt()))
+                .modifiedAt(DateTimeUtil.toStringFromLocalDateTime(address.getModifiedAt()))
+                .deletedAt(DateTimeUtil.toStringFromLocalDateTime(address.getDeletedAt()))
                 .build();
     }
 
@@ -25,18 +29,6 @@ public class AddressMapper {
                 .streetName(addressDto.getStreetName())
                 .streetNumber(addressDto.getStreetNumber())
                 .zipCode(addressDto.getZipCode())
-                .build();
-    }
-
-
-    public static Address updateMapToDTO(AddressDto request, long id) {
-        return Address.builder()
-                .id(id)
-                .country(request.getCountry())
-                .city(request.getCity())
-                .streetName(request.getStreetName())
-                .streetNumber(request.getStreetNumber())
-                .zipCode(request.getZipCode())
                 .build();
     }
 }

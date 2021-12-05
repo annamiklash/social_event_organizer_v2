@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
+import pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
+import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
-import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,10 +34,6 @@ import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusE
 public class OrganizedEventService {
 
     private final OrganizedEventRepository organizedEventRepository;
-
-    private final SecurityService securityService;
-
-    private final UserService userService;
 
     private final EventTypeService eventTypeService;
 
@@ -87,17 +83,23 @@ public class OrganizedEventService {
         if (!eventWithIdAndCustomerIdExists(customerId, eventId)) {
             throw new NotFoundException("Event with id " + eventId + " and customer id " + customerId + " does not exist");
         }
-        final OrganizedEvent organizedEvent = get(eventId);
+        final OrganizedEvent organizedEvent = getWithDetail(eventId);
 
         switch (status) {
-            case IN_PROGRESS: //possible only when current status = CONFIRMED
-                organizedEvent.setEventStatus(IN_PROGRESS.name());
+            case IN_PROGRESS: //possible only when current status CONFIRMED
+                if (organizedEvent.getEventStatus().equals(CONFIRMED.name())) {
+                    organizedEvent.setEventStatus(IN_PROGRESS.name());
+                }
                 break;
-            case CONFIRMED: //if current IN_PROGRESS or READY
-                organizedEvent.setEventStatus(CONFIRMED.name());
+            case CONFIRMED: //if current IN_PROGRESS
+                if (possibleToChangeStatusFromInProgressToConfirmed(organizedEvent)) {
+                    organizedEvent.setEventStatus(CONFIRMED.name());
+                }
                 break;
-            case READY: //IF CONFIRMED
-                organizedEvent.setEventStatus(READY.name());
+            case READY: //if current CONFIRMED
+                if (organizedEvent.getEventStatus().equals(CONFIRMED.name())) {
+                    organizedEvent.setEventStatus(READY.name());
+                }
                 break;
             case CANCELLED:  //any stage except for FINISHED
                 //TODO: check if possible to cancel
@@ -111,6 +113,37 @@ public class OrganizedEventService {
         save(organizedEvent);
 
         return organizedEvent;
+    }
+
+    private boolean possibleToChangeStatusFromInProgressToConfirmed(OrganizedEvent organizedEvent) {
+        final String eventStatus = organizedEvent.getEventStatus();
+        if (eventStatus.equals(IN_PROGRESS.name())) {
+            if (organizedEvent.getLocationForEvent() == null) {
+                return false;
+//                throw new IllegalArgumentException("Cannot change status to CONFIRMED while no locations for event chosen");
+            } else {
+                if (organizedEvent.getLocationForEvent().getConfirmationStatus().equals(ConfirmationStatusEnum.NOT_CONFIRMED.name())) {
+//                    throw new IllegalArgumentException("Cannot change status to CONFIRMED while no locations reservation is not confirmed");
+                    return false;
+                } else {
+                    if (organizedEvent.getLocationForEvent().getCateringsForEventLocation() == null &&
+                            organizedEvent.getLocationForEvent().getServices() == null) {
+                        return true;
+                    }
+                    if (organizedEvent.getLocationForEvent().getCateringsForEventLocation() != null) {
+                        return organizedEvent.getLocationForEvent().getCateringsForEventLocation().stream()
+                                .allMatch(catering -> catering.getConfirmationStatus().equals(ConfirmationStatusEnum.CONFIRMED.name()));
+                    }
+                    if (organizedEvent.getLocationForEvent().getServices() != null) {
+                        return organizedEvent.getLocationForEvent().getServices().stream()
+                                .allMatch(service -> service.getConfirmationStatus().equals(ConfirmationStatusEnum.CONFIRMED.name()));
+                    }
+                }
+            }
+        } else {
+            return false;
+        }
+        return false;
     }
 
 

@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.NOT_AVAILABLE;
-import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
 
 @Service
 @AllArgsConstructor

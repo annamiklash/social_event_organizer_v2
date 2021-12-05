@@ -7,7 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 
-import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
 @UtilityClass
 public class CateringForChosenLocationMapper {

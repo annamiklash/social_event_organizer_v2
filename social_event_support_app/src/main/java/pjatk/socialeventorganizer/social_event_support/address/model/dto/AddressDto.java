@@ -27,20 +27,17 @@ public class AddressDto implements Serializable {
     @Pattern(regexp = RegexConstants.COUNTRY_REGEX)
     private String country;
 
-
     @NotBlank(message = "City is mandatory")
     @Size(min = 2, max = 30, message
             = "The city name should be between 1 and 40 characters")
     @Pattern(regexp = RegexConstants.CITY_REGEX)
     private String city;
 
-
     @NotBlank(message = "Street name is mandatory")
     @Size(min = 2, max = 50, message
             = "The street name should be between 1 and 40 characters")
     @Pattern(regexp = RegexConstants.STREET_REGEX)
     private String streetName;
-
 
     @NotNull(message = "Street number is mandatory")
     @NumberFormat(style = NumberFormat.Style.NUMBER)
@@ -50,4 +47,9 @@ public class AddressDto implements Serializable {
     @Pattern(regexp = RegexConstants.PL_ZIP_REGEX, message = "Should match XX-XXX format")
     String zipCode;
 
+    private String createdAt;
+
+    private String modifiedAt;
+
+    private String deletedAt;
 }

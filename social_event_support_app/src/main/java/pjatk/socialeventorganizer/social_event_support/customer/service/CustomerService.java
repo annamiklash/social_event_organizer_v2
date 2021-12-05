@@ -55,8 +55,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.READY;
-import static pjatk.socialeventorganizer.social_event_support.location.locationforevent.enums.ConfirmationStatusEnum.CONFIRMED;
 
 @Service
 @AllArgsConstructor

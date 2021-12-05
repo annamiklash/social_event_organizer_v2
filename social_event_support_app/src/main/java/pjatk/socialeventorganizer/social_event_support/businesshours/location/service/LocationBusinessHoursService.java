@@ -33,5 +33,9 @@ public class LocationBusinessHoursService {
         locationBusinessHoursRepository.save(locationBusinessHours);
     }
 
+    public void delete(LocationBusinessHours locationBusinessHours) {
+        locationBusinessHoursRepository.delete(locationBusinessHours);
+    }
+
     //TODO: edit method
 }

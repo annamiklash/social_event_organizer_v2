@@ -63,4 +63,15 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
             "LEFT JOIN FETCH oel.services serv ")
     Optional<OrganizedEvent> getWithDetail(long orgEventId);
 
+    @Query("SELECT oe FROM organized_event oe " +
+            "LEFT JOIN FETCH oe.customer cust " +
+            "LEFT JOIN FETCH oe.locationForEvent oel " +
+            "LEFT JOIN FETCH oe.eventType oet " +
+            "LEFT JOIN FETCH oel.cateringsForEventLocation cat " +
+            "LEFT JOIN FETCH cat.catering c " +
+            "LEFT JOIN FETCH cat.cateringOrder co " +
+            "LEFT JOIN FETCH co.item i " +
+            "LEFT JOIN FETCH oel.services serv ")
+    Optional<OrganizedEvent> getEventSummary(long orgEventId);
+
 }

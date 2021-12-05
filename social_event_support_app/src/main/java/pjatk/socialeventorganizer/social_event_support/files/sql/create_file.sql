@@ -26,6 +26,9 @@ CREATE TABLE address
     street_number int         NOT NULL,
     zip_code      varchar(10) NOT NULL,
     city          varchar(30) NOT NULL,
+    created_at    timestamp   NOT NULL,
+    modified_at   timestamp   NOT NULL,
+    deleted_at    timestamp   NULL,
     CONSTRAINT address_pk PRIMARY KEY (id_address)
 );
 
@@ -365,8 +368,8 @@ CREATE TABLE catering_for_chosen_location
 CREATE TABLE catering_order_choice
 (
     id_catering_item                serial NOT NULL,
-    count                           int NOT NULL,
-    id_catering_for_chosen_location int NOT NULL,
+    count                           int    NOT NULL,
+    id_catering_for_chosen_location int    NOT NULL,
     CONSTRAINT catering_order_choice_pk PRIMARY KEY (id_catering_item)
 );
 
@@ -805,27 +808,27 @@ ALTER TABLE service_music_style
 -- End of file.
 
 
-insert into address(country, city, street_name, street_number, zip_code)
-VALUES ('Poland', 'Warsaw', 'Street 1', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 2', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 3', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 4', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 5', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 6', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 7', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 8', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 9', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 10', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 11', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 12', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 13', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 14', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 15', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 16', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 17', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 18', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 19', 1, '123456'),
-       ('Poland', 'Warsaw', 'Street 20', 1, '123456');
+insert into address(country, city, street_name, street_number, zip_code, created_at, modified_at, deleted_at)
+VALUES ('Poland', 'Warsaw', 'Street 1', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 2', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 3', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 4', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 5', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 6', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 7', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 8', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 9', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 10', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 11', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 12', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 13', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 14', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 15', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 16', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 17', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 18', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 19', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Street 20', 1, '123456', (select current_timestamp), (select current_timestamp), null);
 
 
 
@@ -1295,7 +1298,7 @@ values ('2021-09-01 12:00:00', '2021-09-01 12:00:00', 'comment1', 1, 1),
 
 insert into catering_for_chosen_location (order_date, order_time, id_catering, id_location_for_event, comment,
                                           confirmation_status)
-VALUES ('2021-09-01', '12:00:00',  4, 4, 'comment', 'CONFIRMED');
+VALUES ('2021-09-01', '12:00:00', 4, 4, 'comment', 'CONFIRMED');
 
 insert into catering_order_choice (id_catering_item, count, id_catering_for_chosen_location)
 VALUES (5, 3, 1),
