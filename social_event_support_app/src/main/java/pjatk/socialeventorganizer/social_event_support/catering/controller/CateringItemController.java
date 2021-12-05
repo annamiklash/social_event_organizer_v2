@@ -21,13 +21,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Validated
 @RestController
-@RequestMapping("api/catering_items")
+@RequestMapping("api/catering/items")
 public class CateringItemController {
 
     private final CateringItemService cateringItemService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
+            path = "new",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringItemDto>> findAll(@RequestParam(required = false) String keyword,
@@ -35,8 +36,6 @@ public class CateringItemController {
                                                                   @RequestParam(defaultValue = "50") Integer maxResult,
                                                                   @RequestParam(defaultValue = "id") String sort,
                                                                   @RequestParam(defaultValue = "desc") String order) {
-        log.info("GET ALL CATERING_ITEM_TYPES");
-
         final ImmutableList<CateringItem> list = cateringItemService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
 
         return ResponseEntity.ok(
@@ -45,10 +44,9 @@ public class CateringItemController {
                         .collect(Collectors.toList())));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
+            path = "allowed",
             method = RequestMethod.GET,
-            params = {"cateringId"},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringItemDto>> listAllByCateringId(@RequestParam long cateringId) {
         log.info("GET ALL CATERING_ITEM_TYPES");
@@ -61,11 +59,9 @@ public class CateringItemController {
                         .collect(Collectors.toList())));
     }
 
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.GET,
-            params = {"id"},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringItemDto> get(@RequestParam long id) {
 
@@ -77,7 +73,6 @@ public class CateringItemController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
-            params = {"cateringId"},
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringItemDto> create(@Valid @RequestBody CateringItemDto dto, @RequestParam long cateringId) {
@@ -89,7 +84,6 @@ public class CateringItemController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT,
-            params = {"id"},
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringItemDto> edit(@Valid @RequestBody CateringItemDto dto, @RequestParam long id) {
         final CateringItem cateringItem = cateringItemService.edit(id, dto);
@@ -98,8 +92,7 @@ public class CateringItemController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
-            method = RequestMethod.DELETE,
-            params = {"id"})
+            method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@RequestParam long id) {
         cateringItemService.delete(id);
         return ResponseEntity.noContent().build();

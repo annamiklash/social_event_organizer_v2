@@ -69,4 +69,5 @@ public class LocationForEventController {
 
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithLocation(locationForEvent.getEvent()));
     }
+
 }

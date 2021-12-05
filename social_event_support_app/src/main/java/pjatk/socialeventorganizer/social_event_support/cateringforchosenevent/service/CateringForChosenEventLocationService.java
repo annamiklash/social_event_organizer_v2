@@ -43,7 +43,6 @@ public class CateringForChosenEventLocationService {
     public CateringForChosenEventLocation confirmReservation(long cateringId, long eventId) {
         final CateringForChosenEventLocation catering = findByCateringIdAndEventId(cateringId, eventId);
 
-
         catering.setConfirmationStatus(CONFIRMED.name());
         save(catering);
 
@@ -112,5 +111,10 @@ public class CateringForChosenEventLocationService {
         final Catering catering = cateringService.getWithBusinessHours(cateringId);
         return catering.getCateringBusinessHours().stream()
                 .anyMatch(cateringBusinessHours -> cateringBusinessHours.getDay().equals(DayEnum.valueOfLabel(day).name()));
+    }
+
+    public CateringForChosenEventLocation get(long cateringId) {
+        return cateringForLocationRepository.findById(cateringId)
+                .orElseThrow(() -> new NotFoundException("No booked catering with id " + cateringId + " was found"));
     }
 }

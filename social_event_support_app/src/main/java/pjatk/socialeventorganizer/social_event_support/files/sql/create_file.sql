@@ -364,7 +364,7 @@ CREATE TABLE catering_for_chosen_location
 -- Table: catering_order_choice
 CREATE TABLE catering_order_choice
 (
-    id_catering_item                int NOT NULL,
+    id_catering_item                serial NOT NULL,
     count                           int NOT NULL,
     id_catering_for_chosen_location int NOT NULL,
     CONSTRAINT catering_order_choice_pk PRIMARY KEY (id_catering_item)

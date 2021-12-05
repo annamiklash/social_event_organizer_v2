@@ -33,10 +33,10 @@ public class CateringForChosenEventLocationController {
             method = RequestMethod.PUT,
             path = "confirm",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CateringForChosenEventLocationDto> confirmReservation(@RequestParam long id,
+    public ResponseEntity<CateringForChosenEventLocationDto> confirmReservation(@RequestParam long cateringId,
                                                                                 @RequestParam long eventId) {
 
-        final CateringForChosenEventLocation catering = cateringForChosenEventLocationService.confirmReservation(id, eventId);
+        final CateringForChosenEventLocation catering = cateringForChosenEventLocationService.confirmReservation(cateringId, eventId);
 
         return ResponseEntity.ok(CateringForChosenLocationMapper.toDto(catering));
     }
@@ -47,9 +47,9 @@ public class CateringForChosenEventLocationController {
             path = "status",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringForChosenEventLocationDto>> listAllByConfirmationStatus(@RequestParam String status,
-                                                                                                        @RequestParam long locationId) {
+                                                                                                        @RequestParam long cateringId) {
 
-        List<CateringForChosenEventLocation> caterings = cateringForChosenEventLocationService.listAllByStatus(locationId, status);
+        List<CateringForChosenEventLocation> caterings = cateringForChosenEventLocationService.listAllByStatus(cateringId, status);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(caterings.stream()

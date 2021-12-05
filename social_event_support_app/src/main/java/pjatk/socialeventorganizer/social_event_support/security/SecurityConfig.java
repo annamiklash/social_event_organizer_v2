@@ -23,15 +23,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 LOGIN.value,
                 LOGOUT.value,
                 LOCATIONS.value,
-                CATERINGS.value,
-                SERVICES.value,
-                CUISINES.value,
                 LOCATION_AVAILABILITY.value,
+
+                CATERINGS.value,
                 CATERING_AVAILABILITY.value,
+                CUISINES.value,
+                CATERING_ITEMS.value,
+
+                SERVICES.value,
                 SERVICES_AVAILABILITY.value,
                 RESET_PASSWORD.value,
                 RESET.value
-                //"/api/problems/allowed**"
         );
     }
 

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 
 @Builder
@@ -17,15 +18,20 @@ import java.io.Serializable;
 public class CateringOrderChoice implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_catering_item")
     private Long id;
 
-    @PrimaryKeyJoinColumn
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @Min(1)
+    @Column(name = "count", nullable = false)
+    private int amount;
+
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_catering_item")
     private CateringItem item;
 
-    @ManyToOne
-    @JoinColumn(name = "id_organized_event", nullable = false)
-    CateringForChosenEventLocation eventLocationCatering;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_catering_for_chosen_location", nullable = false)
+    private CateringForChosenEventLocation eventLocationCatering;
 
 }
