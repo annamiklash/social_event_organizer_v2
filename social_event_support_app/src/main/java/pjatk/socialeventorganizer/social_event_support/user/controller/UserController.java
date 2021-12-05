@@ -55,7 +55,7 @@ public class UserController {
             method = RequestMethod.GET,
             path = "users/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<ImmutableList<UserDto>> getAllUsers() {
+    public ResponseEntity<ImmutableList<UserDto>> getAllUsers() {
         final ImmutableList<User> users = userService.findAll();
         return ResponseEntity.ok(
                 ImmutableList.copyOf(
@@ -69,7 +69,7 @@ public class UserController {
             method = RequestMethod.GET,
             path = "users",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<UserDto> get(@RequestParam long id) {
+    public ResponseEntity<UserDto> get(@RequestParam long id) {
 
         return ResponseEntity.ok(userService.getWithDetail(id));
     }

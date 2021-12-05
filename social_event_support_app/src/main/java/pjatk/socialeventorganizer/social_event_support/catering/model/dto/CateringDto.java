@@ -47,6 +47,9 @@ public class CateringDto implements Serializable {
     private String serviceCost;
 
     @NotNull
+    private String description;
+
+    @NotNull
     private boolean offersOutsideCatering;
 
     @NotNull
@@ -64,8 +67,6 @@ public class CateringDto implements Serializable {
     private String deletedAt;
 
     private AddressDto address;
-
-    private String description;
 
     private Boolean isOperating;
 

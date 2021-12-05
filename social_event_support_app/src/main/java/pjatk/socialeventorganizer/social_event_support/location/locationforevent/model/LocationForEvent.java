@@ -43,7 +43,6 @@ public class LocationForEvent implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_organized_event")
-//    @OneToOne(mappedBy = "locationForEvent", optional = false, fetch = FetchType.LAZY)
     private OrganizedEvent event;
 
     @EqualsAndHashCode.Exclude

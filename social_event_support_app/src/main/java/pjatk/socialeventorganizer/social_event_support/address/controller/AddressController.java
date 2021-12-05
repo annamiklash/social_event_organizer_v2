@@ -39,7 +39,11 @@ public class AddressController {
 
         final ImmutableList<Address> addressList = addressService.list(new CustomPage(maxResult, firstResult, sort, order));
 
-        return ResponseEntity.ok(ImmutableList.copyOf(addressList.stream().map(AddressMapper::toDto).collect(Collectors.toList())));
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(
+                        addressList.stream()
+                                .map(AddressMapper::toDto)
+                                .collect(Collectors.toList())));
     }
 
 

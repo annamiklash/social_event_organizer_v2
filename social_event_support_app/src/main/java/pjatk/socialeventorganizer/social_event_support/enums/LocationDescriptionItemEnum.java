@@ -18,7 +18,7 @@ public enum LocationDescriptionItemEnum {
     HAS_PATIO("Has Patio"),
     SERVES_FOOD("Serves Food");
 
-    public final String value;
+    private final String value;
 
     LocationDescriptionItemEnum(String value) {
         this.value = value;

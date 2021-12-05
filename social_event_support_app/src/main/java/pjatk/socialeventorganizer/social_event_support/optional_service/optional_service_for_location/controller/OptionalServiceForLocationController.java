@@ -13,7 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.event.model.dto.Organized
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.mapper.OptionalServiceForLocationMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.dto.OptionalServiceForChosenLocationDto;
-import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.service.OptionalServiceForChosenLocationService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.service.OptionalServiceForLocationService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/event/location/services")
 public class OptionalServiceForLocationController {
 
-    private final OptionalServiceForChosenLocationService optionalServiceForChosenLocationService;
+    private final OptionalServiceForLocationService optionalServiceForLocationService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
@@ -36,7 +36,7 @@ public class OptionalServiceForLocationController {
     public ResponseEntity<OptionalServiceForChosenLocationDto> confirmReservation(@RequestParam long id,
                                                                                   @RequestParam long eventId) {
 
-        final OptionalServiceForChosenLocation optionalService = optionalServiceForChosenLocationService.confirmReservation(id, eventId);
+        final OptionalServiceForChosenLocation optionalService = optionalServiceForLocationService.confirmReservation(id, eventId);
 
         return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(optionalService));
     }
@@ -49,7 +49,7 @@ public class OptionalServiceForLocationController {
     public ResponseEntity<ImmutableList<OptionalServiceForChosenLocationDto>> listAllByConfirmationStatus(@RequestParam String status,
                                                                                                           @RequestParam long locationId) {
 
-        List<OptionalServiceForChosenLocation> optionalServices = optionalServiceForChosenLocationService.listAllByStatus(locationId, status);
+        List<OptionalServiceForChosenLocation> optionalServices = optionalServiceForLocationService.listAllByStatus(locationId, status);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(optionalServices.stream()
@@ -66,7 +66,7 @@ public class OptionalServiceForLocationController {
                                                                 @RequestParam long eventId,
                                                                 @RequestParam long serviceId,
                                                                 @RequestBody @Valid OptionalServiceForChosenLocationDto dto) {
-        final OptionalServiceForChosenLocation optionalService = optionalServiceForChosenLocationService.create(customerId, eventId, serviceId, dto);
+        final OptionalServiceForChosenLocation optionalService = optionalServiceForLocationService.create(customerId, eventId, serviceId, dto);
 
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithServices(optionalService.getLocationForEvent().getEvent()));
     }

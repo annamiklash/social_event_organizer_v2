@@ -43,4 +43,10 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "WHERE  c.name LIKE %:keyword% " +
             "AND (cu.id IN :cuisines)")
     List<Catering> search(@Param("cuisines") Set<Long> cuisines, @Param("keyword") String keyword);
+
+    @Query("SELECT cat FROM catering cat " +
+            "LEFT JOIN FETCH cat.cateringBusinessHours bh " +
+            "WHERE cat.id = :cateringId")
+    Optional<Catering> getWithBusinessHours(@Param("cateringId") long cateringId);
+
 }

@@ -29,6 +29,8 @@ public class LocationForEventDto {
     @NotNull
     private int guestCount;
 
+    private String date;
+
     private String confirmationStatus;
 
     private LocationDto location;

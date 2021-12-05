@@ -81,12 +81,14 @@ public class AppProblemController {
         return ResponseEntity.ok(AppProblemMapper.toDto(appProblem));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
+            path = "allowed",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AppProblemDto> reportProblem(@Valid @RequestBody AppProblemDto dto, @RequestParam long userId) {
+    public ResponseEntity<AppProblemDto> reportProblem(@Valid @RequestBody AppProblemDto dto,
+                                                       @RequestParam long userId) {
 
         final AppProblem appProblem = appProblemService.create(dto, userId);
 

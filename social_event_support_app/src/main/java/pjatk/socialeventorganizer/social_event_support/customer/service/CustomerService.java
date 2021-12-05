@@ -16,7 +16,6 @@ import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
@@ -79,8 +78,6 @@ public class CustomerService {
     private final LocationForEventService locationForEventService;
 
     private final CustomerAvatarService customerAvatarService;
-
-    private final CateringForChosenEventLocationService cateringForChosenEventLocationService;
 
     private final LocationService locationService;
 

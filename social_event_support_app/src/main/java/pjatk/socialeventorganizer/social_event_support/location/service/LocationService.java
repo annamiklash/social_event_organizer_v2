@@ -174,8 +174,8 @@ public class LocationService {
         final Set<LocationDescriptionItemEnum> locationDescriptionEnumSet = dto.getDescriptions();
 
         final Set<LocationDescriptionItem> descriptions = locationDescriptionEnumSet.stream()
-                .map(locationDescriptionItemEnum -> locationDescriptionItemEnum.value)
-                .map(value -> locationDescriptionItemService.getById(value))
+                .map(Enum::name)
+                .map(locationDescriptionItemService::getById)
                 .collect(Collectors.toSet());
 
         final Location location = LocationMapper.fromDto(dto);
@@ -204,12 +204,8 @@ public class LocationService {
     }
 
     public Location getWithAvailability(long locationId, String date) {
-        final Optional<Location> optionalLocation = locationRepository.getByIdWithAvailability(locationId, date);
-
-        if (optionalLocation.isPresent()) {
-            return optionalLocation.get();
-        }
-        throw new NotFoundException("Location with id " + locationId + " DOES NOT EXIST");
+        return locationRepository.getByIdWithAvailability(locationId, date)
+                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
     }
 
     private void addLocationOutsideCateringAvailableAndDontServeFood(Location location) {

@@ -54,7 +54,7 @@ public class ComposeInviteEmailUtil implements Serializable {
                         .concat("Meals and snacks provided by: ")
                         .concat(catering.getCatering().getName())
                         .concat(" will be served around ")
-                        .concat(catering.getDateTime())
+                        .concat(catering.getTime())
                         .concat("\n");
             }
             content = content.concat("\n");

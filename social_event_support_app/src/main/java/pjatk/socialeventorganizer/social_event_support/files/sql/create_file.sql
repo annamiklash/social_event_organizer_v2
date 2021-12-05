@@ -318,7 +318,7 @@ CREATE TABLE organized_event
 -- Table: organized_event_guest
 CREATE TABLE event_guest
 (
-    id_guest int NOT NULL,
+    id_guest           int NOT NULL,
     id_organized_event int NOT NULL,
     CONSTRAINT event_guest_pk PRIMARY KEY (id_guest, id_organized_event)
 );
@@ -351,10 +351,13 @@ CREATE TABLE service_review
 -- Table: catering_for_chosen_location
 CREATE TABLE catering_for_chosen_location
 (
-    id_catering_for_chosen_location serial NOT NULL,
-    date_time                       time   NOT NULL,
-    id_catering                     int    NOT NULL,
-    id_location_for_event           int    NOT NULL,
+    id_catering_for_chosen_location serial       NOT NULL,
+    order_time                      time         NOT NULL,
+    order_date                      date         NOT NULL,
+    comment                         varchar(300) NOT NULL,
+    confirmation_status             varchar(30)  NOT NULL,
+    id_catering                     int          NOT NULL,
+    id_location_for_event           int          NOT NULL,
     CONSTRAINT catering_for_chosen_location_pk PRIMARY KEY (id_catering_for_chosen_location)
 );
 
@@ -1290,8 +1293,9 @@ values ('2021-09-01 12:00:00', '2021-09-01 12:00:00', 'comment1', 1, 1),
        ('2021-09-10 12:00:00', '2021-09-10 12:00:00', 'comment10', 10, 10);
 
 
-insert into catering_for_chosen_location (date_time, id_catering, id_location_for_event)
-VALUES ('2021-09-01 12:00:00', 4, 4);
+insert into catering_for_chosen_location (order_date, order_time, id_catering, id_location_for_event, comment,
+                                          confirmation_status)
+VALUES ('2021-09-01', '12:00:00',  4, 4, 'comment', 'CONFIRMED');
 
 insert into catering_order_choice (id_catering_item, count, id_catering_for_chosen_location)
 VALUES (5, 3, 1),

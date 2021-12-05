@@ -7,16 +7,23 @@ import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class CateringForChosenEventLocationDto {
 
-
     private long id;
 
-    private String dateTime;
+    @NotNull
+    private String time;
+
+    @NotNull
+    private String comment;
+
+    private String confirmationStatus;
 
     private CateringDto catering;
 

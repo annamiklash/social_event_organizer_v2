@@ -138,7 +138,6 @@ public class CateringService {
             return optionalCatering.get();
         }
         throw new IllegalArgumentException("Catering with ID " + id + " does not exist");
-
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -154,11 +153,14 @@ public class CateringService {
         if (locationId == null) {
             return createStandaloneCatering(dto, business);
         }
-
         return createCateringWithLocation(dto, locationId, business);
 
     }
 
+    public Catering getWithBusinessHours(long cateringId) {
+        return cateringRepository.getWithBusinessHours(cateringId)
+                .orElseThrow(() -> new NotFoundException("Not catering with id " + cateringId));
+    }
 
     @Transactional(rollbackOn = Exception.class)
     public void addCateringToGivenLocation(Catering catering, long locationId) {

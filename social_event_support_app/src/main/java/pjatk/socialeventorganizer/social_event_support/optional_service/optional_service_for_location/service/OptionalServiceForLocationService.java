@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEv
 import pjatk.socialeventorganizer.social_event_support.exceptions.LocationNotBookedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.mapper.OptionalServiceForLocationMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
@@ -36,7 +37,7 @@ import static pjatk.socialeventorganizer.social_event_support.location.locationf
 @Service
 @AllArgsConstructor
 @Slf4j
-public class OptionalServiceForChosenLocationService {
+public class OptionalServiceForLocationService {
 
     private final OptionalServiceForChosenLocationRepository optionalServiceForChosenLocationRepository;
 
@@ -69,7 +70,9 @@ public class OptionalServiceForChosenLocationService {
 
         final OptionalServiceForChosenLocation optionalServiceForChosenLocation = OptionalServiceForLocationMapper.fromDto(dto);
         optionalServiceForChosenLocation.setOptionalService(optionalService);
-        optionalServiceForChosenLocation.setLocationForEvent(organizedEvent.getLocationForEvent());
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
+        locationForEvent.setEvent(organizedEvent);
+        optionalServiceForChosenLocation.setLocationForEvent(locationForEvent);
 
         save(optionalServiceForChosenLocation);
 
@@ -99,6 +102,20 @@ public class OptionalServiceForChosenLocationService {
 
         modified.forEach(optionalServiceAvailabilityRepository::saveAndFlush);
 
+    }
+
+    public OptionalServiceForChosenLocation confirmReservation(long serviceId, long eventId) {
+        final OptionalServiceForChosenLocation optionalService = findByServiceIdAndEventId(serviceId, eventId);
+
+        optionalService.setConfirmationStatus(CONFIRMED.name());
+        save(optionalService);
+
+        final OrganizedEvent organizedEvent = optionalService.getLocationForEvent().getEvent();
+
+        organizedEvent.setModifiedAt(LocalDateTime.now());
+        organizedEventService.save(organizedEvent);
+
+        return optionalService;
     }
 
     private List<OptionalServiceAvailability> modify(OptionalServiceAvailability availability, LocalDate bookingDate, LocalDateTime bookingTimeFrom, LocalDateTime bookingTimeTo) {
@@ -140,19 +157,7 @@ public class OptionalServiceForChosenLocationService {
         optionalServiceForChosenLocationRepository.save(optionalServiceForChosenLocation);
     }
 
-    public OptionalServiceForChosenLocation confirmReservation(long serviceId, long eventId) {
-        final OptionalServiceForChosenLocation optionalService = findByServiceIdAndEventId(serviceId, eventId);
 
-        optionalService.setConfirmationStatus(CONFIRMED.toString());
-        save(optionalService);
-
-        final OrganizedEvent organizedEvent = optionalService.getLocationForEvent().getEvent();
-
-        organizedEvent.setModifiedAt(LocalDateTime.now());
-        organizedEventService.save(organizedEvent);
-
-        return optionalService;
-    }
 
     private OptionalServiceForChosenLocation findByServiceIdAndEventId(long serviceId, long eventId) {
         return optionalServiceForChosenLocationRepository.findByServiceIdAndEventId(serviceId, eventId)

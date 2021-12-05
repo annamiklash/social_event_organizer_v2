@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, Long> {
 
-
     @Query("SELECT oe from organized_event oe " +
             "left join fetch oe.eventType et " +
             "left join fetch oe.customer c " +
@@ -51,6 +50,7 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
     @Query("SELECT oe from organized_event oe " +
             "LEFT JOIN FETCH oe.locationForEvent lfe " +
             "LEFT JOIN FETCH lfe.location l " +
+            "LEFT JOIN FETCH l.caterings cat " +
             "WHERE oe.id = :eventId")
     Optional<OrganizedEvent> getWithLocation(@Param("eventId") long eventId);
 

@@ -1,6 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.event.mapper;
 
 import lombok.experimental.UtilityClass;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
@@ -73,6 +74,19 @@ public class OrganizedEventMapper {
                 .locationForEvent(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent()))
                 .optionalServices(organizedEvent.getLocationForEvent().getServices().stream()
                         .map(OptionalServiceForLocationMapper::toDto)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public OrganizedEventConfirmationDto toDtoWithCatering(OrganizedEvent organizedEvent) {
+        return OrganizedEventConfirmationDto.builder()
+                .id(organizedEvent.getId())
+                .name(organizedEvent.getName())
+                .eventType(organizedEvent.getEventType().getType())
+                .eventStatus(organizedEvent.getEventStatus())
+                .locationForEvent(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent()))
+                .catering(organizedEvent.getLocationForEvent().getCateringsForEventLocation().stream()
+                        .map(CateringForChosenLocationMapper::toDto)
                         .collect(Collectors.toList()))
                 .build();
     }

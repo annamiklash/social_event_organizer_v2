@@ -61,14 +61,14 @@ public class LocationForEventService {
         if (!isAvailable) {
             throw new NotAvailableException("Location not available for selected date and time");
         }
-        final Location location = locationService.get(locationId);
+        final Location location = locationService.getWithAvailability(locationId, date);
 
         locationService.modifyAvailabilityAfterBooking(location, date, timeFrom, timeTo);
-
 
         final LocationForEvent locationForEvent = LocationForEventMapper.fromDto(dto);
         locationForEvent.setLocation(location);
         locationForEvent.setEvent(organizedEvent);
+        organizedEvent.setLocationForEvent(locationForEvent);
 
         save(locationForEvent);
 
@@ -93,7 +93,6 @@ public class LocationForEventService {
         return locationForEventRepository.findAllByLocationIdAndStatus(locationId, status);
 
     }
-
     public void save(LocationForEvent locationForEvent) {
         locationForEventRepository.save(locationForEvent);
     }

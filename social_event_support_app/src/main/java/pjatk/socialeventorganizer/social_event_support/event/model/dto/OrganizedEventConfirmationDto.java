@@ -30,5 +30,5 @@ public class OrganizedEventConfirmationDto {
 
     private List<OptionalServiceForChosenLocationDto> optionalServices;
 
-    private CateringForChosenEventLocationDto catering;
+    private List<CateringForChosenEventLocationDto> catering;
 }

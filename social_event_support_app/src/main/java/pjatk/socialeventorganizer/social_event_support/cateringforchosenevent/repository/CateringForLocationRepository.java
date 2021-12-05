@@ -12,11 +12,20 @@ import java.util.Optional;
 @Repository
 public interface CateringForLocationRepository extends JpaRepository<CateringForChosenEventLocation, Long> {
 
-    @Query("select cfcl " +
-            "from organized_event oe " +
-            "join location_for_event lfe on lfe.event.id=oe.id " +
-            "join catering_for_chosen_location cfcl on lfe.id = cfcl.eventLocation.id " +
-            "join catering ca on ca.id = cfcl.catering.id " +
-            "where oe.id=:orgEventId and lfe.location.id=:locationId")
-    Optional<List<CateringForChosenEventLocation>> findCateringForChosenEventLocationByOrganizedEventId(@Param("orgEventId") Long orgEventId, @Param("locationId") long locationId);
+    @Query("SELECT c FROM catering_for_chosen_location c " +
+            "LEFT JOIN FETCH c.eventLocation cl " +
+            "LEFT JOIN FETCH cl.event e " +
+            "LEFT JOIN FETCH c.catering cat " +
+            "WHERE e.id = :eventId AND cat.id = :cateringId")
+    Optional<CateringForChosenEventLocation> findByCateringIdAndEventId(@Param("cateringId") long cateringId, @Param("eventId") Long eventId);
+
+    @Query("SELECT c FROM catering_for_chosen_location c " +
+            "LEFT JOIN FETCH c.eventLocation cl " +
+            "LEFT JOIN FETCH cl.event e " +
+            "LEFT JOIN FETCH e.eventType et " +
+            "LEFT JOIN FETCH e.customer ec " +
+            "LEFT JOIN FETCH c.catering cat " +
+            "WHERE cat.id = :cateringId AND c.confirmationStatus = :status")
+    List<CateringForChosenEventLocation> findAllByCateringIdAndStatus(@Param("cateringId") long cateringId, @Param("status") String status);
+
 }

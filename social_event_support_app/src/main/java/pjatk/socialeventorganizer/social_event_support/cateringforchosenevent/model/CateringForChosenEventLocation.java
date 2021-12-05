@@ -6,7 +6,8 @@ import pjatk.socialeventorganizer.social_event_support.location.locationforevent
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Builder
@@ -21,7 +22,17 @@ public class CateringForChosenEventLocation implements Serializable {
     @Column(name = "id_catering_for_chosen_location")
     private Long id;
 
-    private LocalDateTime dateTime;
+    @Column(name = "order_time", nullable = false)
+    private LocalTime time;
+
+    @Column(name = "order_date", nullable = false)
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private String comment;
+
+    @Column(nullable = false)
+    private String confirmationStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering", nullable = false)
