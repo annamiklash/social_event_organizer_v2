@@ -214,11 +214,11 @@ public class CateringService {
     @Transactional(rollbackOn = Exception.class)
     public void deleteCatering(long id) {
         final Catering cateringToDelete = cateringRepository.findAllCateringInformation(id)
-                .orElseThrow(() -> new NotFoundException("Not cateringToDelete with id " + id));
+                .orElseThrow(() -> new NotFoundException("No catering with id " + id));
 
         boolean hasPendingReservations = hasPendingReservations(cateringToDelete);
         if (hasPendingReservations) {
-            throw new ActionNotAllowedException("Cannot delete location with reservations pending");
+            throw new ActionNotAllowedException("Cannot delete catering with reservations pending");
         }
 
         ImmutableSet.copyOf(cateringToDelete.getCateringBusinessHours())

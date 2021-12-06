@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
 import java.util.List;
@@ -42,6 +41,14 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "WHERE os.id_optional_service = :serviceId AND osa.date = CAST(:date as timestamp) " +
             "AND (:timeFrom is null or osa.time_from <= CAST(:timeFrom as timestamp)) " +
             "AND (:timeTo is null or osa.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
-    Optional<Location> available(@Param("serviceId") long serviceId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+    Optional<OptionalService> available(@Param("serviceId") long serviceId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.availability osa " +
+            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
+            "LEFT JOIN FETCH os.serviceForLocation sfl " +
+            "LEFT JOIN FETCH sfl.locationForEvent lfe " +
+            "LEFT JOIN FETCH lfe.event " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> getAllServiceInformation(@Param("serviceId") long serviceId);
 }

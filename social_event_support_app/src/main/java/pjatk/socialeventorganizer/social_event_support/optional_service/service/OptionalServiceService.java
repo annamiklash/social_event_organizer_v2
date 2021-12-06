@@ -15,6 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.service.mod
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
@@ -27,8 +28,8 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.reposito
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -52,7 +53,6 @@ public class OptionalServiceService {
 
     private final TranslationLanguageService translationLanguageService;
 
-    private EntityManager em;
 
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -68,9 +68,7 @@ public class OptionalServiceService {
                 );
             }
         }
-
         return ImmutableList.copyOf(result);
-
     }
 
     public OptionalService get(long id) {
@@ -145,13 +143,27 @@ public class OptionalServiceService {
     }
 
     //TODO: FINISH
+    @Transactional(rollbackOn = Exception.class)
     public void delete(long id) {
+        final OptionalService serviceToDelete = optionalServiceRepository.getAllServiceInformation(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+
+        boolean hasPendingReservations = hasPendingReservations(serviceToDelete);
+        if (hasPendingReservations) {
+            throw new ActionNotAllowedException("Cannot delete service with reservations pending");
+        }
         //cannot delete when there are reservations pending
 
         //delete images
         //set deletedAt
 
 
+    }
+
+    private boolean hasPendingReservations(OptionalService serviceToDelete) {
+        return serviceToDelete.getServiceForLocation().stream()
+                .map(optionalService -> optionalService.getLocationForEvent().getEvent())
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
 
 

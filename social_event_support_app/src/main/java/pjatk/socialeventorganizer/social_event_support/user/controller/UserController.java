@@ -10,7 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
-import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.ChangePasswordDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.NewPasswordDto;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -29,16 +30,25 @@ public class UserController {
     @PostMapping("/reset_password")
     public ResponseEntity<Void> sendResetPasswordEmail(HttpServletRequest request, @RequestParam String email) {
         final String appUrl = request.getScheme() + "://" + request.getServerName();
+        //TODO: validate if user with email exists and not blocked
         userService.sendResetEmailLink(email, appUrl);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
+    @PostMapping("password/change")
+    public ResponseEntity<Void> changePassword(@RequestParam long id,
+                                               @RequestBody ChangePasswordDto dto) {
+        userService.changePassword(id, dto);
         return ResponseEntity.ok().build();
     }
 
 
     @PostMapping("/reset")
     public ResponseEntity<Void> setNewPassword(@RequestParam("token") String token,
-                                               @RequestBody NewPasswordRequest newPasswordRequest) {
+                                               @RequestBody NewPasswordDto newPasswordDto) {
 
-        userService.setNewPassword(token, newPasswordRequest);
+        userService.setNewPassword(token, newPasswordDto);
         return ResponseEntity.ok().build();
     }
 

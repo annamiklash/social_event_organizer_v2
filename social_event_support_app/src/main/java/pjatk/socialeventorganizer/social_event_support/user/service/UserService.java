@@ -16,7 +16,8 @@ import pjatk.socialeventorganizer.social_event_support.security.password.Passwor
 import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
-import pjatk.socialeventorganizer.social_event_support.user.model.request.NewPasswordRequest;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.ChangePasswordDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.NewPasswordDto;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
 
@@ -25,8 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException.Enum.INCORRECT_CREDENTIALS;
-import static pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException.Enum.USER_NOT_EXISTS;
+import static pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException.Enum.*;
 import static pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException.ENUM.USER_EXISTS;
 
 @Service
@@ -132,11 +132,21 @@ public class UserService {
         emailService.sendEmail(passwordResetEmail);
     }
 
+    public void changePassword(long id, ChangePasswordDto dto){
+        final User user = get(id);
+        final Boolean passwordsMatch = passwordEncoderSecurity.doPasswordsMatch(dto.getOldPassword(), user.getPassword());
+        if (!passwordsMatch) {
+            throw new InvalidCredentialsException(PASSWORDS_NOT_MATCH);
+        }
+        user.setPassword(passwordEncoderSecurity.bcryptEncryptor(dto.getNewPassword()));
+        save(user);
+    }
+
     @Transactional(rollbackOn = Exception.class)
-    public void setNewPassword(String token, NewPasswordRequest newPasswordRequest) {
+    public void setNewPassword(String token, NewPasswordDto newPasswordDto) {
         final User user = getByResetPasswordToken(token);
 
-        user.setPassword(passwordEncoderSecurity.bcryptEncryptor(newPasswordRequest.getPassword()));
+        user.setPassword(passwordEncoderSecurity.bcryptEncryptor(newPasswordDto.getPassword()));
         user.setResetPasswordToken(null);
         save(user);
     }
