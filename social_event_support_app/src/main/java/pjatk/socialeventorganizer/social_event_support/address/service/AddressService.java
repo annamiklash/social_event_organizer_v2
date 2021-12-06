@@ -51,8 +51,8 @@ public class AddressService {
     public Address create(AddressDto dto) {
         final Address address = AddressMapper.fromDto(dto);
 
+        address.setCreatedAt(LocalDateTime.now());
         address.setModifiedAt(LocalDateTime.now());
-        address.setDeletedAt(LocalDateTime.now());
 
         save(address);
         return address;
