@@ -517,15 +517,15 @@
 			"name": "CATERING",
 			"item": [
 				{
-					"name": "AVAILABILITY",
+					"name": "CATERING EVENT",
 					"item": [
 						{
-							"name": "GET /api/locations/2/availability",
+							"name": "GET api/event/catering/status",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/availability/catering?id=3&date=2021-11-16",
+									"raw": "http://localhost:8080/api/event/catering/status?status=CONFIRMED&cateringId=3",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -533,17 +533,18 @@
 									"port": "8080",
 									"path": [
 										"api",
-										"availability",
-										"catering"
+										"event",
+										"catering",
+										"status"
 									],
 									"query": [
 										{
-											"key": "id",
-											"value": "3"
+											"key": "status",
+											"value": "CONFIRMED"
 										},
 										{
-											"key": "date",
-											"value": "2021-11-16"
+											"key": "cateringId",
+											"value": "3"
 										}
 									]
 								}
@@ -551,27 +552,229 @@
 							"response": []
 						},
 						{
-							"name": "POST /api/locations/2/availability",
+							"name": "PUT /api/event/catering/confirm",
 							"request": {
-								"method": "POST",
+								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/api/availability/catering?id=3",
+									"raw": "http://localhost:8080/api/event/catering/confirm?cateringId=6&eventId=6",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
-										"",
 										"api",
-										"availability",
+										"event",
+										"catering",
+										"confirm"
+									],
+									"query": [
+										{
+											"key": "cateringId",
+											"value": "6"
+										},
+										{
+											"key": "eventId",
+											"value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /api/event/catering add catering",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"time\": \"21:00:00\",\r\n    \"comment\" : \"test comment\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/event/catering?customerId=15&eventId=6&cateringId=6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"event",
 										"catering"
 									],
 									"query": [
 										{
+											"key": "customerId",
+											"value": "15"
+										},
+										{
+											"key": "eventId",
+											"value": "6"
+										},
+										{
+											"key": "cateringId",
+											"value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CATERING ORDER",
+					"item": [
+						{
+							"name": "GET /api/catering/order",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/catering/order?cateringId=6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"catering",
+										"order"
+									],
+									"query": [
+										{
+											"key": "cateringId",
+											"value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /api/catering/order",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\" : 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/catering/order?itemId=33&cateringId=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"catering",
+										"order"
+									],
+									"query": [
+										{
+											"key": "itemId",
+											"value": "33"
+										},
+										{
+											"key": "cateringId",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT /api/catering/order",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\" : 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/catering/order?orderChoiceId=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"catering",
+										"order"
+									],
+									"query": [
+										{
+											"key": "orderChoiceId",
+											"value": "1"
+										},
+										{
+											"key": "cateringId",
+											"value": "2",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE /api/catering/order",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\" : 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/catering/order?id=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"catering",
+										"order"
+									],
+									"query": [
+										{
 											"key": "id",
-											"value": "3"
+											"value": "1"
+										},
+										{
+											"key": "cateringId",
+											"value": "2",
+											"disabled": true
 										}
 									]
 								}
@@ -681,10 +884,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    },\r\n    \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ],\r\n    \"name\": \"Name\",\r\n    \"email\": \"email@hello.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"serviceCost\": \"20.3\",\r\n    \"description\": \"\",\r\n    \"offersOutsideCatering\": false\r\n}"
+							"raw": "{\r\n    \"name\": \"Name\",\r\n    \"email\": \"email@hello.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"serviceCost\": \"20.3\",\r\n    \"description\": \"\",\r\n    \"offersOutsideCatering\": true,\r\n    \"cuisines\": [\r\n        \"Greek\",\r\n        \"Vegetarian\"\r\n    ],\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    },\r\n    \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SUNDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ]\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/caterings/new/location?locationId=3",
+							"raw": "http://localhost:8080/api/caterings/new",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -693,14 +896,7 @@
 							"path": [
 								"api",
 								"caterings",
-								"new",
-								"location"
-							],
-							"query": [
-								{
-									"key": "locationId",
-									"value": "3"
-								}
+								"new"
 							]
 						}
 					},
@@ -871,7 +1067,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/catering_items?cateringId=10",
+							"raw": "http://localhost:8080/api/catering/items/allowed?cateringId=6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -879,12 +1075,14 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"catering_items"
+								"catering",
+								"items",
+								"allowed"
 							],
 							"query": [
 								{
 									"key": "cateringId",
-									"value": "10"
+									"value": "6"
 								}
 							]
 						}
@@ -892,13 +1090,13 @@
 					"response": []
 				},
 				{
-					"name": "POST http://localhost:8080/api/catering_item/{id}",
+					"name": "POST /api/catering/items",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\" : \"Test\",\r\n    \"description\": \"Description\",\r\n    \"servingPrice\" : \"20.1\",\r\n    \"isVegan\": false,\r\n    \"isVegetarian\" : true,\r\n    \"isGlutenFree\": true,\r\n    \"type\": \"Soup\",\r\n    \"cateringId\" : 2\r\n}",
+							"raw": "{\r\n    \"name\" : \"Test good soup\",\r\n    \"description\": \"Description\",\r\n    \"servingPrice\" : \"20.1\",\r\n    \"isVegan\": false,\r\n    \"isVegetarian\" : true,\r\n    \"isGlutenFree\": true,\r\n    \"type\": \"Soup\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -906,7 +1104,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/catering_items?cateringId=10",
+							"raw": "http://localhost:8080/api/catering/items?cateringId=6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -914,12 +1112,13 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"catering_items"
+								"catering",
+								"items"
 							],
 							"query": [
 								{
 									"key": "cateringId",
-									"value": "10"
+									"value": "6"
 								}
 							]
 						}
@@ -1065,7 +1264,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"timeFrom\" : \"18:00:00\",\r\n    \"timeTo\": \"21:00:00\",\r\n    \"guestCount\" : 25\r\n}",
+									"raw": "{\r\n    \"timeFrom\" : \"18:00:00\",\r\n    \"timeTo\": \"21:00:00\",\r\n    \"guestCount\" : 25,\r\n    \"comment\" : \"test comment\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1458,6 +1657,10 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "SERVICE FOR LOCATION",
+					"item": []
 				},
 				{
 					"name": "GET api/services",
@@ -2381,7 +2584,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/problems?userId=15",
+							"raw": "http://localhost:8080/api/problems/allowed?userId=15",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2389,7 +2592,8 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"problems"
+								"problems",
+								"allowed"
 							],
 							"query": [
 								{

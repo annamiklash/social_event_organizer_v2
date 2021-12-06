@@ -126,7 +126,7 @@ public class LocationController {
             method = RequestMethod.GET,
             path = "business",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<LocationDto>> getByBusinessId(@PathVariable long id) {
+    public ResponseEntity<ImmutableList<LocationDto>> getByBusinessId(@RequestParam long id) {
         ImmutableList<Location> locations = locationService.getByBusinessId(id);
 
         return ResponseEntity.ok(
