@@ -1035,6 +1035,29 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GET /api/locations/2/detail Copy 2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/allowed/5/detail",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations",
+								"allowed",
+								"5",
+								"detail"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1588,6 +1611,29 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GET /api/locations/2/detail Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/allowed/5/detail",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations",
+								"allowed",
+								"5",
+								"detail"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1982,7 +2028,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"addressRequest\": {\r\n        \"county\" : \"Poland\",\r\n        \"city\" : \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\" : 23,\r\n        \"zipCode\": \"01-157\"\r\n    },  \r\n    \"firstName\" : \"First\",\r\n    \"lastName\" : \"Last\",\r\n    \"birthDate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\"\r\n}",
+							"raw": "{\r\n    \"addressRequest\": {\r\n        \"country\" : \"Poland\",\r\n        \"city\" : \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\" : 23,\r\n        \"zipCode\": \"01-157\"\r\n    },  \r\n    \"firstName\" : \"First\",\r\n    \"lastName\" : \"Last\",\r\n    \"birthDate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2533,6 +2579,42 @@
 							"path": [
 								"api",
 								"users"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "14"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/password/change",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"Customer1!\",\r\n    \"newPassword\": \"Customer2!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/password/change?id=14",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"password",
+								"change"
 							],
 							"query": [
 								{
