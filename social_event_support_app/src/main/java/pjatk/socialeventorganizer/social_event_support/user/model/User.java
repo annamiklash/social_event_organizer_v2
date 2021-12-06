@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,13 +22,13 @@ public class User implements Serializable {
     @Column(name = "id_user")
     private Long id;
 
-    @Column(name = "hashed_password")
+    @Column(name = "hashed_password", nullable = false)
     private String password;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "user_type")
+    @Column(name = "user_type", nullable = false)
     private Character type;
 
     @Column(name = "reset_password_token")
@@ -50,7 +49,7 @@ public class User implements Serializable {
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
     Set<AppProblem> appProblems;
 }

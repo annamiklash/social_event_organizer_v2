@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.optional_service.model.translator;
+package pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.model.TranslationLanguage;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -26,5 +26,13 @@ public class Interpreter extends OptionalService {
             joinColumns = @JoinColumn(name = "id_optional_service"),
             inverseJoinColumns = @JoinColumn(name = "id_language"))
     private Set<TranslationLanguage> languages;
+
+    public void addLanguage(TranslationLanguage language) {
+        languages.add(language);
+    }
+
+    public void removeLanguage(TranslationLanguage language) {
+        languages.remove(language);
+    }
 
 }

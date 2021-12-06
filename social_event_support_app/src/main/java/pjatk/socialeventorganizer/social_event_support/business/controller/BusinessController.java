@@ -85,7 +85,7 @@ public class BusinessController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@RequestParam long id) {
-        businessService.delete(id);
+        businessService.deleteLogical(id);
 
         return ResponseEntity.ok().build();
     }

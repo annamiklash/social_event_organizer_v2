@@ -85,7 +85,15 @@ public class AddressService {
         address.setModifiedAt(LocalDateTime.now());
         address.setDeletedAt(LocalDateTime.now());
 
-        addressRepository.save(get(id));
+        addressRepository.save(address);
+    }
+
+    public void delete(Address address) {
+
+        address.setModifiedAt(LocalDateTime.now());
+        address.setDeletedAt(LocalDateTime.now());
+
+        addressRepository.save(address);
     }
 
 

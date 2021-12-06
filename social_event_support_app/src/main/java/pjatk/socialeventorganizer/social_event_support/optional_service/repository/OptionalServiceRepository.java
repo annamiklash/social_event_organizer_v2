@@ -44,6 +44,7 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
     Optional<OptionalService> available(@Param("serviceId") long serviceId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.styles ms " +
             "LEFT JOIN FETCH os.availability osa " +
             "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
             "LEFT JOIN FETCH os.serviceForLocation sfl " +

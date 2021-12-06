@@ -33,5 +33,9 @@ public class OptionalServiceBusinessService {
         optionalServiceBusinessHoursRepository.save(optionalServiceBusinessHours);
     }
 
+    public void delete(OptionalServiceBusinessHours businessHours) {
+        optionalServiceBusinessHoursRepository.delete(businessHours);
+    }
+
     //TODO: edit method
 }

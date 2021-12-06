@@ -132,7 +132,7 @@ public class UserService {
         emailService.sendEmail(passwordResetEmail);
     }
 
-    public void changePassword(long id, ChangePasswordDto dto){
+    public void changePassword(long id, ChangePasswordDto dto) {
         final User user = get(id);
         final Boolean passwordsMatch = passwordEncoderSecurity.doPasswordsMatch(dto.getOldPassword(), user.getPassword());
         if (!passwordsMatch) {
@@ -161,12 +161,9 @@ public class UserService {
     }
 
     public void block(long id) {
-
         final User user = get(id);
         user.setActive(false);
         user.setBlockedAt(LocalDateTime.now());
-
-        //TODO: invalidate users session
 
         save(user);
     }
@@ -175,4 +172,10 @@ public class UserService {
         return userRepository.active(loginDto.getEmail()).isPresent();
     }
 
+    public void delete(User user) {
+        user.setModifiedAt(LocalDateTime.now());
+        user.setDeletedAt(LocalDateTime.now());
+
+        save(user);
+    }
 }

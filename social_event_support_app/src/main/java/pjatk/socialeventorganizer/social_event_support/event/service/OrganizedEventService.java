@@ -187,4 +187,10 @@ public class OrganizedEventService {
         return organizedEvent;
     }
 
+    public void delete(OrganizedEvent organizedEvent) {
+        organizedEvent.setModifiedAt(LocalDateTime.now());
+        organizedEvent.setDeletedAt(LocalDateTime.now());
+
+        save(organizedEvent);
+    }
 }

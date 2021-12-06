@@ -107,7 +107,7 @@ public class CateringController {
             path = "delete")
     public ResponseEntity<Void> delete(@RequestParam long id) {
         try {
-            cateringService.deleteCatering(id);
+            cateringService.deleteLogical(id);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

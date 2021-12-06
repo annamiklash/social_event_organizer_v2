@@ -79,4 +79,12 @@ public class OptionalService {
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceForChosenLocation> serviceForLocation;
 
+    public void addMusicStyle(MusicStyle musicStyle) {
+        styles.add(musicStyle);
+    }
+
+    public void removeMusicStyle(MusicStyle musicStyle) {
+        styles.remove(musicStyle);
+    }
+
 }

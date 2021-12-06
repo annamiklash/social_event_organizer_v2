@@ -15,7 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.address.service.AddressSe
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
-import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
+import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.service.LocationBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
@@ -60,7 +60,7 @@ public class LocationService {
 
     private final AddressService addressService;
 
-    private final BusinessService businessService;
+    private final BusinessRepository businessRepository;
 
     private final LocationAvailabilityRepository locationAvailabilityRepository;
 
@@ -164,7 +164,8 @@ public class LocationService {
     public Location create(LocationDto dto) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
 
-        final Business business = businessService.get(userCredentials.getUserId());
+        final Business business = businessRepository.findById(userCredentials.getUserId())
+                .orElseThrow(() -> new NotFoundException("Business with id " + userCredentials.getUserId() + " DOES NOT EXIST"));
 
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);

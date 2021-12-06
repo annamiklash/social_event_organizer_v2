@@ -8,10 +8,10 @@ import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.Interpreter;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.kidperformer.KidsPerformer;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.MusicBand;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.Musician;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.Interpreter;
 import pjatk.socialeventorganizer.social_event_support.optional_service.validator.Validator;
 
 import java.util.stream.Collectors;

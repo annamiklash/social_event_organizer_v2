@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -24,37 +24,41 @@ import java.util.Set;
 public class Business implements Serializable {
 
     @Id
-    @Column(name = "id_business_user")
-    Long id;
+    @Column(name = "id_business_user", nullable = false)
+    private long id;
 
-    @Column(name = "first_name")
-    String firstName;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-    @Column(name = "last_name")
-    String lastName;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
-    @Column(name = "business_name")
-    String businessName;
+    @Column(name = "business_name", nullable = false)
+    private String businessName;
 
-    @Column(name = "phone_number")
-    BigInteger phoneNumber;
+    @Column(name = "phone_number", nullable = false)
+    private BigInteger phoneNumber;
 
-    @Column(name = "verification_status")
-    String verificationStatus;
+    @Column(name = "verification_status", nullable = false)
+    private String verificationStatus;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business_address")
-    Address address;
+    private Address address;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business")
-    Set<Catering> caterings = new HashSet<>();
+    private Set<Catering> caterings;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business")
-    Set<Location> locations = new HashSet<>();
+    private Set<Location> locations;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_business")
+    private Set<OptionalService> services;
 
     @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL, optional = false)
-    User user;
+    private User user;
 }

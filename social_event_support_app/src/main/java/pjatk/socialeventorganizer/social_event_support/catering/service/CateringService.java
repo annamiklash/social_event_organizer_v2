@@ -212,7 +212,7 @@ public class CateringService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void deleteCatering(long id) {
+    public void deleteLogical(long id) {
         final Catering cateringToDelete = cateringRepository.findAllCateringInformation(id)
                 .orElseThrow(() -> new NotFoundException("No catering with id " + id));
 

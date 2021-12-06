@@ -15,10 +15,12 @@ import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessM
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
+import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
-import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
+import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -34,13 +36,17 @@ import static pjatk.socialeventorganizer.social_event_support.enums.BusinessVeri
 @Slf4j
 public class BusinessService {
 
-    BusinessRepository businessRepository;
+    private final BusinessRepository businessRepository;
 
-    AddressService addressService;
+    private final AddressService addressService;
 
-    SecurityService securityService;
+    private final UserService userService;
 
-    UserService userService;
+    private final LocationService locationService;
+
+    private final CateringService cateringService;
+
+    private final OptionalServiceService optionalServiceService;
 
     public ImmutableList<Business> list(CustomPage customPage) {
 
@@ -89,25 +95,36 @@ public class BusinessService {
         throw new NotFoundException("Business with id " + id + " DOES NOT EXIST");
     }
 
-    public void delete(long id) {
-        final Business business = getWithDetail(id);
+    @Transactional(rollbackOn = Exception.class)
+    public void deleteLogical(long id) {
+        final Business businessToDelete = businessRepository.findAllBusinessInformation(id)
+                .orElseThrow(() -> new NotFoundException("Business with id " + id + " DOES NOT EXIST"));
 
+        ImmutableList.copyOf(businessToDelete.getLocations())
+                .forEach(location -> locationService.deleteLogical(location.getId()));
 
-        //TODO: finish
-        //delete address
-        //delete caterings is exist
-        //delete locations if exist
-        //delete caterings if exist
+        ImmutableList.copyOf(businessToDelete.getCaterings())
+                .forEach(catering -> cateringService.deleteLogical(catering.getId()));
 
+        ImmutableList.copyOf(businessToDelete.getServices())
+                .forEach(service -> optionalServiceService.deleteLogical(service.getId()));
+
+        addressService.delete(businessToDelete.getAddress());
+        userService.delete(businessToDelete.getUser());
+
+        save(businessToDelete);
     }
 
-    public Business verify(long id) {
 
+    public Business verify(long id) {
         final Business business = get(id);
         business.setVerificationStatus(String.valueOf(BusinessVerificationStatusEnum.VERIFIED));
 
         businessRepository.save(business);
         return business;
+    }
 
+    private void save(Business business) {
+        businessRepository.save(business);
     }
 }

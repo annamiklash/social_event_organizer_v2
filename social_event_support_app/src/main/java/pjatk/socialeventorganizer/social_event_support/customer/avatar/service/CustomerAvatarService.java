@@ -44,4 +44,8 @@ public class CustomerAvatarService {
 
         return customerAvatar;
     }
+
+    public void delete (CustomerAvatar customerAvatar) {
+        customerAvatarRepository.delete(customerAvatar);
+    }
 }

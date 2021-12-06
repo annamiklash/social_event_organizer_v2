@@ -1,10 +1,10 @@
-package pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.service;
+package pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.model.TranslationLanguage;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.repository.TranslationLanguageRepository;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.repository.TranslationLanguageRepository;
 
 import java.util.List;
 
@@ -18,4 +18,6 @@ public class TranslationLanguageService {
     public List<TranslationLanguage> getAllByInterpreterId(long id) {
         return translationLanguageRepository.getByInterpreterId(id);
     }
+
+
 }

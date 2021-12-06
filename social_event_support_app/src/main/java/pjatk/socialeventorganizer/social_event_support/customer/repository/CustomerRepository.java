@@ -45,4 +45,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             "left join fetch ce.eventType cee " +
             "WHERE c.id = :id")
     Optional<Customer> getWithDetail(@Param("id") long id);
+
+    @Query("SELECT c FROM customer c " +
+            "LEFT JOIN FETCH c.address a " +
+            "LEFT JOIN FETCH c.user u " +
+            "LEFT JOIN FETCH c.guests g " +
+            "LEFT JOIN FETCH c.events " +
+            "WHERE c.id = :id")
+    Optional<Customer> getAllCustomerInformation(@Param("id") long id);
 }

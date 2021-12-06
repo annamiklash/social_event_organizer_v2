@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.customer.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
@@ -35,6 +36,7 @@ import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEve
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
@@ -56,7 +58,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
-import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.READY;
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
 
 @Service
 @AllArgsConstructor
@@ -213,12 +215,24 @@ public class CustomerService {
         throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
     }
 
-    //TODO:FINISH
+
     public void delete(long id) {
-        //reservation set deletedAt
-        //delete guests
-        //set deletedAt
+        final Customer customerToDelete = customerRepository.getAllCustomerInformation(id)
+                .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
+        boolean hasPendingReservations = hasPendingReservations(customerToDelete);
+        if (hasPendingReservations) {
+            throw new ActionNotAllowedException("Cannot delete customer with reservations pending");
+        }
+        ImmutableSet.copyOf(customerToDelete.getGuests()).forEach(guestService::delete);
+        ImmutableSet.copyOf(customerToDelete.getEvents()).forEach(organizedEventService::delete);
+
+        customerAvatarService.delete(customerToDelete.getAvatar());
+        addressService.delete(customerToDelete.getAddress());
+        userService.delete(customerToDelete.getUser());
+
+        save(customerToDelete);
     }
+
 
     public Customer edit(CustomerDto dto, long id) {
         final Customer customer = get(id);
@@ -234,12 +248,8 @@ public class CustomerService {
         return customer;
     }
 
-    public void save(Customer customer) {
-        customerRepository.save(customer);
-    }
-
     public void addGuestsToEvent(long id, long eventId, long locationId, long[] guestIds) {
-        Customer customer  = customerRepository.findById(id)
+        Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("No customer with id " + id));
         final LocationForEvent locationForEvent = locationForEventService.findByLocationIdAndEventId(locationId, eventId);
 
@@ -284,8 +294,18 @@ public class CustomerService {
         }
     }
 
+    private void save(Customer customer) {
+        customerRepository.save(customer);
+    }
+
     private OrganizedEventDto createInvitationContent(OrganizedEvent organizedEvent) {
         return OrganizedEventMapper.toDtoForInvite(organizedEvent);
     }
 
+    private boolean hasPendingReservations(Customer customerToDelete) {
+        return customerToDelete.getEvents().stream()
+                .anyMatch(organizedEvent -> !organizedEvent.getEventStatus().equals(FINISHED.name())
+                        || !organizedEvent.getEventStatus().equals(CANCELLED.name()));
+
+    }
 }

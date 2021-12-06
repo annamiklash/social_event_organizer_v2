@@ -20,4 +20,13 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
 
 
     Optional<Business> findById(long id);
+
+    @Query("SELECT b FROM business b " +
+            "LEFT JOIN FETCH b.user u " +
+            "LEFT JOIN FETCH b.caterings c " +
+            "LEFT JOIN FETCH b.locations l " +
+            "LEFT JOIN FETCH b.services s " +
+            "LEFT JOIN FETCH b.address a")
+    Optional<Business> findAllBusinessInformation(long id);
+
 }

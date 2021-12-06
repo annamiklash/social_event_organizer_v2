@@ -92,6 +92,10 @@ public class GuestService {
         guestRepository.delete(guest);
     }
 
+    public void delete(Guest guest) {
+        guestRepository.delete(guest);
+    }
+
 
     private void save(Guest guest) {
         guestRepository.save(guest);

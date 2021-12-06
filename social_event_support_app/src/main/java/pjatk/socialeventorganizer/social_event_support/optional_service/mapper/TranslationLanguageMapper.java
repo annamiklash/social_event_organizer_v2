@@ -2,7 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.optional_service.mapper;
 
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.TranslationLanguageDto;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.model.TranslationLanguage;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
 
 @UtilityClass
 public class TranslationLanguageMapper {

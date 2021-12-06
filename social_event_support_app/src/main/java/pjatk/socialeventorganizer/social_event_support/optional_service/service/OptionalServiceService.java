@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.optional_service.service
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
@@ -22,8 +24,12 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.O
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.Interpreter;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.service.TranslationLanguageService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.Interpreter;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.service.MusicStyleService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.repostory.OptionalServiceForChosenLocationRepository;
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
@@ -53,6 +59,11 @@ public class OptionalServiceService {
 
     private final TranslationLanguageService translationLanguageService;
 
+    private final MusicStyleService musicStyleService;
+
+    private final OptionalServiceAvailabilityRepository optionalServiceAvailabilityRepository;
+
+    private final OptionalServiceForChosenLocationRepository optionalServiceForChosenLocationRepository;
 
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -144,7 +155,7 @@ public class OptionalServiceService {
 
     //TODO: FINISH
     @Transactional(rollbackOn = Exception.class)
-    public void delete(long id) {
+    public void deleteLogical(long id) {
         final OptionalService serviceToDelete = optionalServiceRepository.getAllServiceInformation(id)
                 .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
 
@@ -152,12 +163,39 @@ public class OptionalServiceService {
         if (hasPendingReservations) {
             throw new ActionNotAllowedException("Cannot delete service with reservations pending");
         }
-        //cannot delete when there are reservations pending
 
-        //delete images
-        //set deletedAt
+        ImmutableSet.copyOf(serviceToDelete.getOptionalServiceBusinessHours())
+                .forEach(optionalServiceBusinessService::delete);
 
+        ImmutableSet.copyOf(serviceToDelete.getAvailability())
+                .forEach(optionalServiceAvailabilityRepository::delete);
 
+        ImmutableSet.copyOf(serviceToDelete.getServiceForLocation())
+                .forEach(optionalServiceForChosenLocationRepository::delete);
+
+        final String type = serviceToDelete.getType();
+        switch (type) {
+            case "INTERPRETER":
+                final ImmutableSet<TranslationLanguage> languages = ImmutableSet.copyOf(((Interpreter) serviceToDelete).getLanguages());
+                for (TranslationLanguage language : languages) {
+                    ((Interpreter) serviceToDelete).removeLanguage(language);
+                }
+                break;
+
+            case "MUSICIAN":
+            case "MUSIC BAND":
+            case "SINGER":
+            case "DJ":
+                final ImmutableSet<MusicStyle> musicStyles = ImmutableSet.copyOf(serviceToDelete.getStyles());
+                for (MusicStyle musicStyle : musicStyles) {
+                    serviceToDelete.removeMusicStyle(musicStyle);
+                }
+                break;
+            default:
+                break;
+        }
+        serviceToDelete.setModifiedAt(LocalDateTime.now());
+        serviceToDelete.setDeletedAt(LocalDateTime.now());
     }
 
     private boolean hasPendingReservations(OptionalService serviceToDelete) {
@@ -165,6 +203,5 @@ public class OptionalServiceService {
                 .map(optionalService -> optionalService.getLocationForEvent().getEvent())
                 .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
-
 
 }

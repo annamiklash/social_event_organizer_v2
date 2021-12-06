@@ -1,10 +1,10 @@
-package pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.repository;
+package pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.model.TranslationLanguage;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
 
 import java.util.List;
 

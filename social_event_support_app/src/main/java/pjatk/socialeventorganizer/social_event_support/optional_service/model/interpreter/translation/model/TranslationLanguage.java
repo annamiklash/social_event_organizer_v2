@@ -1,7 +1,7 @@
-package pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.translation.model;
+package pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model;
 
 import lombok.*;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.translator.Interpreter;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.Interpreter;
 
 import javax.persistence.*;
 import java.util.HashSet;

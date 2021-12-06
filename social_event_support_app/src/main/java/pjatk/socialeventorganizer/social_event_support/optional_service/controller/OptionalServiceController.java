@@ -96,7 +96,7 @@ public class OptionalServiceController {
             params = "{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@RequestParam long id) {
-        optionalServiceService.delete(id);
+        optionalServiceService.deleteLogical(id);
 
         return ResponseEntity.noContent().build();
     }
