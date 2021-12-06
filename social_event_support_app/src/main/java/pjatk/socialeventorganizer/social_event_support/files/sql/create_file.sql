@@ -137,7 +137,6 @@ CREATE TABLE customer
     last_name           varchar(40) NOT NULL,
     birthdate           date        NOT NULL,
     phone_number        bigint      NOT NULL,
-    id_customer_address int         NOT NULL,
     CONSTRAINT customer_pk PRIMARY KEY (id_customer_user)
 );
 
@@ -546,16 +545,6 @@ ALTER TABLE catering_review
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
-
--- Reference: customer_address (table: customer)
-ALTER TABLE customer
-    ADD CONSTRAINT customer_address
-        FOREIGN KEY (id_customer_address)
-            REFERENCES address (id_address)
-            NOT DEFERRABLE
-                INITIALLY IMMEDIATE
-;
-
 
 -- Reference: customer_user (table: customer)
 ALTER TABLE customer
@@ -1108,13 +1097,12 @@ VALUES ('https://infatuation.s3.amazonaws.com/media/images/guides/greek-restaura
 
 
 
-INSERT INTO customer (id_customer_user, first_name, last_name, birthdate, phone_number,
-                      id_customer_address)
-VALUES (9, 'Lacy', 'Botsford', '1988-06-30', 123456789, 20),
-       (13, 'Tommie', 'Bechtelar', '1990-09-24', 123456789, 19),
-       (11, 'Delia', 'Koch', '1985-11-16', 123456789, 18),
-       (12, 'Tracey', 'Metz', '2000-03-16', 123456789, 17),
-       (10, 'Oma', 'Walter', '1975-11-08', 123456789, 16);
+INSERT INTO customer (id_customer_user, first_name, last_name, birthdate, phone_number)
+VALUES (9, 'Lacy', 'Botsford', '1988-06-30', 123456789),
+       (13, 'Tommie', 'Bechtelar', '1990-09-24', 123456789),
+       (11, 'Delia', 'Koch', '1985-11-16', 123456789),
+       (12, 'Tracey', 'Metz', '2000-03-16', 123456789),
+       (10, 'Oma', 'Walter', '1975-11-08', 123456789);
 
 
 INSERT INTO guest (first_name, last_name, email, id_customer, created_at, modified_at)

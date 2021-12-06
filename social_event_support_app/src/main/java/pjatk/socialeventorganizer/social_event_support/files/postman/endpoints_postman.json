@@ -72,7 +72,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"customer1@email.com\",\r\n    \"password\": \"customer\",\r\n    \"firstName\": \"Hanna\",\r\n    \"lastName\": \"Miklash\",\r\n    \"birthdate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Tyszkiewicza\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    }\r\n}"
+							"raw": "{\r\n    \"email\": \"new_customer1@email.com\",\r\n    \"password\": \"Customer1!\",\r\n    \"firstName\": \"Hanna\",\r\n    \"lastName\": \"Miklash\",\r\n    \"birthdate\": \"1994-06-22\",\r\n    \"phoneNumber\": \"123456789\"\r\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/api/register/customer",

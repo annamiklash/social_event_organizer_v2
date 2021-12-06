@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
@@ -101,8 +100,6 @@ public class CustomerService {
 
     @Transactional(rollbackOn = Exception.class)
     public Customer create(CustomerDto dto) {
-
-        final Address address = addressService.create(dto.getAddress());
         final Customer customer = CustomerMapper.fromDto(dto);
 
         if (dto.getAvatar() != null) {
@@ -113,8 +110,6 @@ public class CustomerService {
 
         customer.setId(user.getId());
         customer.setUser(user);
-        customer.setAddress(address);
-
         user.setActive(true);
         user.setModifiedAt(LocalDateTime.now());
 
@@ -227,7 +222,6 @@ public class CustomerService {
         ImmutableSet.copyOf(customerToDelete.getEvents()).forEach(organizedEventService::delete);
 
         customerAvatarService.delete(customerToDelete.getAvatar());
-        addressService.delete(customerToDelete.getAddress());
         userService.delete(customerToDelete.getUser());
 
         save(customerToDelete);

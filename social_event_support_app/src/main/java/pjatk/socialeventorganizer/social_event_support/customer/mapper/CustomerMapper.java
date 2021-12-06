@@ -1,7 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.customer.mapper;
 
 import lombok.experimental.UtilityClass;
-import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
@@ -47,7 +46,6 @@ public class CustomerMapper {
                 .build();
     }
 
-
     public CustomerDto toDtoWithProblems(Customer customer) {
         return CustomerDto.builder()
                 .firstName(customer.getFirstName())
@@ -82,7 +80,9 @@ public class CustomerMapper {
                 .birthdate(customer.getBirthdate().toString())
                 .user(UserMapper.toDtoWithProblems(customer.getUser()))
 //                .guests(customer.getGuests().stream().map(GuestMapper::toDto).collect(Collectors.toSet()))
-                .events(customer.getEvents().stream().map(OrganizedEventMapper::toDto).collect(Collectors.toSet()))
+                .events(customer.getEvents().stream()
+                        .map(OrganizedEventMapper::toDto)
+                        .collect(Collectors.toSet()))
                 .build();
     }
 
@@ -92,7 +92,6 @@ public class CustomerMapper {
                 .lastName(customer.getLastName())
                 .birthdate(DateTimeUtil.fromStringToFormattedDate(customer.getBirthdate()))
                 .phoneNumber(Converter.convertPhoneNumberString(customer.getPhoneNumber()))
-                .address(AddressMapper.fromDto(customer.getAddress()))
                 .build();
     }
 
@@ -100,7 +99,6 @@ public class CustomerMapper {
         return CustomerDto.builder()
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
-                .address(dto.getAddress())
                 .birthdate(dto.getBirthdate())
                 .phoneNumber(dto.getPhoneNumber())
                 .user(dto.getUser())
