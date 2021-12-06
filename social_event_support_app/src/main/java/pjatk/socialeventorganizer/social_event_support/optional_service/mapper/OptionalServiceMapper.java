@@ -1,7 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.optional_service.mapper;
 
 import lombok.experimental.UtilityClass;
-import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessMapper;
+import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
@@ -139,10 +139,14 @@ public class OptionalServiceMapper {
 
     public OptionalServiceDto toDtoWithDetails(OptionalService optionalService) {
         final OptionalServiceDto dto = toDto(optionalService);
-        dto.setBusiness(BusinessMapper.toDto(optionalService.getBusiness()));
+//        dto.setBusiness(BusinessMapper.toDto(optionalService.getBusiness()));
 
         dto.setBusinessHours(optionalService.getOptionalServiceBusinessHours().stream()
                 .map(BusinessHoursMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setServiceAvailability(optionalService.getAvailability().stream()
+                .map(AvailabilityMapper::toDto)
                 .collect(Collectors.toList()));
 
         return dto;

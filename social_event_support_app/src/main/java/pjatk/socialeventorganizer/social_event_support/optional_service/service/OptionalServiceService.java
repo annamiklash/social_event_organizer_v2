@@ -12,7 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
-import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
+import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
@@ -28,7 +28,6 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.in
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.service.MusicStyleService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.repostory.OptionalServiceForChosenLocationRepository;
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
@@ -39,7 +38,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
@@ -51,15 +49,13 @@ public class OptionalServiceService {
 
     private final OptionalServiceRepository optionalServiceRepository;
 
-    private final BusinessService businessService;
+    private final BusinessRepository businessRepository;
 
     private final SecurityService securityService;
 
     private final OptionalServiceBusinessService optionalServiceBusinessService;
 
     private final TranslationLanguageService translationLanguageService;
-
-    private final MusicStyleService musicStyleService;
 
     private final OptionalServiceAvailabilityRepository optionalServiceAvailabilityRepository;
 
@@ -83,19 +79,40 @@ public class OptionalServiceService {
     }
 
     public OptionalService get(long id) {
-        final Optional<OptionalService> optionalService = optionalServiceRepository.findById(id);
+        return optionalServiceRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+    }
 
-        if (optionalService.isPresent()) {
-            return optionalService.get();
+    public OptionalService getWithDetail(long id) {
+        final OptionalService optionalService = optionalServiceRepository.findWithDetail(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+
+        final String type = optionalService.getType();
+        switch (type) {
+            case "INTERPRETER":
+                final ImmutableSet<TranslationLanguage> languages = ImmutableSet.copyOf(((Interpreter) optionalService).getLanguages());
+                ((Interpreter) optionalService).setLanguages(languages);
+                break;
+
+            case "MUSICIAN":
+            case "MUSIC BAND":
+            case "SINGER":
+            case "DJ":
+                final ImmutableSet<MusicStyle> musicStyles = ImmutableSet.copyOf(optionalService.getStyles());
+                optionalService.setStyles(musicStyles);
+                break;
+            default:
+                break;
         }
-
-        throw new NotFoundException("Service with id " + id + " DOES NOT EXIST");
+        return optionalService;
     }
 
     @Transactional(rollbackOn = Exception.class)
     public OptionalService create(OptionalServiceDto dto) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
-        final Business business = businessService.get(userCredentials.getUserId());
+
+        final Business business = businessRepository.findById(userCredentials.getUserId())
+                .orElseThrow(() -> new NotFoundException("Business with id " + userCredentials.getUserId() + " DOES NOT EXIST"));
 
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);

@@ -51,7 +51,9 @@ public class LocationMapper {
 
     public static LocationDto toDtoWithAvailability(Location location) {
         final LocationDto dto = toDto(location);
-        dto.setLocationAvailability(location.getAvailability().stream().map(AvailabilityMapper::toDto).collect(Collectors.toList()));
+        dto.setLocationAvailability(location.getAvailability().stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(Collectors.toList()));
 
         return dto;
     }

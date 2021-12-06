@@ -62,8 +62,17 @@ public class OptionalServiceController {
         return ResponseEntity.ok(OptionalServiceMapper.toDto(optionalService));
     }
 
-    //TODO: add method getWithDetail
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "allowed/{id}/detail",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OptionalServiceDto> getWithDetail(@PathVariable long id) {
+        log.info("GET " + id);
 
+        final OptionalService optionalService = optionalServiceService.getWithDetail(id);
+
+        return ResponseEntity.ok(OptionalServiceMapper.toDtoWithDetails(optionalService));
+    }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(

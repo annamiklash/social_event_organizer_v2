@@ -18,7 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.catering.rep
 import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
-import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
+import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.service.CateringBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
@@ -66,7 +66,7 @@ public class CateringService {
 
     private final SecurityService securityService;
 
-    private final BusinessService businessService;
+    private final BusinessRepository businessRepository;
 
     private final CateringBusinessHoursService cateringBusinessHoursService;
 
@@ -141,7 +141,8 @@ public class CateringService {
     public Catering create(CateringDto dto, Long locationId) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
 
-        final Business business = businessService.get(userCredentials.getUserId());
+        final Business business = businessRepository.findById(userCredentials.getUserId())
+                .orElseThrow(() -> new NotFoundException("Business with id " + userCredentials.getUserId() + " DOES NOT EXIST"));
 
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
@@ -292,7 +293,7 @@ public class CateringService {
 
         final Location location = locationService.getWithDetail(locationId);
 
-        if (!business.getId().equals(location.getBusiness().getId())) {
+        if (business.getId() != (location.getBusiness().getId())) {
             throw new InvalidCredentialsException(InvalidCredentialsException.Enum.INCORRECT_CREDENTIALS);
         }
 

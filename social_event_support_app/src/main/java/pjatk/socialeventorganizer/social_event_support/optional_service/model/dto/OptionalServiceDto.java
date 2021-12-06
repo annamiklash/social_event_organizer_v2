@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
 
@@ -43,6 +44,8 @@ public class OptionalServiceDto implements Serializable {
     private String instrument;
 
     private Set<TranslationLanguageDto> translationLanguages;
+
+    private List<AvailabilityDto> serviceAvailability;
 
     private Integer musicBandPeopleCount;
 
