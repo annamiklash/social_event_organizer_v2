@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CateringBusinessHoursService {
 
-    private CateringBusinessHoursRepository cateringBusinessHoursRepository;
+    private final CateringBusinessHoursRepository cateringBusinessHoursRepository;
 
     public List<CateringBusinessHours> create(List<BusinessHoursDto> dtos) {
 
@@ -27,10 +27,15 @@ public class CateringBusinessHoursService {
                 .map(BusinessHoursMapper::fromDtoToCatering)
                 .peek(this::save)
                 .collect(Collectors.toList());
-
     }
 
     private void save(CateringBusinessHours cateringBusinessHours) {
         cateringBusinessHoursRepository.save(cateringBusinessHours);
     }
+
+    public void delete(CateringBusinessHours businessHour) {
+        cateringBusinessHoursRepository.delete(businessHour);
+    }
+
+    //TODO: edit method
 }

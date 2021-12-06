@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.catering.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,6 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.catering.mo
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.service.CateringBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
-import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.FilterCateringsDto;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository;
@@ -33,16 +33,15 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto;
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
-import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
-import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
-import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.*;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -125,19 +124,17 @@ public class CateringService {
     }
 
     public Catering get(long id) {
-        final Optional<Catering> optionalCatering = cateringRepository.findById(id);
-        if (optionalCatering.isPresent()) {
-            return optionalCatering.get();
-        }
-        throw new NotFoundException("Address with id " + id + " DOES NOT EXIST");
+        return cateringRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Catering with ID " + id + " does not exist"));
     }
 
     public Catering getWithDetail(long id) {
-        final Optional<Catering> optionalCatering = cateringRepository.findByIdWithDetail(id);
-        if (optionalCatering.isPresent()) {
-            return optionalCatering.get();
-        }
-        throw new IllegalArgumentException("Catering with ID " + id + " does not exist");
+        return cateringRepository.findByIdWithDetail(id)
+                .orElseThrow(() -> new IllegalArgumentException("Catering with ID " + id + " does not exist"));
+    }
+
+    public ImmutableList<Catering> getByBusinessId(long id) {
+        return ImmutableList.copyOf(cateringRepository.findAllByBusiness_Id(id));
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -149,7 +146,6 @@ public class CateringService {
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
-
         if (locationId == null) {
             return createStandaloneCatering(dto, business);
         }
@@ -215,23 +211,33 @@ public class CateringService {
         return catering.getCateringAddress();
     }
 
-
     @Transactional(rollbackOn = Exception.class)
-    public void deleteCatering(Long id) {
-        final Catering catering = getWithDetail(id);
+    public void deleteCatering(long id) {
+        final Catering cateringToDelete = cateringRepository.findAllCateringInformation(id)
+                .orElseThrow(() -> new NotFoundException("Not cateringToDelete with id " + id));
 
-        final List<CateringItem> items = catering.getCateringItems().stream()
-                .map(cateringItem -> cateringItemRepository.getById(cateringItem.getId()))
-                .collect(Collectors.toList());
+        boolean hasPendingReservations = hasPendingReservations(cateringToDelete);
+        if (hasPendingReservations) {
+            throw new ActionNotAllowedException("Cannot delete location with reservations pending");
+        }
 
-        items.forEach(cateringItemRepository::delete);
+        ImmutableSet.copyOf(cateringToDelete.getCateringBusinessHours())
+                .forEach(cateringBusinessHoursService::delete);
 
-        addressService.delete(catering.getCateringAddress().getId());
+        ImmutableSet.copyOf(cateringToDelete.getCateringItems())
+                .forEach(cateringItemRepository::delete);
 
-        catering.getLocations().forEach(catering::removeLocation);
+        addressService.delete(cateringToDelete.getCateringAddress().getId());
 
-        catering.setDeletedAt(LocalDateTime.now());
-        log.info("TRYING TO DELETE CATERING WITH ID " + id);
+        cateringToDelete.setModifiedAt(LocalDateTime.now());
+        cateringToDelete.setDeletedAt(LocalDateTime.now());
+
+    }
+
+    private boolean hasPendingReservations(Catering cateringToDelete) {
+        return cateringToDelete.getCateringForChosenEventLocations().stream()
+                .map(catering -> catering.getEventLocation().getEvent())
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
 
 

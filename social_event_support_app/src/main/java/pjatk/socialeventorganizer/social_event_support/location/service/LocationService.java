@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.location.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -269,6 +270,10 @@ public class LocationService {
 
     }
 
+    public ImmutableList<Location> getByBusinessId(long id) {
+        return ImmutableList.copyOf(locationRepository.findAllByBusiness_Id(id));
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long id) {
         final Location locationToDelete = locationRepository.getAllLocationInformation(id)
@@ -278,23 +283,25 @@ public class LocationService {
         if (hasPendingReservations) {
             throw new ActionNotAllowedException("Cannot delete location with reservations pending");
         }
+        final Set<LocationBusinessHours> businessHours = ImmutableSet.copyOf(locationToDelete.getLocationBusinessHours());
+        for (LocationBusinessHours businessHour : businessHours) {
+            locationBusinessHoursService.delete(businessHour);
+        }
 
-        final Set<LocationDescriptionItem> descriptions = locationToDelete.getDescriptions();
+        final Set<LocationDescriptionItem> descriptions = ImmutableSet.copyOf(locationToDelete.getDescriptions());
         for (LocationDescriptionItem description : descriptions) {
             locationToDelete.removeDescriptionItem(description);
         }
 
-        final Set<LocationAvailability> availabilities = locationToDelete.getAvailability();
+        final Set<LocationAvailability> availabilities = ImmutableSet.copyOf(locationToDelete.getAvailability());
         for (LocationAvailability availability : availabilities) {
             locationToDelete.removeAvailability(availability);
         }
 
-        final Set<Catering> caterings = locationToDelete.getCaterings();
-        cateringRepository.deleteAll(caterings);
-        cateringRepository.flush();
-//        for (Catering catering : caterings) {
-//            locationToDelete.removeCatering(catering);
-//        }
+        final Set<Catering> caterings = ImmutableSet.copyOf(locationToDelete.getCaterings());
+        for (Catering catering : caterings) {
+            locationToDelete.removeCatering(catering);
+        }
         addressService.delete(locationToDelete.getLocationAddress().getId());
 
         locationToDelete.setModifiedAt(LocalDateTime.now());
@@ -371,7 +378,4 @@ public class LocationService {
         return modified;
     }
 
-    public ImmutableList<Location> getByBusinessId(long id) {
-        return ImmutableList.copyOf(locationRepository.findAllByBusiness_Id(id));
-    }
 }

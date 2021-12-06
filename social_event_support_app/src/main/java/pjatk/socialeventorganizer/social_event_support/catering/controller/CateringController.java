@@ -87,6 +87,20 @@ public class CateringController {
         return ResponseEntity.ok(CateringMapper.toDtoWithDetail(catering));
     }
 
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "business",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<CateringDto>> getByBusinessId(@RequestParam long id) {
+        final ImmutableList<Catering> caterings = cateringService.getByBusinessId(id);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(caterings.stream()
+                        .map(CateringMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
@@ -135,7 +149,6 @@ public class CateringController {
 
             return ResponseEntity.ok(CateringMapper.toDto(catering));
         } catch (IllegalArgumentException e) {
-
             return ResponseEntity.notFound().build();
         }
     }

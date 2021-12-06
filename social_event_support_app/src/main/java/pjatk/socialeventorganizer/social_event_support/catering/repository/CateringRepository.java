@@ -21,7 +21,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "JOIN c.business cb join cb.user cbu " +
             "WHERE  c.name LIKE %:keyword% " +
             "OR c.description LIKE %:keyword% " +
-            "AND c.deletedAt IS NOT NULL " +
+            "AND c.deletedAt IS NULL " +
             "AND cbu.isActive = true")
     Page<Catering> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
@@ -48,5 +48,18 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "LEFT JOIN FETCH cat.cateringBusinessHours bh " +
             "WHERE cat.id = :cateringId")
     Optional<Catering> getWithBusinessHours(@Param("cateringId") long cateringId);
+
+    List<Catering> findAllByBusiness_Id(long id);
+
+    @Query("SELECT c FROM catering c " +
+            "LEFT JOIN FETCH c.cateringAddress cad " +
+            "LEFT JOIN FETCH c.cateringBusinessHours bh " +
+            "LEFT JOIN FETCH c.locations cl " +
+            "LEFT JOIN FETCH c.cuisines cc " +
+            "LEFT JOIN FETCH c.cateringForChosenEventLocations cfel " +
+            "LEFT JOIN FETCH cfel.eventLocation el " +
+            "LEFT JOIN FETCH el.event " +
+            "WHERE c.id = :cateringId")
+    Optional<Catering> findAllCateringInformation(@Param("cateringId") long locationId);
 
 }

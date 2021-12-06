@@ -46,7 +46,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("SELECT l FROM location AS l " +
             "WHERE l.name LIKE %:keyword% " +
-            "OR  l.description LIKE %:keyword%")
+            "OR  l.description LIKE %:keyword% " +
+            "AND l.deletedAt IS NULL")
     Page<Location> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
     @Query(value = "SELECT distinct l.* from location l " +
@@ -68,6 +69,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @Query(value = "SELECT distinct l.* from location l " +
             "left join location_availability la on la.id_location = l.id_location " +
             "WHERE l.id_location = :locationId " +
+            "AND l.deleted_at IS NULL " +
             "AND la.date = CAST(:date as timestamp) " +
             "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
             "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
