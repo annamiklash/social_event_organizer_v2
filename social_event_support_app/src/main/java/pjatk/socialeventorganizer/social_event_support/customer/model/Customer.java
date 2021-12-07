@@ -23,7 +23,6 @@ import java.util.Set;
 public class Customer implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_customer_user")
     private Long id;
 
@@ -50,7 +49,7 @@ public class Customer implements Serializable {
     private Set<OrganizedEvent> events;
 
     @PrimaryKeyJoinColumn
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)

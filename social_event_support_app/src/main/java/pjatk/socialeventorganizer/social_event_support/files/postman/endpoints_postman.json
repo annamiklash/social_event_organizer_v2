@@ -158,7 +158,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{  \r\n    \"email\" : \"customer1@email.com\",\r\n    \"password\": \"customer\"\r\n}"
+							"raw": "{  \r\n    \"email\" : \"aniamiklash@gmail.com\",\r\n    \"password\": \"Customer2!\"\r\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/api/login",
@@ -2501,7 +2501,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2509,7 +2509,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/reset_password",
+							"raw": "http://localhost:8080/api/reset_password?email=aniamiklash@gmail.com",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2518,6 +2518,12 @@
 							"path": [
 								"api",
 								"reset_password"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "aniamiklash@gmail.com"
+								}
 							]
 						}
 					},
@@ -2527,10 +2533,17 @@
 					"name": "POST http://localhost:8080/api/reset_password Copy",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "token",
+								"value": "b5e78cdc-e92d-4551-b10f-c28abad8ed07",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"maks@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"raw": "{\r\n    \"password\": \"Password111!\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2538,7 +2551,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/reset_password",
+							"raw": "http://localhost:8080/api/reset?token=ed80501c-fd17-4601-a93a-cdbc4e920297",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2546,7 +2559,13 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"reset_password"
+								"reset"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "ed80501c-fd17-4601-a93a-cdbc4e920297"
+								}
 							]
 						}
 					},

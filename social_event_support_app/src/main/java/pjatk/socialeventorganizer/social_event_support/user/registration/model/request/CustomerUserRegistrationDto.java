@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
@@ -50,9 +52,6 @@ public class CustomerUserRegistrationDto {
             = "Phone number should be 9 characters long")
     @Pattern(regexp = RegexConstants.PHONE_NUMBER_REGEX, message = "should contain only digits")
     private String phoneNumber;
-
-    @NotNull
-    private AddressDto address;
 
     private final Character type = 'C';
 

@@ -21,6 +21,7 @@ import pjatk.socialeventorganizer.social_event_support.user.model.dto.NewPasswor
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -43,6 +44,8 @@ public class UserService {
     private final CustomerRepository customerRepository;
 
     private final BusinessRepository businessRepository;
+
+    private final EntityManager em;
 
     public ImmutableList<User> findAll() {
         return ImmutableList.copyOf(userRepository.findAll());
@@ -154,6 +157,9 @@ public class UserService {
     public boolean isNewAccount(long id, char type) {
         final Optional<User> optionalUser = userRepository.isNewAccount(id, type);
         return optionalUser.isEmpty();
+    }
+    public void clear(){
+        em.clear();
     }
 
     private boolean userExists(String email) {
