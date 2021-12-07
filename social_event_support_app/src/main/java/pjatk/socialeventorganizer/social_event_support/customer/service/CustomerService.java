@@ -114,7 +114,6 @@ public class CustomerService {
         user.setModifiedAt(LocalDateTime.now());
 
         userService.save(user);
-        userService.clear();
 
         log.info("TRYING TO SAVE CUSTOMER");
         customerRepository.save(customer);

@@ -24,7 +24,7 @@ public class Customer implements Serializable {
 
     @Id
     @Column(name = "id_customer_user")
-    private Long id;
+    private long id;
 
     @Column(nullable = false)
     private String firstName;
@@ -49,7 +49,7 @@ public class Customer implements Serializable {
     private Set<OrganizedEvent> events;
 
     @PrimaryKeyJoinColumn
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
