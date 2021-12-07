@@ -47,7 +47,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> getWithDetail(@Param("id") long id);
 
     @Query("SELECT c FROM customer c " +
-            "LEFT JOIN FETCH c.address a " +
             "LEFT JOIN FETCH c.user u " +
             "LEFT JOIN FETCH c.guests g " +
             "LEFT JOIN FETCH c.events " +
