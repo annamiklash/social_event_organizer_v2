@@ -2,7 +2,6 @@ package pjatk.socialeventorganizer.social_event_support.catering.model;
 
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
-import pjatk.socialeventorganizer.social_event_support.availability.catering.model.CateringAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
@@ -76,10 +75,6 @@ public class Catering implements Serializable {
 
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
     private Set<Location> locations = new HashSet<>();
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_catering")
-    private Set<CateringAvailability> availability;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")

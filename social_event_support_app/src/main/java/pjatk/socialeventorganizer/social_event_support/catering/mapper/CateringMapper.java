@@ -4,7 +4,6 @@ package pjatk.socialeventorganizer.social_event_support.catering.mapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
-import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
@@ -80,19 +79,7 @@ public class CateringMapper {
                 .map(LocationMapper::toDto)
                 .collect(Collectors.toList()));
 
-        dto.setAvailability(catering.getAvailability().stream()
-                .map(AvailabilityMapper::toDto)
-                .collect(Collectors.toList()));
-
         return dto;
     }
 
-    public static CateringDto toDtoWithAvailability(Catering catering) {
-        final CateringDto dto = toDto(catering);
-        dto.setAvailability(catering.getAvailability().stream()
-                .map(AvailabilityMapper::toDto)
-                .collect(Collectors.toList()));
-
-        return dto;
-    }
 }

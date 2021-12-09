@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,5 +25,7 @@ public interface AppProblemRepository extends JpaRepository<AppProblem, Long> {
             "left join fetch a.user ua " +
             "WHERE a.id = :id")
     Optional<AppProblem> findByIdWithDetail(@Param("id") long id);
+
+    List<AppProblem> findByUser_Id(long id);
 
 }

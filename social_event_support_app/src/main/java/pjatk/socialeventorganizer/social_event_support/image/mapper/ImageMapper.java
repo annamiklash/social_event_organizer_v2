@@ -9,7 +9,6 @@ public class ImageMapper {
 
     public LocationImage mapToLocationImageDTO(ImageRequestDetails imageRequestDetails, Integer locationId) {
         return LocationImage.builder()
-                .locationId(locationId)
                 .image(imageRequestDetails.getImage())
                 .alt(imageRequestDetails.getAlt())
                 .build();

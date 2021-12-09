@@ -8,6 +8,8 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.dto.Busines
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.repository.LocationBusinessHoursRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,13 +31,29 @@ public class LocationBusinessHoursService {
                 .collect(Collectors.toList());
     }
 
-    private void save(LocationBusinessHours locationBusinessHours) {
-        locationBusinessHoursRepository.save(locationBusinessHours);
-    }
-
     public void delete(LocationBusinessHours locationBusinessHours) {
         locationBusinessHoursRepository.delete(locationBusinessHours);
     }
 
-    //TODO: edit method
+    public LocationBusinessHours edit(long id, BusinessHoursDto dto) {
+        final LocationBusinessHours businessHours = get(id);
+
+        businessHours.setDay(dto.getDay().name());
+        businessHours.setDay(dto.getDay().name());
+        businessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
+
+        save(businessHours);
+        return businessHours;
+
+    }
+
+    public LocationBusinessHours get(long id) {
+        return locationBusinessHoursRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No business hours with id " + id));
+    }
+
+    private void save(LocationBusinessHours locationBusinessHours) {
+        locationBusinessHoursRepository.save(locationBusinessHours);
+    }
+
 }

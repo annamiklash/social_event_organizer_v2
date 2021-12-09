@@ -13,10 +13,6 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
-import pjatk.socialeventorganizer.social_event_support.availability.catering.model.CateringAvailability;
-import pjatk.socialeventorganizer.social_event_support.availability.catering.repository.CateringAvailabilityRepository;
-import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
-import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
@@ -49,8 +45,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
-
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -69,8 +63,6 @@ public class CateringService {
     private final BusinessRepository businessRepository;
 
     private final CateringBusinessHoursService cateringBusinessHoursService;
-
-    private final CateringAvailabilityRepository cateringAvailabilityRepository;
 
     private final CuisineService cuisineService;
 
@@ -262,30 +254,6 @@ public class CateringService {
         cateringRepository.saveAndFlush(catering);
     }
 
-    public Catering getWithAvailability(long id, String date) {
-        final Optional<Catering> optionalCatering = cateringRepository.getByIdWithAvailability(id, date);
-
-        if (optionalCatering.isPresent()) {
-            return optionalCatering.get();
-        }
-        throw new NotFoundException("Catering with id " + id + " DOES NOT EXIST");
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public void addAvailability(List<AvailabilityDto> dtos, long cateringId) {
-        final Catering catering = get(cateringId);
-
-        final List<CateringAvailability> availabilities = dtos.stream()
-                .map(AvailabilityMapper::fromDtoToCateringAvailability)
-                .collect(Collectors.toList());
-
-        availabilities.stream()
-                .peek(availability -> availability.setStatus(AVAILABLE.toString()))
-                .peek(availability -> availability.setCatering(catering))
-                .forEach(cateringAvailabilityRepository::save);
-
-    }
-
     private Catering createCateringWithLocation(CateringDto dto, Long locationId, Business business) {
         if (!locationService.exists(locationId)) {
             throw new IllegalArgumentException("Location does not exist");
@@ -364,4 +332,7 @@ public class CateringService {
         return catering;
     }
 
+    public ImmutableList<Catering> getByLocationId(long id) {
+        return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
+    }
 }

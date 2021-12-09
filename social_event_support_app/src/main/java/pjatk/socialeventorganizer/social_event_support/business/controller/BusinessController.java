@@ -54,7 +54,7 @@ public class BusinessController {
         return ResponseEntity.ok(BusinessMapper.toDto(business));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/{id}/detail",
@@ -66,7 +66,7 @@ public class BusinessController {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('ADMIN','NEW_USER')")
+    @PreAuthorize("hasAnyAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -78,10 +78,21 @@ public class BusinessController {
         return ResponseEntity.ok(BusinessMapper.toDto(business));
     }
 
+    @PreAuthorize("hasAuthority('BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BusinessDto> edit(@RequestParam long id, @Valid @RequestBody BusinessDto dto) {
+
+        final Business business = businessService.edit(id, dto);
+
+        return ResponseEntity.ok(BusinessMapper.toDto(business));
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN','BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
-            params = {"id"},
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@RequestParam long id) {

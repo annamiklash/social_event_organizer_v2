@@ -17,12 +17,13 @@ public class LocationImage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_location_image")
-    Long id;
+    private Long id;
 
-    String image;
+    private String image;
 
-    String alt;
+    private  String alt;
 
-    @Column(name = "id_location")
-    Integer locationId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_location")
+    private Location location;
 }

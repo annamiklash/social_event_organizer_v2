@@ -25,8 +25,6 @@ public class BusinessDto implements Serializable {
 
     public long id;
 
-    private UserDto user;
-
     @NotBlank(message = "First name is mandatory")
     @Size(min = 1, max = 30, message
             = "The name should be between 1 and 30 characters")
@@ -50,6 +48,8 @@ public class BusinessDto implements Serializable {
             = "Phone number should be 9 characters long")
     @Pattern(regexp = RegexConstants.PHONE_NUMBER_REGEX, message = "should contain only digits")
     private String phoneNumber;
+
+    private UserDto user;
 
     @NotNull
     private AddressDto address;

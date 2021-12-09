@@ -6,6 +6,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.mapper.Avail
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.image.model.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
@@ -34,6 +35,7 @@ public class LocationMapper {
     public LocationDto toDto(Location location) {
         return LocationDto.builder()
                 .id(Math.toIntExact(location.getId()))
+                .images(location.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()))
                 .name(location.getName())
                 .description(location.getDescription())
                 .email(location.getEmail())

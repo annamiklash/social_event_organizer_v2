@@ -15,15 +15,17 @@ import java.io.Serializable;
 @Builder
 public class AppProblemDto implements Serializable {
 
-    private Long id;
-
-    private String createdAt;
+    private long id;
 
     @NotNull
     private String concern;
 
     @NotNull
     private String description;
+
+    private String createdAt;
+
+    private String resolvedAt;
 
     private UserDto user;
 }

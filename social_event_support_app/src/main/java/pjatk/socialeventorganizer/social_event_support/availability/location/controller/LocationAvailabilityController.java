@@ -58,7 +58,31 @@ public class LocationAvailabilityController {
                         .collect(Collectors.toList())));
     }
 
-    //TODO: edit
 
-    //TODO: delete
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@Valid @RequestBody AvailabilityDto[] dtos,
+                                                                 @RequestParam @NotNull long id) {
+        locationAvailabilityService.delete(Arrays.asList(dtos), id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<AvailabilityDto>> edit(@Valid @RequestBody AvailabilityDto[] dtos,
+                                                               @RequestParam @NotNull long id) {
+        final List<LocationAvailability> availabilities = locationAvailabilityService.edit(Arrays.asList(dtos), id);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(availabilities.stream()
+                        .map(AvailabilityMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
 }

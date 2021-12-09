@@ -26,6 +26,9 @@ public class AppProblem implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "resolved_at")
+    private LocalDateTime resolvedAt;
+
     @Column(nullable = false)
     private String concern;
 

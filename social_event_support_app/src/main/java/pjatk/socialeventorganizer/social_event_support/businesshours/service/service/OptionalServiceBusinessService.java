@@ -8,6 +8,8 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.dto.Busines
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.repository.OptionalServiceBusinessHoursRepository;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +31,23 @@ public class OptionalServiceBusinessService {
                 .collect(Collectors.toList());
     }
 
+    public OptionalServiceBusinessHours edit(long id, BusinessHoursDto dto) {
+        final OptionalServiceBusinessHours businessHours = get(id);
+
+        businessHours.setDay(dto.getDay().name());
+        businessHours.setDay(dto.getDay().name());
+        businessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
+
+        save(businessHours);
+        return businessHours;
+
+    }
+
+    public OptionalServiceBusinessHours get(long id) {
+        return optionalServiceBusinessHoursRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No business hours with id " + id));
+    }
+
     private void save(OptionalServiceBusinessHours optionalServiceBusinessHours) {
         optionalServiceBusinessHoursRepository.save(optionalServiceBusinessHours);
     }
@@ -37,5 +56,4 @@ public class OptionalServiceBusinessService {
         optionalServiceBusinessHoursRepository.delete(businessHours);
     }
 
-    //TODO: edit method
 }

@@ -17,7 +17,6 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,11 +35,29 @@ public class AddressService {
     }
 
     public Address get(long id) {
-        final Optional<Address> optionalAddress = addressRepository.findById(id);
-        if (optionalAddress.isPresent()) {
-            return optionalAddress.get();
-        }
-        throw new NotFoundException("Address with id " + id + " DOES NOT EXIST");
+       return addressRepository.findById(id)
+               .orElseThrow(() ->  new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
+    }
+
+    public Address getByUserId(long id) {
+        return addressRepository.findByUserId(id)
+                .orElseThrow(() ->  new NotFoundException("Address with user id " + id + " DOES NOT EXIST"));
+    }
+
+    public Address getByLocationId(long id) {
+
+        return addressRepository.findByLocationId(id)
+                .orElseThrow(() ->  new NotFoundException("Address with location id " + id + " DOES NOT EXIST"));
+    }
+
+    public Address getByCateringId(long id) {
+        return addressRepository.findByCateringId(id)
+                .orElseThrow(() ->  new NotFoundException("Address with catering id " + id + " DOES NOT EXIST"));
+    }
+
+    public Address getByServiceId(long id) {
+        return addressRepository.findByServiceId(id)
+                .orElseThrow(() ->  new NotFoundException("Address with service id " + id + " DOES NOT EXIST"));
     }
 
     public boolean addressWithIdExists(Long id) {

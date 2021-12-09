@@ -11,7 +11,6 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringOrderChoice;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringOrderChoiceDto;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringOrderChoiceRepository;
-import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 @Service
@@ -24,8 +23,6 @@ public class CateringOrderChoiceService {
     private final CateringForChosenEventLocationService cateringForChosenEventLocationService;
 
     private final CateringItemService cateringItemService;
-
-    private final CustomerService customerService;
 
 
     public ImmutableList<CateringOrderChoice> getAll(long cateringId) {

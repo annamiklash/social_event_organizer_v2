@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query(value = "SELECT distinct l.* from location l " +
+            "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join address a on l.id_location_address = a.id_address " +
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
@@ -27,6 +28,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> searchWithDateAndTimeFromTimeTo(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query(value = "SELECT distinct l.* from location l " +
+            "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join address a on l.id_location_address = a.id_address " +
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
@@ -37,6 +39,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> searchWithDate(@Param("date") String date);
 
     @Query("SELECT l FROM location l " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
             "left join fetch l.business lb " +
             "left join fetch l.caterings lc " +
             "left join fetch l.descriptions ld " +
@@ -45,6 +48,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     Optional<Location> getByIdWithDetail(@Param("id") Long id);
 
     @Query("SELECT l FROM location AS l " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
             "WHERE l.name LIKE %:keyword% " +
             "OR  l.description LIKE %:keyword% " +
             "AND l.deletedAt IS NULL")
@@ -58,6 +62,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> findByLocationAddress_City(String city);
 
     @Query(value = "SELECT distinct l.* from location l " +
+            "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join address a on l.id_location_address = a.id_address " +
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
@@ -67,6 +72,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> getAll();
 
     @Query(value = "SELECT distinct l.* from location l " +
+            "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join location_availability la on la.id_location = l.id_location " +
             "WHERE l.id_location = :locationId " +
             "AND l.deleted_at IS NULL " +

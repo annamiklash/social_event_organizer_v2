@@ -8,6 +8,8 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.catering.mo
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.repository.CateringBusinessHoursRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,5 +39,23 @@ public class CateringBusinessHoursService {
         cateringBusinessHoursRepository.delete(businessHour);
     }
 
-    //TODO: edit method
+
+    public CateringBusinessHours edit(long id, BusinessHoursDto dto) {
+        final CateringBusinessHours businessHours = get(id);
+
+        businessHours.setDay(dto.getDay().name());
+        businessHours.setDay(dto.getDay().name());
+        businessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
+
+        save(businessHours);
+        return businessHours;
+
+    }
+
+    public CateringBusinessHours get(long id) {
+        return cateringBusinessHoursRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No business hours with id " + id));
+    }
+
+
 }

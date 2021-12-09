@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessMapper;
@@ -16,6 +17,7 @@ import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
+import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
@@ -26,7 +28,6 @@ import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum.NOT_VERIFIED;
@@ -79,20 +80,30 @@ public class BusinessService {
         return business;
     }
 
+    public Business edit(long businessId, BusinessDto dto) {
+        final Business business = get(businessId);
+
+        business.setBusinessName(dto.getBusinessName());
+        business.setFirstName(dto.getFirstName());
+        business.setLastName(dto.getLastName());
+        business.setPhoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()));
+
+        addressService.save(AddressMapper.fromDto(dto.getAddress()));
+
+        save(business);
+
+        return business;
+    }
+
     public Business getWithDetail(long id) {
-        final Optional<Business> businessOptional = businessRepository.getWithDetail(id);
-        if (businessOptional.isPresent()) {
-            return businessOptional.get();
-        }
-        throw new NotFoundException("Address with id " + id + " DOES NOT EXIST");
+        return businessRepository.getWithDetail(id)
+                .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
+
     }
 
     public Business get(long id) {
-        final Optional<Business> businessOptional = businessRepository.findById(id);
-        if (businessOptional.isPresent()) {
-            return businessOptional.get();
-        }
-        throw new NotFoundException("Business with id " + id + " DOES NOT EXIST");
+        return businessRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
     }
 
     @Transactional(rollbackOn = Exception.class)

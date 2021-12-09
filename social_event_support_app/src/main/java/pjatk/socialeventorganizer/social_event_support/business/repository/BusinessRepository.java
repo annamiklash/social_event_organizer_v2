@@ -15,11 +15,17 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
 
     Boolean existsByUser_Id(Long id);
 
-    @Query("SELECT b FROM business b left join fetch b.address ba left join fetch b.caterings bc left join fetch b.locations bl WHERE b.id = :id")
+    @Query("SELECT b FROM business b " +
+            "left join fetch b.address ba " +
+            "left join fetch b.caterings bc " +
+            "left join fetch b.locations bl " +
+            "WHERE b.id = :id")
     Optional<Business> getWithDetail(@Param("id") long id);
 
-
-    Optional<Business> findById(long id);
+    @Query("SELECT b FROM business b " +
+            "left join fetch b.user " +
+            "WHERE b.id = :id")
+    Optional<Business> findById(@Param("id") long id);
 
     @Query("SELECT b FROM business b " +
             "LEFT JOIN FETCH b.user u " +

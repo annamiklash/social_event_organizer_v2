@@ -86,7 +86,7 @@ public class Location implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "name"))
     private Set<LocationDescriptionItem> descriptions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Set<LocationImage> images = new HashSet<>();
 

@@ -20,7 +20,6 @@ import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,12 +27,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AppProblemService {
 
-    private AppProblemRepository appProblemRepository;
+    private final AppProblemRepository appProblemRepository;
 
-    private UserService userService;
+    private final UserService userService;
 
     public List<AppProblem> list(CustomPage customPage, String keyword) {
-
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
         final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
@@ -42,31 +40,33 @@ public class AppProblemService {
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
 
-    public AppProblem get(long id) {
 
-        final Optional<AppProblem> optionalAppProblem = appProblemRepository.findByIdWithDetail(id);
-        if (optionalAppProblem.isPresent()) {
-            return optionalAppProblem.get();
-        }
-        throw new NotFoundException("App problem with id " + id + " DOES NOT EXIST");
+    public AppProblem get(long id) {
+        return appProblemRepository.findByIdWithDetail(id)
+                .orElseThrow(() -> new NotFoundException("App problem with id " + id + " DOES NOT EXIST"));
+    }
+
+    public ImmutableList<AppProblem> getByUserId(long id) {
+        userService.get(id);
+        return ImmutableList.copyOf(appProblemRepository.findByUser_Id(id));
+
     }
 
     public AppProblem resolve(long id) {
-        //TODO: add flag isResolved to entity
+        final AppProblem appProblem = get(id);
+
+        appProblem.setResolvedAt(LocalDateTime.now());
+        save(appProblem);
 
         return null;
     }
-
 
     public void save(AppProblem appProblem) {
         appProblemRepository.save(appProblem);
     }
 
-
     public AppProblem create(AppProblemDto dto, long id) {
-
         final User user = userService.get(id);
-
         final AppProblem appProblem = AppProblemMapper.fromDto(dto);
 
         appProblem.setUser(user);

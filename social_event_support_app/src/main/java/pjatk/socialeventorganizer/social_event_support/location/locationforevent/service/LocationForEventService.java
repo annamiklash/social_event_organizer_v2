@@ -19,7 +19,9 @@ import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,6 +77,23 @@ public class LocationForEventService {
         return locationForEvent;
     }
 
+    public LocationForEvent getWithLocation(long locationForEventId) {
+        return locationForEventRepository.findByIdWithLocation(locationForEventId)
+                .orElseThrow(() -> new NotFoundException("No locationReservation with id " + locationForEventId));
+    }
+
+    public LocationForEvent cancelReservation(long locationForEventId) {
+        final LocationForEvent locationForEvent = getWithLocation(locationForEventId);
+
+        final LocalTime timeFrom = locationForEvent.getTimeFrom();
+        final LocalTime timeTo = locationForEvent.getTimeTo();
+        final LocalDate date = locationForEvent.getEvent().getDate();
+
+        return null;
+
+    }
+
+
     public LocationForEvent confirmReservation(long locationId, long eventId) {
         final LocationForEvent locationForEvent = findByLocationIdAndEventId(locationId, eventId);
 
@@ -93,6 +112,7 @@ public class LocationForEventService {
         return locationForEventRepository.findAllByLocationIdAndStatus(locationId, status);
 
     }
+
     public void save(LocationForEvent locationForEvent) {
         locationForEventRepository.save(locationForEvent);
     }

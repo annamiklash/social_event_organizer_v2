@@ -27,17 +27,10 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     @Query("SELECT c from catering c " +
             "left join fetch c.cateringItems ci " +
-            "left join fetch c.availability ca " +
             "left join fetch c.cateringBusinessHours cbh " +
             "left join fetch c.locations cl " +
             "WHERE c.id = :id")
     Optional<Catering> findByIdWithDetail(@Param("id") long id);
-
-
-    @Query(value = "SELECT distinct c.* from catering c " +
-            "left join catering_availability ca on ca.id_catering = c.id_catering " +
-            "where c.id_catering = :id AND ca.date = CAST(:date as timestamp)", nativeQuery = true)
-    Optional<Catering> getByIdWithAvailability(@Param("id") long id, @Param("date") String date);
 
     @Query("SELECT distinct c from catering c left join c.cuisines cu " +
             "WHERE  c.name LIKE %:keyword% " +
@@ -60,6 +53,11 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "LEFT JOIN FETCH cfel.eventLocation el " +
             "LEFT JOIN FETCH el.event " +
             "WHERE c.id = :cateringId")
-    Optional<Catering> findAllCateringInformation(@Param("cateringId") long locationId);
+    Optional<Catering> findAllCateringInformation(@Param("cateringId") long cateringId);
+
+    @Query("SELECT c FROM catering c " +
+            "LEFT JOIN FETCH c.locations l " +
+            "WHERE l.id = :locationId")
+    List<Catering> findAllByLocationId(@Param("locationId") long locationId);
 
 }

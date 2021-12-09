@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.appproblem.mapper;
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 
 @UtilityClass
@@ -11,7 +12,8 @@ public class AppProblemMapper {
     public AppProblemDto toDto(AppProblem appProblem) {
         return AppProblemDto.builder()
                 .id(appProblem.getId())
-                .createdAt(String.valueOf(appProblem.getCreatedAt()))
+                .createdAt(DateTimeUtil.toStringFromLocalDateTime(appProblem.getCreatedAt()))
+                .resolvedAt(DateTimeUtil.toStringFromLocalDateTime(appProblem.getResolvedAt()))
                 .concern(appProblem.getConcern())
                 .description(appProblem.getDescription())
                 .build();
