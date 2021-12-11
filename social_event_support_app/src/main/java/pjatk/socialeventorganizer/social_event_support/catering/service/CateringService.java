@@ -248,7 +248,12 @@ public class CateringService {
         throw new NotFoundException("No catering with id " + id + " found.");
     }
 
-    public void saveCatering(Catering catering) {
+    public Catering getWithImages(long cateringId) {
+        return cateringRepository.findWithImages(cateringId)
+                .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " DOES NOT EXIST"));
+    }
+
+    private void saveCatering(Catering catering) {
         log.info("TRYING TO SAVE" + catering.toString());
 
         cateringRepository.saveAndFlush(catering);
@@ -335,4 +340,5 @@ public class CateringService {
     public ImmutableList<Catering> getByLocationId(long id) {
         return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
     }
+
 }

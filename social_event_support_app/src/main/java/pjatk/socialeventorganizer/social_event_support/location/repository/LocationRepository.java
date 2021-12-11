@@ -93,4 +93,10 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     Optional<Location> getAllLocationInformation(@Param("locationId") long locationId);
 
     List<Location> findAllByBusiness_Id(long id);
+
+    @Query("SELECT l from location l " +
+            "LEFT JOIN FETCH l.images i " +
+            "WHERE l.id = :locationId")
+    Optional<Location> findWithImages(@Param("locationId") long locationId);
+
 }

@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.image.model.OptionalServiceImage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 
@@ -67,6 +68,10 @@ public class OptionalService {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceAvailability> availability;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_optional_service")
+    private Set<OptionalServiceImage> images;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
