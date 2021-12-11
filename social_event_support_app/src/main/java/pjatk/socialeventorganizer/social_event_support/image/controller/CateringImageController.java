@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
-import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
+import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.service.CateringImageService;
 
 import javax.validation.Valid;
@@ -44,7 +44,7 @@ public class CateringImageController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            path = "allowed/main",
+            path = "allowed",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> main(@RequestParam long cateringId) {
         final Optional<CateringImage> main = cateringImageService.getMain(cateringId);
@@ -76,22 +76,24 @@ public class CateringImageController {
                 ImmutableList.copyOf(list.stream()
                         .map(ImageMapper::toDto)
                         .collect(Collectors.toList()))
+
         );
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long cateringId, @RequestParam long id) {
-        cateringImageService.setNewMain(cateringId, id);
+    public ResponseEntity<Void> changeMain(@RequestParam long oldId, @RequestParam long newId) {
+        cateringImageService.setNewMain(oldId, newId);
         return ResponseEntity.ok().build();
+
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long cateringId, @RequestParam long id) {
-        cateringImageService.deleteById(cateringId, id);
+    public ResponseEntity<Void> delete(@RequestParam long oldId, @RequestParam long newId) {
+        cateringImageService.deleteById(oldId, newId);
         return ResponseEntity.ok().build();
 
     }

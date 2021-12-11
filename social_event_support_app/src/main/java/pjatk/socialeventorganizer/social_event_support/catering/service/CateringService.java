@@ -345,4 +345,5 @@ public class CateringService {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
         return cateringRepository.countAll(keyword);
     }
+
 }

@@ -10,7 +10,11 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
+<<<<<<< HEAD
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
+=======
+import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
+>>>>>>> 168ec2e... Add Image support to catering, location, service
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
 
@@ -57,12 +61,15 @@ public class CateringImageService {
         return result;
     }
 
+
     public CateringImage create(long cateringId, ImageDto dto) {
         ImageValidator.validateFileExtension(dto.getPath());
-
-        final boolean exists = mainExists(cateringId);
-        dto.setMain(!exists);
-
+        if (dto.isMain()) {
+            final boolean exists = mainExists(cateringId);
+            if (exists) {
+                dto.setMain(false);
+            }
+        }
         final Catering catering = cateringService.getWithImages(cateringId);
         if (catering.getImages().size() >= MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
@@ -79,17 +86,14 @@ public class CateringImageService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void setNewMain(long cateringId, long newId) {
-        final Optional<CateringImage> optionalImage = getMain(cateringId);
-        if (optionalImage.isPresent()) {
-            final CateringImage cateringImage = optionalImage.get();
-            cateringImage.setMain(false);
-
-            save(cateringImage);
-        }
+    public void setNewMain(long oldId, long newId) {
+        final CateringImage oldMain = get(oldId);
         final CateringImage newMain = get(newId);
+
+        oldMain.setMain(false);
         newMain.setMain(true);
 
+        save(oldMain);
         save(newMain);
         cateringImageRepository.flush();
     }

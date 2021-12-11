@@ -63,16 +63,17 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "WHERE l.id = :locationId")
     List<Catering> findAllByLocationId(@Param("locationId") long locationId);
 
-    @Query("SELECT c FROM catering c " +
-            "LEFT JOIN FETCH c.images i " +
-            "WHERE c.id = :cateringId")
-    Optional<Catering> findWithImages(@Param("cateringId") long cateringId);
-
     @Query("SELECT count(c) FROM catering AS c " +
             "JOIN c.business cb join cb.user cbu " +
             "WHERE  c.name LIKE %:keyword% " +
             "OR c.description LIKE %:keyword% " +
             "AND c.deletedAt IS NULL " +
             "AND cbu.isActive = true")
-    Long countAll(@Param("keyword")String keyword);
+    Long countAll(@Param("keyword") String keyword);
+
+    @Query("SELECT c FROM catering c " +
+            "LEFT JOIN FETCH c.images i " +
+            "WHERE c.id = :cateringId")
+    Optional<Catering> findWithImages(@Param("cateringId") long cateringId);
+
 }
