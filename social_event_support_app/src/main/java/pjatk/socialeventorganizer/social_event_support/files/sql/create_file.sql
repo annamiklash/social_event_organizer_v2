@@ -1,5 +1,3 @@
--- CREATE TYPE event_status_enum AS ENUM ('FINISHED', 'CONFIRMED', 'CANCELLED', 'IN_PLANNING', 'READY');
-
 -- Table: users
 CREATE TABLE users
 (
@@ -1429,3 +1427,5 @@ ALTER TABLE customer
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
+
+
