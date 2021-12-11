@@ -59,4 +59,9 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
             "WHERE os.id = :serviceId")
     Optional<OptionalService> findWithDetail(@Param("serviceId") long serviceId);
+
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.images i " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> findWithImages(@Param("serviceId") long serviceId);
 }
