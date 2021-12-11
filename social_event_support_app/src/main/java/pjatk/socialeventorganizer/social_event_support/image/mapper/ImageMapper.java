@@ -1,16 +1,28 @@
 package pjatk.socialeventorganizer.social_event_support.image.mapper;
 
-import org.springframework.stereotype.Component;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageRequestDetails;
-import pjatk.socialeventorganizer.social_event_support.location.model.LocationImage;
+import lombok.experimental.UtilityClass;
+import pjatk.socialeventorganizer.social_event_support.image.model.Image;
+import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
+import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
 
-@Component
+@UtilityClass
 public class ImageMapper {
 
-    public LocationImage mapToLocationImageDTO(ImageRequestDetails imageRequestDetails, Integer locationId) {
+    public Image fromDto(ImageDto imageDto) {
         return LocationImage.builder()
-                .image(imageRequestDetails.getImage())
-                .alt(imageRequestDetails.getAlt())
+                .isMain(imageDto.isMain())
+                .type(imageDto.getType())
                 .build();
     }
+
+    public ImageDto toDto(Image image) {
+        return ImageDto.builder()
+                .isMain(image.isMain())
+                .type(image.getType())
+                .image(image.getImage())
+                .build();
+    }
+
+
+
 }

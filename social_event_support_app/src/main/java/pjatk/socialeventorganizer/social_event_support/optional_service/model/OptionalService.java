@@ -10,7 +10,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
-import pjatk.socialeventorganizer.social_event_support.catering.model.CateringImage;
+import pjatk.socialeventorganizer.social_event_support.image.model.OptionalServiceImage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 

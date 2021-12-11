@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -16,6 +17,7 @@ public class CustomerAvatarDto implements Serializable {
 
     private Long id;
 
+    @NotNull
     private String path;
 
     private byte[] image;

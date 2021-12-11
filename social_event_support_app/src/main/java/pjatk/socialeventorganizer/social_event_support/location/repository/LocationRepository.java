@@ -84,4 +84,10 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     List<String> findDistinctCities();
 
 
+
+    @Query("SELECT l from location l " +
+            "LEFT JOIN FETCH l.images i " +
+            "WHERE l.id = :locationId")
+    Optional<Location> findWithImages(@Param("locationId") long locationId);
+
 }
