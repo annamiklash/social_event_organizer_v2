@@ -43,4 +43,25 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "AND (:timeTo is null or osa.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
     Optional<Location> available(@Param("serviceId") long serviceId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.styles ms " +
+            "LEFT JOIN FETCH os.availability osa " +
+            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
+            "LEFT JOIN FETCH os.serviceForLocation sfl " +
+            "LEFT JOIN FETCH sfl.locationForEvent lfe " +
+            "LEFT JOIN FETCH lfe.event " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> getAllServiceInformation(@Param("serviceId") long serviceId);
+
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.styles ms " +
+            "LEFT JOIN FETCH os.availability osa " +
+            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> findWithDetail(@Param("serviceId") long serviceId);
+
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.images i " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> findWithImages(@Param("serviceId") long serviceId);
 }

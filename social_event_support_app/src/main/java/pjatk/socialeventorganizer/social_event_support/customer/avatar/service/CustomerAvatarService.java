@@ -7,7 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.avatar.mapper.Cu
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.repository.CustomerAvatarRepository;
-import pjatk.socialeventorganizer.social_event_support.customer.avatar.validator.AvatarValidator;
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.validator.ImageValidator;
 
 import javax.transaction.Transactional;
 import java.io.File;
@@ -23,7 +23,7 @@ public class CustomerAvatarService {
     @Transactional(rollbackOn = Exception.class)
     public CustomerAvatar create(CustomerAvatarDto dto) {
 
-        AvatarValidator.validate(dto);
+        ImageValidator.validateFileExtension(dto.getPath());
 
         final File file = new File(dto.getPath());
         final byte[] bFile = new byte[(int) file.length()];

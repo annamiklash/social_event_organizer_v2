@@ -32,7 +32,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
@@ -74,7 +73,25 @@ public class OptionalServiceService {
     }
 
     public OptionalService get(long id) {
-        final Optional<OptionalService> optionalService = optionalServiceRepository.findById(id);
+        return optionalServiceRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+    }
+
+    public OptionalService getWithImages(long id) {
+        return optionalServiceRepository.findWithImages(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+    }
+
+    public OptionalService getWithDetail(long id) {
+        final OptionalService optionalService = optionalServiceRepository.findWithDetail(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+
+        final String type = optionalService.getType();
+        switch (type) {
+            case "INTERPRETER":
+                final ImmutableSet<TranslationLanguage> languages = ImmutableSet.copyOf(((Interpreter) optionalService).getLanguages());
+                ((Interpreter) optionalService).setLanguages(languages);
+                break;
 
         if (optionalService.isPresent()) {
             return optionalService.get();
@@ -145,14 +162,54 @@ public class OptionalServiceService {
     }
 
     //TODO: FINISH
-    public void delete(long id) {
-        //cannot delete when there are reservations pending
+    @Transactional(rollbackOn = Exception.class)
+    public void deleteLogical(long id) {
+        final OptionalService serviceToDelete = optionalServiceRepository.getAllServiceInformation(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
 
-        //delete images
-        //set deletedAt
+        boolean hasPendingReservations = hasPendingReservations(serviceToDelete);
+        if (hasPendingReservations) {
+            throw new ActionNotAllowedException("Cannot delete service with reservations pending");
+        }
 
+        ImmutableSet.copyOf(serviceToDelete.getOptionalServiceBusinessHours())
+                .forEach(optionalServiceBusinessService::delete);
 
+        ImmutableSet.copyOf(serviceToDelete.getAvailability())
+                .forEach(optionalServiceAvailabilityRepository::delete);
+
+        ImmutableSet.copyOf(serviceToDelete.getServiceForLocation())
+                .forEach(optionalServiceForChosenLocationRepository::delete);
+
+        final String type = serviceToDelete.getType();
+        switch (type) {
+            case "INTERPRETER":
+                final ImmutableSet<TranslationLanguage> languages = ImmutableSet.copyOf(((Interpreter) serviceToDelete).getLanguages());
+                for (TranslationLanguage language : languages) {
+                    ((Interpreter) serviceToDelete).removeLanguage(language);
+                }
+                break;
+
+            case "MUSICIAN":
+            case "MUSIC BAND":
+            case "SINGER":
+            case "DJ":
+                final ImmutableSet<MusicStyle> musicStyles = ImmutableSet.copyOf(serviceToDelete.getStyles());
+                for (MusicStyle musicStyle : musicStyles) {
+                    serviceToDelete.removeMusicStyle(musicStyle);
+                }
+                break;
+            default:
+                break;
+        }
+        serviceToDelete.setModifiedAt(LocalDateTime.now());
+        serviceToDelete.setDeletedAt(LocalDateTime.now());
     }
 
+    private boolean hasPendingReservations(OptionalService serviceToDelete) {
+        return serviceToDelete.getServiceForLocation().stream()
+                .map(optionalService -> optionalService.getLocationForEvent().getEvent())
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
+    }
 
 }

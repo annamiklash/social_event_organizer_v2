@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageRequestDetails;
+import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class LocationImageDto {
 
     @NotNull
-    List<ImageRequestDetails> details;
+    List<ImageDto> details;
 
     @NotNull
     Integer locationId;

@@ -73,4 +73,23 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
             "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
     Optional<Location> available(@Param("locationId") long locationId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+
+    @Query("SELECT l from location l " +
+            "LEFT JOIN FETCH l.locationAddress lad " +
+            "LEFT JOIN FETCH l.descriptions d " +
+            "LEFT JOIN FETCH l.caterings cat " +
+            "LEFT JOIN FETCH l.availability la " +
+            "LEFT JOIN FETCH l.locationBusinessHours bh " +
+            "LEFT JOIN FETCH l.locationForEvent lfe " +
+            "LEFT JOIN FETCH lfe.event " +
+            "WHERE l.id = :locationId")
+    Optional<Location> getAllLocationInformation(@Param("locationId") long locationId);
+
+    List<Location> findAllByBusiness_Id(long id);
+
+    @Query("SELECT l from location l " +
+            "LEFT JOIN FETCH l.images i " +
+            "WHERE l.id = :locationId")
+    Optional<Location> findWithImages(@Param("locationId") long locationId);
+
 }

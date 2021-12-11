@@ -7,6 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
+import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 
 import javax.persistence.*;
@@ -14,7 +15,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 import static pjatk.socialeventorganizer.social_event_support.common.constants.Const.CATERING_ITEMS_MINIMUM;
@@ -73,8 +73,12 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_catering")
     private Set<CateringBusinessHours> cateringBusinessHours;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_catering")
+    private Set<CateringImage> images;
+
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
-    private Set<Location> locations = new HashSet<>();
+    private Set<Location> locations;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_catering")

@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.dto.Busines
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
+import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -82,5 +83,7 @@ public class LocationDto implements Serializable {
     private Set<CateringDto> caterings;
 
     private List<AvailabilityDto> locationAvailability;
+
+    private List<ImageDto> images;
 
 }
