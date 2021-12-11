@@ -88,4 +88,25 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
     List<OptionalService> getAll();
 
 
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.styles ms " +
+            "LEFT JOIN FETCH os.availability osa " +
+            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
+            "LEFT JOIN FETCH os.serviceForLocation sfl " +
+            "LEFT JOIN FETCH sfl.locationForEvent lfe " +
+            "LEFT JOIN FETCH lfe.event " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> getAllServiceInformation(@Param("serviceId") long serviceId);
+
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.styles ms " +
+            "LEFT JOIN FETCH os.availability osa " +
+            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> findWithDetail(@Param("serviceId") long serviceId);
+
+    @Query("SELECT os from optional_service os " +
+            "LEFT JOIN FETCH os.images i " +
+            "WHERE os.id = :serviceId")
+    Optional<OptionalService> findWithImages(@Param("serviceId") long serviceId);
 }

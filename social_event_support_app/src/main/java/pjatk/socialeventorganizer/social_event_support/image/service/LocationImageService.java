@@ -141,6 +141,7 @@ public class LocationImageService {
                 .orElseThrow(() -> new NotFoundException("Image not found"));
     }
 
+
     private boolean mainExists(long serviceId) {
         return getMain(serviceId).isPresent();
     }

@@ -19,8 +19,8 @@ public interface OptionalServiceImageRepository extends JpaRepository<OptionalSe
             "WHERE s.id = :serviceId AND i.isMain = TRUE")
     Optional<OptionalServiceImage> getMain(@Param("serviceId") long serviceId);
 
-    @Query(value = "SELECT count(1) from optional_service_image i " +
-            "LEFT JOIN optional_service os on i.id_optional_service = os.id_optional_service " +
-            "WHERE os.id_optional_service = :serviceId", nativeQuery = true)
+    @Query("SELECT count(i) from optional_service_image i " +
+            "LEFT JOIN FETCH i.service s " +
+            "WHERE s.id = :serviceId")
     int countAll(@Param("serviceId") long serviceId);
 }
