@@ -24,5 +24,4 @@ public class ImageMapper {
                 .encodedImage(Base64Utils.encodeToString(image.getImage()))
                 .build();
     }
-
 }

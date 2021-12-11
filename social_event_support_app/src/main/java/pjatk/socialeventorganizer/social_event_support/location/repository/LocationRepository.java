@@ -91,7 +91,6 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
     List<String> findDistinctCities();
 
 
-
     @Query("SELECT l from location l " +
             "LEFT JOIN FETCH l.images i " +
             "WHERE l.id = :locationId")

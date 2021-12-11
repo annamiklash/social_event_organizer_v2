@@ -46,7 +46,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
@@ -305,6 +305,8 @@ public class OptionalServiceService {
                     .stream()
                     .map(musicStyleService::getByName)
                     .collect(Collectors.toSet());
+        ImmutableSet.copyOf(serviceToDelete.getServiceForLocation())
+                .forEach(optionalServiceForChosenLocationRepository::delete);
 
             return optionalServices.stream()
                     .filter(optionalService -> CollectionUtils.containsAny(musicStyles, optionalService.getStyles()))

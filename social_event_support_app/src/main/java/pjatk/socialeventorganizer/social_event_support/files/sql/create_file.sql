@@ -6,8 +6,8 @@ CREATE TABLE users
     hashed_password      varchar(300) NOT NULL,
     created_at           timestamp    NOT NULL,
     modified_at          timestamp    NOT NULL,
-    deleted_at           timestamp NULL,
-    blocked_at           timestamp NULL,
+    deleted_at           timestamp    NULL,
+    blocked_at           timestamp    NULL,
     is_active            boolean      NOT NULL,
     user_type            char         NOT NULL,
     reset_password_token varchar(400) NULL,
@@ -26,7 +26,7 @@ CREATE TABLE address
     city          varchar(30) NOT NULL,
     created_at    timestamp   NOT NULL,
     modified_at   timestamp   NOT NULL,
-    deleted_at    timestamp NULL,
+    deleted_at    timestamp   NULL,
     CONSTRAINT address_pk PRIMARY KEY (id_address)
 );
 
@@ -68,17 +68,17 @@ alter table app_problem
 -- Table: catering
 CREATE TABLE catering
 (
-    id_catering         serial       NOT NULL,
-    name                varchar(100) NOT NULL,
-    email               varchar(100) NOT NULL,
-    phone_number        bigint       NOT NULL,
+    id_catering         serial        NOT NULL,
+    name                varchar(100)  NOT NULL,
+    email               varchar(100)  NOT NULL,
+    phone_number        bigint        NOT NULL,
     service_cost        decimal(8, 2) NULL,
-    description         varchar(500) NULL,
-    created_at          timestamp    NOT NULL,
-    modified_at         timestamp    NOT NULL,
-    deleted_at          timestamp NULL,
-    id_business         int          NOT NULL,
-    id_catering_address int          NOT NULL,
+    description         varchar(500)  NULL,
+    created_at          timestamp     NOT NULL,
+    modified_at         timestamp     NOT NULL,
+    deleted_at          timestamp     NULL,
+    id_business         int           NOT NULL,
+    id_catering_address int           NOT NULL,
     CONSTRAINT catering_pk PRIMARY KEY (id_catering)
 );
 
@@ -99,7 +99,7 @@ CREATE TABLE catering_item
     id_catering_item serial        NOT NULL,
     name             varchar(50)   NOT NULL,
     type             varchar(10)   NOT NULL,
-    description      varchar(200) NULL,
+    description      varchar(200)  NULL,
     serving_price    decimal(6, 2) NOT NULL,
     created_at       timestamp     NOT NULL,
     modified_at      timestamp     NOT NULL,
@@ -145,7 +145,7 @@ CREATE TABLE customer
 -- Table: description_item
 CREATE TABLE description_item
 (
-    name        varchar(40) NOT NULL,
+    name        varchar(40)  NOT NULL,
     description varchar(100) NULL,
     CONSTRAINT description_item_pk PRIMARY KEY (name)
 );
@@ -158,8 +158,7 @@ CREATE TABLE event_type
     CONSTRAINT event_type_pk PRIMARY KEY (id_event_type)
 );
 
-create
-    unique index event_type_type_uindex
+create unique index event_type_type_uindex
     on event_type (type);
 
 -- Table: guest

@@ -20,7 +20,7 @@ public interface CateringImageRepository extends JpaRepository<CateringImage, Lo
     Optional<CateringImage> getMain(@Param("cateringId") long cateringId);
 
     @Query("SELECT count(i) from catering_image i " +
-            "LEFT JOIN catering c on c.id = i.catering.id " +
+            "LEFT JOIN FETCH i.catering c " +
             "WHERE c.id = :cateringId")
-    int countAll(@Param("cateringId") long cateringId);
+    int countAll(@Param("serviceId") long serviceId);
 }

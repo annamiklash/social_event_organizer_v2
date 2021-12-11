@@ -11,10 +11,14 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundExcept
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 =======
 import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
 >>>>>>> 168ec2e... Add Image support to catering, location, service
+=======
+import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
+>>>>>>> c3ee252... Add Image support to catering, location, service
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
 
