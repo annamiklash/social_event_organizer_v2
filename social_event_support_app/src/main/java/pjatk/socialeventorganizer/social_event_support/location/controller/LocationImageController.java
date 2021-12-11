@@ -9,10 +9,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
 import pjatk.socialeventorganizer.social_event_support.image.model.response.ImageResponse;
-import pjatk.socialeventorganizer.social_event_support.location.model.LocationImage;
+import pjatk.socialeventorganizer.social_event_support.image.service.LocationImageService;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationImageDto;
-import pjatk.socialeventorganizer.social_event_support.location.service.LocationImageService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 @RestController
-@RequestMapping("api/location_image")
+@RequestMapping("api/location/image")
 public class LocationImageController {
 
     private final LocationImageService service;
@@ -32,7 +32,7 @@ public class LocationImageController {
             value = "/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImageResponse> addLocation(@Valid @RequestBody LocationImageDto request) {
+    public ResponseEntity<ImageResponse> create(@Valid @RequestBody LocationImageDto request) {
         final ImageResponse response = service.addImagesToLocation(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

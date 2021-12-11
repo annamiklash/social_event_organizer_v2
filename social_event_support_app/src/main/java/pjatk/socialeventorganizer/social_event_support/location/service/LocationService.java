@@ -412,6 +412,10 @@ public class LocationService {
         return modified;
     }
 
+    public Location getWithImages(long locationId) {
+        return locationRepository.findWithImages(locationId)
+                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
+    }
     public List<String> getCities() {
 
         return locationRepository.findDistinctCities();
