@@ -60,7 +60,7 @@ public class LocationImageController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> save(@RequestParam long locationId, @Valid @RequestBody ImageDto dto) {
-        final LocationImage cateringImage = locationImageService.create(locationId, dto);
+        final LocationImage cateringImage = locationImageService.save(locationId, dto);
         return ResponseEntity.ok(ImageMapper.toDto(cateringImage));
     }
 

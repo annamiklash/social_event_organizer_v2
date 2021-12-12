@@ -44,7 +44,7 @@ public class CateringImageController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            path = "allowed",
+            path = "allowed/main",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> main(@RequestParam long cateringId) {
         final Optional<CateringImage> main = cateringImageService.getMain(cateringId);
@@ -76,7 +76,6 @@ public class CateringImageController {
                 ImmutableList.copyOf(list.stream()
                         .map(ImageMapper::toDto)
                         .collect(Collectors.toList()))
-
         );
     }
 
@@ -86,7 +85,6 @@ public class CateringImageController {
     public ResponseEntity<Void> changeMain(@RequestParam long oldId, @RequestParam long newId) {
         cateringImageService.setNewMain(oldId, newId);
         return ResponseEntity.ok().build();
-
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
