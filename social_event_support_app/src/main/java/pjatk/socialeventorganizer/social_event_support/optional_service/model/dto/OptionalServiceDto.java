@@ -46,7 +46,7 @@ public class OptionalServiceDto implements Serializable {
     @Pattern(regexp = RegexConstants.LAST_NAME_REGEX)
     private String lastName;
 
-    @NotNull
+    @NotBlank(message = "Type from is mandatory")
     private String type;
 
     @NotBlank(message = "Email is mandatory")
