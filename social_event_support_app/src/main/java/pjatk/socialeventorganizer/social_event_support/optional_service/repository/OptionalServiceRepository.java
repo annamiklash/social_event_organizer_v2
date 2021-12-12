@@ -71,6 +71,7 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "OR os.description LIKE %:keyword% " +
             "OR os.alias LIKE %:keyword%")
     Long countAll(@Param("keyword") String keyword);
+
     List<OptionalService> findAllByBusiness_Id(long id);
 
     @Query(value = "SELECT os.* from optional_service os " +
@@ -87,26 +88,4 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "WHERE s.deletedAt IS NULL")
     List<OptionalService> getAll();
 
-
-    @Query("SELECT os from optional_service os " +
-            "LEFT JOIN FETCH os.styles ms " +
-            "LEFT JOIN FETCH os.availability osa " +
-            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
-            "LEFT JOIN FETCH os.serviceForLocation sfl " +
-            "LEFT JOIN FETCH sfl.locationForEvent lfe " +
-            "LEFT JOIN FETCH lfe.event " +
-            "WHERE os.id = :serviceId")
-    Optional<OptionalService> getAllServiceInformation(@Param("serviceId") long serviceId);
-
-    @Query("SELECT os from optional_service os " +
-            "LEFT JOIN FETCH os.styles ms " +
-            "LEFT JOIN FETCH os.availability osa " +
-            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
-            "WHERE os.id = :serviceId")
-    Optional<OptionalService> findWithDetail(@Param("serviceId") long serviceId);
-
-    @Query("SELECT os from optional_service os " +
-            "LEFT JOIN FETCH os.images i " +
-            "WHERE os.id = :serviceId")
-    Optional<OptionalService> findWithImages(@Param("serviceId") long serviceId);
 }
