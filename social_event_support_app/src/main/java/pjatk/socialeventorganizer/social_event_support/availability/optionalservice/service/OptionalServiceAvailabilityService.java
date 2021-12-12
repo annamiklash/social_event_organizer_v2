@@ -31,7 +31,7 @@ public class OptionalServiceAvailabilityService {
     private final OptionalServiceService optionalServiceService;
 
 
-    public List<OptionalServiceAvailability> create(List<AvailabilityDto> dtos, long serviceId, boolean deleteAll) {
+    public List<OptionalServiceAvailability> update(List<AvailabilityDto> dtos, long serviceId, boolean deleteAll) {
         final OptionalService optionalService = optionalServiceService.get(serviceId);
         final Map<String, List<AvailabilityDto>> byDate = dtos.stream().collect(Collectors.groupingBy(AvailabilityDto::getDate));
 
@@ -58,6 +58,13 @@ public class OptionalServiceAvailabilityService {
         return optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(id, date);
     }
 
+    public void delete(long locationId, String date) {
+        optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(locationId, date).stream()
+                .filter(cateringAvailability -> cateringAvailability.getStatus().equals(AVAILABLE.name()))
+                .forEach(optionalServiceAvailabilityRepository::delete);
+    }
+
+
     private void save(OptionalServiceAvailability optionalServiceAvailability) {
         optionalServiceAvailabilityRepository.save(optionalServiceAvailability);
     }
@@ -71,7 +78,7 @@ public class OptionalServiceAvailabilityService {
                 .filter(serviceAvailability -> serviceAvailability.getStatus().equals("AVAILABLE"))
                 .collect(Collectors.toList());
 
-        if (deleteAll){
+        if (deleteAll) {
             available.forEach(optionalServiceAvailabilityRepository::delete);
         }
 
@@ -134,7 +141,7 @@ public class OptionalServiceAvailabilityService {
 
     }
 
-    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId ) {
+    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId) {
         return optionalServiceAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
     }
 

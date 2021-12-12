@@ -18,6 +18,7 @@ public class LocationForEventMapper {
 
     public LocationForEventDto toDto(LocationForEvent location) {
         return LocationForEventDto.builder()
+                .id(location.getId())
                 .date(DateTimeUtil.toDateOnlyStringFromLocalDateTime(location.getEvent().getDate()))
                 .timeFrom(DateTimeUtil.toTimeOnlyFromLocalTime(location.getTimeFrom()))
                 .timeTo(DateTimeUtil.toTimeOnlyFromLocalTime(location.getTimeTo()))

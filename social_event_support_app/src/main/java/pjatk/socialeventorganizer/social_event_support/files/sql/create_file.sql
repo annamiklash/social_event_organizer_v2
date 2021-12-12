@@ -347,6 +347,10 @@ CREATE TABLE service_for_event
     CONSTRAINT service_for_event_pk PRIMARY KEY (id_chosen_service_for_event)
 );
 
+alter table service_for_event
+    add confirmation_status varchar(30) default 'CONFIRMED';
+
+
 -- Table: service_review
 CREATE TABLE service_review
 (

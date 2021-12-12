@@ -24,6 +24,7 @@ public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
+    private static final DateTimeFormatter TIME_FORMATTER_WITH_SECONDS = DateTimeFormatter.ofPattern(TIME_FORMAT_WITH_SECONDS);
 
     public LocalDateTime fromStringToFormattedDateTime(String date) {
         if (date == null || date.equals("null")) {
@@ -64,8 +65,15 @@ public class DateTimeUtil {
     }
 
     public String joinDateAndTime(String date, String time) {
+        if (time.length() != TIME_FORMAT_WITH_SECONDS.length()) {
+            time = time + ":00";
+        }
 
         return date + " " + time;
+    }
+
+    public String fromLocalTimeToString(LocalTime time) {
+        return time.format(TIME_FORMATTER_WITH_SECONDS);
     }
 
 
