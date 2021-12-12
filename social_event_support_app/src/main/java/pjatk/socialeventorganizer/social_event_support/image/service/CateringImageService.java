@@ -48,7 +48,7 @@ public class CateringImageService {
         for (ImageDto dto : new HashSet<>(dtos)) {
             final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
 
-            final CateringImage cateringImage = (CateringImage)ImageMapper.fromDto(dto);
+            final CateringImage cateringImage = (CateringImage) ImageMapper.fromDto(dto);
             cateringImage.setCatering(catering);
             cateringImage.setImage(data);
 
@@ -58,7 +58,6 @@ public class CateringImageService {
 
         return result;
     }
-
 
     public CateringImage create(long cateringId, ImageDto dto) {
         ImageValidator.validateFileExtension(dto.getPath());
