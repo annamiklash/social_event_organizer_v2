@@ -70,5 +70,28 @@ public class CateringForChosenEventLocationController {
 
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithCatering(catering.getEventLocation().getEvent()));
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            path = "cancel",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CateringForChosenEventLocationDto> confirmCancelled(@RequestParam long id) {
+
+        final CateringForChosenEventLocation locationForEvent = cateringForChosenEventLocationService.setAsCancelled(id);
+
+        return ResponseEntity.ok(CateringForChosenLocationMapper.toDto(locationForEvent));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CateringForChosenEventLocationDto> cancel(@RequestParam long id) {
+        final CateringForChosenEventLocation locationForEvent = cateringForChosenEventLocationService.cancelReservation(id);
+
+        return ResponseEntity.ok(CateringForChosenLocationMapper.toDto(locationForEvent));
+    }
 }
 

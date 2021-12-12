@@ -3,12 +3,17 @@ package pjatk.socialeventorganizer.social_event_support.location.locationforeven
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
+import pjatk.socialeventorganizer.social_event_support.availability.location.service.LocationAvailabilityService;
+import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
@@ -25,7 +30,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
 
 @Service
 @AllArgsConstructor
@@ -39,6 +44,8 @@ public class LocationForEventService {
     private final CustomerRepository customerRepository;
 
     private final LocationService locationService;
+
+    private final LocationAvailabilityService locationAvailabilityService;
 
     public List<LocationForEvent> getLocationInfoByOrganizedEventId(long eventId) {
         final Optional<List<LocationForEvent>> optionalLocationForEvent = locationForEventRepository.findLocationForEventByOrganizedEventId(eventId);
@@ -79,20 +86,63 @@ public class LocationForEventService {
 
     public LocationForEvent getWithLocation(long locationForEventId) {
         return locationForEventRepository.findByIdWithLocation(locationForEventId)
-                .orElseThrow(() -> new NotFoundException("No locationReservation with id " + locationForEventId));
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
     }
 
+    @Transactional(rollbackOn = Exception.class)
     public LocationForEvent cancelReservation(long locationForEventId) {
-        final LocationForEvent locationForEvent = getWithLocation(locationForEventId);
+        final LocationForEvent locationForEvent = getWithLocationAndEvent(locationForEventId);
+
+        if (!CollectionUtils.isEmpty(locationForEvent.getServices())) {
+            throw new ActionNotAllowedException("Cannot cancel reservation for venue while there are service reservation for given event");
+        }
+
+        if (!CollectionUtils.isEmpty(locationForEvent.getCateringsForEventLocation())) {
+            throw new ActionNotAllowedException("Cannot cancel reservation for venue while there are catering reservation for given event");
+        }
+
+        locationForEvent.setConfirmationStatus(CANCELLATION_PENDING.name());
+        locationForEvent.getEvent().setModifiedAt(LocalDateTime.now());
+        save(locationForEvent);
+
+        return locationForEvent;
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public LocationForEvent setAsCancelled(long locationForEventId) {
+        final LocationForEvent locationForEvent = getWithLocationAndEvent(locationForEventId);
+        if (!locationForEvent.getConfirmationStatus().equals(CANCELLATION_PENDING.name())) {
+            throw new ActionNotAllowedException("Cannot confirm cancellation");
+        }
+        locationForEvent.setConfirmationStatus(CANCELLED.name());
+
+        final OrganizedEvent event = locationForEvent.getEvent();
 
         final LocalTime timeFrom = locationForEvent.getTimeFrom();
         final LocalTime timeTo = locationForEvent.getTimeTo();
-        final LocalDate date = locationForEvent.getEvent().getDate();
+        final LocalDate date = event.getDate();
 
-        return null;
+        final LocalDateTime dateTime = LocalDateTime.of(date, timeFrom);
+        if (!isAllowedToCancel(dateTime)) {
+            throw new ActionNotAllowedException("Cannot cancel reservation");
+        }
 
+        final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
+        final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeTo));
+
+        LocationAvailability locationAvailability = locationAvailabilityService.getByDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), stringTimeFrom, stringTimeTo);
+        locationAvailability = locationAvailabilityService.updateToAvailable(locationAvailability, locationForEvent.getLocation());
+
+        event.setModifiedAt(LocalDateTime.now());
+        organizedEventService.save(event);
+
+        return locationForEvent;
     }
 
+    public LocationForEvent getWithLocationAndEvent(long locationForEventId) {
+        return locationForEventRepository.getWithLocationAndEvent(locationForEventId)
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
+    }
 
     public LocationForEvent confirmReservation(long locationId, long eventId) {
         final LocationForEvent locationForEvent = findByLocationIdAndEventId(locationId, eventId);
@@ -126,5 +176,10 @@ public class LocationForEventService {
         }
         throw new NotFoundException("Location for event does not exist");
     }
+
+    private boolean isAllowedToCancel(LocalDateTime dateTime) {
+        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(LocalDateTime.now());
+    }
+
 
 }

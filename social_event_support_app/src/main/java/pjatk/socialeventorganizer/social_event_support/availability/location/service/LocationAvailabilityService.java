@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.availability.location.service;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,8 +10,9 @@ import pjatk.socialeventorganizer.social_event_support.availability.location.rep
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
-import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
+import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.NOT_AVAILABLE;
 
 @Service
 @AllArgsConstructor
@@ -29,11 +32,11 @@ public class LocationAvailabilityService {
 
     private final LocationAvailabilityRepository locationAvailabilityRepository;
 
-    private final LocationService locationService;
+    private final LocationRepository locationRepository;
 
     @Transactional(rollbackOn = Exception.class)
     public List<LocationAvailability> update(List<AvailabilityDto> dtos, long locationId, boolean deleteAll) {
-        final Location location = locationService.get(locationId);
+        final Location location = locationRepository.findById(locationId).orElseThrow(() -> new NotFoundException("Location does not exist"));
         final Map<String, List<AvailabilityDto>> byDate = dtos.stream().collect(Collectors.groupingBy(AvailabilityDto::getDate));
 
         final List<AvailabilityDto> availabilityDtos = byDate.values().stream()
@@ -67,13 +70,36 @@ public class LocationAvailabilityService {
         }
     }
 
-    private LocationAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, Location location, boolean deleteAll) {
-        final List<LocationAvailability> available = findAllByLocationIdAndDate(location.getId(), dto.getDate()).stream()
-                .filter(locationAvailability -> locationAvailability.getStatus().equals("AVAILABLE"))
-                .collect(Collectors.toList());
+    public LocationAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
+        return locationAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
+                .orElseThrow();
 
-        if (deleteAll){
-            available.forEach(locationAvailabilityRepository::delete);
+    }
+
+    public LocationAvailability updateToAvailable(LocationAvailability locationAvailability, Location location) {
+        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
+
+        final LocationAvailability availability = resolveAvailabilitiesForDay(availabilityDto, location, false);
+        availability.setStatus(AVAILABLE.name());
+        save(availability);
+
+        return availability;
+    }
+
+    private LocationAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, Location location, boolean deleteAll) {
+        final List<LocationAvailability> available = ImmutableList.copyOf(findAllByLocationIdAndDate(location.getId(), dto.getDate()).stream()
+                .filter(locationAvailability -> locationAvailability.getStatus().equals("AVAILABLE"))
+                .collect(Collectors.toList()));
+
+        if (deleteAll) {
+            for (LocationAvailability availability : available) {
+                locationAvailabilityRepository.delete(availability);
+                locationAvailabilityRepository.flush();
+            }
+        }
+
+        if (dto.getId() != null && dto.getStatus().equals("NOT_AVAILABLE")) {
+            dto.setStatus("AVAILABLE");
         }
 
         final List<LocationAvailability> notAvailable = findAllByLocationIdAndDate(location.getId(), dto.getDate()).stream()
@@ -84,7 +110,7 @@ public class LocationAvailabilityService {
             return AvailabilityMapper.fromDtoToLocationAvailability(dto);
         }
 
-        if (available.size() > 0 && notAvailable.size() == 0) {
+        if (available.size() > 0 || isToCancel(notAvailable, dto)) {
             final Optional<LocationAvailability> upperBordering = findByLocationIdAndTimeTo(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()), location.getId()); //upper
             final Optional<LocationAvailability> lowerBordering = findByLocationIdAndTimeFrom(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()), location.getId());//lower
 
@@ -119,6 +145,15 @@ public class LocationAvailabilityService {
         }
     }
 
+    private boolean isToCancel(List<LocationAvailability> notAvailable, AvailabilityDto dto) {
+        final Optional<LocationAvailability> or = notAvailable.stream().filter(locationAvailability -> locationAvailability.getStatus().equals(NOT_AVAILABLE.name())
+                && locationAvailability.getDate().equals(DateTimeUtil.fromStringToFormattedDate(dto.getDate()))
+                && locationAvailability.getTimeFrom().equals(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
+                && locationAvailability.getTimeTo().equals(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()))))
+                .findAny();
+        return or.isPresent();
+    }
+
     private boolean isNewWithinNotAvailable(AvailabilityDto dto, List<LocationAvailability> not_available) {
         final LocalDateTime from = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()));
         final LocalDateTime to = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()));
@@ -135,7 +170,7 @@ public class LocationAvailabilityService {
 
     }
 
-    private Optional<LocationAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId ) {
+    private Optional<LocationAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId) {
         return locationAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
     }
 
