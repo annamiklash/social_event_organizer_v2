@@ -61,12 +61,10 @@ public class CateringImageService {
 
     public CateringImage create(long cateringId, ImageDto dto) {
         ImageValidator.validateFileExtension(dto.getPath());
-        if (dto.isMain()) {
-            final boolean exists = mainExists(cateringId);
-            if (exists) {
-                dto.setMain(false);
-            }
-        }
+
+        final boolean exists = mainExists(cateringId);
+        dto.setMain(!exists);
+
         final Catering catering = cateringService.getWithImages(cateringId);
         if (catering.getImages().size() >= MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
@@ -83,14 +81,17 @@ public class CateringImageService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void setNewMain(long oldId, long newId) {
-        final CateringImage oldMain = get(oldId);
-        final CateringImage newMain = get(newId);
+    public void setNewMain(long cateringId, long newId) {
+        final Optional<CateringImage> optionalImage = getMain(cateringId);
+        if (optionalImage.isPresent()) {
+            final CateringImage cateringImage = optionalImage.get();
+            cateringImage.setMain(false);
 
-        oldMain.setMain(false);
+            save(cateringImage);
+        }
+        final CateringImage newMain = get(newId);
         newMain.setMain(true);
 
-        save(oldMain);
         save(newMain);
         cateringImageRepository.flush();
     }
