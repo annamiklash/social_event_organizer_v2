@@ -2,7 +2,6 @@ package pjatk.socialeventorganizer.social_event_support.availability.optionalser
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
@@ -31,14 +30,11 @@ public class OptionalServiceAvailabilityService {
 
     private final OptionalServiceService optionalServiceService;
 
-    public List<OptionalServiceAvailability> findAllByServiceIdAndDate(long id, String date) {
 
-        return optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(id, date);
-    }
-
-    public List<OptionalServiceAvailability> create(List<AvailabilityDto> dtos, long serviceId) {
+    public List<OptionalServiceAvailability> create(List<AvailabilityDto> dtos, long serviceId, boolean deleteAll) {
         final OptionalService optionalService = optionalServiceService.get(serviceId);
         final Map<String, List<AvailabilityDto>> byDate = dtos.stream().collect(Collectors.groupingBy(AvailabilityDto::getDate));
+
 
         final List<AvailabilityDto> availabilityDtos = byDate.values().stream()
                 .flatMap(List::stream)
@@ -47,7 +43,7 @@ public class OptionalServiceAvailabilityService {
         final List<OptionalServiceAvailability> result = new ArrayList<>();
 
         for (AvailabilityDto availabilityDto : availabilityDtos) {
-            final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, optionalService);
+            final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, optionalService, deleteAll);
 
             availability.setOptionalService(optionalService);
             availability.setStatus(AVAILABLE.name());
@@ -58,36 +54,52 @@ public class OptionalServiceAvailabilityService {
         return result;
     }
 
-    private OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto availabilityDto, OptionalService optionalService) {
-        final List<OptionalServiceAvailability> available = findAllByServiceIdAndDate(optionalService.getId(), availabilityDto.getDate()).stream()
-                .filter(locationAvailability -> "AVAILABLE".equals(locationAvailability.getStatus()))
+    public List<OptionalServiceAvailability> findAllByServiceIdAndDate(long id, String date) {
+        return optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(id, date);
+    }
+
+    private void save(OptionalServiceAvailability optionalServiceAvailability) {
+        optionalServiceAvailabilityRepository.save(optionalServiceAvailability);
+    }
+
+    private void deleteById(long id) {
+        optionalServiceAvailabilityRepository.deleteById(id);
+    }
+
+    private OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
+        final List<OptionalServiceAvailability> available = findAllByServiceIdAndDate(service.getId(), dto.getDate()).stream()
+                .filter(serviceAvailability -> serviceAvailability.getStatus().equals("AVAILABLE"))
                 .collect(Collectors.toList());
 
-        final List<OptionalServiceAvailability> not_available = findAllByServiceIdAndDate(optionalService.getId(), availabilityDto.getDate()).stream()
-                .filter(serviceAvailability -> "NOT_AVAILABLE".equals(serviceAvailability.getStatus()))
-                .collect(Collectors.toList());
-
-        if (available.size() == 0 && not_available.size() == 0) {
-            return AvailabilityMapper.fromDtoToOptionalServiceAvailability(availabilityDto);
+        if (deleteAll){
+            available.forEach(optionalServiceAvailabilityRepository::delete);
         }
 
-        if (available.size() > 0 && not_available.size() == 0) {
-            final Optional<OptionalServiceAvailability> upperBordering = findByServiceIdAndTimeTo(availabilityDto.getTimeFrom(), optionalService.getId()); //upper
-            final Optional<OptionalServiceAvailability> lowerBordering = findByServiceIdAndTimeFrom(availabilityDto.getTimeTo(), optionalService.getId());//lower
+        final List<OptionalServiceAvailability> notAvailable = findAllByServiceIdAndDate(service.getId(), dto.getDate()).stream()
+                .filter(locationAvailability -> locationAvailability.getStatus().equals("NOT_AVAILABLE"))
+                .collect(Collectors.toList());
+
+        if (available.size() == 0 && notAvailable.size() == 0) {
+            return AvailabilityMapper.fromDtoToOptionalServiceAvailability(dto);
+        }
+
+        if (available.size() > 0 && notAvailable.size() == 0) {
+            final Optional<OptionalServiceAvailability> upperBordering = findByLocationIdAndTimeTo(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()), service.getId()); //upper
+            final Optional<OptionalServiceAvailability> lowerBordering = findByLocationIdAndTimeFrom(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()), service.getId());//lower
 
             if (upperBordering.isEmpty() && lowerBordering.isEmpty()) { // -> save as it is
-                return AvailabilityMapper.fromDtoToOptionalServiceAvailability(availabilityDto);
+                return AvailabilityMapper.fromDtoToOptionalServiceAvailability(dto);
             }
 
             if (upperBordering.isPresent() && lowerBordering.isEmpty()) { // -> extend upper (upper.setTimeTo(dto.getTimeTo))
                 final OptionalServiceAvailability availability = upperBordering.get();
-                availability.setTimeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeTo())));
+                availability.setTimeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo())));
                 return availability;
             }
 
             if (upperBordering.isEmpty()) { // -> extend lower (lower.setTimeFrom(dto.getTimeFrom))
                 final OptionalServiceAvailability availability = lowerBordering.get();
-                availability.setTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeFrom())));
+                availability.setTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())));
                 return availability;
             } else {                        // -> change one of them, delete the other,
                 final OptionalServiceAvailability lower = upperBordering.get();
@@ -98,20 +110,19 @@ public class OptionalServiceAvailabilityService {
                 return upper;
             }
         } else {
-            if (isNewWithinNotAvailable(availabilityDto, not_available)) {
+            if (isNewWithinNotAvailable(dto, notAvailable)) {
                 throw new IllegalArgumentException("Time from and time to for availability is withing reserved time frame");
             } else {
-                return AvailabilityMapper.fromDtoToOptionalServiceAvailability(availabilityDto);
+                return AvailabilityMapper.fromDtoToOptionalServiceAvailability(dto);
             }
         }
     }
 
-    private boolean isNewWithinNotAvailable(AvailabilityDto availabilityDto, List<OptionalServiceAvailability> not_available) {
+    private boolean isNewWithinNotAvailable(AvailabilityDto dto, List<OptionalServiceAvailability> notAvailable) {
+        final LocalDateTime from = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()));
+        final LocalDateTime to = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()));
 
-        final LocalDateTime from = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeFrom()));
-        final LocalDateTime to = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeTo()));
-
-        for (OptionalServiceAvailability availability : not_available) {
+        for (OptionalServiceAvailability availability : notAvailable) {
             if (from.isBefore(availability.getTimeTo()) && from.isAfter(availability.getTimeFrom())) {
                 return true;
             }
@@ -120,59 +131,15 @@ public class OptionalServiceAvailabilityService {
             }
         }
         return false;
-    }
-
-    private Optional<OptionalServiceAvailability> findByServiceIdAndTimeFrom(String timeTo, Long serviceId) {
-        return optionalServiceAvailabilityRepository.findByServiceIdAndTimeFrom(serviceId, timeTo);
 
     }
 
-    private Optional<OptionalServiceAvailability> findByServiceIdAndTimeTo(String timeFrom, Long serviceId) {
-        return optionalServiceAvailabilityRepository.findByServiceIdAndTimeTo(serviceId, timeFrom);
-
+    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId ) {
+        return optionalServiceAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
     }
 
-    public List<OptionalServiceAvailability> edit(List<AvailabilityDto> dtos, long serviceId) {
-        final Map<String, List<AvailabilityDto>> byDate = dtos.stream().collect(Collectors.groupingBy(AvailabilityDto::getDate));
-
-        final List<AvailabilityDto> availabilityDtoList = byDate.values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        final List<OptionalServiceAvailability> result = new ArrayList<>();
-
-        for (AvailabilityDto dto : availabilityDtoList) {
-            optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(serviceId, dto.getDate())
-                    .stream()
-                    .filter(serviceAvailavbilitie -> serviceAvailavbilitie.getStatus().equals(AVAILABLE.name()))
-                    .forEach(cateringAvailability -> deleteById(cateringAvailability.getId()));
-            result.add(createOne(dto, serviceId));
-        }
-
-        return result;
-    }
-
-    private void save(OptionalServiceAvailability optionalServiceAvailability) {
-        optionalServiceAvailabilityRepository.save(optionalServiceAvailability);
-    }
-
-    public OptionalServiceAvailability createOne(AvailabilityDto dto, long serviceId) {
-        final OptionalService service = optionalServiceService.get(serviceId);
-        final OptionalServiceAvailability availability = AvailabilityMapper.fromDtoToOptionalServiceAvailability(dto);
-        availability.setOptionalService(service);
-
-        save(availability);
-
-        return availability;
-    }
-
-    private boolean calendarEmptyForDate(String date, long locationId) {
-        List<OptionalServiceAvailability> result = optionalServiceAvailabilityRepository.findByDate(locationId, date);
-        return !CollectionUtils.isEmpty(result);
-    }
-
-    private void deleteById(long id) {
-        optionalServiceAvailabilityRepository.deleteById(id);
+    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeTo(String timeFrom, long locationId) {
+        return optionalServiceAvailabilityRepository.findByLocationIdAndTimeTo(locationId, timeFrom);
     }
 
 
