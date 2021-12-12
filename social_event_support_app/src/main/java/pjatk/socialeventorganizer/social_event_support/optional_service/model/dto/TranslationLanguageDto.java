@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -16,6 +16,6 @@ public class TranslationLanguageDto implements Serializable {
 
     private long id;
 
-    @NotNull
+    @NotBlank(message = "Name is mandatory")
     private String name;
 }

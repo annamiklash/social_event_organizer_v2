@@ -1,14 +1,20 @@
 package pjatk.socialeventorganizer.social_event_support.event.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -20,22 +26,30 @@ public class OrganizedEventDto implements Serializable {
 
     private Long id;
 
-    @NotNull
+    @Size(min = 1, max = 100, message = "Cannot be more that 100 symbols")
+    @NotBlank(message = "Event name is mandatory")
     private String name;
 
-    @NotNull
+    @NotBlank(message = "Date is mandatory")
+    @Pattern(regexp = RegexConstants.DATE_REGEX)
+    @JsonFormat(pattern = DateTimeUtil.DATE_FORMAT)
     private String date;
 
-    @NotNull
+    @NotBlank(message = "Start time is mandatory")
+    @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
+    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
     private String startTime;
 
-    @NotNull
+    @NotBlank(message = "End time is mandatory")
+    @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
+    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
     private String endTime;
 
-    @NotNull
+    @Min(1)
+    @NotBlank(message = "Guest amount is mandatory")
     private int guestCount;
 
-    @NotNull
+    @NotBlank(message = "Event type is mandatory")
     private String eventType;
 
     private String eventStatus;
