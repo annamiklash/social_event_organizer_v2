@@ -14,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @MappedSuperclass
-public class Image {
+public abstract class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
