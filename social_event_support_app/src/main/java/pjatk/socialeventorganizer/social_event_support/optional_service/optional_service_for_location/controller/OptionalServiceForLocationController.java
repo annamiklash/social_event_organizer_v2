@@ -70,4 +70,28 @@ public class OptionalServiceForLocationController {
 
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithServices(optionalService.getLocationForEvent().getEvent()));
     }
+
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            path = "cancel",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OptionalServiceForChosenLocationDto> confirmCancelled(@RequestParam long id) {
+
+        final OptionalServiceForChosenLocation serviceForChosenLocation = optionalServiceForLocationService.setAsCancelled(id);
+
+        return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(serviceForChosenLocation));
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
+    @RequestMapping(
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OptionalServiceForChosenLocationDto> cancel(@RequestParam long id) {
+        final OptionalServiceForChosenLocation serviceForChosenLocation = optionalServiceForLocationService.cancelReservation(id);
+
+        return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(serviceForChosenLocation));
+    }
 }

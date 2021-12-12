@@ -9,6 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 
@@ -73,7 +74,7 @@ public class OptionalServiceAvailabilityService {
         optionalServiceAvailabilityRepository.deleteById(id);
     }
 
-    private OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
+    public OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
         final List<OptionalServiceAvailability> available = findAllByServiceIdAndDate(service.getId(), dto.getDate()).stream()
                 .filter(serviceAvailability -> serviceAvailability.getStatus().equals("AVAILABLE"))
                 .collect(Collectors.toList());
@@ -125,6 +126,17 @@ public class OptionalServiceAvailabilityService {
         }
     }
 
+    public OptionalServiceAvailability updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
+        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
+
+        final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, service, false);
+        availability.setStatus(AVAILABLE.name());
+        save(availability);
+
+        return availability;
+    }
+
+
     private boolean isNewWithinNotAvailable(AvailabilityDto dto, List<OptionalServiceAvailability> notAvailable) {
         final LocalDateTime from = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()));
         final LocalDateTime to = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()));
@@ -150,4 +162,8 @@ public class OptionalServiceAvailabilityService {
     }
 
 
+    public OptionalServiceAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
+        return optionalServiceAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
+                .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
+    }
 }
