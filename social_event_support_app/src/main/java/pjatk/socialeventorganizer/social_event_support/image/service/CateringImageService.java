@@ -59,12 +59,10 @@ public class CateringImageService {
 
     public CateringImage create(long cateringId, ImageDto dto) {
         ImageValidator.validateFileExtension(dto.getPath());
-        if (dto.isMain()) {
-            final boolean exists = mainExists(cateringId);
-            if (exists) {
-                dto.setMain(false);
-            }
-        }
+
+        final boolean exists = mainExists(cateringId);
+        dto.setMain(!exists);
+
         final Catering catering = cateringService.getWithImages(cateringId);
         if (catering.getImages().size() >= MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
@@ -81,14 +79,17 @@ public class CateringImageService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void setNewMain(long oldId, long newId) {
-        final CateringImage oldMain = get(oldId);
-        final CateringImage newMain = get(newId);
+    public void setNewMain(long cateringId, long newId) {
+        final Optional<CateringImage> optionalImage = getMain(cateringId);
+        if (optionalImage.isPresent()) {
+            final CateringImage cateringImage = optionalImage.get();
+            cateringImage.setMain(false);
 
-        oldMain.setMain(false);
+            save(cateringImage);
+        }
+        final CateringImage newMain = get(newId);
         newMain.setMain(true);
 
-        save(oldMain);
         save(newMain);
         cateringImageRepository.flush();
     }
@@ -101,12 +102,28 @@ public class CateringImageService {
         return cateringImageRepository.countAll(cateringId);
     }
 
-    public void deleteById(long oldId, Long newId) {
-        final CateringImage toDelete = get(oldId);
-        if (toDelete.isMain() && newId != null) {
-            setNewMain(oldId, newId);
+    public void deleteById(long locationId, Long toDelete) {
+        List<CateringImage> list = findByCateringId(locationId);
+        if (list.size() == 1) {
+            cateringImageRepository.deleteById(toDelete);
+            return;
         }
-        cateringImageRepository.deleteById(oldId);
+        if (list.size() == 0){
+            return;
+        }
+        final CateringImage imageToDelete = get(toDelete);
+        if (imageToDelete.isMain()) {
+            final Optional<CateringImage> optionalMain = getMain(locationId);
+            if (optionalMain.isEmpty() || optionalMain.get().getId() == toDelete) {
+                final CateringImage cateringImage = list.stream()
+                        .filter(image -> !image.isMain() && image.getId() != toDelete)
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
+                cateringImage.setMain(true);
+                save(cateringImage);
+            }
+        }
+        cateringImageRepository.delete(imageToDelete);
     }
 
     public Optional<CateringImage> getMain(long serviceId) {
