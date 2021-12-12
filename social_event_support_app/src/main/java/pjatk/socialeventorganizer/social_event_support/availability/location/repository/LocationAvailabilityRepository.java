@@ -31,4 +31,12 @@ public interface LocationAvailabilityRepository extends JpaRepository<LocationAv
             "where la.id_location=:id AND la.status = 'AVAILABLE' " +
             "AND la.time_from = CAST(:timeFrom as timestamp)", nativeQuery = true)
     Optional<LocationAvailability> findByLocationIdAndTimeFrom(@Param("id") Long id, @Param("timeFrom") String timeFrom);
+
+
+    @Query(value = "select distinct la.* from location_availability la " +
+            "WHERE la.date = CAST(:date as date) " +
+            "AND la.time_from = CAST(:timeFrom as timestamp) " +
+            "AND la.time_to= CAST(:timeTo as timestamp)", nativeQuery = true)
+    Optional<LocationAvailability> getByDateAndTime(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+
 }

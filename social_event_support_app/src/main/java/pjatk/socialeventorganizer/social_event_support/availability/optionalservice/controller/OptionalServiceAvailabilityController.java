@@ -50,7 +50,7 @@ public class OptionalServiceAvailabilityController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<AvailabilityDto>> create(@Valid @RequestBody AvailabilityDto[] dtos,
                                                                  @RequestParam @NotNull long id) {
-        final List<OptionalServiceAvailability> availabilities = optionalServiceAvailabilityService.create(Arrays.asList(dtos), id);
+        final List<OptionalServiceAvailability> availabilities = optionalServiceAvailabilityService.update(Arrays.asList(dtos), id, true);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(availabilities.stream()
@@ -58,7 +58,16 @@ public class OptionalServiceAvailabilityController {
                         .collect(Collectors.toList())));
     }
 
-    //TODO: edit
 
-    //TODO: delete
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@RequestParam long id,
+            @RequestParam String date){
+        optionalServiceAvailabilityService.delete(id, date);
+
+        return ResponseEntity.ok().build();
+    }
 }
