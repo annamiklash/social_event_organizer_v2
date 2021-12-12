@@ -129,7 +129,6 @@ public class OptionalServiceImageService {
 
     public Optional<OptionalServiceImage> getMain(long serviceId) {
         return optionalServiceImageRepository.getMain(serviceId);
-
     }
 
     private void save(OptionalServiceImage image) {
