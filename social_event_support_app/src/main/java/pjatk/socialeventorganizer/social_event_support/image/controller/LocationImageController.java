@@ -82,8 +82,8 @@ public class LocationImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long locationId, @RequestParam long imageId) {
-        locationImageService.setNewMain(locationId, imageId);
+    public ResponseEntity<Void> changeMain(@RequestParam long locationId, @RequestParam long id) {
+        locationImageService.setNewMain(locationId, id);
         return ResponseEntity.ok().build();
 
     }
@@ -91,8 +91,8 @@ public class LocationImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long locationId, @RequestParam long imageId) {
-        locationImageService.deleteById(locationId, imageId);
+    public ResponseEntity<Void> delete(@RequestParam long locationId, @RequestParam long id) {
+        locationImageService.deleteById(locationId, id);
         return ResponseEntity.ok().build();
 
     }
