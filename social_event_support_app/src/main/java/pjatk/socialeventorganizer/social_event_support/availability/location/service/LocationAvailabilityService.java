@@ -74,7 +74,7 @@ public class LocationAvailabilityService {
 
     public LocationAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
         return locationAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
 
     }
 
