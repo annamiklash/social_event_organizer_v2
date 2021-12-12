@@ -10,12 +10,15 @@ public enum AllowedUrlsEnum {
     LOGOUT("/api/logout*"),
     LOCATIONS("/api/locations/allowed/**"),
     LOCATION_AVAILABILITY("api/availability/location/allowed**"),
+    LOCATION_IMAGES("/api/images/location/allowed/**"),
     CATERINGS("/api/caterings/allowed/**"),
     CATERING_AVAILABILITY("api/availability/catering/allowed**"),
+    CATERING_IMAGES("/api/images/catering/allowed/**"),
     SERVICES("/api/services/allowed/**"),
     SERVICES_AVAILABILITY("api/availability/services/allowed**"),
+    SERVICE_IMAGES("/api/images/service/allowed/**"),
     CUISINES("/api/cuisines/allowed/**"),
-    CATERING_ITEMS("/api/catering/items/allowed**"),
+    CATERING_ITEMS("/api/catering/items/allowed/**"),
     RESET_PASSWORD("/api/reset_password"),
     RESET( "/api/reset");
 

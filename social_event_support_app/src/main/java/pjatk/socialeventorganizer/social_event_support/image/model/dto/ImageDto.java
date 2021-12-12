@@ -22,18 +22,17 @@ public class ImageDto {
     private String path;
 
     @NotNull
+    private String name;
+
     private boolean isMain;
-
-    private String type;
-
-    private long size;
-
-    private byte[] image;
 
     private LocationDto location;
 
     private CateringDto catering;
 
     private OptionalServiceDto service;
+
+    private String encodedImage;
+
 
 }

@@ -19,19 +19,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity webSecurity) {
         webSecurity.ignoring().antMatchers(
-                REGISTER.value,
-                LOGIN.value,
-                LOGOUT.value,
-                LOCATIONS.value,
-                LOCATION_AVAILABILITY.value,
-
                 CATERINGS.value,
                 CATERING_AVAILABILITY.value,
                 CUISINES.value,
                 CATERING_ITEMS.value,
-
+                CATERING_IMAGES.value,
+                LOCATIONS.value,
+                LOCATION_AVAILABILITY.value,
+                LOCATION_IMAGES.value,
+                LOGIN.value,
+                LOGOUT.value,
                 SERVICES.value,
                 SERVICES_AVAILABILITY.value,
+                SERVICE_IMAGES.value,
+                REGISTER.value,
                 RESET_PASSWORD.value,
                 RESET.value
         );

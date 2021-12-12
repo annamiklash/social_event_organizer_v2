@@ -1,15 +1,17 @@
 package pjatk.socialeventorganizer.social_event_support.location.mapper;
 
 import lombok.experimental.UtilityClass;
+import org.apache.commons.collections4.CollectionUtils;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
-import pjatk.socialeventorganizer.social_event_support.image.model.ImageMapper;
+import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -33,9 +35,8 @@ public class LocationMapper {
     }
 
     public LocationDto toDto(Location location) {
-        return LocationDto.builder()
+        final LocationDto dto = LocationDto.builder()
                 .id(Math.toIntExact(location.getId()))
-                .images(location.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()))
                 .name(location.getName())
                 .description(location.getDescription())
                 .email(location.getEmail())
@@ -49,6 +50,14 @@ public class LocationMapper {
                 .deletedAt(String.valueOf(location.getDeletedAt()))
                 .address(AddressMapper.toDto(location.getLocationAddress()))
                 .build();
+
+        if (!CollectionUtils.isEmpty(location.getImages())) {
+            dto.setImages(location.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()));
+        } else {
+            dto.setImages(new ArrayList<>());
+        }
+
+        return dto;
     }
 
     public static LocationDto toDtoWithAvailability(Location location) {
