@@ -107,6 +107,7 @@ public class LocationService {
         return location;
     }
 
+
     public Location getWithDetail(long id) {
         final Location location = locationRepository.getByIdWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));

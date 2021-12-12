@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
@@ -88,7 +89,6 @@ public class OptionalServiceAvailabilityService {
         if (available.size() == 0 && notAvailable.size() == 0) {
             return AvailabilityMapper.fromDtoToOptionalServiceAvailability(dto);
         }
-
         if (available.size() > 0 && notAvailable.size() == 0) {
             final Optional<OptionalServiceAvailability> upperBordering = findByLocationIdAndTimeTo(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()), service.getId()); //upper
             final Optional<OptionalServiceAvailability> lowerBordering = findByLocationIdAndTimeFrom(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()), service.getId());//lower
@@ -138,14 +138,6 @@ public class OptionalServiceAvailabilityService {
         }
         return false;
 
-    }
-
-    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId) {
-        return optionalServiceAvailabilityRepository.findByServiceIdAndTimeFrom(locationId, timeTo);
-    }
-
-    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeTo(String timeFrom, long locationId) {
-        return optionalServiceAvailabilityRepository.findByServiceIdAndTimeTo(locationId, timeFrom);
     }
 
 }
