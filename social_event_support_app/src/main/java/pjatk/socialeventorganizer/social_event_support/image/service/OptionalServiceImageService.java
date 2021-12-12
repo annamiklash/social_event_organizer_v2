@@ -50,7 +50,7 @@ public class OptionalServiceImageService {
             image.setService(service);
             image.setImage(data);
 
-            create(image);
+            save(image);
             result.add(image);
         }
 
@@ -60,12 +60,9 @@ public class OptionalServiceImageService {
     public OptionalServiceImage create(long serviceId, ImageDto dto) {
         ImageValidator.validateFileExtension(dto.getPath());
 
-        if (dto.isMain()) {
-            final boolean exists = mainExists(serviceId);
-            if (exists) {
-                dto.setMain(false);
-            }
-        }
+        final boolean exists = mainExists(serviceId);
+        dto.setMain(!exists);
+
         final OptionalService service = optionalServiceService.getWithImages(serviceId);
         if (service.getImages().size() >= MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
@@ -76,21 +73,24 @@ public class OptionalServiceImageService {
         image.setService(service);
         image.setImage(data);
 
-        create(image);
+        save(image);
 
         return image;
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void setNewMain(long oldId, long newId) {
-        final OptionalServiceImage oldMain = get(oldId);
-        final OptionalServiceImage newMain = get(newId);
+    public void setNewMain(long cateringId, long newId) {
+        final Optional<OptionalServiceImage> optionalImage = getMain(cateringId);
+        if (optionalImage.isPresent()) {
+            final OptionalServiceImage serviceImage = optionalImage.get();
+            serviceImage.setMain(false);
 
-        oldMain.setMain(false);
+            save(serviceImage);
+        }
+        final OptionalServiceImage newMain = get(newId);
         newMain.setMain(true);
 
-        create(oldMain);
-        create(newMain);
+        save(newMain);
         optionalServiceImageRepository.flush();
     }
 
@@ -103,20 +103,35 @@ public class OptionalServiceImageService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void deleteById(long oldId, Long newId) {
-        final OptionalServiceImage toDelete = get(oldId);
-        if (toDelete.isMain() && newId != null) {
-            setNewMain(oldId, newId);
+    public void deleteById(long serviceId, Long toDelete) {
+        final List<OptionalServiceImage> list = findByServiceId(serviceId);
+        if (list.size() == 1) {
+            optionalServiceImageRepository.deleteById(toDelete);
+            return;
         }
-        optionalServiceImageRepository.deleteById(oldId);
+        if (list.size() == 0) {
+            return;
+        }
+        final OptionalServiceImage imageToDelete = get(toDelete);
+        if (imageToDelete.isMain()) {
+            final Optional<OptionalServiceImage> optionalMain = getMain(serviceId);
+            if (optionalMain.isEmpty() || optionalMain.get().getId() == toDelete) {
+                final OptionalServiceImage serviceImage = findByServiceId(serviceId).stream()
+                        .filter(image -> !image.isMain() && image.getId() != toDelete)
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
+                serviceImage.setMain(true);
+                save(serviceImage);
+            }
+        }
+        optionalServiceImageRepository.delete(imageToDelete);
     }
 
     public Optional<OptionalServiceImage> getMain(long serviceId) {
         return optionalServiceImageRepository.getMain(serviceId);
-
     }
 
-    private void create(OptionalServiceImage image) {
+    private void save(OptionalServiceImage image) {
         optionalServiceImageRepository.save(image);
     }
 
