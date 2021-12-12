@@ -39,5 +39,15 @@ public interface LocationForEventRepository extends JpaRepository<LocationForEve
             "LEFT JOIN FETCH lfe.location l " +
             "LEFT JOIN FETCH l.availability " +
             "WHERE lfe.id = :locationForEventId")
-    Optional<LocationForEvent> findByIdWithLocation(long locationForEventId);
+    Optional<LocationForEvent> findByIdWithLocation(@Param("locationForEventId")long locationForEventId);
+
+    @Query("SELECT lfe from location_for_event lfe " +
+            "LEFT JOIN FETCH lfe.location l " +
+            "LEFT JOIN FETCH lfe.cateringsForEventLocation c " +
+            "LEFT JOIN FETCH lfe.event e " +
+            "LEFT JOIN FETCH lfe.services s " +
+            "LEFT JOIN FETCH l.availability " +
+            "WHERE lfe.id = :locationForEventId")
+    Optional<LocationForEvent> getWithLocationAndEvent(@Param("locationForEventId")long locationForEventId);
+
 }

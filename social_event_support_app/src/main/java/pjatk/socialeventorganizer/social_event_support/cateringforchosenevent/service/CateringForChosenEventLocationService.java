@@ -10,22 +10,25 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.ma
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringForLocationRepository;
+import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.LocationNotBookedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
 
 @Service
 @AllArgsConstructor
@@ -89,6 +92,43 @@ public class CateringForChosenEventLocationService {
         return cateringForLocation;
     }
 
+    @Transactional(rollbackOn = Exception.class)
+    public CateringForChosenEventLocation cancelReservation(long cateringForEventId) {
+        final CateringForChosenEventLocation cateringForLocation = getWithCateringAndEvent(cateringForEventId);
+        final OrganizedEvent event = cateringForLocation.getEventLocation().getEvent();
+
+        final LocalTime time = cateringForLocation.getTime();
+        final LocalDate date = event.getDate();
+        final LocalDateTime dateTime = LocalDateTime.of(date, time);
+
+        if (!isAllowedToCancel(dateTime)) {
+            throw new ActionNotAllowedException("Cannot cancel reservation");
+        }
+        cateringForLocation.setConfirmationStatus(CANCELLATION_PENDING.name());
+        event.setModifiedAt(LocalDateTime.now());
+
+        organizedEventService.save(event);
+        save(cateringForLocation);
+
+        return cateringForLocation;
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public CateringForChosenEventLocation setAsCancelled(long locationForEventId) {
+        final CateringForChosenEventLocation cateringForChosenEventLocation = getWithCateringAndEvent(locationForEventId);
+        if (!cateringForChosenEventLocation.getConfirmationStatus().equals(CANCELLATION_PENDING.name())) {
+            throw new ActionNotAllowedException("Cannot confirm cancellation");
+        }
+        cateringForChosenEventLocation.setConfirmationStatus(CANCELLED.name());
+
+        final OrganizedEvent event = cateringForChosenEventLocation.getEventLocation().getEvent();
+
+        event.setModifiedAt(LocalDateTime.now());
+        organizedEventService.save(event);
+
+        return cateringForChosenEventLocation;
+    }
+
     private boolean dateValid(LocalTime startTime, LocalTime endTime, String bookingTime) {
         return DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isBefore(endTime)
                 && DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isAfter(startTime);
@@ -113,8 +153,17 @@ public class CateringForChosenEventLocationService {
                 .anyMatch(cateringBusinessHours -> cateringBusinessHours.getDay().equals(DayEnum.valueOfLabel(day).name()));
     }
 
+    public CateringForChosenEventLocation getWithCateringAndEvent(long cateringForEventId) {
+        return cateringForLocationRepository.getWithCateringAndEvent(cateringForEventId)
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + cateringForEventId));
+    }
+
     public CateringForChosenEventLocation get(long cateringId) {
         return cateringForLocationRepository.findById(cateringId)
                 .orElseThrow(() -> new NotFoundException("No booked catering with id " + cateringId + " was found"));
+    }
+
+    private boolean isAllowedToCancel(LocalDateTime dateTime) {
+        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(LocalDateTime.now());
     }
 }
