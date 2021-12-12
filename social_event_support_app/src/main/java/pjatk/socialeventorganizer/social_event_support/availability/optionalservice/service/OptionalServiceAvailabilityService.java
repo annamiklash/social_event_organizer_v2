@@ -73,7 +73,7 @@ public class OptionalServiceAvailabilityService {
                 .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
     }
 
-    private OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
+    public OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
         final List<OptionalServiceAvailability> available = findAllByServiceIdAndDate(service.getId(), dto.getDate()).stream()
                 .filter(serviceAvailability -> "AVAILABLE".equals(serviceAvailability.getStatus()))
                 .collect(Collectors.toList());
@@ -123,6 +123,17 @@ public class OptionalServiceAvailabilityService {
             }
         }
     }
+
+    public OptionalServiceAvailability updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
+        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
+
+        final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, service, false);
+        availability.setStatus(AVAILABLE.name());
+        save(availability);
+
+        return availability;
+    }
+
 
     private boolean isNewWithinNotAvailable(AvailabilityDto dto, List<OptionalServiceAvailability> notAvailable) {
         final LocalDateTime from = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()));
