@@ -61,7 +61,7 @@ public class OptionalServiceImageController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> save(@RequestParam long serviceId, @Valid @RequestBody ImageDto dto) {
-        final OptionalServiceImage serviceImage = optionalServiceImageService.save(serviceId, dto);
+        final OptionalServiceImage serviceImage = optionalServiceImageService.create(serviceId, dto);
         return ResponseEntity.ok(ImageMapper.toDto(serviceImage));
     }
 
