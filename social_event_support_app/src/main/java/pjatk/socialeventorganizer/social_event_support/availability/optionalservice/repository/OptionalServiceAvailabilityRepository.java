@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OptionalServiceAvailabilityRepository extends JpaRepository<OptionalServiceAvailability, Long> {
@@ -20,4 +21,14 @@ public interface OptionalServiceAvailabilityRepository extends JpaRepository<Opt
             "where sa.id_optional_service=:id AND sa.status = 'AVAILABLE' " +
             "AND sa.date = CAST(:date as timestamp)", nativeQuery = true)
     List<OptionalServiceAvailability> findByDate(@Param("id") Long id, @Param("date") String date);
+
+    @Query(value = "select distinct la.* from optional_service_availability la " +
+            "where la.id_optional_service=:id AND la.status = 'AVAILABLE' " +
+            "AND la.time_to = CAST(:timeTo as timestamp)", nativeQuery = true)
+    Optional<OptionalServiceAvailability> findByLocationIdAndTimeTo(@Param("id") Long id, @Param("timeTo") String timeTo);
+
+    @Query(value = "select distinct la.* from optional_service_availability la " +
+            "where la.id_optional_service=:id AND la.status = 'AVAILABLE' " +
+            "AND la.time_from = CAST(:timeFrom as timestamp)", nativeQuery = true)
+    Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(@Param("id") Long id, @Param("timeFrom") String timeFrom);
 }

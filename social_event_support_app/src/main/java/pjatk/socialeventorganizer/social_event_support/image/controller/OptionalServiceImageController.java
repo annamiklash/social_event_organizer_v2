@@ -55,8 +55,6 @@ public class OptionalServiceImageController {
         return ResponseEntity.ok(ImageMapper.toDto(main.get()));
     }
 
-
-
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
