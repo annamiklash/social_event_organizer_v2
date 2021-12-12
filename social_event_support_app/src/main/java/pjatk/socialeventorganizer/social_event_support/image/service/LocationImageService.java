@@ -50,21 +50,20 @@ public class LocationImageService {
             locationImage.setLocation(location);
             locationImage.setImage(data);
 
-            create(locationImage);
+            save(locationImage);
             result.add(locationImage);
         }
 
         return result;
     }
 
-    public LocationImage create(long locationId, ImageDto dto) {
+    public LocationImage save(long locationId, ImageDto dto) {
         ImageValidator.validateFileExtension(dto.getPath());
 
-        if (dto.isMain()) {
-            final boolean exists = mainExists(locationId);
-            dto.setMain(!exists);
-        }
-            final Location location = locationService.getWithImages(locationId);
+        final boolean exists = mainExists(locationId);
+        dto.setMain(!exists);
+
+        final Location location = locationService.getWithImages(locationId);
         if (location.getImages().size() >= MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
         }
@@ -74,7 +73,7 @@ public class LocationImageService {
         locationImage.setLocation(location);
         locationImage.setImage(data);
 
-        create(locationImage);
+        save(locationImage);
 
         return locationImage;
     }
@@ -93,24 +92,44 @@ public class LocationImageService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void setNewMain(long oldId, long newId) {
-        final LocationImage oldMain = get(oldId);
-        final LocationImage newMain = get(newId);
+    public void setNewMain(long locationId, long newId) {
+        final Optional<LocationImage> optionalImage = getMain(locationId);
+        if (optionalImage.isPresent()) {
+            final LocationImage locationImage = optionalImage.get();
+            locationImage.setMain(false);
 
-        oldMain.setMain(false);
+            save(locationImage);
+        }
+        final LocationImage newMain = get(newId);
         newMain.setMain(true);
 
-        create(oldMain);
-        create(newMain);
+        save(newMain);
         locationImageRepository.flush();
     }
 
-    public void deleteById(long oldId, Long newId) {
-        final LocationImage toDelete = get(oldId);
-        if (toDelete.isMain() && newId != null) {
-            setNewMain(oldId, newId);
+    public void deleteById(long locationId, Long toDelete) {
+        final List<LocationImage> list = findByLocationId(locationId);
+        if (list.size() == 1) {
+            locationImageRepository.deleteById(toDelete);
+            return;
         }
-        locationImageRepository.deleteById(oldId);
+        if (list.size() == 0){
+            return;
+        }
+        final LocationImage imageToDelete = get(toDelete);
+        if (imageToDelete.isMain()) {
+            final Optional<LocationImage> optionalMain = getMain(locationId);
+            if (optionalMain.isEmpty() || optionalMain.get().getId() == toDelete) {
+                final LocationImage locationImage = findByLocationId(locationId).stream()
+                        .filter(image -> !image.isMain() && image.getId() != toDelete)
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
+                locationImage.setMain(true);
+                save(locationImage);
+            }
+        }
+
+        locationImageRepository.delete(imageToDelete);
     }
 
     public Optional<LocationImage> getMain(long serviceId) {
@@ -118,7 +137,7 @@ public class LocationImageService {
 
     }
 
-    private void create(LocationImage image) {
+    private void save(LocationImage image) {
         locationImageRepository.save(image);
     }
 

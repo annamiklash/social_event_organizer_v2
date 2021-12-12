@@ -3,16 +3,19 @@ package pjatk.socialeventorganizer.social_event_support.catering.mapper;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.cuisine.mapper.CuisineMapper;
+import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -47,7 +50,7 @@ public class CateringMapper {
     }
 
     public CateringDto toDto(Catering catering) {
-        return CateringDto.builder()
+        final CateringDto dto = CateringDto.builder()
                 .id(catering.getId())
                 .name(catering.getName())
                 .description(catering.getDescription())
@@ -62,6 +65,15 @@ public class CateringMapper {
                         .map(CuisineMapper::toDto)
                         .collect(Collectors.toList()))
                 .build();
+
+        if (!CollectionUtils.isEmpty(catering.getImages())) {
+            dto.setImages(catering.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()));
+        } else {
+            dto.setImages(new ArrayList<>());
+        }
+
+        return dto;
+
     }
 
     public static CateringDto toDtoWithDetail(Catering catering) {

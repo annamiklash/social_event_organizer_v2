@@ -39,13 +39,12 @@ public class LocationImageController {
                 ImmutableList.copyOf(list.stream()
                         .map(ImageMapper::toDto)
                         .collect(Collectors.toList()))
-
         );
     }
 
     @RequestMapping(
             method = RequestMethod.GET,
-            path = "allowed",
+            path = "allowed/main",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> main(@RequestParam long locationId) {
         final Optional<LocationImage> main = locationImageService.getMain(locationId);
@@ -61,7 +60,7 @@ public class LocationImageController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> save(@RequestParam long locationId, @Valid @RequestBody ImageDto dto) {
-        final LocationImage cateringImage = locationImageService.create(locationId, dto);
+        final LocationImage cateringImage = locationImageService.save(locationId, dto);
         return ResponseEntity.ok(ImageMapper.toDto(cateringImage));
     }
 
@@ -84,8 +83,8 @@ public class LocationImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long oldId, @RequestParam long newId) {
-        locationImageService.setNewMain(oldId, newId);
+    public ResponseEntity<Void> changeMain(@RequestParam long locationId, @RequestParam long imageId) {
+        locationImageService.setNewMain(locationId, imageId);
         return ResponseEntity.ok().build();
 
     }
@@ -93,8 +92,8 @@ public class LocationImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long oldId, @RequestParam long newId) {
-        locationImageService.deleteById(oldId, newId);
+    public ResponseEntity<Void> delete(@RequestParam long locationId, @RequestParam long imageId) {
+        locationImageService.deleteById(locationId, imageId);
         return ResponseEntity.ok().build();
 
     }
