@@ -40,9 +40,6 @@ public class CateringItemDto implements Serializable {
     @NotNull(message = "Choose if gluten-free or not")
     private boolean isGlutenFree;
 
-    /*
-    Assuming in UI there will be checkboxes to choose from
-     */
     //TODO: rethink to add enums instead for dropdown menu
     @NotBlank(message = "Choose Entree, Appetizer, Dessert, Soup or Salad")
     @Pattern(regexp = "^(Entree|Appetizer|Dessert|Soup|Salad)$")

@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
@@ -17,7 +18,8 @@ public class CustomerAvatarDto implements Serializable {
 
     private Long id;
 
-    @NotNull
+    @Size(min = 1, max = 300, message = "Path is too long")
+    @NotBlank(message = "Image path is mandatory")
     private String path;
 
     private byte[] image;

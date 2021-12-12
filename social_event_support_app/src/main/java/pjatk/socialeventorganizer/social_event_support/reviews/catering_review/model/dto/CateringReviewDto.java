@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
@@ -17,13 +20,17 @@ public class CateringReviewDto {
 
     private long id;
 
-    @NotNull
+    @NotBlank(message = "Title is mandatory")
     private String title;
 
-    @NotNull
+    @NotBlank(message = "Comment is mandatory")
+    @Size(min = 5, max = 100, message
+            = "comment should be between 5 and 100 characters")
     private String comment;
 
-    @NotNull
+    @Min(1)
+    @Max(5)
+    @NotBlank(message = "Rating is mandatory")
     private int starRating;
 
     private CustomerDto customer;

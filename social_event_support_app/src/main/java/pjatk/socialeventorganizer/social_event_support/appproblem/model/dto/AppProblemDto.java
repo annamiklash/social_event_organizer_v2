@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
@@ -17,10 +18,12 @@ public class AppProblemDto implements Serializable {
 
     private long id;
 
-    @NotNull
+    @NotBlank(message = "Concern is mandatory")
     private String concern;
 
-    @NotNull
+    @NotBlank(message = "Concern is mandatory")
+    @Size(min = 1, max = 300, message
+            = "The name should be between 1 and 300 characters")
     private String description;
 
     private String createdAt;

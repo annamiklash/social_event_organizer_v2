@@ -2,7 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.user.model;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.AppProblem;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -22,6 +22,10 @@ public class RegexConstants {
         $                 # end-of-string
      */
     public static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!*^&+=])(?=\\S+$).{8,}$";
-    public static final String BIRTHDATE_REGEX = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$";
+    public static final String DATE_REGEX = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$";
+    public static final String TIME_REGEX = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$";
+    public static final String TIME_REGEX_WITH_SECONDS = "^(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]:?[0-5][0-9]+$))";
+    public static final String TIMESTAMP_REGEX = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$";
+
 
 }

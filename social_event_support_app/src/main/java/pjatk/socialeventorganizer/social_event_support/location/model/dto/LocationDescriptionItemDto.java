@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Data
@@ -14,10 +14,10 @@ import java.util.Set;
 @Builder
 public class LocationDescriptionItemDto {
 
-    @NotNull
+    @NotBlank(message = "Name is mandatory")
     private String id;
 
-    @NotNull
+    @NotBlank(message = "Description is mandatory")
     private String description;
 
     private Set<LocationDto> locations;

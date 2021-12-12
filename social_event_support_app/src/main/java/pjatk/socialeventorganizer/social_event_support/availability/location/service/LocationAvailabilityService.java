@@ -76,14 +76,13 @@ public class LocationAvailabilityService {
 
     }
 
-    public LocationAvailability updateToAvailable(LocationAvailability locationAvailability, Location location) {
+    public void updateToAvailable(LocationAvailability locationAvailability, Location location) {
         final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
 
         final LocationAvailability availability = resolveAvailabilitiesForDay(availabilityDto, location, false);
         availability.setStatus(AVAILABLE.name());
         save(availability);
 
-        return availability;
     }
 
     private LocationAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, Location location, boolean deleteAll) {

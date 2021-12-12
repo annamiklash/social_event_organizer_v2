@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.AppProblemStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.repository.AppProblemRepository;

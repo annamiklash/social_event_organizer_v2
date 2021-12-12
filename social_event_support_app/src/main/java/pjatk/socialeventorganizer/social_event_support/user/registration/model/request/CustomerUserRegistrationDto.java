@@ -44,7 +44,7 @@ public class CustomerUserRegistrationDto {
     private String lastName;
 
     @NotBlank(message = "Birthdate is mandatory")
-    @Pattern(regexp = RegexConstants.BIRTHDATE_REGEX)
+    @Pattern(regexp = RegexConstants.DATE_REGEX)
     private String birthdate;
 
     @NotBlank(message = "Phone number is mandatory")
