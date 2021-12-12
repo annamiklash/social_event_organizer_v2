@@ -1,7 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.appproblem.mapper;
 
 import lombok.experimental.UtilityClass;
-import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;

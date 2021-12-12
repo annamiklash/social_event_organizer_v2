@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringItemDto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -17,7 +18,8 @@ public class CateringOrderChoiceDto implements Serializable {
 
     private long id;
 
-    @NotNull
+    @Min(1)
+    @NotBlank(message = "Amount is mandatory")
     private int amount;
 
     private CateringItemDto item;

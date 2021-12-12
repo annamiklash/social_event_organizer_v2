@@ -13,7 +13,10 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.Cuisine
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -47,16 +50,18 @@ public class CateringDto implements Serializable {
     @Pattern(regexp = RegexConstants.PRICE_REGEX, message = "should contain only digits or digits separated by a dot sign (1.23)")
     private String serviceCost;
 
-    @NotNull
+    @NotBlank(message = "Description is mandatory")
+    @Size(min = 1, max = 300, message
+            = "Description can be no more than 300 symbols")
     private String description;
 
-    @NotNull
+    @NotBlank(message = "Flag is mandatory")
     private boolean offersOutsideCatering;
 
-    @NotNull
+    @NotBlank(message = "Business hours is mandatory")
     private List<BusinessHoursDto> businessHours;
 
-    @NotNull
+    @NotBlank(message = "Cuisines is mandatory")
     private List<CuisineDto> cuisines;
 
     private List<AvailabilityDto> availability;
