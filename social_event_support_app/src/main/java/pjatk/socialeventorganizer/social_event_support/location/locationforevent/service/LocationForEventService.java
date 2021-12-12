@@ -131,7 +131,7 @@ public class LocationForEventService {
         final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeTo));
 
         LocationAvailability locationAvailability = locationAvailabilityService.getByDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), stringTimeFrom, stringTimeTo);
-        locationAvailabilityService.updateToAvailable(locationAvailability, locationForEvent.getLocation());
+        locationAvailability = locationAvailabilityService.updateToAvailable(locationAvailability, locationForEvent.getLocation());
 
         event.setModifiedAt(LocalDateTime.now());
         organizedEventService.save(event);
