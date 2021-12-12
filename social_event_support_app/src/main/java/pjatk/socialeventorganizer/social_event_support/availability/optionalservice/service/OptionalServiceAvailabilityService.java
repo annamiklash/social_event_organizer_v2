@@ -151,4 +151,13 @@ public class OptionalServiceAvailabilityService {
 
     }
 
+    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId ) {
+        return optionalServiceAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
+    }
+
+    private Optional<OptionalServiceAvailability> findByLocationIdAndTimeTo(String timeFrom, long locationId) {
+        return optionalServiceAvailabilityRepository.findByLocationIdAndTimeTo(locationId, timeFrom);
+    }
+
+
 }
