@@ -10,15 +10,9 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
-=======
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
->>>>>>> 168ec2e... Add Image support to catering, location, service
-=======
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
->>>>>>> c3ee252... Add Image support to catering, location, service
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
 
@@ -54,7 +48,7 @@ public class CateringImageService {
         for (ImageDto dto : new HashSet<>(dtos)) {
             final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
 
-            final CateringImage cateringImage = (CateringImage) ImageMapper.fromDto(dto);
+            final CateringImage cateringImage = (CateringImage)ImageMapper.fromDto(dto);
             cateringImage.setCatering(catering);
             cateringImage.setImage(data);
 

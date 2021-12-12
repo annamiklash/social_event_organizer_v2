@@ -1,7 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.image.model;
 
 import lombok.experimental.UtilityClass;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 
 import java.io.Serializable;
 
@@ -15,8 +15,22 @@ public class ImageMapper implements Serializable {
                 .build();
     }
 
-    public Image fromDto(ImageDto dto) {
-        return Image.builder()
+    public LocationImage fromDtoToLocationImage(ImageDto dto) {
+        return LocationImage.builder()
+                .image(dto.getImage())
+                .isMain(dto.isMain())
+                .build();
+    }
+
+    public CateringImage fromDtoToCateringImage(ImageDto dto) {
+        return CateringImage.builder()
+                .image(dto.getImage())
+                .isMain(dto.isMain())
+                .build();
+    }
+
+    public OptionalServiceImage fromDtoToServiceImage(ImageDto dto) {
+        return OptionalServiceImage.builder()
                 .image(dto.getImage())
                 .isMain(dto.isMain())
                 .build();
