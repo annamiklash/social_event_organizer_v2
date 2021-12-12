@@ -8,7 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.repository.LocationImageRepository;
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;

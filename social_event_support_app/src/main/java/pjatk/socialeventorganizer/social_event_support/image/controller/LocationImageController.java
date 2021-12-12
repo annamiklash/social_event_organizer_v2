@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.service.LocationImageService;
 
 import javax.validation.Valid;
