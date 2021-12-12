@@ -156,6 +156,11 @@ public class CateringForChosenEventLocationService {
                 .orElseThrow(() -> new NotFoundException("No location Reservation with id " + cateringForEventId));
     }
 
+    public CateringForChosenEventLocation getWithCateringAndEvent(long cateringForEventId) {
+        return cateringForLocationRepository.getWithCateringAndEvent(cateringForEventId)
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + cateringForEventId));
+    }
+
     public CateringForChosenEventLocation get(long cateringId) {
         return cateringForLocationRepository.findById(cateringId)
                 .orElseThrow(() -> new NotFoundException("No booked catering with id " + cateringId + " was found"));

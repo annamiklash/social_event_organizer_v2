@@ -34,7 +34,7 @@ public class LocationAvailabilityService {
 
     private final LocationRepository locationRepository;
 
-    private final LocationService locationService;
+    private final LocationRepository locationRepository;
 
     @Transactional(rollbackOn = Exception.class)
     public List<LocationAvailability> update(List<AvailabilityDto> dtos, long locationId, boolean deleteAll) {
@@ -74,17 +74,18 @@ public class LocationAvailabilityService {
 
     public LocationAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
         return locationAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
-                .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
+                .orElseThrow();
 
     }
 
-    public void updateToAvailable(LocationAvailability locationAvailability, Location location) {
+    public LocationAvailability updateToAvailable(LocationAvailability locationAvailability, Location location) {
         final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
 
         final LocationAvailability availability = resolveAvailabilitiesForDay(availabilityDto, location, false);
         availability.setStatus(AVAILABLE.name());
         save(availability);
 
+        return availability;
     }
 
     private LocationAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, Location location, boolean deleteAll) {
@@ -172,7 +173,7 @@ public class LocationAvailabilityService {
 
     }
 
-    private Optional<LocationAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId ) {
+    private Optional<LocationAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId) {
         return locationAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
     }
 
