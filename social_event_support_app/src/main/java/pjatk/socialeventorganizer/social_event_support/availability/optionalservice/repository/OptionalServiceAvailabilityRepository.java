@@ -31,4 +31,10 @@ public interface OptionalServiceAvailabilityRepository extends JpaRepository<Opt
             "where la.id_optional_service=:id AND la.status = 'AVAILABLE' " +
             "AND la.time_from = CAST(:timeFrom as timestamp)", nativeQuery = true)
     Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(@Param("id") Long id, @Param("timeFrom") String timeFrom);
+
+    @Query(value = "select distinct la.* from optional_service_availability la " +
+            "WHERE la.date = CAST(:date as date) " +
+            "AND la.time_from = CAST(:timeFrom as timestamp) " +
+            "AND la.time_to= CAST(:timeTo as timestamp)", nativeQuery = true)
+    Optional<OptionalServiceAvailability> getByDateAndTime(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 }

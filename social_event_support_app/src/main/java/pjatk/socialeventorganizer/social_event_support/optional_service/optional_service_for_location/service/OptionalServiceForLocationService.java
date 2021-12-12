@@ -6,11 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
+import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.service.OptionalServiceAvailabilityService;
+import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.LocationNotBookedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
@@ -25,6 +28,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.service.
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +36,7 @@ import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.NOT_AVAILABLE;
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
 
 @Service
 @AllArgsConstructor
@@ -48,6 +52,8 @@ public class OptionalServiceForLocationService {
     private final OptionalServiceService optionalServiceService;
 
     private final OptionalServiceAvailabilityRepository optionalServiceAvailabilityRepository;
+
+    private final OptionalServiceAvailabilityService optionalServiceAvailabilityService;
 
     @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation create(long customerId, long eventId, long serviceId, OptionalServiceForChosenLocationDto dto) {
@@ -104,6 +110,7 @@ public class OptionalServiceForLocationService {
 
     }
 
+
     public OptionalServiceForChosenLocation confirmReservation(long serviceId, long eventId) {
         final OptionalServiceForChosenLocation optionalService = findByServiceIdAndEventId(serviceId, eventId);
 
@@ -117,6 +124,7 @@ public class OptionalServiceForLocationService {
 
         return optionalService;
     }
+
 
     private List<OptionalServiceAvailability> modify(OptionalServiceAvailability availability, LocalDate bookingDate, LocalDateTime bookingTimeFrom, LocalDateTime bookingTimeTo) {
 
@@ -158,14 +166,68 @@ public class OptionalServiceForLocationService {
     }
 
 
-
     private OptionalServiceForChosenLocation findByServiceIdAndEventId(long serviceId, long eventId) {
         return optionalServiceForChosenLocationRepository.findByServiceIdAndEventId(serviceId, eventId)
                 .orElseThrow(() -> new NotFoundException("No optional service for event " + eventId));
     }
 
     public List<OptionalServiceForChosenLocation> listAllByStatus(long serviceId, String status) {
-        return  optionalServiceForChosenLocationRepository.findAllByServiceIdAndStatus(serviceId, status);
+        return optionalServiceForChosenLocationRepository.findAllByServiceIdAndStatus(serviceId, status);
+
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public OptionalServiceForChosenLocation setAsCancelled(long locationForEventId) {
+        final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(locationForEventId);
+        if (!serviceForEvent.getConfirmationStatus().equals(CANCELLATION_PENDING.name())) {
+            throw new ActionNotAllowedException("Cannot confirm cancellation");
+        }
+        serviceForEvent.setConfirmationStatus(CANCELLED.name());
+
+        final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
+
+        final LocalTime timeFrom = serviceForEvent.getTimeFrom();
+        final LocalTime timeTo = serviceForEvent.getTimeTo();
+        final LocalDate date = event.getDate();
+
+        final LocalDateTime dateTime = LocalDateTime.of(date, timeFrom);
+        if (!isAllowedToCancel(dateTime)) {
+            throw new ActionNotAllowedException("Cannot cancel reservation");
+        }
+
+        final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
+        final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeTo));
+
+        OptionalServiceAvailability locationAvailability = optionalServiceAvailabilityService.getByDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), stringTimeFrom, stringTimeTo);
+        locationAvailability = optionalServiceAvailabilityService.updateToAvailable(locationAvailability, serviceForEvent.getOptionalService());
+
+        event.setModifiedAt(LocalDateTime.now());
+        organizedEventService.save(event);
+
+        return serviceForEvent;
+    }
+
+    private boolean isAllowedToCancel(LocalDateTime dateTime) {
+        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(LocalDateTime.now());
+    }
+
+    public OptionalServiceForChosenLocation getWithServiceAndEvent(long locationForEventId) {
+        return optionalServiceForChosenLocationRepository.getWithServiceAndEvent(locationForEventId)
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public OptionalServiceForChosenLocation cancelReservation(long id) {
+        final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(id);
+        final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
+
+        serviceForEvent.setConfirmationStatus(CANCELLATION_PENDING.name());
+        event.setModifiedAt(LocalDateTime.now());
+
+        organizedEventService.save(event);
+        save(serviceForEvent);
+
+        return serviceForEvent;
 
     }
 }
