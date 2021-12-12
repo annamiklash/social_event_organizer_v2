@@ -169,6 +169,12 @@ public class OptionalServiceService {
         return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
 
     }
+     public OptionalService getWithImages(long id){
+        return optionalServiceRepository.findWithImages(id)
+                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+
+     }
+
 
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long id) {

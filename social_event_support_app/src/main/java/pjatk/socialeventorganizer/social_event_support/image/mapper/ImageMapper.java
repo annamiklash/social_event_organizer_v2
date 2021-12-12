@@ -3,7 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.image.mapper;
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.image.model.Image;
 import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 
 @UtilityClass
 public class ImageMapper {
