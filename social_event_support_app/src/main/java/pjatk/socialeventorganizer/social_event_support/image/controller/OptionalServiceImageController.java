@@ -45,7 +45,7 @@ public class OptionalServiceImageController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            path = "allowed",
+            path = "allowed/main",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> main(@RequestParam long serviceId) {
         final Optional<OptionalServiceImage> main = optionalServiceImageService.getMain(serviceId);

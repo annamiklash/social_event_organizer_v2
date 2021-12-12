@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -21,14 +22,14 @@ public abstract class Image {
     @Column(name = "id_image")
     private long id;
 
-    @Lob
     @Column(nullable = false)
+    @Type(type = "org.hibernate.type.BinaryType")
     private byte[] image;
 
     @Column(nullable = false)
     private boolean isMain;
 
     @Column(nullable = false)
-    private String type;
+    private String name;
 
 }

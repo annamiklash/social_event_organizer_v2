@@ -1,3 +1,5 @@
+-- CREATE TYPE event_status_enum AS ENUM ('FINISHED', 'CONFIRMED', 'CANCELLED', 'IN_PLANNING', 'READY');
+
 -- Table: users
 CREATE TABLE users
 (
@@ -86,8 +88,8 @@ CREATE TABLE catering
 CREATE TABLE catering_image
 (
     id_image    serial       NOT NULL,
-    type        varchar(100) NOT NULL,
     image       bytea        NOT NULL,
+    name        varchar(100) NOT NULL,
     is_main     bool         NOT NULL,
     id_catering int          NOT NULL,
     CONSTRAINT catering_image_pk PRIMARY KEY (id_image)
@@ -219,8 +221,8 @@ CREATE TABLE location_for_event
 CREATE TABLE location_image
 (
     id_image    serial       NOT NULL,
-    type        varchar(100) NOT NULL,
     image       bytea        NOT NULL,
+    name        varchar(100) NOT NULL,
     is_main     bool         NOT NULL,
     id_location int          NOT NULL,
     CONSTRAINT location_image_pk PRIMARY KEY (id_image)
@@ -298,8 +300,8 @@ CREATE TABLE service_music_style
 CREATE TABLE optional_service_image
 (
     id_image            serial       NOT NULL,
-    type                varchar(100) NOT NULL,
     image               bytea        NOT NULL,
+    name                varchar(100) NOT NULL,
     is_main             bool         NOT NULL,
     id_optional_service int          NOT NULL,
     CONSTRAINT optional_service_image_pk PRIMARY KEY (id_image)
@@ -1380,5 +1382,3 @@ ALTER TABLE customer
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
-
-
