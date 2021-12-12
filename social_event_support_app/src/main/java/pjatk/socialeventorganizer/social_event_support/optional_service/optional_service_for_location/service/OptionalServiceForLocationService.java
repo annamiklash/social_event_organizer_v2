@@ -177,6 +177,21 @@ public class OptionalServiceForLocationService {
     }
 
     @Transactional(rollbackOn = Exception.class)
+    public OptionalServiceForChosenLocation cancelReservation(long id) {
+        final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(id);
+        final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
+
+        serviceForEvent.setConfirmationStatus(CANCELLATION_PENDING.name());
+        event.setModifiedAt(LocalDateTime.now());
+
+        organizedEventService.save(event);
+        save(serviceForEvent);
+
+        return serviceForEvent;
+
+    }
+
+    @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation setAsCancelled(long locationForEventId) {
         final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(locationForEventId);
         if (!serviceForEvent.getConfirmationStatus().equals(CANCELLATION_PENDING.name())) {
@@ -216,18 +231,5 @@ public class OptionalServiceForLocationService {
                 .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public OptionalServiceForChosenLocation cancelReservation(long id) {
-        final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(id);
-        final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
 
-        serviceForEvent.setConfirmationStatus(CANCELLATION_PENDING.name());
-        event.setModifiedAt(LocalDateTime.now());
-
-        organizedEventService.save(event);
-        save(serviceForEvent);
-
-        return serviceForEvent;
-
-    }
 }
