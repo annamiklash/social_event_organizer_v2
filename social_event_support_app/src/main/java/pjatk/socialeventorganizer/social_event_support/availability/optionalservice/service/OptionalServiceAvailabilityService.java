@@ -126,14 +126,13 @@ public class OptionalServiceAvailabilityService {
         }
     }
 
-    public OptionalServiceAvailability updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
+    public void updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
         final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
 
         final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, service, false);
         availability.setStatus(AVAILABLE.name());
         save(availability);
 
-        return availability;
     }
 
 
