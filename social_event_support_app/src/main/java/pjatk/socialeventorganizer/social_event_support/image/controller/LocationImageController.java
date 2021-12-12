@@ -60,7 +60,7 @@ public class LocationImageController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImageDto> save(@RequestParam long locationId, @Valid @RequestBody ImageDto dto) {
-        final LocationImage cateringImage = locationImageService.create(locationId, dto);
+        final LocationImage cateringImage = locationImageService.save(locationId, dto);
         return ResponseEntity.ok(ImageMapper.toDto(cateringImage));
     }
 
@@ -82,8 +82,8 @@ public class LocationImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long locationId, @RequestParam long id) {
-        locationImageService.setNewMain(locationId, id);
+    public ResponseEntity<Void> changeMain(@RequestParam long locationId, @RequestParam long imageId) {
+        locationImageService.setNewMain(locationId, imageId);
         return ResponseEntity.ok().build();
 
     }
@@ -91,8 +91,8 @@ public class LocationImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long locationId, @RequestParam long id) {
-        locationImageService.deleteById(locationId, id);
+    public ResponseEntity<Void> delete(@RequestParam long locationId, @RequestParam long imageId) {
+        locationImageService.deleteById(locationId, imageId);
         return ResponseEntity.ok().build();
 
     }
