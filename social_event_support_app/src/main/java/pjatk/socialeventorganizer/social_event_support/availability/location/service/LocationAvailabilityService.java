@@ -34,6 +34,8 @@ public class LocationAvailabilityService {
 
     private final LocationRepository locationRepository;
 
+    private final LocationService locationService;
+
     @Transactional(rollbackOn = Exception.class)
     public List<LocationAvailability> update(List<AvailabilityDto> dtos, long locationId, boolean deleteAll) {
         final Location location = locationRepository.findById(locationId).orElseThrow(() -> new NotFoundException("Location does not exist"));
@@ -97,6 +99,7 @@ public class LocationAvailabilityService {
             }
         }
 
+        final List<LocationAvailability> notAvailable = findAllByLocationIdAndDate(location.getId(), dto.getDate()).stream()
         if (dto.getId() != null && dto.getStatus().equals("NOT_AVAILABLE")) {
             dto.setStatus("AVAILABLE");
         }
@@ -169,7 +172,7 @@ public class LocationAvailabilityService {
 
     }
 
-    private Optional<LocationAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId) {
+    private Optional<LocationAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId ) {
         return locationAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
     }
 
