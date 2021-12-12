@@ -88,6 +88,14 @@ public class LocationService {
         throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
     }
 
+    public Location getWithMainImage(long id) {
+        final Optional<Location> optionalLocation = locationRepository.getByIdWithImages(id);
+        if (optionalLocation.isPresent()) {
+            return optionalLocation.get();
+        }
+        throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
+    }
+
 
     public Location getWithDetail(long id) {
         final Optional<Location> optionalLocation = locationRepository.getByIdWithDetail(id);
