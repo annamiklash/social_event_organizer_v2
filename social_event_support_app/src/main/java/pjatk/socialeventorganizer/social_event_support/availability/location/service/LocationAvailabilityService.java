@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.availability.location.service;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -148,6 +149,15 @@ public class LocationAvailabilityService {
                 return AvailabilityMapper.fromDtoToLocationAvailability(availabilityDto);
             }
         }
+    }
+
+    private boolean isToCancel(List<LocationAvailability> notAvailable, AvailabilityDto dto) {
+        final Optional<LocationAvailability> or = notAvailable.stream().filter(locationAvailability -> locationAvailability.getStatus().equals(NOT_AVAILABLE.name())
+                && locationAvailability.getDate().equals(DateTimeUtil.fromStringToFormattedDate(dto.getDate()))
+                && locationAvailability.getTimeFrom().equals(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
+                && locationAvailability.getTimeTo().equals(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()))))
+                .findAny();
+        return or.isPresent();
     }
 
     private boolean isToCancel(List<LocationAvailability> notAvailable, AvailabilityDto dto) {
