@@ -51,7 +51,7 @@ public class BusinessDto implements Serializable {
 
     private UserDto user;
 
-    @NotNull
+    @NotNull(message = "You need to specify address")
     private AddressDto address;
 
     private String verificationStatus;

@@ -60,8 +60,8 @@ public class OptionalServiceImageController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImageDto> save(@RequestParam long cateringId, @Valid @RequestBody ImageDto dto) {
-        final OptionalServiceImage serviceImage = optionalServiceImageService.create(cateringId, dto);
+    public ResponseEntity<ImageDto> save(@RequestParam long serviceId, @Valid @RequestBody ImageDto dto) {
+        final OptionalServiceImage serviceImage = optionalServiceImageService.create(serviceId, dto);
         return ResponseEntity.ok(ImageMapper.toDto(serviceImage));
     }
 
@@ -71,8 +71,8 @@ public class OptionalServiceImageController {
             path = "multiple",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<ImageDto>> saveMultiple(@RequestParam long cateringId, @Valid @RequestBody ImageDto[] dtos) {
-        final List<OptionalServiceImage> list = optionalServiceImageService.saveMultiple(cateringId, Arrays.asList(dtos));
+    public ResponseEntity<ImmutableList<ImageDto>> saveMultiple(@RequestParam long serviceId, @Valid @RequestBody ImageDto[] dtos) {
+        final List<OptionalServiceImage> list = optionalServiceImageService.saveMultiple(serviceId, Arrays.asList(dtos));
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(ImageMapper::toDto)
@@ -84,8 +84,8 @@ public class OptionalServiceImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long oldId, @RequestParam long newId) {
-        optionalServiceImageService.setNewMain(oldId, newId);
+    public ResponseEntity<Void> changeMain(@RequestParam long serviceId, @RequestParam long newId) {
+        optionalServiceImageService.setNewMain(serviceId, newId);
         return ResponseEntity.ok().build();
 
     }
@@ -93,8 +93,8 @@ public class OptionalServiceImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long oldId, @RequestParam long newId) {
-        optionalServiceImageService.deleteById(oldId, newId);
+    public ResponseEntity<Void> delete(@RequestParam long serviceId, @RequestParam long newId) {
+        optionalServiceImageService.deleteById(serviceId, newId);
         return ResponseEntity.ok().build();
 
     }

@@ -1,11 +1,13 @@
 package pjatk.socialeventorganizer.social_event_support.customer.model.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
@@ -37,7 +39,8 @@ public class CustomerDto {
     private String lastName;
 
     @NotBlank(message = "Birthdate is mandatory")
-    @Pattern(regexp = RegexConstants.BIRTHDATE_REGEX)
+    @Pattern(regexp = RegexConstants.DATE_REGEX)
+    @JsonFormat(pattern = DateTimeUtil.DATE_FORMAT)
     private String birthdate;
 
     @NotBlank(message = "Phone number is mandatory")

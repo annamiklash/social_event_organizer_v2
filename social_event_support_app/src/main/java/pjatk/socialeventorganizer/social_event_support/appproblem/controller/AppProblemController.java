@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
-import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.AppProblemStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.enums.AppProblemTypeEnum;
 
 import javax.validation.Valid;
 import java.util.List;

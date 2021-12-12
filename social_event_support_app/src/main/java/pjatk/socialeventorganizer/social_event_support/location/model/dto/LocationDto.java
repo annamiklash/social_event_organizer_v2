@@ -63,13 +63,13 @@ public class LocationDto implements Serializable {
     @NumberFormat(style = NumberFormat.Style.NUMBER)
     private Integer sizeInSqMeters;
 
-    @NotNull
+    @NotNull(message = "Location descriptions is mandatory")
     private Set<LocationDescriptionItemEnum> descriptions;
 
-    @NotNull
+    @NotNull(message = "Address is mandatory")
     private AddressDto address;
 
-    @NotNull
+    @NotNull(message = "Business hours is mandatory")
     private List<BusinessHoursDto> businessHours;
 
     private String createdAt;

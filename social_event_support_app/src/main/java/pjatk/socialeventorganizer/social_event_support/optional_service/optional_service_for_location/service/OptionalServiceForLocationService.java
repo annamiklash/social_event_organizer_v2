@@ -199,7 +199,7 @@ public class OptionalServiceForLocationService {
         final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeTo));
 
         OptionalServiceAvailability locationAvailability = optionalServiceAvailabilityService.getByDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), stringTimeFrom, stringTimeTo);
-        locationAvailability = optionalServiceAvailabilityService.updateToAvailable(locationAvailability, serviceForEvent.getOptionalService());
+       optionalServiceAvailabilityService.updateToAvailable(locationAvailability, serviceForEvent.getOptionalService());
 
         event.setModifiedAt(LocalDateTime.now());
         organizedEventService.save(event);

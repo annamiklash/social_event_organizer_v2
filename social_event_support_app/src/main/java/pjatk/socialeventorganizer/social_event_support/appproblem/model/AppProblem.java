@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.appproblem;
+package pjatk.socialeventorganizer.social_event_support.appproblem.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

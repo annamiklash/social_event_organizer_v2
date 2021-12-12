@@ -8,7 +8,8 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.dto.Cateri
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
@@ -18,10 +19,13 @@ public class ImageDto {
 
     private long id;
 
-    @NotNull
+    @Size(min = 1, max = 300, message = "Path is too long")
+    @NotBlank(message = "Image path is mandatory")
     private String path;
 
-    @NotNull
+    @NotBlank(message = "Name is mandatory")
+    @Size(min = 1, max = 50, message
+            = "The name should be between 1 and 50 characters")
     private String name;
 
     private boolean isMain;

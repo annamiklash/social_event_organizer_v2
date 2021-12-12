@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -17,7 +17,7 @@ public class EventTypeDto implements Serializable {
 
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "Type is mandatory")
     private String type;
 
     private Set<OrganizedEventDto> events;
