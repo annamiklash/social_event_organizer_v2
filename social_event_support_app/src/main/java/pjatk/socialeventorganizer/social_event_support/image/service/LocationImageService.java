@@ -57,7 +57,7 @@ public class LocationImageService {
         return result;
     }
 
-    public LocationImage save(long locationId, ImageDto dto) {
+    public LocationImage create(long locationId, ImageDto dto) {
         ImageValidator.validateFileExtension(dto.getPath());
 
         final boolean exists = mainExists(locationId);
@@ -82,11 +82,6 @@ public class LocationImageService {
         return locationImageRepository.findAllByLocation_Id(locationId);
     }
 
-    private LocationImage get(long imageId) {
-        return locationImageRepository.findById(imageId)
-                .orElseThrow(() -> new NotFoundException("Image not found"));
-    }
-
     public int count(long locationId) {
         return locationImageRepository.countAll(locationId);
     }
@@ -107,13 +102,14 @@ public class LocationImageService {
         locationImageRepository.flush();
     }
 
+    @Transactional(rollbackOn = Exception.class)
     public void deleteById(long locationId, Long toDelete) {
         final List<LocationImage> list = findByLocationId(locationId);
         if (list.size() == 1) {
             locationImageRepository.deleteById(toDelete);
             return;
         }
-        if (list.size() == 0){
+        if (list.size() == 0) {
             return;
         }
         final LocationImage imageToDelete = get(toDelete);
@@ -128,7 +124,6 @@ public class LocationImageService {
                 save(locationImage);
             }
         }
-
         locationImageRepository.delete(imageToDelete);
     }
 
@@ -139,6 +134,11 @@ public class LocationImageService {
 
     private void save(LocationImage image) {
         locationImageRepository.save(image);
+    }
+
+    private LocationImage get(long imageId) {
+        return locationImageRepository.findById(imageId)
+                .orElseThrow(() -> new NotFoundException("Image not found"));
     }
 
     private boolean mainExists(long serviceId) {
