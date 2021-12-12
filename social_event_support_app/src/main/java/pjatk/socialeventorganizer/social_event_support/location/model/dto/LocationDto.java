@@ -12,7 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.dto.Busines
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;

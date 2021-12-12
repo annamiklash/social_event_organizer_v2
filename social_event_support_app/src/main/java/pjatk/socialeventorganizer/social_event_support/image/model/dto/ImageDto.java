@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.image.model.request;
+package pjatk.socialeventorganizer.social_event_support.image.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

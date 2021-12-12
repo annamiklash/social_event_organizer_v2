@@ -20,7 +20,7 @@ public interface LocationImageRepository extends JpaRepository<LocationImage, Lo
     Optional<LocationImage> getMain(@Param("locationId") long locationId);
 
     @Query("SELECT count(i) from location_image i " +
-            "LEFT JOIN FETCH i.location l " +
+            "LEFT JOIN location l on l.id = i.location.id " +
             "WHERE l.id = :locationId")
     int countAll(@Param("locationId") long locationId);
 
