@@ -34,6 +34,8 @@ public class CateringDto implements Serializable {
     @Pattern(regexp = RegexConstants.NAME_REGEX)
     private String name;
 
+    private double rating;
+
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     @Size(min = 5, max = 100, message

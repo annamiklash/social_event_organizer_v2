@@ -33,6 +33,8 @@ public class LocationDto implements Serializable {
     @Pattern(regexp = RegexConstants.NAME_REGEX)
     private String name;
 
+    private double rating;
+
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     @Size(min = 5, max = 100, message
@@ -71,6 +73,8 @@ public class LocationDto implements Serializable {
 
     @NotNull(message = "Business hours is mandatory")
     private List<BusinessHoursDto> businessHours;
+
+
 
     private String createdAt;
 

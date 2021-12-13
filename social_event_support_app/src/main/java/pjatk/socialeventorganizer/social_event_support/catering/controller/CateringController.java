@@ -8,9 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
-import pjatk.socialeventorganizer.social_event_support.address.model.Address;
-import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
@@ -18,6 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.dto.Filter
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
+import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.service.CateringReviewService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -31,6 +29,8 @@ import java.util.stream.Collectors;
 public class CateringController {
 
     private final CateringService cateringService;
+
+    private final CateringReviewService cateringReviewService;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -46,6 +46,7 @@ public class CateringController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(cateringList.stream()
                         .map(CateringMapper::toDto)
+                        .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -60,6 +61,7 @@ public class CateringController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(CateringMapper::toDto)
+                        .peek(cateringDto -> cateringDto.setRating(cateringReviewService.getRating(cateringDto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -70,10 +72,11 @@ public class CateringController {
     public ResponseEntity<CateringDto> get(@RequestParam long id) {
         log.info("GET " + id);
         final Catering catering = cateringService.get(id);
+        final CateringDto cateringDto = CateringMapper.toDto(catering);
+        cateringDto.setRating(cateringReviewService.getRating(id));
 
-        return ResponseEntity.ok(CateringMapper.toDto(catering));
+        return ResponseEntity.ok(cateringDto);
     }
-
 
 
     @RequestMapping(
@@ -84,7 +87,10 @@ public class CateringController {
         log.info("GET " + id);
         final Catering catering = cateringService.getWithDetail(id);
 
-        return ResponseEntity.ok(CateringMapper.toDtoWithDetail(catering));
+        final CateringDto cateringDto = CateringMapper.toDtoWithDetail(catering);
+        cateringDto.setRating(cateringReviewService.getRating(id));
+
+        return ResponseEntity.ok(cateringDto);
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
@@ -98,6 +104,7 @@ public class CateringController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(caterings.stream()
                         .map(CateringMapper::toDto)
+                        .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -112,6 +119,7 @@ public class CateringController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(caterings.stream()
                         .map(CateringMapper::toDto)
+                        .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -161,42 +169,14 @@ public class CateringController {
         try {
             final Catering catering = cateringService.edit(id, dto);
 
-            return ResponseEntity.ok(CateringMapper.toDto(catering));
+            final CateringDto cateringDto = CateringMapper.toDtoWithDetail(catering);
+            cateringDto.setRating(cateringReviewService.getRating(id));
+
+            return ResponseEntity.ok(cateringDto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.PUT,
-            value = "/{id}/address",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CateringDto> editAddress(@Valid @RequestBody AddressDto dto, @PathVariable long id) {
-        try {
-            final Catering catering = cateringService.editAddress(id, dto);
-            return ResponseEntity.ok(CateringMapper.toDto(catering));
-        } catch (IllegalArgumentException e) {
-
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/{id}/address",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AddressDto> getCateringAddress(@PathVariable long id) {
-        try {
-            final Address address = cateringService.getAddress(id);
-
-            return ResponseEntity.ok(AddressMapper.toDto(address));
-        } catch (IllegalArgumentException e) {
-
-            return ResponseEntity.notFound().build();
-        }
-    }
 
 }
