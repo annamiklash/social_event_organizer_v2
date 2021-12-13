@@ -96,9 +96,13 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "WHERE l.id = :locationId")
     Optional<Location> findWithImages(@Param("locationId") long locationId);
 
+    @Query("SELECT l from location l " +
+            "LEFT JOIN FETCH l.images i " +
+            "WHERE l.id = :locationId AND i.isMain = true")
+    Optional<Location> getByIdWithImages(@Param("locationId")long locationId);
+
     @Query("SELECT l FROM location l " +
             "LEFT JOIN FETCH l.caterings c " +
             "WHERE c.id = :cateringId")
-    List<Location> findAllByCateringId(long cateringId);
-
+    List<Location> findAllByCateringId(@Param("cateringId")long cateringId);
 }

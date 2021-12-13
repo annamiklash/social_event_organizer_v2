@@ -44,21 +44,18 @@ public class OptionalServiceController {
                                                              @RequestParam(defaultValue = "5") Integer pageSize,
                                                              @RequestParam(defaultValue = "id") String sortBy) {
         log.info("GET ALL SERVICES");
-        final ImmutableList<OptionalService> list = optionalServiceService.list(
-                CustomPage.builder()
+        final ImmutableList<OptionalService> list = optionalServiceService.list( CustomPage.builder()
                         .pageNo(pageNo)
                         .pageSize(pageSize)
                         .sortBy(sortBy).build(), keyword);
-
         final Long count = optionalServiceService.count(keyword);
 
         final ImmutableList<OptionalServiceDto> result = ImmutableList.copyOf(list.stream()
-                .map(OptionalServiceMapper::toDto)
-                .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
+                        .map(OptionalServiceMapper::toDto)
+                        .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
                 .collect(Collectors.toList()));
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
-
     }
 
     @RequestMapping(

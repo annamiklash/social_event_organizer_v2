@@ -89,6 +89,19 @@ public class CateringReviewService {
         return bd.doubleValue();
     }
 
+    public double getRating(long cateringId) {
+        final List<CateringReview> reviews = cateringReviewRepository.getByCateringId(cateringId);
+        if (CollectionUtils.isEmpty(reviews)) {
+            return 0;
+        }
+        final Double rating = reviews.stream()
+                .collect(Collectors.averagingDouble(CateringReview::getStarRating));
+
+        BigDecimal bd = new BigDecimal(Double.toString(rating));
+        bd = bd.setScale(1, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
     public boolean exists(long id) {
         return cateringReviewRepository.existsCateringReviewByCatering_Id(id);
     }
