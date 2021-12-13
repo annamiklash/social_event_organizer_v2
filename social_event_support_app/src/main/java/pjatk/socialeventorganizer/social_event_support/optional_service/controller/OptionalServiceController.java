@@ -17,6 +17,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.Op
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
+import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.OptionalServiceReviewService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -31,6 +32,8 @@ public class OptionalServiceController {
 
     private final OptionalServiceService optionalServiceService;
 
+    private final OptionalServiceReviewService optionalServiceReviewService;
+
     @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed/all",
@@ -41,12 +44,11 @@ public class OptionalServiceController {
                                                                   @RequestParam(defaultValue = "id") String sort,
                                                                   @RequestParam(defaultValue = "desc") String order) {
         log.info("GET ALL SERVICES");
-
         final ImmutableList<OptionalService> list = optionalServiceService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
-
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(OptionalServiceMapper::toDto)
+                        .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -58,8 +60,11 @@ public class OptionalServiceController {
         log.info("GET " + id);
 
         final OptionalService optionalService = optionalServiceService.get(id);
+        final OptionalServiceDto serviceDto = OptionalServiceMapper.toDto(optionalService);
 
-        return ResponseEntity.ok(OptionalServiceMapper.toDto(optionalService));
+        serviceDto.setRating(optionalServiceReviewService.getRating(id));
+
+        return ResponseEntity.ok(serviceDto);
     }
 
     @RequestMapping(
@@ -70,8 +75,11 @@ public class OptionalServiceController {
         log.info("GET " + id);
 
         final OptionalService optionalService = optionalServiceService.getWithDetail(id);
+        final OptionalServiceDto serviceDto = OptionalServiceMapper.toDtoWithDetails(optionalService);
 
-        return ResponseEntity.ok(OptionalServiceMapper.toDtoWithDetails(optionalService));
+        serviceDto.setRating(optionalServiceReviewService.getRating(id));
+
+        return ResponseEntity.ok(serviceDto);
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
@@ -96,7 +104,11 @@ public class OptionalServiceController {
 
         final OptionalService optionalService = optionalServiceService.edit(dto, id);
 
-        return ResponseEntity.ok(OptionalServiceMapper.toDto(optionalService));
+        final OptionalServiceDto serviceDto = OptionalServiceMapper.toDto(optionalService);
+
+        serviceDto.setRating(optionalServiceReviewService.getRating(id));
+
+        return ResponseEntity.ok(serviceDto);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -148,6 +160,7 @@ public class OptionalServiceController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(OptionalServiceMapper::toDto)
+                        .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
                         .collect(Collectors.toList())));
     }
 

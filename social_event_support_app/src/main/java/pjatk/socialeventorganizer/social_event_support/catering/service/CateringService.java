@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
-import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
@@ -186,24 +185,6 @@ public class CateringService {
         return catering;
     }
 
-    public Catering editAddress(long cateringId, AddressDto addressDto) {
-        if (!cateringWithIdExists(cateringId)) {
-            throw new IllegalArgumentException("Catering with ID " + cateringId + " does not exist");
-        }
-        final Catering catering = get(cateringId);
-        final Address address = addressService.edit(catering.getCateringAddress().getId(), addressDto);
-        catering.setCateringAddress(address);
-
-        saveCatering(catering);
-
-        return catering;
-    }
-
-    public Address getAddress(long cateringId) {
-        final Catering catering = get(cateringId);
-        return catering.getCateringAddress();
-    }
-
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long id) {
         final Catering cateringToDelete = cateringRepository.findAllCateringInformation(id)
@@ -253,9 +234,12 @@ public class CateringService {
                 .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " DOES NOT EXIST"));
     }
 
+    public ImmutableList<Catering> getByLocationId(long id) {
+        return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
+    }
+
     private void saveCatering(Catering catering) {
         log.info("TRYING TO SAVE" + catering.toString());
-
         cateringRepository.saveAndFlush(catering);
     }
 
@@ -337,8 +321,5 @@ public class CateringService {
         return catering;
     }
 
-    public ImmutableList<Catering> getByLocationId(long id) {
-        return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
-    }
 
 }
