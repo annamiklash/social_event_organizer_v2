@@ -41,7 +41,10 @@ import pjatk.socialeventorganizer.social_event_support.security.service.Security
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
@@ -80,28 +83,19 @@ public class LocationService {
 
 
     public Location get(long id) {
-        final Optional<Location> optionalLocation = locationRepository.findById(id);
-        if (optionalLocation.isPresent()) {
-            return optionalLocation.get();
-        }
-        throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
+        return locationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
     }
 
     public Location getWithMainImage(long id) {
-        final Optional<Location> optionalLocation = locationRepository.getByIdWithImages(id);
-        if (optionalLocation.isPresent()) {
-            return optionalLocation.get();
-        }
-        throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
+        return locationRepository.getByIdWithImages(id)
+                .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
     }
 
 
     public Location getWithDetail(long id) {
-        final Optional<Location> optionalLocation = locationRepository.getByIdWithDetail(id);
-        if (optionalLocation.isPresent()) {
-            return optionalLocation.get();
-        }
-        throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
+        return locationRepository.getByIdWithDetail(id)
+                .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
     }
 
     public boolean isAvailable(long locationId, String date, String timeFrom, String timeTo) {
@@ -283,6 +277,16 @@ public class LocationService {
         return ImmutableList.copyOf(locationRepository.findAllByBusiness_Id(id));
     }
 
+    public Location getWithImages(long locationId) {
+        return locationRepository.findWithImages(locationId)
+                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
+    }
+
+    public ImmutableList<Location> getByCateringId(long cateringId) {
+        return ImmutableList.copyOf(locationRepository.findAllByCateringId(cateringId));
+    }
+
+    //TODO: delete reviews, change email to ---@----DELETED_TIMESTAMP
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long id) {
         final Location locationToDelete = locationRepository.getAllLocationInformation(id)
@@ -387,8 +391,5 @@ public class LocationService {
         return modified;
     }
 
-    public Location getWithImages(long locationId) {
-        return locationRepository.findWithImages(locationId)
-                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
-    }
+
 }

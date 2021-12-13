@@ -17,8 +17,6 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import static pjatk.socialeventorganizer.social_event_support.common.constants.Const.CATERING_ITEMS_MINIMUM;
-
 @Builder
 @Getter
 @Setter
@@ -119,8 +117,5 @@ public class Catering implements Serializable {
         locations.remove(location);
     }
 
-    @Transient
-    public boolean isOperating() {
-        return cateringItems.size() > CATERING_ITEMS_MINIMUM;
-    }
+
 }

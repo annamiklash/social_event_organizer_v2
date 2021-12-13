@@ -27,6 +27,8 @@ public class OptionalServiceDto implements Serializable {
     @NotBlank(message = "Alias from is mandatory")
     private String alias;
 
+    private double rating;
+
     @NotBlank(message = "Type from is mandatory")
     private String type;
 
