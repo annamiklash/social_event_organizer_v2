@@ -29,6 +29,8 @@ public class LocationController {
 
     private final LocationService locationService;
 
+    private final LocationReviewService locationReviewService;
+
     @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed/all",
@@ -47,6 +49,7 @@ public class LocationController {
 
         final ImmutableList<LocationDto> result = ImmutableList.copyOf(list.stream()
                 .map(LocationMapper::toDto)
+                        .peek(dto -> dto.setRating(locationReviewService.getRating(dto.getId())))
                 .collect(Collectors.toList()));
 
         return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(count, pageNo, pageSize, sortBy), result));
@@ -125,7 +128,6 @@ public class LocationController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(LocationMapper::toDto)
-//                        .peek(locationDto -> locationDto.setRating(locationReviewService.getRating(locationDto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -136,7 +138,6 @@ public class LocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationDto> getWithAvailability(@PathVariable long id, @RequestParam String date) {
         final Location location = locationService.getWithAvailability(id, date);
-
         final LocationDto locationDto = LocationMapper.toDto(location);
 
         return ResponseEntity.ok(locationDto);
@@ -167,6 +168,7 @@ public class LocationController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(locations.stream()
                         .map(LocationMapper::toDto)
+                        .peek(dto -> dto.setRating(locationReviewService.getRating(dto.getId())))
                         .collect(Collectors.toList())));
     }
 

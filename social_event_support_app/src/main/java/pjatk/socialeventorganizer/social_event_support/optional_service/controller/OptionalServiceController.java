@@ -47,13 +47,12 @@ public class OptionalServiceController {
         final ImmutableList<OptionalService> list = optionalServiceService.list( CustomPage.builder()
                         .pageNo(pageNo)
                         .pageSize(pageSize)
-                        .sortBy(sortBy).build(), keyword);
-        final Long count = optionalServiceService.count(keyword);
+                        .sortBy(sortBy).build(), keyword);final Long count = optionalServiceService.count(keyword);
 
         final ImmutableList<OptionalServiceDto> result = ImmutableList.copyOf(list.stream()
                         .map(OptionalServiceMapper::toDto)
                         .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
-                .collect(Collectors.toList()));
+                        .collect(Collectors.toList()));
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
     }

@@ -106,4 +106,9 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "LEFT JOIN FETCH l.caterings c " +
             "WHERE c.id = :cateringId")
     List<Location> findAllByCateringId(@Param("cateringId")long cateringId);
+
+    @Query("SELECT l FROM location l " +
+            "LEFT JOIN FETCH l.caterings c " +
+            "WHERE c.id = :cateringId")
+    List<Location> findAllByCateringId(long cateringId);
 }

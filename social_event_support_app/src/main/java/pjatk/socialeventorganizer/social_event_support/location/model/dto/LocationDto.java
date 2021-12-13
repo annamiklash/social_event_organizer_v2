@@ -74,6 +74,8 @@ public class LocationDto implements Serializable {
     @NotNull(message = "Business hours is mandatory")
     private List<BusinessHoursDto> businessHours;
 
+
+
     private String createdAt;
 
     private String modifiedAt;
