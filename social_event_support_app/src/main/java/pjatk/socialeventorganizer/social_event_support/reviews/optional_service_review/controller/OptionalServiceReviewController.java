@@ -13,6 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapp
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.OptionalServiceReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.ServiceReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.OptionalServiceReviewService;
+import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.OptionalServiceReviewService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -25,8 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/reviews/service")
 public class OptionalServiceReviewController {
 
-    private final OptionalServiceReviewService serviceReviewService;
-
+    private final OptionalServiceReviewService optionalServiceReviewService;
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(
@@ -37,7 +37,7 @@ public class OptionalServiceReviewController {
                                                           @RequestParam long serviceId,
                                                           @Valid @RequestBody ServiceReviewDto dto) {
 
-        final OptionalServiceReview review = serviceReviewService.leaveServiceReview(id, serviceId, dto);
+        final OptionalServiceReview review = optionalServiceReviewService.leaveServiceReview(id, serviceId, dto);
         return ResponseEntity.ok(ReviewMapper.toServiceReviewDto(review));
     }
 
@@ -47,7 +47,7 @@ public class OptionalServiceReviewController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<ServiceReviewDto>> listAllByServiceId(@RequestParam long id) {
 
-        final List<OptionalServiceReview> review = serviceReviewService.getByServiceId(id);
+        final List<OptionalServiceReview> review = optionalServiceReviewService.getByServiceId(id);
         return ResponseEntity.ok(ImmutableList.copyOf(
                 review.stream()
                         .map(ReviewMapper::toServiceReviewDto)

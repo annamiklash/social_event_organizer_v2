@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
+import pjatk.socialeventorganizer.social_event_support.reviews.location_review.service.LocationReviewService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,6 +29,8 @@ public class LocationController {
 
     private final LocationService locationService;
 
+    private final LocationReviewService locationReviewService;
+
     @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed/all",
@@ -38,12 +41,12 @@ public class LocationController {
                                                            @RequestParam(defaultValue = "id") String sort,
                                                            @RequestParam(defaultValue = "desc") String order) {
         log.info("GET ALL LOCATIONS");
-
         final ImmutableList<Location> list = locationService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(LocationMapper::toDto)
+                        .peek(dto -> dto.setRating(locationReviewService.getRating(dto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -55,8 +58,10 @@ public class LocationController {
         log.info("GET " + id);
 
         final Location location = locationService.getWithMainImage(id);
+        final LocationDto dto = LocationMapper.toDto(location);
+        dto.setRating(locationReviewService.getRating(id));
 
-        return ResponseEntity.ok(LocationMapper.toDto(location));
+        return ResponseEntity.ok(dto);
     }
 
     @RequestMapping(
@@ -77,8 +82,10 @@ public class LocationController {
         log.info("GET " + id);
 
         final Location location = locationService.getWithDetail(id);
+        final LocationDto dto = LocationMapper.toDto(location);
+        dto.setRating(locationReviewService.getRating(id));
 
-        return ResponseEntity.ok(LocationMapper.toDtoWithDetail(location));
+        return ResponseEntity.ok(dto);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -87,7 +94,6 @@ public class LocationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto) {
-
         final Location location = locationService.create(dto);
 
         return ResponseEntity.ok(LocationMapper.toDto(location));
@@ -102,8 +108,10 @@ public class LocationController {
     public ResponseEntity<LocationDto> edit(@Valid @RequestBody LocationDto dto, @RequestParam long id) {
 
         final Location location = locationService.edit(dto, id);
+        final LocationDto locationDto = LocationMapper.toDto(location);
+        locationDto.setRating(locationReviewService.getRating(id));
 
-        return ResponseEntity.ok(LocationMapper.toDtoWithDetail(location));
+        return ResponseEntity.ok(locationDto);
     }
 
     @RequestMapping(
@@ -118,6 +126,7 @@ public class LocationController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(LocationMapper::toDto)
+                        .peek(locationDto -> locationDto.setRating(locationReviewService.getRating(locationDto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -127,9 +136,12 @@ public class LocationController {
             value = "/{id}/availability",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationDto> getWithAvailability(@PathVariable long id, @RequestParam String date) {
-        Location location = locationService.getWithAvailability(id, date);
+        final Location location = locationService.getWithAvailability(id, date);
 
-        return ResponseEntity.ok(LocationMapper.toDtoWithAvailability(location));
+        final LocationDto locationDto = LocationMapper.toDto(location);
+        locationDto.setRating(locationReviewService.getRating(id));
+
+        return ResponseEntity.ok(locationDto);
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
@@ -138,11 +150,27 @@ public class LocationController {
             path = "business",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationDto>> getByBusinessId(@RequestParam long id) {
-        ImmutableList<Location> locations = locationService.getByBusinessId(id);
+        final ImmutableList<Location> locations = locationService.getByBusinessId(id);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(locations.stream()
                         .map(LocationMapper::toDto)
+                        .peek(dto -> dto.setRating(locationReviewService.getRating(dto.getId())))
+                        .collect(Collectors.toList())));
+    }
+
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "business",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<LocationDto>> getByCateringId(@RequestParam long cateringId) {
+        final ImmutableList<Location> locations = locationService.getByCateringId(cateringId);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(locations.stream()
+                        .map(LocationMapper::toDto)
+                        .peek(dto -> dto.setRating(locationReviewService.getRating(dto.getId())))
                         .collect(Collectors.toList())));
     }
 
