@@ -77,8 +77,9 @@ public class OptionalServiceService {
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
-        final Page<OptionalService> page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
+        final Pageable paging = PageRequest.of(customPage.getPageNo(), customPage.getPageSize(),
+                Sort.by(customPage.getSortBy()));
+        final Page<OptionalService > page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
 
         final List<OptionalService> result = page.get().collect(Collectors.toList());
         for (OptionalService optionalService : result) {
@@ -195,12 +196,17 @@ public class OptionalServiceService {
         return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
 
     }
-     public OptionalService getWithImages(long id){
+
+    public OptionalService getWithImages(long id) {
         return optionalServiceRepository.findWithImages(id)
                 .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
 
-     }
+    }
 
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return optionalServiceRepository.countAll(keyword);
+    }
 
     public ImmutableList<OptionalService> getByBusinessId(long id) {
         return ImmutableList.copyOf(optionalServiceRepository.findAllByBusiness_Id(id));
@@ -339,4 +345,5 @@ public class OptionalServiceService {
         }
         return optionalServices;
     }
+
 }

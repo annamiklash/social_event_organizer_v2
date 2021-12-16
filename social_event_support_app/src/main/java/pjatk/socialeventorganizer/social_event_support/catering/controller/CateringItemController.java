@@ -12,7 +12,6 @@ import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringI
 import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringItemDto;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringItemService;
-import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
@@ -26,23 +25,27 @@ public class CateringItemController {
 
     private final CateringItemService cateringItemService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(
-            path = "new",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<CateringItemDto>> findAll(@RequestParam(required = false) String keyword,
-                                                                  @RequestParam(defaultValue = "0") Integer firstResult,
-                                                                  @RequestParam(defaultValue = "50") Integer maxResult,
-                                                                  @RequestParam(defaultValue = "id") String sort,
-                                                                  @RequestParam(defaultValue = "desc") String order) {
-        final ImmutableList<CateringItem> list = cateringItemService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
-
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(CateringItemMapper::toDto)
-                        .collect(Collectors.toList())));
-    }
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @RequestMapping(
+//            path = "new",
+//            method = RequestMethod.GET,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<TableDto<CateringItemDto>> findAll(@RequestParam(required = false) String keyword,
+//                                                             @RequestParam(defaultValue = "0") Integer pageNo,
+//                                                             @RequestParam(defaultValue = "5") Integer pageSize,
+//                                                             @RequestParam(defaultValue = "id") String sortBy) {
+//        final ImmutableList<CateringItem> list = cateringItemService.list(
+//                CustomPage.builder()
+//                        .pageNo(pageNo)
+//                        .pageSize(pageSize)
+//                        .sortBy(sortBy).build(), keyword);
+//
+//        final ImmutableList<CateringItemDto> result = ImmutableList.copyOf(list.stream()
+//                .map(CateringItemMapper::toDto)
+//                .collect(Collectors.toList()));
+//
+//        return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).build(), result));
+//    }
 
     @RequestMapping(
             path = "allowed",

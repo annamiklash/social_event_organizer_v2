@@ -18,6 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.dt
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.OptionalServiceReviewService;
+import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,18 +39,26 @@ public class OptionalServiceController {
             method = RequestMethod.GET,
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<OptionalServiceDto>> list(@RequestParam(required = false) String keyword,
-                                                                  @RequestParam(defaultValue = "0") Integer firstResult,
-                                                                  @RequestParam(defaultValue = "50") Integer maxResult,
-                                                                  @RequestParam(defaultValue = "id") String sort,
-                                                                  @RequestParam(defaultValue = "desc") String order) {
+    public ResponseEntity<TableDto<OptionalServiceDto>> list(@RequestParam(required = false) String keyword,
+                                                             @RequestParam(defaultValue = "0") Integer pageNo,
+                                                             @RequestParam(defaultValue = "5") Integer pageSize,
+                                                             @RequestParam(defaultValue = "id") String sortBy) {
         log.info("GET ALL SERVICES");
-        final ImmutableList<OptionalService> list = optionalServiceService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(OptionalServiceMapper::toDto)
-                        .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
-                        .collect(Collectors.toList())));
+        final ImmutableList<OptionalService> list = optionalServiceService.list(
+                CustomPage.builder()
+                        .pageNo(pageNo)
+                        .pageSize(pageSize)
+                        .sortBy(sortBy).build(), keyword);
+
+        final Long count = optionalServiceService.count(keyword);
+
+        final ImmutableList<OptionalServiceDto> result = ImmutableList.copyOf(list.stream()
+                .map(OptionalServiceMapper::toDto)
+                .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
+                .collect(Collectors.toList()));
+
+        return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
+
     }
 
     @RequestMapping(

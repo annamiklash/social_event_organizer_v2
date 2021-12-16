@@ -39,7 +39,7 @@ public class OrganizedEventController {
                                                                     @RequestParam(defaultValue = "id") String sort,
                                                                     @RequestParam(defaultValue = "desc") String order) {
         log.info("GET ALL ORG EVENTS");
-        return ResponseEntity.ok(organizedEventService.list(new CustomPage(maxResult, firstResult, sort, order), keyword));
+        return ResponseEntity.ok(organizedEventService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build(), keyword));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")

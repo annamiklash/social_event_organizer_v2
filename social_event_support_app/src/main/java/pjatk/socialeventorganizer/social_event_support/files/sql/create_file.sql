@@ -858,7 +858,15 @@ ALTER TABLE catering_availability
             NOT DEFERRABLE
                 INITIALLY IMMEDIATE
 ;
+-- End of file.
+alter table catering
+    add rating decimal default 0 not null;
 
+alter table location
+    add rating decimal default 0 not null;
+
+alter table optional_service
+    add rating decimal default 0 not null;
 
 create table optional_service_availability
 (

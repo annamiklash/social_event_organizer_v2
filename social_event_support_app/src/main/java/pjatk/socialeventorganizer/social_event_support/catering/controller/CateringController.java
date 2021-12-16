@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.service.Catering
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.service.CateringReviewService;
+import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,18 +37,26 @@ public class CateringController {
             method = RequestMethod.GET,
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<CateringDto>> list(@RequestParam(defaultValue = "0") Integer firstResult,
-                                                           @RequestParam(defaultValue = "50") Integer maxResult,
-                                                           @RequestParam(defaultValue = "id") String sort,
-                                                           @RequestParam(defaultValue = "desc") String order,
-                                                           @RequestParam(required = false) String keyword) {
+    public ResponseEntity<TableDto<CateringDto>> list(@RequestParam(required = false) String keyword,
+                                                           @RequestParam(defaultValue = "0") Integer pageNo,
+                                                           @RequestParam(defaultValue = "5") Integer pageSize,
+                                                           @RequestParam(defaultValue = "id") String sortBy) {
+
         log.info("GET ALL CATERING");
-        final List<Catering> cateringList = cateringService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(cateringList.stream()
-                        .map(CateringMapper::toDto)
-                        .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
-                        .collect(Collectors.toList())));
+        final List<Catering> cateringList = cateringService.list(
+                CustomPage.builder()
+                        .pageNo(pageNo)
+                        .pageSize(pageSize)
+                        .sortBy(sortBy).build(), keyword);
+
+        final Long count = cateringService.count(keyword);
+
+        final ImmutableList<CateringDto> result = ImmutableList.copyOf(cateringList.stream()
+                .map(CateringMapper::toDto)
+                .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
+                .collect(Collectors.toList()));
+
+        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(count, pageNo, pageSize, sortBy), result));
     }
 
     @RequestMapping(
@@ -177,6 +186,5 @@ public class CateringController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
 }

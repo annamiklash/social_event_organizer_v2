@@ -42,7 +42,7 @@ public class CustomerController {
                                                               @RequestParam(defaultValue = "id") String sort,
                                                               @RequestParam(defaultValue = "desc") String order) {
         log.info("GET ALL CUSTOMERS");
-        final ImmutableList<Customer> list = customerService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
+        final ImmutableList<Customer> list = customerService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build(), keyword);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()

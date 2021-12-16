@@ -38,7 +38,7 @@ public class AppProblemService {
 
     public List<AppProblem> list(CustomPage customPage, String keyword, AppProblemStatusEnum status) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
-        final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSortBy()).descending());
 
         if (status == AppProblemStatusEnum.RESOLVED) {
             final Page<AppProblem> page = appProblemRepository.findAllWithKeywordResolved(paging);
