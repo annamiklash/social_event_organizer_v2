@@ -32,13 +32,13 @@ public class GuestService {
 
     private CustomerRepository customerRepository;
 
-    public ImmutableList<GuestDto> list(CustomPage customPagination, String keyword) {
+    public ImmutableList<Guest> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSortBy()).descending());
         final Page<Guest> page = guestRepository.findAllWithKeyword(paging, keyword);
 
-        return ImmutableList.copyOf(page.get().map(GuestMapper::toDto).collect(Collectors.toList()));
+        return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
 
     public List<Guest> listAllByCustomerId(long id) {

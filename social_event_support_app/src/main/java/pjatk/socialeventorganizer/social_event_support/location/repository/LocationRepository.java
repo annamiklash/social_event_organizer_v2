@@ -2,8 +2,8 @@ package pjatk.socialeventorganizer.social_event_support.location.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface LocationRepository extends JpaRepository<Location, Long> {
+public interface LocationRepository extends PagingAndSortingRepository<Location, Long> {
 
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +
@@ -66,6 +66,13 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "OR  l.description LIKE %:keyword% " +
             "AND l.deletedAt IS NULL")
     Page<Location> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
+
+    @Query("SELECT count(l) FROM location AS l " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
+            "WHERE l.name LIKE %:keyword% " +
+            "OR  l.description LIKE %:keyword% " +
+            "AND l.deletedAt IS NULL")
+    long countAll(@Param("keyword") String keyword);
 
     @Query(value = "SELECT distinct l.* from location l " +
             "left join location_availability la on la.id_location = l.id_location " +
@@ -126,4 +133,5 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "LEFT JOIN FETCH l.caterings c " +
             "WHERE c.id = :cateringId")
     List<Location> findAllByCateringId(long cateringId);
+
 }

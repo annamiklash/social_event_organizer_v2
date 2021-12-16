@@ -36,6 +36,7 @@ import pjatk.socialeventorganizer.social_event_support.location.model.LocationDe
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
+import pjatk.socialeventorganizer.social_event_support.reviews.location_review.service.LocationReviewService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
@@ -72,16 +73,26 @@ public class LocationService {
 
     private final SecurityService securityService;
 
+    private final LocationReviewService locationReviewService;
+
+
     public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
-                Sort.by(customPagination.getSort()).descending());
+
+        final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
+                Sort.by(customPagination.getSortBy()));
         final Page<Location> page = locationRepository.findAllWithKeyword(paging, keyword);
 
-        return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
+        return ImmutableList.copyOf(page.get()
+                .peek(location -> location.setRating(locationReviewService.getRating(location.getId())))
+                .collect(Collectors.toList()));
     }
 
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return locationRepository.countAll(keyword);
+    }
 
     public Location get(long id) {
         return locationRepository.findById(id)
@@ -89,14 +100,20 @@ public class LocationService {
     }
 
     public Location getWithMainImage(long id) {
-        return locationRepository.getByIdWithImages(id)
+        final Location location = locationRepository.getByIdWithImages(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
+
+        location.setRating(locationReviewService.getRating(id));
+        return location;
     }
 
 
     public Location getWithDetail(long id) {
-        return locationRepository.getByIdWithDetail(id)
+        final Location location = locationRepository.getByIdWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
+
+        location.setRating(locationReviewService.getRating(id));
+        return location;
     }
 
     public boolean isAvailable(long locationId, String date, String timeFrom, String timeTo) {
@@ -152,8 +169,9 @@ public class LocationService {
                                 .collect(Collectors.toList()));
             }
         }
-
-        return ImmutableList.copyOf(locations);
+        return ImmutableList.copyOf(locations.stream()
+                .peek(location -> locationReviewService.getRating(location.getId()))
+                .collect(Collectors.toList()));
     }
 
     public ImmutableList<Location> findByCityWithId(String city) {
@@ -195,6 +213,7 @@ public class LocationService {
         location.setLocationBusinessHours(new HashSet<>(businessHours));
         location.setCreatedAt(LocalDateTime.now());
         location.setModifiedAt(LocalDateTime.now());
+        location.setRating(0.0);
 
         saveLocation(location);
 
@@ -213,8 +232,11 @@ public class LocationService {
     }
 
     public Location getWithAvailability(long locationId, String date) {
-        return locationRepository.getByIdWithAvailability(locationId, date)
+        final Location location = locationRepository.getByIdWithAvailability(locationId, date)
                 .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
+
+        location.setRating(locationReviewService.getRating(locationId));
+        return location;
     }
 
     private void addLocationOutsideCateringAvailableAndDontServeFood(Location location) {

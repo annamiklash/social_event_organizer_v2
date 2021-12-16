@@ -38,7 +38,10 @@ public class GuestController {
                                                               @RequestParam(defaultValue = "id") String sort,
                                                               @RequestParam(defaultValue = "desc") String order) {
         log.info("GET GUESTS");
-        return ResponseEntity.ok(guestService.list(new CustomPage(maxResult, firstResult, sort, order), keyword));
+        final ImmutableList<Guest> list = guestService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build(), keyword);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(list.stream().map(GuestMapper::toDto).collect(Collectors.toList())));
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')")

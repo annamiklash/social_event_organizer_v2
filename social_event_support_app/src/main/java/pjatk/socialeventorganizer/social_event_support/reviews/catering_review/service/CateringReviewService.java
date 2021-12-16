@@ -1,17 +1,24 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.catering_review.service;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
+import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.CateringReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.dto.CateringReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.repository.CateringReviewRepository;
+import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.LocationReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 
 import java.math.BigDecimal;
@@ -50,12 +57,16 @@ public class CateringReviewService {
         return cateringReview;
     }
 
-    public List<CateringReview> getByCateringId(long id) {
-        if (exists(id)) {
-            return cateringReviewRepository.getByCateringId(id);
+    public List<CateringReview> getByCateringId(CustomPage paging, long id) {
+        if (!exists(id)) {
+            throw new NotFoundException("Catering with id " + id + " does not exist");
         }
-        throw new NotFoundException("Catering with id " + id + " does not exist");
+        final Pageable pageable = PageRequest.of(paging.getPageNo(), paging.getPageSize(),
+                Sort.by(paging.getSortBy()));
+        final Page<CateringReview> page = cateringReviewRepository.getByCateringId(id, pageable);
 
+        return ImmutableList.copyOf(page.get()
+                .collect(Collectors.toList()));
     }
 
     public double getRating(long cateringId) {
@@ -73,5 +84,9 @@ public class CateringReviewService {
 
     public boolean exists(long id) {
         return cateringReviewRepository.existsCateringReviewByCatering_Id(id);
+    }
+
+    public Long count(long cateringId) {
+        return cateringReviewRepository.countAllByCatering_Id(cateringId);
     }
 }

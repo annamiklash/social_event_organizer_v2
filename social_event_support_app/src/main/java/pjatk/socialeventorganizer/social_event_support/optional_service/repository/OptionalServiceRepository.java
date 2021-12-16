@@ -65,4 +65,9 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "WHERE os.id = :serviceId")
     Optional<OptionalService> findWithImages(@Param("serviceId") long serviceId);
 
+    @Query("SELECT count(os) from optional_service os " +
+            "WHERE os.type LIKE %:keyword% " +
+            "OR os.description LIKE %:keyword% " +
+            "OR os.alias LIKE %:keyword%")
+    Long countAll(@Param("keyword") String keyword);
 }
