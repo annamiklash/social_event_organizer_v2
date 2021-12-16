@@ -40,7 +40,7 @@ public class AppProblemController {
                                                              @RequestParam(defaultValue = "desc") String order,
                                                              @RequestParam AppProblemStatusEnum status) {
         log.info("GET ALL APP_PROBLEMS");
-        List<AppProblem> list = appProblemService.list(new CustomPage(maxResult, firstResult, sort, order), keyword, status);
+        List<AppProblem> list = appProblemService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build(), keyword, status);
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(AppProblemMapper::toDtoWithUser)

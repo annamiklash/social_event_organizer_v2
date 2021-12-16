@@ -9,11 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.OptionalServiceReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.ServiceReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.OptionalServiceReviewService;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.ServiceReviewService;
+import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -46,13 +48,22 @@ public class OptionalServiceReviewController {
             method = RequestMethod.GET,
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<ServiceReviewDto>> listAllByServiceId(@RequestParam long id) {
+    public ResponseEntity<TableDto<ServiceReviewDto>> listAllByServiceId(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                                         @RequestParam(defaultValue = "5") Integer pageSize,
+                                                                         @RequestParam(defaultValue = "id") String sortBy,
+                                                                         @RequestParam long id) {
+        final List<OptionalServiceReview> review = optionalServiceReviewService.getByServiceId(CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy).build(), id);
 
-        final List<OptionalServiceReview> review = optionalServiceReviewService.getByServiceId(id);
-        return ResponseEntity.ok(ImmutableList.copyOf(
+        final Long count = optionalServiceReviewService.count(id);
+
+        final ImmutableList<ServiceReviewDto> result = ImmutableList.copyOf(
                 review.stream()
                         .map(ReviewMapper::toServiceReviewDto)
-                        .collect(Collectors.toList())
-        ));
+                        .collect(Collectors.toList()));
+
+        return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
     }
 }

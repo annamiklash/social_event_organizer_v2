@@ -1,5 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.location_review.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +16,16 @@ public interface LocationReviewRepository extends JpaRepository<LocationReview, 
     boolean existsLocationReviewByLocation_Id(long id);
 
     @Query("SELECT lr from location_review lr " +
-            "left join fetch lr.customer c " +
-            "left join fetch lr.location l WHERE l.id = :id")
+            "left join customer c on c.id = lr.customer.id " +
+            "left join location l on l.id = lr.location.id WHERE l.id = :id")
+    Page<LocationReview> getByLocationId(@Param("id") long id, Pageable paging);
+
+    @Query("SELECT lr from location_review lr " +
+            "left join customer c on c.id = lr.customer.id " +
+            "left join location l on l.id = lr.location.id WHERE l.id = :id")
     List<LocationReview> getByLocationId(@Param("id") long id);
+
+    Long countLocationReviewsByLocation_Id(long id);
+
 
 }

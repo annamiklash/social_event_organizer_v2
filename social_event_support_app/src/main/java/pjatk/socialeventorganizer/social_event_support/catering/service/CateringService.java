@@ -67,8 +67,8 @@ public class CateringService {
     public ImmutableList<Catering> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
-                Sort.by(customPagination.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
+                Sort.by(customPagination.getSortBy()).descending());
         final Page<Catering> page = cateringRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
@@ -341,4 +341,8 @@ public class CateringService {
     }
 
 
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return cateringRepository.countAll(keyword);
+    }
 }

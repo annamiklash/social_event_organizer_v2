@@ -1,11 +1,17 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.location_review.service;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
-import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
@@ -27,7 +33,7 @@ public class LocationReviewService {
 
     private final LocationReviewRepository locationReviewRepository;
 
-    private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
 
     private final LocationRepository locationRepository;
 
@@ -36,7 +42,8 @@ public class LocationReviewService {
     }
 
     public LocationReview leaveLocationReview(long id, long locationId, LocationReviewDto dto) {
-        final Customer customer = customerService.get(id);
+        final Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " does not exist"));
 
         final Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
@@ -64,15 +71,23 @@ public class LocationReviewService {
         return bd.doubleValue();
     }
 
-    public List<LocationReview> getByLocationId(long id) {
-        if (exists(id)) {
-            return locationReviewRepository.getByLocationId(id);
+    public List<LocationReview> getByLocationId(CustomPage paging, long id) {
+        if (!exists(id)) {
+            throw new NotFoundException("Location with id " + id + " does not exist");
         }
-        throw new NotFoundException("Location with id " + id + " does not exist");
+        final Pageable pageable = PageRequest.of(paging.getPageNo(), paging.getPageSize(),
+                Sort.by(paging.getSortBy()));
+        final Page<LocationReview> page = locationReviewRepository.getByLocationId(id, pageable);
 
+        return ImmutableList.copyOf(page.get()
+                .collect(Collectors.toList()));
     }
 
     public boolean exists(long id) {
         return locationReviewRepository.existsLocationReviewByLocation_Id(id);
+    }
+
+    public Long count(long locationId) {
+        return locationReviewRepository.countLocationReviewsByLocation_Id(locationId);
     }
 }

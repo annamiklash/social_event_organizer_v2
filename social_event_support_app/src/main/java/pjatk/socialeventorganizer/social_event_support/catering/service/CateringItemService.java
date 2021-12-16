@@ -35,12 +35,13 @@ public class CateringItemService {
     public ImmutableList<CateringItem> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSortBy()).descending());
 
         final Page<CateringItem> page = cateringItemRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
+
 
     public ImmutableList<CateringItem> listAllByCateringId(long cateringId) {
         final List<CateringItem> cateringItemList = cateringItemRepository.findAllByCatering_Id(cateringId);

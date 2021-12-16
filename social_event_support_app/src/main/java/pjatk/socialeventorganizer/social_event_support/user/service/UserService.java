@@ -1,17 +1,24 @@
 package pjatk.socialeventorganizer.social_event_support.user.service;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
+import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
+import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
 import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
@@ -26,6 +33,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException.Enum.*;
 import static pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException.ENUM.USER_EXISTS;
@@ -47,8 +55,15 @@ public class UserService {
 
     private final EntityManager em;
 
-    public ImmutableList<User> findAll() {
-        return ImmutableList.copyOf(userRepository.findAll());
+    public ImmutableList<User> list(CustomPage customPagination, String keyword) {
+         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+
+        final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
+                Sort.by(customPagination.getSortBy()));
+
+        final Page<User> page = userRepository.findAllWithKeyword(paging, keyword);
+
+        return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
 
     public User getUserByEmail(String email) {
@@ -183,5 +198,10 @@ public class UserService {
         user.setDeletedAt(LocalDateTime.now());
 
         save(user);
+    }
+
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return userRepository.countAll(keyword);
     }
 }

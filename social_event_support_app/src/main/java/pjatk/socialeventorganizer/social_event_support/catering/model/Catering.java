@@ -46,6 +46,9 @@ public class Catering implements Serializable {
     @Column
     private String description;
 
+    @Column(name = "rating")
+    private double rating;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

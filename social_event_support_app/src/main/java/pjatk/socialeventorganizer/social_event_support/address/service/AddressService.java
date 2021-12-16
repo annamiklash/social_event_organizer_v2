@@ -30,7 +30,7 @@ public class AddressService {
 
     public ImmutableList<Address> list(CustomPage customPagination) {
 
-        Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSort()).descending());
+        Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSortBy()).descending());
         final Page<Address> page = addressRepository.findAll(paging);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

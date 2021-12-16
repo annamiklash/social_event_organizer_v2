@@ -43,7 +43,7 @@ public class OrganizedEventService {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
         final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
-                Sort.by(customPagination.getSort()).descending());
+                Sort.by(customPagination.getSortBy()).descending());
         final Page<OrganizedEvent> page = organizedEventRepository.findAll(paging);
 
         return page.get().map(OrganizedEventMapper::toDtoWithCustomer).collect(ImmutableList.toImmutableList());

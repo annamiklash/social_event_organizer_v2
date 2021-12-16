@@ -1,9 +1,15 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
@@ -50,12 +56,16 @@ public class OptionalServiceReviewService {
         return optionalServiceReview;
     }
 
-    public List<OptionalServiceReview> getByServiceId(long id) {
-        if (exists(id)) {
-            return serviceReviewRepository.getByServiceId(id);
+    public List<OptionalServiceReview> getByServiceId(CustomPage paging, long id) {
+        if (!exists(id)) {
+            throw new NotFoundException("Catering with id " + id + " does not exist");
         }
-        throw new NotFoundException("Catering with id " + id + " does not exist");
+        final Pageable pageable = PageRequest.of(paging.getPageNo(), paging.getPageSize(),
+                Sort.by(paging.getSortBy()));
+        final Page<OptionalServiceReview> page = serviceReviewRepository.getByServiceId(id, pageable);
 
+        return ImmutableList.copyOf(page.get()
+                .collect(Collectors.toList()));
     }
 
     public double getRating(long serviceId) {
@@ -73,5 +83,9 @@ public class OptionalServiceReviewService {
 
     public boolean exists(long id) {
         return serviceReviewRepository.existsByOptionalService_Id(id);
+    }
+
+    public Long count(long id) {
+        return serviceReviewRepository.countAllByOptionalService_Id(id);
     }
 }
