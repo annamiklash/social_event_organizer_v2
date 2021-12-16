@@ -113,6 +113,9 @@ public class LocationService {
             return optionalLocation.get();
         }
         throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
+
+        location.setRating(locationReviewService.getRating(id));
+        return location;
     }
 
 

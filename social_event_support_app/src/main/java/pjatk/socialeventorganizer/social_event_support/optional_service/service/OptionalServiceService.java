@@ -196,17 +196,13 @@ public class OptionalServiceService {
         return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
 
     }
-     public OptionalService getWithImages(long id){
-        return optionalServiceRepository.findWithImages(id)
-                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
-
-     }
 
     public OptionalService getWithImages(long id) {
         return optionalServiceRepository.findWithImages(id)
                 .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
 
     }
+
 
     public Long count(String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -352,5 +348,6 @@ public class OptionalServiceService {
         }
         return optionalServices;
     }
+
 
 }
