@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.ChangePasswordDto;
@@ -66,13 +68,25 @@ public class UserController {
             method = RequestMethod.GET,
             path = "users/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<UserDto>> getAllUsers() {
-        final ImmutableList<User> users = userService.findAll();
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(
-                        users.stream()
-                                .map(UserMapper::toDto)
-                                .collect(Collectors.toList())));
+    public ResponseEntity<TableDto<UserDto>> list(@RequestParam(required = false) String keyword,
+                                                  @RequestParam(defaultValue = "0") Integer pageNo,
+                                                  @RequestParam(defaultValue = "5") Integer pageSize,
+                                                  @RequestParam(defaultValue = "id") String sortBy) {
+
+        final ImmutableList<User> users = userService.list(
+                CustomPage.builder()
+                        .pageNo(pageNo)
+                        .pageSize(pageSize)
+                        .sortBy(sortBy).build(), keyword);
+        final Long count = userService.count(keyword);
+
+        final ImmutableList<UserDto> result = ImmutableList.copyOf(
+                users.stream()
+                        .map(UserMapper::toDto)
+                        .collect(Collectors.toList()));
+
+        return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().total(count).pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).build(), result));
+
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

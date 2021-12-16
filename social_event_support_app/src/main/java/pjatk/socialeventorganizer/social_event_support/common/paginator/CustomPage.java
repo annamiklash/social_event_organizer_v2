@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Builder
@@ -14,19 +13,27 @@ import java.io.Serializable;
 @Component
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class CustomPage implements Serializable {
 
-    @NotNull
+
     private Integer maxResult;
 
-    @NotNull
+
     private Integer firstResult;
 
-    @NotNull
-    private String sort;
 
-    @NotNull
+    private String sortBy;
+
+
     private String order;
+
+
+    private Integer pageNo;
+
+    private Integer pageSize;
+
+
 
 
 

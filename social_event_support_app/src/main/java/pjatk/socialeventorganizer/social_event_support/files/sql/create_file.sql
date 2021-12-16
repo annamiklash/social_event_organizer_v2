@@ -802,7 +802,14 @@ ALTER TABLE service_music_style
 ;
 
 -- End of file.
+alter table catering
+    add rating decimal default 0 not null;
 
+alter table location
+    add rating decimal default 0 not null;
+
+alter table optional_service
+    add rating decimal default 0 not null;
 
 insert into address(country, city, street_name, street_number, zip_code, created_at, modified_at, deleted_at)
 VALUES ('Poland', 'Warsaw', 'Street 1', 1, '123456', (select current_timestamp), (select current_timestamp), null),

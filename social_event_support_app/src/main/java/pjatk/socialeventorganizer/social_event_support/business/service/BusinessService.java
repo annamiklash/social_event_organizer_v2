@@ -51,7 +51,7 @@ public class BusinessService {
 
     public ImmutableList<Business> list(CustomPage customPage) {
 
-        final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSortBy()).descending());
         final Page<Business> page = businessRepository.findAll(paging);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

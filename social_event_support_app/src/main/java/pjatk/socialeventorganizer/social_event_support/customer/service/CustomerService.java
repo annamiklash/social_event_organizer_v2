@@ -91,7 +91,7 @@ public class CustomerService {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
         final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
-                Sort.by(customPagination.getSort()).descending());
+                Sort.by(customPagination.getSortBy()).descending());
         final Page<Customer> page = customerRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

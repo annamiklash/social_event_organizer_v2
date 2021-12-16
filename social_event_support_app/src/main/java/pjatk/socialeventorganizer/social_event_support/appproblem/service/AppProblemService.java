@@ -34,7 +34,7 @@ public class AppProblemService {
     public List<AppProblem> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
+        final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSortBy()).descending());
         final Page<AppProblem> page = appProblemRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

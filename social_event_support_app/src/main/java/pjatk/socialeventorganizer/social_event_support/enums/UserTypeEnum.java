@@ -11,7 +11,7 @@ public enum UserTypeEnum {
 
     private final Character value;
 
-    private UserTypeEnum(Character value) {
+    UserTypeEnum(Character value) {
         this.value = value;
     }
 }
