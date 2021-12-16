@@ -27,6 +27,7 @@ public class CateringItemService {
 
    private final TimestampHelper timestampHelper;
 
+
     public ImmutableList<CateringItem> listAllByCateringId(long cateringId) {
         final List<CateringItem> cateringItemList = cateringItemRepository.findAllByCatering_Id(cateringId);
 

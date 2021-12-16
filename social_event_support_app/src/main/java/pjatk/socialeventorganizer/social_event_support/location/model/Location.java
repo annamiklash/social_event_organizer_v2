@@ -111,6 +111,8 @@ public class Location implements Serializable {
     @JoinColumn(name = "id_location")
     private Set<LocationBusinessHours> locationBusinessHours;
 
+
+
     public void addAvailability(LocationAvailability locationAvailability) {
         availability.add(locationAvailability);
     }

@@ -178,7 +178,7 @@ public class LocationService {
                                 .collect(Collectors.toList()));
             }
         }
-        locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
+locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
 
         return ImmutableList.copyOf(locations.stream()
                 .peek(location -> locationReviewService.getRating(location.getId()))

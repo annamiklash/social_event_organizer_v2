@@ -48,6 +48,13 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
     long countAll(@Param("keyword") String keyword);
 
 
+    @Query("SELECT count(l) FROM location AS l " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
+            "WHERE l.name LIKE %:keyword% " +
+            "OR  l.description LIKE %:keyword% " +
+            "AND l.deletedAt IS NULL")
+    long countAll(@Param("keyword") String keyword);
+
     @Query(value = "SELECT distinct l.* from location l " +
             "left join location_availability la on la.id_location = l.id_location " +
             "WHERE l.id_location = :id AND la.date = CAST(:date as timestamp)", nativeQuery = true)
@@ -111,4 +118,5 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "LEFT JOIN FETCH l.caterings c " +
             "WHERE c.id = :cateringId")
     List<Location> findAllByCateringId(long cateringId);
+
 }

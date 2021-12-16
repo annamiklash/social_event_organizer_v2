@@ -337,4 +337,8 @@ public class CateringService {
         }
     }
 
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return cateringRepository.countAll(keyword);
+    }
 }
