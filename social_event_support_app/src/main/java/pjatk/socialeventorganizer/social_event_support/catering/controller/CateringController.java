@@ -54,7 +54,7 @@ public class CateringController {
         final ImmutableList<CateringDto> result = ImmutableList.copyOf(cateringList.stream()
                 .map(CateringMapper::toDto)
                 .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
-                        .collect(Collectors.toList()));
+                .collect(Collectors.toList()));
 
         return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(count, pageNo, pageSize, sortBy), result));
     }
@@ -186,6 +186,5 @@ public class CateringController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
 }
