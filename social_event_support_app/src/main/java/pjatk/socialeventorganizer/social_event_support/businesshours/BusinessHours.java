@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 import java.time.LocalTime;
 
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Getter
 @Setter
 @AllArgsConstructor
