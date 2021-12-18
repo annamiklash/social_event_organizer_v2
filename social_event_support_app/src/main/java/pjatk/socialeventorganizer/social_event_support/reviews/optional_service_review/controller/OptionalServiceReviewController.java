@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/reviews/service")
 public class OptionalServiceReviewController {
 
-    private ServiceReviewService serviceReviewService;
+    private final ServiceReviewService serviceReviewService;
 
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
@@ -41,9 +41,9 @@ public class OptionalServiceReviewController {
         return ResponseEntity.ok(ReviewMapper.toServiceReviewDto(review));
     }
 
-    @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
+            path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<ServiceReviewDto>> listAllByServiceId(@RequestParam long id) {
 

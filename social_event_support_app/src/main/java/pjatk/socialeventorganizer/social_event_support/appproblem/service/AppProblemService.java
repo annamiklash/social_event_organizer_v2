@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
+import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
 import pjatk.socialeventorganizer.social_event_support.appproblem.repository.AppProblemRepository;
@@ -19,7 +20,9 @@ import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +38,7 @@ public class AppProblemService {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
         final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
-        final Page<AppProblem> page = appProblemRepository.findAllWithKeyword(paging, keyword);
+        final Page<AppProblem> page = appProblemRepository.findAllWithKeyword(paging);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
@@ -67,6 +70,12 @@ public class AppProblemService {
 
     public AppProblem create(AppProblemDto dto, long id) {
         final User user = userService.get(id);
+
+        final Optional<AppProblemTypeEnum> optionalConcern = Arrays.stream(AppProblemTypeEnum.values()).filter(appProblemType -> appProblemType.getValue().equals(dto.getConcern())).findAny();
+
+        if (optionalConcern.isEmpty()) {
+            throw new NotFoundException("No matching concern found");
+        }
         final AppProblem appProblem = AppProblemMapper.fromDto(dto);
 
         appProblem.setUser(user);

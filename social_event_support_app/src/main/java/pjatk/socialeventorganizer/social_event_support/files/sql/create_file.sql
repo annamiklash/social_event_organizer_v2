@@ -64,6 +64,9 @@ CREATE TABLE app_problem
     CONSTRAINT app_problem_pk PRIMARY KEY (id_app_problem)
 );
 
+alter table app_problem
+    add resolved_at timestamp;
+
 -- Table: catering
 CREATE TABLE catering
 (

@@ -15,10 +15,8 @@ import java.util.Optional;
 public interface AppProblemRepository extends JpaRepository<AppProblem, Long> {
 
     @Query("SELECT a FROM app_problem AS a " +
-            "left join a.user ua " +
-            "WHERE (:keyword is null or a.description LIKE %:keyword%) " +
-            "OR (:keyword is null or a.concern LIKE %:keyword%)")
-    Page<AppProblem> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
+            "left join users u on u.id = a.user.id")
+    Page<AppProblem> findAllWithKeyword(Pageable paging);
 
 
     @Query("SELECT a FROM app_problem AS a " +

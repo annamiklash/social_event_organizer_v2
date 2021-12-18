@@ -40,9 +40,9 @@ public class LocationReviewController {
         return ResponseEntity.ok(ReviewMapper.toLocationReviewDto(review));
     }
 
-    @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
+            path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationReviewDto>> listAllByLocationId(@RequestParam long locationId) {
 

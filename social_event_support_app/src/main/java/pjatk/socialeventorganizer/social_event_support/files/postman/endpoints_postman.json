@@ -31,7 +31,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"business@email.com\",\r\n    \"password\": \"business!1\",\r\n    \"firstName\": \"TEST\",\r\n    \"lastName\": \"Lastname\",\r\n    \"businessName\": \"Best business\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    }\r\n}"
+							"raw": "{\r\n    \"email\" : \"new_business@gmail.com\",\r\n    \"password\": \"Business!1\",\r\n    \"firstName\": \"TEST\",\r\n    \"lastName\": \"Lastname\",\r\n    \"businessName\": \"Best business\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Street\",\r\n        \"streetNumber\": 23,\r\n        \"zipCode\": \"01-157\"\r\n    }\r\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/api/register/business",
@@ -136,6 +136,46 @@
 					"response": []
 				},
 				{
+					"name": "POST api/login business",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n    \"email\" : \"new_business@gmail.com\",\r\n    \"password\": \"Business!1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST api/login customer",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {
@@ -159,46 +199,6 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{  \r\n    \"email\" : \"aniamiklash@gmail.com\",\r\n    \"password\": \"Customer2!\"\r\n}"
-						},
-						"url": {
-							"raw": "http://localhost:8080/api/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST api/login business",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"accept": true
-						}
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{  \r\n    \"email\" : \"new_business@email.com\",\r\n    \"password\": \"Business!1\"\r\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/api/login",
@@ -789,7 +789,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/caterings/allowed/all?keyword=uk",
+							"raw": "http://localhost:8080/api/caterings/allowed/all?pageNo=0&pageSize=5&sortBy=id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -803,8 +803,16 @@
 							],
 							"query": [
 								{
-									"key": "keyword",
-									"value": "uk"
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
 								}
 							]
 						}
@@ -1281,13 +1289,72 @@
 							"response": []
 						},
 						{
-							"name": "POST /api/event/location  add location",
+							"name": "DELETE /api/event/location  cancel",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/event/location?id=12",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"event",
+										"location"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "12"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT /api/event/location/confirm Copy",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/event/location/confirm?id=3&eventId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"event",
+										"location",
+										"confirm"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "3"
+										},
+										{
+											"key": "eventId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /api/event/catering add catering Copy",
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"timeFrom\" : \"18:00:00\",\r\n    \"timeTo\": \"21:00:00\",\r\n    \"guestCount\" : 25,\r\n    \"comment\" : \"test comment\"\r\n}",
+									"raw": "{\r\n    \"timeFrom\": \"12:00:00\",\r\n    \"timeTo\": \"15:00:00\",\r\n    \"guestCount\": 15\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1295,7 +1362,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/event/location?customerId=15&eventId=6&locationId=7",
+									"raw": "http://localhost:8080/api/event/location?customerId=15&eventId=7&locationId=7",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1313,11 +1380,39 @@
 										},
 										{
 											"key": "eventId",
-											"value": "6"
+											"value": "7"
 										},
 										{
 											"key": "locationId",
 											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT /api/event/location/confirm Copy 2",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/event/location/cancel?id=12",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"event",
+										"location",
+										"cancel"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "12"
 										}
 									]
 								}
@@ -1368,7 +1463,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "[\r\n    {\r\n        \"date\": \"2021-12-12\",\r\n        \"timeFrom\": \"2021-12-01 10:00:00\",\r\n        \"timeTo\": \"2021-12-01 23:00:00\"\r\n    }\r\n]",
+									"raw": "[\r\n    {\r\n        \"date\": \"2021-12-18\",\r\n        \"timeFrom\": \"10:00:00\",\r\n        \"timeTo\": \"20:00:00\"\r\n    }\r\n    \r\n]",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1396,8 +1491,66 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "GET /api/locations/allowed/all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/locations/allowed/all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"locations",
+										"allowed",
+										"all"
+									]
+								}
+							},
+							"response": []
 						}
 					]
+				},
+				{
+					"name": "GET /api/locations?id=5 Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/allowed/all?pageNo=1&pageSize=5&sortBy=id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations",
+								"allowed",
+								"all"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								}
+							]
+						}
+					},
+					"response": []
 				},
 				{
 					"name": "GET /api/locations?id=5",
@@ -1432,7 +1585,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/locations/allowed/5/detail",
+							"raw": "http://localhost:8080/api/locations/allowed/7/detail",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1442,7 +1595,7 @@
 								"api",
 								"locations",
 								"allowed",
-								"5",
+								"7",
 								"detail"
 							]
 						}
@@ -1472,10 +1625,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Streetzzzzzz\",\r\n        \"streetNumber\": 666,\r\n        \"zipCode\": \"66-666\"\r\n    },\r\n    \"descriptions\": [\r\n        \"WHEELCHAIR_ACCESSIBLE\",\r\n        \"OUTSIDE_CATERING_AVAILABLE\",\r\n        \"SERVES_FOOD\"\r\n    ],\r\n    \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ],\r\n    \"name\": \"TestTTTTTT\",\r\n    \"email\": \"email@hello.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"seatingCapacity\": 50,\r\n    \"standingCapacity\": 100,\r\n    \"description\": \"Best of the best\",\r\n    \"dailyRentCost\": \"300.0\",\r\n    \"sizeInSqMeters\": 200\r\n}"
+							"raw": "{\r\n    \"address\": {\r\n        \"country\": \"Poland\",\r\n        \"city\": \"Warsaw\",\r\n        \"streetName\": \"Streetzzzzzz\",\r\n        \"streetNumber\": 666,\r\n        \"zipCode\": \"66-666\"\r\n    },\r\n    \"descriptions\": [\r\n        \"WHEELCHAIR_ACCESSIBLE\",\r\n        \"OUTSIDE_CATERING_AVAILABLE\",\r\n        \"SERVES_FOOD\"\r\n    ],\r\n    \"businessHours\": [\r\n        {\r\n            \"day\": \"TUESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"WEDNESDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"THURSDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"FRIDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        },\r\n        {\r\n            \"day\": \"SATURDAY\",\r\n            \"timeFrom\": \"09:00:00\",\r\n            \"timeTo\": \"22:00:00\"\r\n        }\r\n    ],\r\n    \"name\": \"HELLOO\",\r\n    \"email\": \"email@hello.com\",\r\n    \"phoneNumber\": \"123456789\",\r\n    \"seatingCapacity\": 50,\r\n    \"standingCapacity\": 100,\r\n    \"description\": \"Best of the best\",\r\n    \"dailyRentCost\": \"300.0\",\r\n    \"sizeInSqMeters\": 200\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/locations",
+							"raw": "http://localhost:8080/api/locations/allowed/all",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1483,7 +1636,9 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"locations"
+								"locations",
+								"allowed",
+								"all"
 							]
 						}
 					},
@@ -1714,7 +1869,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/services/allowed/all",
+							"raw": "http://localhost:8080/api/services/allowed/all?pageNo=5&pageSize=10&sortBy=id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1725,6 +1880,20 @@
 								"services",
 								"allowed",
 								"all"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "5"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								}
 							]
 						}
 					},
@@ -2251,7 +2420,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Mary and Jon's Wedding\",\r\n    \"date\": \"2021-12-12\",\r\n    \"startTime\": \"15:00:00\",\r\n    \"endTime\": \"22:00:00\",\r\n    \"guestCount\": 25,\r\n    \"eventType\": \"WEDDING\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Mary and Jon's Wedding\",\r\n    \"date\": \"2021-12-18\",\r\n    \"startTime\": \"15:00:00\",\r\n    \"endTime\": \"22:00:00\",\r\n    \"guestCount\": 25,\r\n    \"eventType\": \"WEDDING\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2362,95 +2531,6 @@
 								"api",
 								"location_description",
 								"all"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "LOCATION_IMAGE",
-			"item": [
-				{
-					"name": "POST http://localhost:8080/api/location/add",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"accept": true
-						}
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"details\" : [{\r\n        \"image\" : \"1234566\", \r\n        \"alt\": \"alt1\"\r\n    },\r\n    {\r\n        \"image\" : \"qwerrttyyuii\", \r\n        \"alt\": \"alt2\"\r\n    }],\r\n    \"locationId\" : 14\r\n\r\n}"
-						},
-						"url": {
-							"raw": "http://localhost:8080/api/location_image/add",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"location_image",
-								"add"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET  http://localhost:8080/api/location_image/location/{id}",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true,
-						"disabledSystemHeaders": {
-							"accept": true
-						}
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"details\" : [{\r\n        \"image\" : \"1234566\", \r\n        \"alt\": \"alt1\"\r\n    },\r\n    {\r\n        \"image\" : \"qwerrttyyuii\", \r\n        \"alt\": \"alt2\"\r\n    }],\r\n    \"locationId\" : 14\r\n\r\n}"
-						},
-						"url": {
-							"raw": "http://localhost:8080/api/location_image/location/6",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"location_image",
-								"location",
-								"6"
 							]
 						}
 					},
@@ -2677,7 +2757,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"concern\" : \"TESTTTT\",\r\n    \"description\" : \" description helloooo\"\r\n}",
+							"raw": "{\r\n    \"concern\" : \"Inappropriate behavior\",\r\n    \"description\" : \" description helloooo tahnk you bye\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2685,7 +2765,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/problems/allowed?userId=15",
+							"raw": "http://localhost:8080/api/problems?userId=14",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2693,13 +2773,12 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"problems",
-								"allowed"
+								"problems"
 							],
 							"query": [
 								{
 									"key": "userId",
-									"value": "15"
+									"value": "14"
 								}
 							]
 						}
@@ -3030,7 +3109,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/reviews/location?locationId=1",
+									"raw": "http://localhost:8080/api/reviews/location/allowed/all?locationId=1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -3039,7 +3118,9 @@
 									"path": [
 										"api",
 										"reviews",
-										"location"
+										"location",
+										"allowed",
+										"all"
 									],
 									"query": [
 										{
@@ -3114,7 +3195,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/reviews/catering?cateringId=1",
+									"raw": "http://localhost:8080/api/reviews/catering/allowed/all?cateringId=1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -3123,7 +3204,9 @@
 									"path": [
 										"api",
 										"reviews",
-										"catering"
+										"catering",
+										"allowed",
+										"all"
 									],
 									"query": [
 										{
@@ -3198,7 +3281,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/reviews/service?serviceId=1",
+									"raw": "http://localhost:8080/api/reviews/service/allowed/all?serviceId=1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -3207,7 +3290,9 @@
 									"path": [
 										"api",
 										"reviews",
-										"service"
+										"service",
+										"allowed",
+										"all"
 									],
 									"query": [
 										{
@@ -3271,6 +3356,548 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "IMAGE",
+			"item": [
+				{
+					"name": "LOCATION",
+					"item": [
+						{
+							"name": "POST api/images/location?locationId=7",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/location?locationId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"location"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET api/images/location/allowed/all?locationId=7",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/images/location/allowed/all?locationId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"location",
+										"allowed",
+										"all"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET api/images/location/allowed/all?locationId=7 Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/images/location/allowed/main?locationId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"location",
+										"allowed",
+										"main"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT api/images/location?locationId=7&imageId",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/location?locationId=7&id=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"location"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "7"
+										},
+										{
+											"key": "id",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE api/images/location?locationId=7&imageId",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/location?locationId=7&imageId=6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"location"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "7"
+										},
+										{
+											"key": "imageId",
+											"value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CATERING",
+					"item": [
+						{
+							"name": "POST api/images/location?locationId=7",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/catering?cateringId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"catering"
+									],
+									"query": [
+										{
+											"key": "cateringId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET api/images/location/allowed/all?locationId=7",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/images/catering/allowed/all?cateringId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"catering",
+										"allowed",
+										"all"
+									],
+									"query": [
+										{
+											"key": "cateringId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET api/images/location/allowed/all?locationId=7 Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/images/catering/allowed/main?cateringId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"catering",
+										"allowed",
+										"main"
+									],
+									"query": [
+										{
+											"key": "cateringId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT api/images/location?locationId=7&imageId",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/location?locationId=7&imageId=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"location"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "7"
+										},
+										{
+											"key": "imageId",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE api/images/location?locationId=7&imageId",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/catering?cateringId=7&id=6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"catering"
+									],
+									"query": [
+										{
+											"key": "cateringId",
+											"value": "7"
+										},
+										{
+											"key": "id",
+											"value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "SERVICE",
+					"item": [
+						{
+							"name": "POST api/images/location?locationId=7",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/location?locationId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"location"
+									],
+									"query": [
+										{
+											"key": "locationId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET api/images/location/allowed/all?locationId=7",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/images/service/allowed/all?serviceid=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"service",
+										"allowed",
+										"all"
+									],
+									"query": [
+										{
+											"key": "serviceid",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET api/images/location/allowed/all?locationId=7 Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/images/service/allowed/main?serviceId=7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"service",
+										"allowed",
+										"main"
+									],
+									"query": [
+										{
+											"key": "serviceId",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT api/images/location?locationId=7&imageId",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/service?serviceId=7&newId=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"service"
+									],
+									"query": [
+										{
+											"key": "serviceId",
+											"value": "7"
+										},
+										{
+											"key": "newId",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE api/images/location?locationId=7&imageId",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isMain\": false,\r\n    \"name\" : \"Main area\",\r\n    \"path\" : \"C:\\\\Users\\\\Anna\\\\Desktop\\\\pjatk\\\\7 semester\\\\PRO3\\\\2.jpg\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/images/service?serviceId=7&id=6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"images",
+										"service"
+									],
+									"query": [
+										{
+											"key": "serviceId",
+											"value": "7"
+										},
+										{
+											"key": "id",
+											"value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
