@@ -125,7 +125,7 @@ public class CateringService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public Catering create(CateringDto dto, Long locationId) {
+    public Catering create(CateringDto cateringDto, Long locationId) {
         final UserCredentials userCredentials = securityService.getUserCredentials();
 
         final Business business = businessRepository.findById(userCredentials.getUserId())
@@ -135,9 +135,9 @@ public class CateringService {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
         if (locationId == null) {
-            return createStandaloneCatering(dto, business);
+            return createStandaloneCatering(cateringDto, business);
         }
-        return createCateringWithLocation(dto, locationId, business);
+        return createCateringWithLocation(cateringDto, locationId, business);
 
     }
 
