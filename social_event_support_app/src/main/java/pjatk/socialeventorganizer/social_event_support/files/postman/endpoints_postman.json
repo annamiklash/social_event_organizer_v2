@@ -1789,6 +1789,28 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GET /api/locations cities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations/allowed/cities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations",
+								"allowed",
+								"cities"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2346,6 +2368,46 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "DELETE api/customers delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/guests/invite?customerId=14&eventId=6&locationId=7&guestIds=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"guests",
+								"invite"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "14"
+								},
+								{
+									"key": "eventId",
+									"value": "6"
+								},
+								{
+									"key": "locationId",
+									"value": "7"
+								},
+								{
+									"key": "guestIds",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2484,6 +2546,29 @@
 									"key": "tab",
 									"value": "CURRENT"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/events types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/events/types/allowed/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"events",
+								"types",
+								"allowed",
+								"all"
 							]
 						}
 					},
