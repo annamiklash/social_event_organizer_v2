@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,14 +22,14 @@ public class CateringBusinessHoursService {
 
     private final CateringBusinessHoursRepository cateringBusinessHoursRepository;
 
-    public List<CateringBusinessHours> create(List<BusinessHoursDto> dtos) {
+    public Set<CateringBusinessHours> create(List<BusinessHoursDto> dtos) {
 
         BusinessHoursValidator.validate(dtos);
 
         return dtos.stream()
                 .map(BusinessHoursMapper::fromDtoToCatering)
                 .peek(this::save)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private void save(CateringBusinessHours cateringBusinessHours) {
