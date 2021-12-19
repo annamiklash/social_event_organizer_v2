@@ -21,8 +21,8 @@ public interface ServiceReviewRepository extends JpaRepository<OptionalServiceRe
     List<OptionalServiceReview> getByServiceId(@Param("id") long id);
 
     @Query("SELECT sr from service_review sr " +
-            "left join fetch sr.customer c " +
-            "left join fetch sr.optionalService os WHERE os.id = :id")
+            "left join customer c on c.id = sr.customer.id " +
+            "left join optional_service os on os.id = sr.optionalService.id WHERE os.id = :id")
     Page<OptionalServiceReview> getByServiceId(@Param("id") long id, Pageable pageable);
 
     long countAllByOptionalService_Id(long id);
