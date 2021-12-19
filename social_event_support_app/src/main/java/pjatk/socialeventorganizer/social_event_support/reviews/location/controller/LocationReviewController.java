@@ -65,20 +65,4 @@ public class LocationReviewController {
         return ResponseEntity.ok(ReviewMapper.toLocationReviewDto(review));
     }
 
-    @RequestMapping(
-            method = RequestMethod.GET,
-            path = "allowed/all",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<LocationReviewDto>> listAllByLocationId(@RequestParam long locationId) {
-
-        final List<LocationReview> review = locationReviewService.getByLocationId(locationId);
-        return ResponseEntity.ok(ImmutableList.copyOf(
-                review.stream()
-                        .map(ReviewMapper::toLocationReviewDto)
-                        .collect(Collectors.toList())
-        ));
-    }
-
-
-
 }
