@@ -1743,7 +1743,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"descriptionItems\": [\r\n        \"HAS_STAGE\"\r\n    ],\r\n    \"date\": \"2021-12-01\",\r\n    \"timeFrom\": \"2021-12-01 18:00:00\",\r\n    \"timeTo\": \"2021-12-01 19:00:00\",\r\n    \"guestCount\": 10,\r\n    \"isSeated\": true\r\n\r\n}",
+							"raw": "{\r\n    \"descriptionItems\": [\r\n        \"SERVES_FOOD\"\r\n    ],\r\n    \"date\": \"2021-12-01\",\r\n    \"timeFrom\": \"2021-12-01 18:00:00\",\r\n    \"timeTo\": \"2021-12-01 19:00:00\",\r\n    \"guestCount\": 10,\r\n    \"isSeated\": true\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

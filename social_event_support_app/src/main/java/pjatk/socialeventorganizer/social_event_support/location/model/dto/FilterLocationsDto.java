@@ -23,8 +23,6 @@ public class FilterLocationsDto implements Serializable {
 
     private String timeTo;
 
-    private String country;
-
     private String city;
 
     private Integer guestCount;

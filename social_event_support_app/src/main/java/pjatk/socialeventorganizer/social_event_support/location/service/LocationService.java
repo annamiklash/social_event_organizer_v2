@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -107,24 +108,26 @@ public class LocationService {
 
     public ImmutableList<Location> search(FilterLocationsDto dto) {
 
-        final List<LocationDescriptionItem> filters = dto.getDescriptionItems().stream()
-                .map(locationDescriptionItemService::getByName)
-                .collect(Collectors.toList());
-
         List<Location> locations;
 
         if (dto.getDate() != null && dto.getTimeFrom() != null && dto.getTimeTo() != null) {
             locations = locationRepository.searchWithDateAndTimeFromTimeTo(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
+        } else if (dto.getDate() != null && dto.getTimeFrom() != null && dto.getTimeTo() == null) {
+            locations = locationRepository.searchWithDateAndTimeFrom(dto.getDate(), dto.getTimeFrom());
         } else if (dto.getDate() != null && (dto.getTimeFrom() == null || dto.getTimeTo() == null)) {
             locations = locationRepository.searchWithDate(dto.getDate());
         } else {
             locations = getAll();
         }
-
-        locations = locations.stream()
-                .filter(location -> location.getDescriptions().containsAll(filters))
+        final List<LocationDescriptionItem> filters = dto.getDescriptionItems().stream()
+                .map(locationDescriptionItemService::getByName)
                 .collect(Collectors.toList());
 
+        if (!CollectionUtils.isEmpty(filters)) {
+            locations = locations.stream()
+                    .filter(location -> location.getDescriptions().containsAll(filters))
+                    .collect(Collectors.toList());
+        }
 
         if (dto.getIsSeated() == null && dto.getGuestCount() != null) {
             return ImmutableList.copyOf(

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/problems")
 public class AppProblemController {
 
-    private AppProblemService appProblemService;
+    private final AppProblemService appProblemService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
@@ -72,7 +72,6 @@ public class AppProblemController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             method = RequestMethod.PUT,
-            params = {"id"},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AppProblemDto> resolve(@RequestParam long id) {
         log.info("GET " + id);

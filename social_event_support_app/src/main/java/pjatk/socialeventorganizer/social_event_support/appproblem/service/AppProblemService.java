@@ -61,7 +61,7 @@ public class AppProblemService {
         appProblem.setResolvedAt(LocalDateTime.now());
         save(appProblem);
 
-        return null;
+        return appProblem;
     }
 
     public void save(AppProblem appProblem) {

@@ -35,4 +35,5 @@ public enum LocationDescriptionItemEnum {
     public static LocationDescriptionItemEnum valueOfLabel(String label) {
         return VALUES.get(label);
     }
+
 }

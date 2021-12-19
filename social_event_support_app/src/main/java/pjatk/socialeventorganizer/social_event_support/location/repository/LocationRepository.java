@@ -35,6 +35,19 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join description_item di on ld.name = di.name " +
             "WHERE la.status = 'AVAILABLE' " +
             "AND l.deleted_at IS NULL " +
+            "AND la.date = CAST(:date as timestamp) " +
+            "AND la.time_from <= CAST(:timeFrom as timestamp)", nativeQuery = true)
+    List<Location> searchWithDateAndTimeFrom(@Param("date") String date, @Param("timeFrom") String timeFrom);
+
+
+    @Query(value = "SELECT distinct l.* from location l " +
+            "LEFT JOIN location_image li on li.id_location = l.id_location " +
+            "left join address a on l.id_location_address = a.id_address " +
+            "left join location_availability la on la.id_location = l.id_location " +
+            "left join location_description ld on l.id_location = ld.id_location " +
+            "left join description_item di on ld.name = di.name " +
+            "WHERE la.status = 'AVAILABLE' " +
+            "AND l.deleted_at IS NULL " +
             "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
     List<Location> searchWithDate(@Param("date") String date);
 
@@ -96,4 +109,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("SELECT distinct a.city FROM address a left join location l on l.locationAddress.id = a.id")
     List<String> findDistinctCities();
+
+
 }
