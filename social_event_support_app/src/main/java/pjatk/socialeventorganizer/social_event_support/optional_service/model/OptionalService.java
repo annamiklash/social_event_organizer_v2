@@ -32,19 +32,25 @@ public class OptionalService {
     @Column(name = "id_optional_service")
     private Long id;
 
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
     @Column
     private String alias;
 
-    @Column(insertable = false, updatable = false)
+    @Column(insertable = false, updatable = false, nullable = false)
     private String type;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String description;
 
-    @Column(name = "service_cost")
+    @Column(name = "service_cost", nullable = false)
     private BigDecimal serviceCost;
 
     @Column(name = "created_at", nullable = false)

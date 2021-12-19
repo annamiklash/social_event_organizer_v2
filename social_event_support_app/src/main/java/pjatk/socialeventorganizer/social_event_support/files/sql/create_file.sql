@@ -135,11 +135,11 @@ CREATE TABLE catering_review
 -- Table: customer
 CREATE TABLE customer
 (
-    id_customer_user    int         NOT NULL,
-    first_name          varchar(30) NOT NULL,
-    last_name           varchar(40) NOT NULL,
-    birthdate           date        NOT NULL,
-    phone_number        bigint      NOT NULL,
+    id_customer_user int         NOT NULL,
+    first_name       varchar(30) NOT NULL,
+    last_name        varchar(40) NOT NULL,
+    birthdate        date        NOT NULL,
+    phone_number     bigint      NOT NULL,
     CONSTRAINT customer_pk PRIMARY KEY (id_customer_user)
 );
 
@@ -243,6 +243,8 @@ CREATE TABLE location_review
 CREATE TABLE optional_service
 (
     id_optional_service serial        NOT NULL,
+    first_name          varchar(50)   NOT NULL,
+    last_name           varchar(50)   NOT NULL,
     "alias"             varchar(50)   NULL,
     type                varchar(50)   NOT NULL,
     email               varchar(100)  NOT NULL,
@@ -1118,27 +1120,27 @@ VALUES ('Else', 'Ryan', 'Ryan12@gmail.com', 9, (select current_timestamp), (sele
 
 
 insert into optional_service(alias, type, email, description, service_cost, id_business, created_at, modified_at,
-                             deleted_at, kids_performer_type, age_from, age_to, instrument, people_count)
+                             deleted_at, kids_performer_type, age_from, age_to, instrument, people_count, first_name, last_name)
 values ('alias1', 'SINGER', 'email@gmail.com', 'description1', '100.00', 8, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe'),
        ('alias2', 'DJ', 'email@gmail.com', 'description2', '200.00', 6, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe'),
        ('alias3', 'MUSIC BAND', 'email@gmail.com', 'description3', '300.00', 3, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, 4),
+        (select current_timestamp), null, null, null, null, null, 4, 'Jon', 'Doe'),
        ('alias4', 'INTERPRETER', 'email@gmail.com', 'description4', '400.00', 4, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe'),
        ('alia5', 'SINGER', 'email@gmail.com', 'description5', '250.00', 5, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe'),
        ('alias6', 'KIDS PERFORMER', 'email@gmail.com', 'description6', '160.00', 6, (select current_timestamp),
-        (select current_timestamp), null, 'CLOWN', 5, 12, null, null),
+        (select current_timestamp), null, 'CLOWN', 5, 12, null, null, 'Jon', 'Doe'),
        ('alias7', 'MUSICIAN', 'email@gmail.com', 'description7', '70.00', 7, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, 'GUITAR', null),
+        (select current_timestamp), null, null, null, null, 'GUITAR', null, 'Jon', 'Doe'),
        ('alias8', 'MUSICIAN', 'email@gmail.com', 'description8', '180.00', 4, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, 'PIANO', null),
+        (select current_timestamp), null, null, null, null, 'PIANO', null, 'Jon', 'Doe'),
        ('alias9', 'HOST', 'email@gmail.com', 'description9', '290.00', 4, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe'),
        ('alias10', 'INTERPRETER', 'email@gmail.com', 'description10', '140.00', 4, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null);
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe');
 
 insert into translation_language(name)
 VALUES ('SPANISH'),
