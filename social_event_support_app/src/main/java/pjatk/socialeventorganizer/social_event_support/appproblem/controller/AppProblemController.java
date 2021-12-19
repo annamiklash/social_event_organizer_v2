@@ -65,9 +65,10 @@ public class AppProblemController {
             method = RequestMethod.GET,
             path = "/types",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<AppProblemTypeEnum>> concerns() {
+    public ResponseEntity<ImmutableList<String>> concerns() {
+        final List<AppProblemTypeEnum> enumList = List.of(AppProblemTypeEnum.values());
 
-        return ResponseEntity.ok(ImmutableList.copyOf(List.of(AppProblemTypeEnum.values())));
+        return ResponseEntity.ok(ImmutableList.copyOf(enumList.stream().map(AppProblemTypeEnum::getValue).collect(Collectors.toList())));
     }
 
 
