@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.address.repository.AddressRepository;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
@@ -29,8 +30,7 @@ public class AddressService {
     private final TimestampHelper timestampHelper;
 
     public ImmutableList<Address> list(CustomPage customPagination) {
-
-        Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSortBy()).descending());
+        Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(), Sort.by(customPagination.getSortBy()).descending());
         final Page<Address> page = addressRepository.findAll(paging);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
@@ -47,7 +47,6 @@ public class AddressService {
     }
 
     public Address getByLocationId(long id) {
-
         return addressRepository.findByLocationId(id)
                 .orElseThrow(() -> new NotFoundException("Address with location id " + id + " DOES NOT EXIST"));
     }
@@ -63,7 +62,6 @@ public class AddressService {
     }
 
     public boolean addressWithIdExists(Long id) {
-        log.info("CHECKING IF ADDRESS WITH ID " + id + " EXISTS");
         return addressRepository.existsById(id);
     }
 

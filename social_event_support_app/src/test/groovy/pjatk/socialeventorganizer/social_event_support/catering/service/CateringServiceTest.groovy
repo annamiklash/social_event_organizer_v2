@@ -1,32 +1,24 @@
 package pjatk.socialeventorganizer.social_event_support.catering.service
 
-
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService
-import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
-import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum
-import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.service.CateringBusinessHoursService
-import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
-import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository
-import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService
-import pjatk.socialeventorganizer.social_event_support.trait.UserCredentialsTrait
+import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.business.BusinessTrait
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringTrait
 import pjatk.socialeventorganizer.social_event_support.trait.location.LocationTrait
+import pjatk.socialeventorganizer.social_event_support.trait.user.UserCredentialsTrait
 import spock.lang.Specification
 import spock.lang.Subject
 
-import java.time.LocalTime
-
-class CateringServiceTest extends Specification implements UserCredentialsTrait, AddressTrait, CateringTrait, LocationTrait, BusinessTrait {
+class CateringServiceTest extends Specification implements UserCredentialsTrait, AddressTrait, CateringTrait, LocationTrait, BusinessTrait, BusinessHoursTrait {
 
     @Subject
     CateringService cateringService;
@@ -74,41 +66,13 @@ class CateringServiceTest extends Specification implements UserCredentialsTrait,
 
         def address = fakeAddress
 
-        def businessDto = BusinessDto.builder()
-                .id(1)
-                .businessName('Name')
-                .address(addressDto)
-                .verificationStatus('VERIFIED')
-                .build();
+        def cateringBusinessHours = fakeCateringBusinessHours
 
         def business = fakeVerifiedBusiness
 
-        def cateringDto = CateringDto.builder()
-                .name('Name')
-                .phoneNumber('123456789')
-                .serviceCost('100.20')
-                .offersOutsideCatering(true)
-                .address(addressDto)
-                .business(businessDto)
-                .build()
+        def cateringDto = fakeCateringDtoOffersOutsideCatering
 
-        def cuisines = Set.of(Cuisine.builder().id(1).name('Cuisine').build())
-
-        def businessHours = CateringBusinessHours.builder()
-                .id(1)
-                .day(DayEnum.MONDAY.name())
-                .timeFrom(LocalTime.of(10, 0))
-                .timeTo(LocalTime.of(20, 0))
-                .build()
-
-        def businessHOursSet = new HashSet(List.of(business))
-
-        def catering = Catering.builder()
-                .name('Name')
-                .business(business)
-                .cuisines(cuisines)
-                .build()
-
+        def catering = fakeCateringOffersOutsideCatering
 
         when:
         cateringService.create(cateringDto, null)
@@ -117,7 +81,7 @@ class CateringServiceTest extends Specification implements UserCredentialsTrait,
         1 * addressService.create(addressDto) >> address
         1 * securityService.getUserCredentials() >> userCredentials
         1 * businessRepository.findById(userCredentials.getUserId()) >> Optional.of(business)
-        1 * cateringBusinessHoursService.create(businessHoursDto) >> List.of(businessHours)
+        1 * cateringBusinessHoursService.create(businessHoursDto) >> Set.of(cateringBusinessHours)
         2 * repository.saveAndFlush(catering)
         1 * locationService.findByCityWithId(address.getCity())
         1 * locationService.saveLocation(location)

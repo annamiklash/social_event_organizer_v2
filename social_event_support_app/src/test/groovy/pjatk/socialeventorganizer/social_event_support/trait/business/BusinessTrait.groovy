@@ -9,6 +9,8 @@ trait BusinessTrait {
 
     BusinessDto fakeVerifiedBusinessDto = BusinessDto.builder()
             .id(1)
+            .firstName('Name')
+            .lastName('Name')
             .businessName('Name')
             .verificationStatus('VERIFIED')
             .address(buildAddress())
@@ -16,6 +18,8 @@ trait BusinessTrait {
 
     BusinessDto fakeNotVerifiedBusinessDto = BusinessDto.builder()
             .id(1)
+            .firstName('Name')
+            .lastName('Name')
             .businessName('Name')
             .verificationStatus('NOT_VERIFIED')
             .address(buildAddress())
@@ -23,14 +27,18 @@ trait BusinessTrait {
 
     Business fakeVerifiedBusiness = Business.builder()
             .id(1)
+            .firstName('Name')
+            .lastName('Name')
             .businessName('Name')
             .verificationStatus('VERIFIED')
             .build()
 
     Business fakeNotVerifiedBusiness = Business.builder()
             .id(1)
+            .firstName('Name')
+            .lastName('Name')
             .businessName('Name')
-            .verificationStatus('VERIFIED')
+            .verificationStatus('NOT_VERIFIED')
             .build()
 
     def buildAddress() {
