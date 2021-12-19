@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.AppProblemStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 
@@ -36,9 +37,10 @@ public class AppProblemController {
                                                              @RequestParam(defaultValue = "0") Integer firstResult,
                                                              @RequestParam(defaultValue = "50") Integer maxResult,
                                                              @RequestParam(defaultValue = "id") String sort,
-                                                             @RequestParam(defaultValue = "desc") String order) {
+                                                             @RequestParam(defaultValue = "desc") String order,
+                                                             @RequestParam AppProblemStatusEnum status) {
         log.info("GET ALL APP_PROBLEMS");
-        List<AppProblem> list = appProblemService.list(new CustomPage(maxResult, firstResult, sort, order), keyword);
+        List<AppProblem> list = appProblemService.list(new CustomPage(maxResult, firstResult, sort, order), keyword, status);
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(AppProblemMapper::toDtoWithUser)

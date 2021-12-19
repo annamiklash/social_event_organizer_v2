@@ -2821,7 +2821,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/problems",
+							"raw": "http://localhost:8080/api/problems?status=ALL",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2830,6 +2830,12 @@
 							"path": [
 								"api",
 								"problems"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ALL"
+								}
 							]
 						}
 					},

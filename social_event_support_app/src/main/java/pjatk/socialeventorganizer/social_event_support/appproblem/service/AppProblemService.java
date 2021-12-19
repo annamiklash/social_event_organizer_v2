@@ -13,6 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.AppProblemStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.repository.AppProblemRepository;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
@@ -34,12 +35,20 @@ public class AppProblemService {
 
     private final UserService userService;
 
-    public List<AppProblem> list(CustomPage customPage, String keyword) {
+    public List<AppProblem> list(CustomPage customPage, String keyword, AppProblemStatusEnum status) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
-
         final Pageable paging = PageRequest.of(customPage.getFirstResult(), customPage.getMaxResult(), Sort.by(customPage.getSort()).descending());
-        final Page<AppProblem> page = appProblemRepository.findAllWithKeyword(paging);
 
+        if (status == AppProblemStatusEnum.RESOLVED) {
+            final Page<AppProblem> page = appProblemRepository.findAllWithKeywordResolved(paging);
+            return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
+        }
+        if (status == AppProblemStatusEnum.NOT_RESOLVED) {
+            final Page<AppProblem> page = appProblemRepository.findAllWithKeywordNotResolved(paging);
+            return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
+        }
+
+        final Page<AppProblem> page = appProblemRepository.findAllWithKeyword(paging);
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
 

@@ -18,6 +18,13 @@ public interface AppProblemRepository extends JpaRepository<AppProblem, Long> {
             "left join users u on u.id = a.user.id")
     Page<AppProblem> findAllWithKeyword(Pageable paging);
 
+    @Query("SELECT a FROM app_problem AS a " +
+            "left join users u on u.id = a.user.id WHERE a.resolvedAt is null")
+    Page<AppProblem> findAllWithKeywordNotResolved(Pageable paging);
+
+    @Query("SELECT a FROM app_problem AS a " +
+            "left join users u on u.id = a.user.id WHERE a.resolvedAt is not null")
+    Page<AppProblem> findAllWithKeywordResolved(Pageable paging);
 
     @Query("SELECT a FROM app_problem AS a " +
             "left join fetch a.user ua " +
@@ -25,5 +32,6 @@ public interface AppProblemRepository extends JpaRepository<AppProblem, Long> {
     Optional<AppProblem> findByIdWithDetail(@Param("id") long id);
 
     List<AppProblem> findByUser_Id(long id);
+
 
 }
