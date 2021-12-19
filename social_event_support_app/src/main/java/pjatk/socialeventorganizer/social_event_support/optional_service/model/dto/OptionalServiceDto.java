@@ -46,6 +46,9 @@ public class OptionalServiceDto implements Serializable {
     private String lastName;
 
     @NotNull
+    private double rating;
+
+    @NotBlank(message = "Type from is mandatory")
     private String type;
 
     @NotBlank(message = "Email is mandatory")
