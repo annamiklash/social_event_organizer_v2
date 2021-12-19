@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.location.model.dto.Locati
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -56,6 +57,16 @@ public class LocationController {
         final Location location = locationService.get(id);
 
         return ResponseEntity.ok(LocationMapper.toDto(location));
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "allowed/cities",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getCities() {
+        final List<String> result = locationService.getCities();
+
+        return ResponseEntity.ok(result);
     }
 
     @RequestMapping(

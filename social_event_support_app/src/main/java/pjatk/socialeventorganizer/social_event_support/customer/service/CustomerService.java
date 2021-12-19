@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -69,8 +68,6 @@ public class CustomerService {
     private final UserService userService;
 
     private final EmailService emailService;
-
-    private final AddressService addressService;
 
     private final GuestService guestService;
 
@@ -163,8 +160,6 @@ public class CustomerService {
 
     }
 
-
-
     public Customer getWithDetail(long id) {
         final Optional<Customer> optionalCustomer = customerRepository.getWithDetail(id);
         if (optionalCustomer.isPresent()) {
@@ -214,6 +209,7 @@ public class CustomerService {
 
 
     public void delete(long id) {
+
         final Customer customerToDelete = customerRepository.getAllCustomerInformation(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
         boolean hasPendingReservations = hasPendingReservations(customerToDelete);

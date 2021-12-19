@@ -379,4 +379,10 @@ public class LocationService {
         return modified;
     }
 
+    public List<String> getCities() {
+
+        return locationRepository.findDistinctCities();
+
+
+    }
 }

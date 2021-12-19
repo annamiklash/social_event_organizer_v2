@@ -170,7 +170,6 @@ public class OptionalServiceService {
 
     }
 
-    //TODO: FINISH
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long id) {
         final OptionalService serviceToDelete = optionalServiceRepository.getAllServiceInformation(id)
