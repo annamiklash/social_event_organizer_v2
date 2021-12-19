@@ -83,6 +83,14 @@ public class LocationReviewService {
                 .collect(Collectors.toList()));
     }
 
+    public List<LocationReview> getByLocationId(long id) {
+        if (!exists(id)) {
+            throw new NotFoundException("Location with id " + id + " does not exist");
+        }
+
+        return locationReviewRepository.getByLocationId(id);
+    }
+
     public boolean exists(long id) {
         return locationReviewRepository.existsLocationReviewByLocation_Id(id);
     }
