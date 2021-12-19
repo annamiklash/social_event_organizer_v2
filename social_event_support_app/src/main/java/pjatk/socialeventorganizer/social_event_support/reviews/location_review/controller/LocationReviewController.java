@@ -28,7 +28,6 @@ public class LocationReviewController {
 
     private final LocationReviewService locationReviewService;
 
-    @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,21 +64,5 @@ public class LocationReviewController {
         final LocationReview review = locationReviewService.leaveLocationReview(customerId, locationId, dto);
         return ResponseEntity.ok(ReviewMapper.toLocationReviewDto(review));
     }
-
-    @RequestMapping(
-            method = RequestMethod.GET,
-            path = "allowed/all",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<LocationReviewDto>> listAllByLocationId(@RequestParam long locationId) {
-
-        final List<LocationReview> review = locationReviewService.getByLocationId(locationId);
-        return ResponseEntity.ok(ImmutableList.copyOf(
-                review.stream()
-                        .map(ReviewMapper::toLocationReviewDto)
-                        .collect(Collectors.toList())
-        ));
-    }
-
-
 
 }
