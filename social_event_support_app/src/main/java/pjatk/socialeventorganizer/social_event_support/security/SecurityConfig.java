@@ -36,7 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 SERVICES_AVAILABILITY.value,
                 SERVICE_REVIEW.value,
                 RESET_PASSWORD.value,
-                RESET.value
+                RESET.value,
+
+                EVENT_TYPES.value
         );
     }
 

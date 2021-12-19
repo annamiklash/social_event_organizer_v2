@@ -5,22 +5,28 @@ import java.util.Map;
 
 public enum AllowedUrlsEnum {
 
-    REGISTER("/api/register/**"),
-    LOGIN("/api/login*"),
-    LOGOUT("/api/logout*"),
+    EVENT_TYPES("/api/events/types/allowed/**"),
+
+    CATERINGS("/api/caterings/allowed/**"),
+    CATERING_AVAILABILITY("api/availability/catering/allowed**"),
+    CATERING_ITEMS("/api/catering/items/allowed**"),
+    CATERINGS_REVIEW("/api/reviews/catering/allowed/**"),
+    CUISINES("/api/cuisines/allowed/**"),
+
     LOCATIONS("/api/locations/allowed/**"),
     LOCATIONS_REVIEW("/api/reviews/location/allowed/**"),
     LOCATION_AVAILABILITY("api/availability/location/allowed**"),
-    CATERINGS("/api/caterings/allowed/**"),
-    CATERINGS_REVIEW("/api/reviews/catering/allowed/**"),
-    CATERING_AVAILABILITY("api/availability/catering/allowed**"),
+
+    LOGIN("/api/login*"),
+    LOGOUT("/api/logout*"),
+
+    REGISTER("/api/register/**"),
+    RESET_PASSWORD("/api/reset_password"),
+    RESET( "/api/reset"),
+
     SERVICES("/api/services/allowed/**"),
     SERVICE_REVIEW("/api/reviews/service/allowed/**"),
-    SERVICES_AVAILABILITY("api/availability/services/allowed**"),
-    CUISINES("/api/cuisines/allowed/**"),
-    CATERING_ITEMS("/api/catering/items/allowed**"),
-    RESET_PASSWORD("/api/reset_password"),
-    RESET( "/api/reset");
+    SERVICES_AVAILABILITY("api/availability/services/allowed**");
 
     public final String value;
 

@@ -29,13 +29,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SecurityService {
 
-    PasswordEncoderSecurity passwordEncoderUtility;
+   private final PasswordEncoderSecurity passwordEncoderUtility;
 
-    UserService userService;
+   private final UserService userService;
 
-    BusinessRepository businessRepository;
+   private final BusinessRepository businessRepository;
 
-    CustomerRepository customerRepository;
+   private final CustomerRepository customerRepository;
 
     public boolean isPasswordMatch(LoginDto loginDto) {
         final String passwordFromRequest = loginDto.getPassword();

@@ -23,6 +23,7 @@ public class EventTypeService {
         return ImmutableList.copyOf(all);
     }
 
+
     public EventType getByType(String type) {
         final Optional<EventType> optionalType = eventRepository.findByType(type);
 
