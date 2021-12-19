@@ -1,14 +1,16 @@
 package pjatk.socialeventorganizer.social_event_support.address.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity(name = "address")

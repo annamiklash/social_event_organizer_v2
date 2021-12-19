@@ -116,12 +116,12 @@ public class CateringService {
 
     public Catering get(long id) {
         return cateringRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Catering with ID " + id + " does not exist"));
+                .orElseThrow(() -> new NotFoundException("Catering with ID " + id + " does not exist"));
     }
 
     public Catering getWithDetail(long id) {
         return cateringRepository.findByIdWithDetail(id)
-                .orElseThrow(() -> new IllegalArgumentException("Catering with ID " + id + " does not exist"));
+                .orElseThrow(() -> new NotFoundException("Catering with ID " + id + " does not exist"));
     }
 
     public ImmutableList<Catering> getByBusinessId(long id) {
@@ -256,13 +256,13 @@ public class CateringService {
 
         final Address address = addressService.create(dto.getAddress());
 
-        final List<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
+        final Set<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
 
         final Catering catering = CateringMapper.fromDto(dto);
 
         catering.setCateringAddress(address);
         catering.setBusiness(business);
-        catering.setCateringBusinessHours(new HashSet<>(businessHours));
+        catering.setCateringBusinessHours(ImmutableSet.copyOf(businessHours));
         catering.setCreatedAt(LocalDateTime.now());
         catering.setModifiedAt(LocalDateTime.now());
         catering.setLocations(new HashSet<>());
@@ -292,14 +292,14 @@ public class CateringService {
             throw new IllegalArgumentException("Standalone catering must offer outside catering");
         }
         final Address address = addressService.create(dto.getAddress());
-
-        final List<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
+        log.info(dto.getBusinessHours().toString());
+        final Set<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
 
         final Catering catering = CateringMapper.fromDto(dto);
 
         catering.setCateringAddress(address);
         catering.setBusiness(business);
-        catering.setCateringBusinessHours(new HashSet<>(businessHours));
+        catering.setCateringBusinessHours(ImmutableSet.copyOf(businessHours));
         catering.setCreatedAt(LocalDateTime.now());
         catering.setModifiedAt(LocalDateTime.now());
         catering.setLocations(new HashSet<>());

@@ -6,11 +6,11 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 trait AddressTrait {
 
     Address fakeAddress = Address.builder()
-            .id(1)
             .country('Poland')
             .city('Warsaw')
             .streetName('Piękna')
             .streetNumber(1)
+            .zipCode('01-157')
             .build()
 
     AddressDto fakeAddressDto = AddressDto.builder()
@@ -19,6 +19,7 @@ trait AddressTrait {
             .city('Warsaw')
             .streetName('Piękna')
             .streetNumber(1)
+            .zipCode('01-157')
             .build()
 
 }

@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.trait
+package pjatk.socialeventorganizer.social_event_support.trait.user
 
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials
 
