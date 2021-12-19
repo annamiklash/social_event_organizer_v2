@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundExcept
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.CateringReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.dto.CateringReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.repository.CateringReviewRepository;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.LocationReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 
 import java.math.BigDecimal;
@@ -68,6 +67,14 @@ public class CateringReviewService {
 
         return ImmutableList.copyOf(page.get()
                 .collect(Collectors.toList()));
+    }
+
+    public List<CateringReview> getByCateringId(long id) {
+        if (!exists(id)) {
+            throw new NotFoundException("Catering with id " + id + " does not exist");
+        }
+        return cateringReviewRepository.getByCateringId(id);
+
     }
 
     public double getRating(long cateringId) {
