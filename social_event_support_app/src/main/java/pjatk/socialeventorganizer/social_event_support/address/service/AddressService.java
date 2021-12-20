@@ -14,7 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.address.repository.AddressRepository;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
@@ -79,7 +79,6 @@ public class AddressService {
         if (!addressWithIdExists(id)) {
             throw new IllegalArgumentException("Address with ID " + id + " does not exist");
         }
-
         final Address address = get(id);
 
         address.setCity(dto.getCity());
