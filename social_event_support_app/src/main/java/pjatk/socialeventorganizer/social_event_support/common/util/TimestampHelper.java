@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-public class TimestampUtil {
+public class TimestampHelper {
 
     public LocalDateTime now() {
         return LocalDateTime.now();
