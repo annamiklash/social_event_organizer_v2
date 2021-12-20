@@ -32,7 +32,10 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
             "LEFT JOIN FETCH b.caterings c " +
             "LEFT JOIN FETCH b.locations l " +
             "LEFT JOIN FETCH b.services s " +
-            "LEFT JOIN FETCH b.address a")
+            "LEFT JOIN FETCH b.address a " +
+            "WHERE b.id = :id")
     Optional<Business> findAllBusinessInformation(long id);
+
+    Optional<Business> getWithAddress(@Param("id") long id);
 
 }
