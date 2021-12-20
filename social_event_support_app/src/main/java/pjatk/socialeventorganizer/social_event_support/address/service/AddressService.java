@@ -12,11 +12,11 @@ import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMap
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.repository.AddressRepository;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AddressService {
 
-    AddressRepository addressRepository;
+    private final AddressRepository addressRepository;
+
+    private final TimestampHelper timestampHelper;
 
     public ImmutableList<Address> list(CustomPage customPagination) {
 
@@ -35,29 +37,29 @@ public class AddressService {
     }
 
     public Address get(long id) {
-       return addressRepository.findById(id)
-               .orElseThrow(() ->  new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
     }
 
     public Address getByUserId(long id) {
         return addressRepository.findByUserId(id)
-                .orElseThrow(() ->  new NotFoundException("Address with user id " + id + " DOES NOT EXIST"));
+                .orElseThrow(() -> new NotFoundException("Address with user id " + id + " DOES NOT EXIST"));
     }
 
     public Address getByLocationId(long id) {
 
         return addressRepository.findByLocationId(id)
-                .orElseThrow(() ->  new NotFoundException("Address with location id " + id + " DOES NOT EXIST"));
+                .orElseThrow(() -> new NotFoundException("Address with location id " + id + " DOES NOT EXIST"));
     }
 
     public Address getByCateringId(long id) {
         return addressRepository.findByCateringId(id)
-                .orElseThrow(() ->  new NotFoundException("Address with catering id " + id + " DOES NOT EXIST"));
+                .orElseThrow(() -> new NotFoundException("Address with catering id " + id + " DOES NOT EXIST"));
     }
 
     public Address getByServiceId(long id) {
         return addressRepository.findByServiceId(id)
-                .orElseThrow(() ->  new NotFoundException("Address with service id " + id + " DOES NOT EXIST"));
+                .orElseThrow(() -> new NotFoundException("Address with service id " + id + " DOES NOT EXIST"));
     }
 
     public boolean addressWithIdExists(Long id) {
@@ -68,8 +70,8 @@ public class AddressService {
     public Address create(AddressDto dto) {
         final Address address = AddressMapper.fromDto(dto);
 
-        address.setCreatedAt(LocalDateTime.now());
-        address.setModifiedAt(LocalDateTime.now());
+        address.setCreatedAt(timestampHelper.now());
+        address.setModifiedAt(timestampHelper.now());
 
         save(address);
         return address;
@@ -82,14 +84,12 @@ public class AddressService {
 
         final Address address = get(id);
 
-        //Cant change city or country -> delete and create new catering
-        if (!dto.getCity().equals(address.getCity()) || !dto.getCountry().equals(address.getCountry())) {
-            throw new IllegalArgumentException("In order to change city or country, you have to create new catering in a given city");
-        }
+        address.setCity(dto.getCity());
+        address.setCountry(dto.getCountry());
         address.setStreetName(dto.getStreetName());
         address.setStreetNumber(dto.getStreetNumber());
         address.setZipCode(dto.getZipCode());
-        address.setModifiedAt(LocalDateTime.now());
+        address.setModifiedAt(timestampHelper.now());
 
         save(address);
 
@@ -99,16 +99,16 @@ public class AddressService {
     public void delete(long id) {
         final Address address = get(id);
 
-        address.setModifiedAt(LocalDateTime.now());
-        address.setDeletedAt(LocalDateTime.now());
+        address.setModifiedAt(timestampHelper.now());
+        address.setDeletedAt(timestampHelper.now());
 
         addressRepository.save(address);
     }
 
     public void delete(Address address) {
 
-        address.setModifiedAt(LocalDateTime.now());
-        address.setDeletedAt(LocalDateTime.now());
+        address.setModifiedAt(timestampHelper.now());
+        address.setDeletedAt(timestampHelper.now());
 
         addressRepository.save(address);
     }

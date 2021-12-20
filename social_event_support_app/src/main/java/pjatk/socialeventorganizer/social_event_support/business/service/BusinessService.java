@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessMapper;
@@ -81,14 +80,14 @@ public class BusinessService {
     }
 
     public Business edit(long businessId, BusinessDto dto) {
-        final Business business = get(businessId);
+        final Business business = getWithAddress(businessId);
 
         business.setBusinessName(dto.getBusinessName());
         business.setFirstName(dto.getFirstName());
         business.setLastName(dto.getLastName());
         business.setPhoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()));
 
-        addressService.save(AddressMapper.fromDto(dto.getAddress()));
+        addressService.edit(business.getAddress().getId(), dto.getAddress());
 
         save(business);
 
@@ -103,6 +102,12 @@ public class BusinessService {
 
     public Business get(long id) {
         return businessRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
+    }
+
+
+    private Business getWithAddress(long id) {
+        return businessRepository.findByIdWithAddress(id)
                 .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
     }
 

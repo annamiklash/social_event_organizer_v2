@@ -220,4 +220,7 @@ public class OptionalServiceService {
                 .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
 
+    public ImmutableList<OptionalService> getByBusinessId(long id) {
+        return ImmutableList.copyOf(optionalServiceRepository.findAllByBusiness_Id(id));
+    }
 }

@@ -74,6 +74,20 @@ public class OptionalServiceController {
         return ResponseEntity.ok(OptionalServiceMapper.toDtoWithDetails(optionalService));
     }
 
+    @PreAuthorize("hasAnyAuthority('BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "business",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<OptionalServiceDto>> getByBusinessId(@RequestParam long id) {
+        ImmutableList<OptionalService> locations = optionalServiceService.getByBusinessId(id);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(locations.stream()
+                        .map(OptionalServiceMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.POST,
