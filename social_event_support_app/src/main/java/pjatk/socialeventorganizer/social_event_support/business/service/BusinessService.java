@@ -94,6 +94,11 @@ public class BusinessService {
         return business;
     }
 
+    private Business getWithAddress(long businessId) {
+        return businessRepository.getWithAddress(businessId)
+                .orElseThrow(() -> new NotFoundException("Address with id " + businessId + " DOES NOT EXIST"));
+    }
+
     public Business getWithDetail(long id) {
         return businessRepository.getWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));

@@ -41,4 +41,6 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
             "WHERE b.id = :id")
     Optional<Business> findByIdWithAddress(@Param("id") long id);
 
+    Optional<Business> getWithAddress(@Param("id") long id);
+
 }

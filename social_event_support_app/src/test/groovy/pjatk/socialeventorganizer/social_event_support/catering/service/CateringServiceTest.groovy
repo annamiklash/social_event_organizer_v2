@@ -39,7 +39,6 @@ class CateringServiceTest extends Specification implements UserCredentialsTrait,
 
     CuisineService cuisineService;
 
-
     def setup() {
         repository = Mock()
         cateringItemRepository = Mock()

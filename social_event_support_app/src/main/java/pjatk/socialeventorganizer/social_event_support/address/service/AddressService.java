@@ -15,7 +15,6 @@ import pjatk.socialeventorganizer.social_event_support.address.repository.Addres
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
-import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.stream.Collectors;
@@ -77,7 +76,7 @@ public class AddressService {
 
     public Address edit(long id, AddressDto dto) {
         if (!addressWithIdExists(id)) {
-            throw new IllegalArgumentException("Address with ID " + id + " does not exist");
+            throw new NotFoundException("Address with ID " + id + " does not exist");
         }
         final Address address = get(id);
 
@@ -110,14 +109,12 @@ public class AddressService {
         addressRepository.save(address);
     }
 
-
-    public void save(Address address) {
-        addressRepository.save(address);
-    }
-
     public Long count() {
         return addressRepository.count();
     }
 
+    private void save(Address address) {
+        addressRepository.save(address);
+    }
 
 }

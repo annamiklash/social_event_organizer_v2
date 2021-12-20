@@ -120,7 +120,8 @@ public class OptionalServiceController {
             params = {"id"},
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OptionalServiceDto> edit(@Valid @RequestBody OptionalServiceDto dto, @RequestParam long id) {
+    public ResponseEntity<OptionalServiceDto> edit(@Valid @RequestBody OptionalServiceDto dto,
+                                                   @RequestParam long id) {
 
         final OptionalService optionalService = optionalServiceService.edit(dto, id);
 

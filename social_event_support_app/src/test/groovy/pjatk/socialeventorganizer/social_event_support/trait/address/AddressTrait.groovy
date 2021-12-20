@@ -13,8 +13,16 @@ trait AddressTrait {
             .zipCode('01-157')
             .build()
 
-    AddressDto fakeAddressDto = AddressDto.builder()
+    Address fakeAddressWithId = Address.builder()
             .id(1)
+            .country('Poland')
+            .city('Warsaw')
+            .streetName('Piękna')
+            .streetNumber(1)
+            .zipCode('01-157')
+            .build()
+
+    AddressDto fakeAddressDto = AddressDto.builder()
             .country('Poland')
             .city('Warsaw')
             .streetName('Piękna')
