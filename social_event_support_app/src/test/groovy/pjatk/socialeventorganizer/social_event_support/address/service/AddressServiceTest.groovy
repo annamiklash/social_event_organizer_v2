@@ -201,9 +201,9 @@ class AddressServiceTest extends Specification implements PageTrait, AddressTrai
 
     def "edit positive scenario"() {
         given:
-        def id = 1;
+        def id = 1
         def dto = fakeAddressDto
-        def address = fakeAddress
+        def address = fakeAddressWithId
         def now = LocalDateTime.parse('2007-12-03T10:15:30')
         address.setModifiedAt(now)
 
@@ -211,7 +211,65 @@ class AddressServiceTest extends Specification implements PageTrait, AddressTrai
         addressService.edit(id, dto)
 
         then:
+        1 * addressRepository.findById(id) >> Optional.of(address)
         1 * timestampUtil.now() >> now
         1 * addressRepository.save(address)
+        1 * addressRepository.existsById(id) >> true
+    }
+
+    def "edit not found exception test scenario"() {
+        given:
+        def id = 999
+        def dto = fakeAddressDto
+
+        when:
+        addressService.edit(id, dto)
+
+        then:
+        1 * addressRepository.existsById(id) >> false
+        thrown(NotFoundException)
+    }
+
+    def "delete by id positive scenario"() {
+        given:
+        def id = 999
+        def address = fakeAddressWithId
+        def now = LocalDateTime.parse('2007-12-03T10:15:30')
+        address.setModifiedAt(now)
+        address.setDeletedAt(now)
+
+        when:
+        addressService.delete(id)
+
+        then:
+        2 * timestampUtil.now() >> now
+        1 * addressRepository.findById(id) >> Optional.of(address)
+        1 * addressRepository.save(address)
+    }
+
+    def "delete positive scenario"() {
+        given:
+        def address = fakeAddressWithId
+        def now = LocalDateTime.parse('2007-12-03T10:15:30')
+        address.setModifiedAt(now)
+        address.setDeletedAt(now)
+
+        when:
+        addressService.delete(address)
+
+        then:
+        2 * timestampUtil.now() >> now
+        1 * addressRepository.save(address)
+    }
+
+    def "count positive scenario"() {
+        given:
+        def total = 0
+
+        when:
+        addressService.count()
+
+        then:
+        1 * addressRepository.count() >> total
     }
 }
