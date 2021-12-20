@@ -60,8 +60,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join fetch l.availability la where l.id = :id")
     Optional<Location> getByIdWithDetail(@Param("id") Long id);
 
-    @Query("SELECT l FROM location AS l " +
-            "LEFT JOIN location_image li on li.location.id = l.id " +
+    @Query("SELECT distinct l FROM location AS l " +
+            "JOIN location_image li on li.location.id = l.id " +
             "WHERE l.name LIKE %:keyword% " +
             "OR  l.description LIKE %:keyword% " +
             "AND l.deletedAt IS NULL")
