@@ -13,7 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.address.repository.AddressRepository;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 public class AddressService {
 
     private final AddressRepository addressRepository;
-    private final TimestampUtil timestampUtil;
+
+    private final TimestampHelper timestampHelper;
 
     public ImmutableList<Address> list(CustomPage customPagination) {
         Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(), Sort.by(customPagination.getSortBy()).descending());
@@ -66,8 +67,8 @@ public class AddressService {
     public Address create(AddressDto dto) {
         final Address address = AddressMapper.fromDto(dto);
 
-        address.setCreatedAt(timestampUtil.now());
-        address.setModifiedAt(timestampUtil.now());
+        address.setCreatedAt(timestampHelper.now());
+        address.setModifiedAt(timestampHelper.now());
 
         save(address);
         return address;
@@ -77,17 +78,14 @@ public class AddressService {
         if (!addressWithIdExists(id)) {
             throw new IllegalArgumentException("Address with ID " + id + " does not exist");
         }
-
         final Address address = get(id);
 
-        //Cant change city or country -> delete and create new catering
-        if (!dto.getCity().equals(address.getCity()) || !dto.getCountry().equals(address.getCountry())) {
-            throw new IllegalArgumentException("In order to change city or country, you have to create new catering in a given city");
-        }
+        address.setCity(dto.getCity());
+        address.setCountry(dto.getCountry());
         address.setStreetName(dto.getStreetName());
         address.setStreetNumber(dto.getStreetNumber());
         address.setZipCode(dto.getZipCode());
-        address.setModifiedAt(timestampUtil.now());
+        address.setModifiedAt(timestampHelper.now());
 
         save(address);
 
@@ -97,16 +95,16 @@ public class AddressService {
     public void delete(long id) {
         final Address address = get(id);
 
-        address.setModifiedAt(timestampUtil.now());
-        address.setDeletedAt(timestampUtil.now());
+        address.setModifiedAt(timestampHelper.now());
+        address.setDeletedAt(timestampHelper.now());
 
         addressRepository.save(address);
     }
 
     public void delete(Address address) {
 
-        address.setModifiedAt(timestampUtil.now());
-        address.setDeletedAt(timestampUtil.now());
+        address.setModifiedAt(timestampHelper.now());
+        address.setDeletedAt(timestampHelper.now());
 
         addressRepository.save(address);
     }
