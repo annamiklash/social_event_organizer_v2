@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.Ap
 import pjatk.socialeventorganizer.social_event_support.appproblem.repository.AppProblemRepository;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.enums.AppProblemTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
