@@ -2,7 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.address.service
 
 import org.springframework.data.domain.Page
 import pjatk.socialeventorganizer.social_event_support.address.repository.AddressRepository
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampUtil
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
@@ -18,7 +18,7 @@ class AddressServiceTest extends Specification implements PageTrait, AddressTrai
 
     AddressRepository addressRepository
 
-    TimestampUtil timestampUtil
+    TimestampHelper timestampUtil
 
     def setup() {
         addressRepository = Mock()
@@ -182,7 +182,6 @@ class AddressServiceTest extends Specification implements PageTrait, AddressTrai
         1 * addressRepository.save(address)
     }
 
-
     def "create positive scenario"() {
         given:
         def dto = fakeAddressDto
@@ -196,6 +195,23 @@ class AddressServiceTest extends Specification implements PageTrait, AddressTrai
 
         then:
         2 * timestampUtil.now() >> now
+        1 * addressRepository.save(address)
+    }
+
+
+    def "edit positive scenario"() {
+        given:
+        def id = 1;
+        def dto = fakeAddressDto
+        def address = fakeAddress
+        def now = LocalDateTime.parse('2007-12-03T10:15:30')
+        address.setModifiedAt(now)
+
+        when:
+        addressService.edit(id, dto)
+
+        then:
+        1 * timestampUtil.now() >> now
         1 * addressRepository.save(address)
     }
 }
