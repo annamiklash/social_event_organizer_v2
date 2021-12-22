@@ -1,7 +1,10 @@
 package pjatk.socialeventorganizer.social_event_support.location.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
@@ -20,8 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Builder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "location")
@@ -101,15 +103,13 @@ public class Location implements Serializable {
     @JoinColumn(name = "id_location")
     private Set<LocationForEvent> locationForEvent = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, orphanRemoval = true)
     @JoinColumn(name = "id_location")
     private Set<LocationAvailability> availability;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, orphanRemoval = true)
     @JoinColumn(name = "id_location")
     private Set<LocationBusinessHours> locationBusinessHours;
-
-
 
     public void addAvailability(LocationAvailability locationAvailability) {
         availability.add(locationAvailability);
