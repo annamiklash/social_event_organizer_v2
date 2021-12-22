@@ -114,10 +114,6 @@ public class BusinessService {
     }
 
 
-    private Business getWithAddress(long id) {
-        return businessRepository.findByIdWithAddress(id)
-                .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
-    }
 
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long businessId) {
@@ -148,4 +144,9 @@ public class BusinessService {
         return business;
     }
 
+
+    private Business getWithAddress(long id) {
+        return businessRepository.findByIdWithAddress(id)
+                .orElseThrow(() -> new NotFoundException("Address with id " + id + " DOES NOT EXIST"));
+    }
 }
