@@ -1,9 +1,13 @@
 package pjatk.socialeventorganizer.social_event_support.trait.business
 
-
+import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
 import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
+import pjatk.socialeventorganizer.social_event_support.location.model.Location
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
+import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto
 
 trait BusinessTrait {
 
@@ -14,7 +18,13 @@ trait BusinessTrait {
             .businessName('Name')
             .verificationStatus('VERIFIED')
             .address(buildAddress())
-            .build();
+            .phoneNumber("123123123")
+            .user(UserDto.builder()
+                    .id(1)
+                    .type('B' as char)
+                    .email('test@email.com')
+                    .build())
+            .build()
 
     BusinessDto fakeNotVerifiedBusinessDto = BusinessDto.builder()
             .id(1)
@@ -31,6 +41,43 @@ trait BusinessTrait {
             .lastName('Name')
             .businessName('Name')
             .verificationStatus('VERIFIED')
+            .phoneNumber(new BigInteger("123123123"))
+            .services(Set.of(
+                    OptionalService.builder()
+                            .id(1)
+                            .type("HOST")
+                            .alias("ALIAS")
+                            .firstName("GERALT")
+                            .lastName("RIVIJSKI")
+                            .description("WIEDZMIN")
+                            .serviceCost(new BigDecimal("123"))
+                            .email("Test@test.com")
+                            .build()
+            ))
+            .caterings(Set.of(
+                    Catering.builder()
+                            .id(1)
+                            .name('Name')
+                            .email('catering@email.com')
+                            .phoneNumber(new BigInteger('123456789'))
+                            .description('description')
+                            .build()
+            ))
+            .locations(Set.of(
+                    Location.builder()
+                            .id(1)
+                            .name('Name')
+                            .email('email@email.com')
+                            .build()
+            ))
+            .address(Address.builder()
+                    .id(1)
+                    .country('Poland')
+                    .city('Warsaw')
+                    .streetName('Piękna')
+                    .streetNumber(1)
+                    .zipCode('01-157')
+                    .build())
             .build()
 
     Business fakeNotVerifiedBusiness = Business.builder()

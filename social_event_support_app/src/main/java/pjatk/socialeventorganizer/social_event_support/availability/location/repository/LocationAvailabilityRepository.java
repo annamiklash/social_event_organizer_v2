@@ -13,14 +13,14 @@ import java.util.Optional;
 public interface LocationAvailabilityRepository extends JpaRepository<LocationAvailability, Long> {
 
     @Query(value = "select distinct la.* from location_availability la " +
-            "where la.id_location=:id " +
+            "where la.id_location=:locationId " +
             "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
-    List<LocationAvailability> findAvailabilitiesByLocationIdAndDate(@Param("id") Long id, @Param("date") String date);
+    List<LocationAvailability> find(@Param("locationId") Long locationId, @Param("date") String date);
 
     @Query(value = "select distinct la.* from location_availability la " +
-            "where la.id_location=:id AND la.status = 'AVAILABLE' " +
+            "where la.id_location=:locationId AND la.status = 'AVAILABLE' " +
             "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
-    List<LocationAvailability> findByDate(@Param("id") Long id, @Param("date") String date);
+    List<LocationAvailability> findWithStatusAvailable(@Param("locationId") Long locationId, @Param("date") String date);
 
     @Query(value = "select distinct la.* from location_availability la " +
             "where la.id_location=:id AND la.status = 'AVAILABLE' " +

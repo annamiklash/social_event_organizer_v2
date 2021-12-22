@@ -1,6 +1,5 @@
 package pjatk.socialeventorganizer.social_event_support.availability.location.service;
 
-import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,8 +35,11 @@ public class LocationAvailabilityService {
 
     @Transactional(rollbackOn = Exception.class)
     public List<LocationAvailability> update(List<AvailabilityDto> dtos, long locationId, boolean deleteAll) {
-        final Location location = locationRepository.findById(locationId).orElseThrow(() -> new NotFoundException("Location does not exist"));
-        final Map<String, List<AvailabilityDto>> byDate = dtos.stream().collect(Collectors.groupingBy(AvailabilityDto::getDate));
+        final Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new NotFoundException("Location does not exist"));
+
+        final Map<String, List<AvailabilityDto>> byDate = dtos.stream()
+                .collect(Collectors.groupingBy(AvailabilityDto::getDate));
 
         final List<AvailabilityDto> availabilityDtos = byDate.values().stream()
                 .flatMap(List::stream)
@@ -58,14 +60,13 @@ public class LocationAvailabilityService {
     }
 
     public List<LocationAvailability> findAllByLocationIdAndDate(long locId, String date) {
-        return locationAvailabilityRepository.findAvailabilitiesByLocationIdAndDate(locId, date);
+        return locationAvailabilityRepository.find(locId, date);
     }
 
 
-    public void delete(List<AvailabilityDto> dtos, long locationId) {
-        for (AvailabilityDto dto : dtos) {
-            locationAvailabilityRepository.findAvailabilitiesByLocationIdAndDate(locationId, dto.getDate()).stream()
-                    .filter(cateringAvailability -> cateringAvailability.getStatus().equals(AVAILABLE.name()))
+    public void delete(List<AvailabilityDto> availabilityDtos, long locationId) {
+        for (AvailabilityDto availabilityDto : availabilityDtos) {
+            locationAvailabilityRepository.findWithStatusAvailable(locationId, availabilityDto.getDate())
                     .forEach(locationAvailabilityRepository::delete);
         }
     }
@@ -85,47 +86,56 @@ public class LocationAvailabilityService {
 
     }
 
-    private LocationAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, Location location, boolean deleteAll) {
-        final List<LocationAvailability> available = ImmutableList.copyOf(findAllByLocationIdAndDate(location.getId(), dto.getDate()).stream()
-                .filter(locationAvailability -> locationAvailability.getStatus().equals("AVAILABLE"))
-                .collect(Collectors.toList()));
+    private LocationAvailability resolveAvailabilitiesForDay(AvailabilityDto availabilityDto, Location location, boolean deleteAll) {
+        final List<LocationAvailability> locationAvailabilityWithStatusAvailableList =
+                findAllByLocationIdAndDate(location.getId(), availabilityDto.getDate())
+                .stream()
+                .filter(locationAvailability -> "AVAILABLE".equals(locationAvailability.getStatus()))
+                .collect(Collectors.toList());
 
         if (deleteAll) {
-            for (LocationAvailability availability : available) {
-                locationAvailabilityRepository.delete(availability);
+            for (LocationAvailability locationAvailability : locationAvailabilityWithStatusAvailableList) {
+                locationAvailabilityRepository.delete(locationAvailability);
                 locationAvailabilityRepository.flush();
             }
         }
 
-        if (dto.getId() != null && dto.getStatus().equals("NOT_AVAILABLE")) {
-            dto.setStatus("AVAILABLE");
+        if (availabilityDto.getId() != null && "NOT_AVAILABLE".equals(availabilityDto.getStatus())) {
+            availabilityDto.setStatus("AVAILABLE");
         }
 
-        final List<LocationAvailability> notAvailable = findAllByLocationIdAndDate(location.getId(), dto.getDate()).stream()
+        final List<LocationAvailability> notAvailable =
+                findAllByLocationIdAndDate(location.getId(), availabilityDto.getDate())
+                .stream()
                 .filter(locationAvailability -> locationAvailability.getStatus().equals("NOT_AVAILABLE"))
                 .collect(Collectors.toList());
 
-        if (available.size() == 0 && notAvailable.size() == 0) {
-            return AvailabilityMapper.fromDtoToLocationAvailability(dto);
+        if (locationAvailabilityWithStatusAvailableList.size() == 0 && notAvailable.size() == 0) {
+            return AvailabilityMapper.fromDtoToLocationAvailability(availabilityDto);
         }
 
-        if (available.size() > 0 || isToCancel(notAvailable, dto)) {
-            final Optional<LocationAvailability> upperBordering = findByLocationIdAndTimeTo(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()), location.getId()); //upper
-            final Optional<LocationAvailability> lowerBordering = findByLocationIdAndTimeFrom(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()), location.getId());//lower
+        if (locationAvailabilityWithStatusAvailableList.size() > 0 || isToCancel(notAvailable, availabilityDto)) {
+            final String timeFrom = DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeFrom());
+            final Optional<LocationAvailability> upperBordering =
+                    locationAvailabilityRepository.findByLocationIdAndTimeTo(location.getId(), timeFrom); //upper
+
+            final String timeTo = DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeTo());
+            final Optional<LocationAvailability> lowerBordering =
+                    locationAvailabilityRepository.findByLocationIdAndTimeFrom(location.getId(), timeTo);//lower
 
             if (upperBordering.isEmpty() && lowerBordering.isEmpty()) { // -> save as it is
-                return AvailabilityMapper.fromDtoToLocationAvailability(dto);
+                return AvailabilityMapper.fromDtoToLocationAvailability(availabilityDto);
             }
 
-            if (upperBordering.isPresent() && lowerBordering.isEmpty()) { // -> extend upper (upper.setTimeTo(dto.getTimeTo))
+            if (upperBordering.isPresent() && lowerBordering.isEmpty()) { // -> extend upper (upper.setTimeTo(availabilityDto.getTimeTo))
                 final LocationAvailability availability = upperBordering.get();
-                availability.setTimeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo())));
+                availability.setTimeTo(DateTimeUtil.fromStringToFormattedDateTime(timeTo));
                 return availability;
             }
 
-            if (upperBordering.isEmpty()) { // -> extend lower (lower.setTimeFrom(dto.getTimeFrom))
+            if (upperBordering.isEmpty()) { // -> extend lower (lower.setTimeFrom(availabilityDto.getTimeFrom))
                 final LocationAvailability availability = lowerBordering.get();
-                availability.setTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())));
+                availability.setTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(timeFrom));
                 return availability;
             } else {                        // -> change one of them, delete the other,
                 final LocationAvailability lower = upperBordering.get();
@@ -136,10 +146,10 @@ public class LocationAvailabilityService {
                 return upper;
             }
         } else {
-            if (isNewWithinNotAvailable(dto, notAvailable)) {
+            if (isNewWithinNotAvailable(availabilityDto, notAvailable)) {
                 throw new IllegalArgumentException("Time from and time to for availability is withing reserved time frame");
             } else {
-                return AvailabilityMapper.fromDtoToLocationAvailability(dto);
+                return AvailabilityMapper.fromDtoToLocationAvailability(availabilityDto);
             }
         }
     }
@@ -167,14 +177,6 @@ public class LocationAvailabilityService {
         }
         return false;
 
-    }
-
-    private Optional<LocationAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId) {
-        return locationAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
-    }
-
-    private Optional<LocationAvailability> findByLocationIdAndTimeTo(String timeFrom, long locationId) {
-        return locationAvailabilityRepository.findByLocationIdAndTimeTo(locationId, timeFrom);
     }
 
     private void save(LocationAvailability locationAvailability) {
