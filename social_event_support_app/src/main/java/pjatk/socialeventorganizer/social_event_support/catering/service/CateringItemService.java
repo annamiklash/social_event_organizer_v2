@@ -1,13 +1,8 @@
 package pjatk.socialeventorganizer.social_event_support.catering.service;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringItemMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
@@ -15,33 +10,22 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.CateringIt
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringItemDto;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
-import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class CateringItemService {
 
-    CateringItemRepository cateringItemRepository;
+   private final CateringItemRepository cateringItemRepository;
 
-    CateringService cateringService;
+   private final CateringService cateringService;
 
-    public ImmutableList<CateringItem> list(CustomPage customPagination, String keyword) {
-        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
-
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSortBy()).descending());
-
-        final Page<CateringItem> page = cateringItemRepository.findAllWithKeyword(paging, keyword);
-
-        return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
-    }
-
+   private final TimestampHelper timestampHelper;
 
     public ImmutableList<CateringItem> listAllByCateringId(long cateringId) {
         final List<CateringItem> cateringItemList = cateringItemRepository.findAllByCatering_Id(cateringId);
@@ -58,17 +42,15 @@ public class CateringItemService {
 
     }
 
-
     public CateringItem create(CateringItemDto dto, long cateringId) {
         final Catering catering = cateringService.get(cateringId);
 
         final CateringItem cateringItem = CateringItemMapper.fromDto(dto);
 
         cateringItem.setCatering(catering);
-        cateringItem.setCreatedAt(LocalDateTime.now());
-        cateringItem.setModifiedAt(LocalDateTime.now());
-
-        catering.setModifiedAt(LocalDateTime.now());
+        cateringItem.setCreatedAt(timestampHelper.now());
+        cateringItem.setModifiedAt(timestampHelper.now());
+        catering.setModifiedAt(timestampHelper.now());
 
         log.info("TRYING TO SAVE " + cateringItem);
 
@@ -88,7 +70,7 @@ public class CateringItemService {
         cateringItem.setVegetarian(dto.isVegetarian());
         cateringItem.setGlutenFree(dto.isGlutenFree());
         cateringItem.setServingPrice(Converter.convertPriceString(dto.getServingPrice()));
-        cateringItem.setModifiedAt(LocalDateTime.now());
+        cateringItem.setModifiedAt(timestampHelper.now());
 
         cateringItemRepository.save(cateringItem);
 

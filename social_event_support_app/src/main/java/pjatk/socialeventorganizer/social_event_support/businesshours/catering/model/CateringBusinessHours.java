@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.businesshours.catering.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.businesshours.BusinessHours;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @Data
+@ToString(callSuper = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity(name = "catering_business_hours")

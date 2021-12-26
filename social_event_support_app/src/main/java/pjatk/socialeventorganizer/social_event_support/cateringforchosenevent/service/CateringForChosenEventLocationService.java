@@ -11,8 +11,9 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringForLocationRepository;
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
+import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
-import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
@@ -36,22 +37,22 @@ import static pjatk.socialeventorganizer.social_event_support.enums.Confirmation
 public class CateringForChosenEventLocationService {
 
     private final CateringForLocationRepository cateringForLocationRepository;
-
     private final OrganizedEventService organizedEventService;
-
     private final CustomerService customerService;
-
     private final CateringService cateringService;
+    private final TimestampHelper timestampHelper;
 
     public CateringForChosenEventLocation confirmReservation(long cateringId, long eventId) {
-        final CateringForChosenEventLocation catering = findByCateringIdAndEventId(cateringId, eventId);
-
+        final CateringForChosenEventLocation catering = 
+        cateringForLocationRepository.findByCateringIdAndEventId(cateringId, eventId)
+                .orElseThrow(() -> new NotFoundException("No catering for event " + eventId));
+        
         catering.setConfirmationStatus(CONFIRMED.name());
-        save(catering);
+        cateringForLocationRepository.save(catering);
 
         final OrganizedEvent organizedEvent = catering.getEventLocation().getEvent();
 
-        organizedEvent.setModifiedAt(LocalDateTime.now());
+        organizedEvent.setModifiedAt(timestampHelper.now());
         organizedEventService.save(organizedEvent);
 
         return catering;
@@ -59,7 +60,9 @@ public class CateringForChosenEventLocationService {
 
     @Transactional(rollbackOn = Exception.class)
     public CateringForChosenEventLocation create(long customerId, long eventId, long cateringId, CateringForChosenEventLocationDto dto) {
-        final Customer customer = customerService.get(customerId);
+        if (!customerService.customerExists(customerId)) {
+            throw new NotFoundException("Customer with id " + customerId + " DOES NOT EXIST");
+        }
         final OrganizedEvent organizedEvent = organizedEventService.getWithLocation(eventId);
         if (organizedEvent.getLocationForEvent() == null) {
             throw new LocationNotBookedException("You cannot book catering prior to booking location");
@@ -87,7 +90,7 @@ public class CateringForChosenEventLocationService {
         final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
         locationForEvent.setEvent(organizedEvent);
 
-        save(cateringForLocation);
+        cateringForLocationRepository.save(cateringForLocation);
 
         return cateringForLocation;
     }
@@ -105,10 +108,10 @@ public class CateringForChosenEventLocationService {
             throw new ActionNotAllowedException("Cannot cancel reservation");
         }
         cateringForLocation.setConfirmationStatus(CANCELLATION_PENDING.name());
-        event.setModifiedAt(LocalDateTime.now());
+        event.setModifiedAt(timestampHelper.now());
 
         organizedEventService.save(event);
-        save(cateringForLocation);
+        cateringForLocationRepository.save(cateringForLocation);
 
         return cateringForLocation;
     }
@@ -116,46 +119,22 @@ public class CateringForChosenEventLocationService {
     @Transactional(rollbackOn = Exception.class)
     public CateringForChosenEventLocation setAsCancelled(long locationForEventId) {
         final CateringForChosenEventLocation cateringForChosenEventLocation = getWithCateringAndEvent(locationForEventId);
-        if (!cateringForChosenEventLocation.getConfirmationStatus().equals(CANCELLATION_PENDING.name())) {
+        if (!CANCELLATION_PENDING.name().equals(cateringForChosenEventLocation.getConfirmationStatus())) {
             throw new ActionNotAllowedException("Cannot confirm cancellation");
         }
         cateringForChosenEventLocation.setConfirmationStatus(CANCELLED.name());
 
         final OrganizedEvent event = cateringForChosenEventLocation.getEventLocation().getEvent();
 
-        event.setModifiedAt(LocalDateTime.now());
+        event.setModifiedAt(timestampHelper.now());
         organizedEventService.save(event);
 
         return cateringForChosenEventLocation;
     }
 
-    private boolean dateValid(LocalTime startTime, LocalTime endTime, String bookingTime) {
-        return DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isBefore(endTime)
-                && DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isAfter(startTime);
-    }
 
     public List<CateringForChosenEventLocation> listAllByStatus(long cateringId, String status) {
         return cateringForLocationRepository.findAllByCateringIdAndStatus(cateringId, status);
-    }
-
-    private CateringForChosenEventLocation findByCateringIdAndEventId(long cateringId, long eventId) {
-        return cateringForLocationRepository.findByCateringIdAndEventId(cateringId, eventId)
-                .orElseThrow(() -> new NotFoundException("No catering for event " + eventId));
-    }
-
-    private void save(CateringForChosenEventLocation catering) {
-        cateringForLocationRepository.save(catering);
-    }
-
-    private boolean isOpen(long cateringId, String day) {
-        final Catering catering = cateringService.getWithBusinessHours(cateringId);
-        return catering.getCateringBusinessHours().stream()
-                .anyMatch(cateringBusinessHours -> cateringBusinessHours.getDay().equals(DayEnum.valueOfLabel(day).name()));
-    }
-
-    public CateringForChosenEventLocation getWithCateringAndEvent(long cateringForEventId) {
-        return cateringForLocationRepository.getWithCateringAndEvent(cateringForEventId)
-                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + cateringForEventId));
     }
 
     public CateringForChosenEventLocation get(long cateringId) {
@@ -163,7 +142,24 @@ public class CateringForChosenEventLocationService {
                 .orElseThrow(() -> new NotFoundException("No booked catering with id " + cateringId + " was found"));
     }
 
+    private boolean isOpen(long cateringId, String day) {
+        final String dayName = DayEnum.valueOfLabel(day).name();
+        final Catering catering = cateringService.getWithBusinessHours(cateringId);
+        return CollectionUtil.emptyListIfNull(catering.getCateringBusinessHours()).stream()
+                .anyMatch(cateringBusinessHours -> dayName.equals(cateringBusinessHours.getDay()));
+    }
+
+    private CateringForChosenEventLocation getWithCateringAndEvent(long cateringForEventId) {
+        return cateringForLocationRepository.getWithCateringAndEvent(cateringForEventId)
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + cateringForEventId));
+    }
+
     private boolean isAllowedToCancel(LocalDateTime dateTime) {
-        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(LocalDateTime.now());
+        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(timestampHelper.now());
+    }
+
+    private boolean dateValid(LocalTime startTime, LocalTime endTime, String bookingTime) {
+        return DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isBefore(endTime)
+                && DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isAfter(startTime);
     }
 }

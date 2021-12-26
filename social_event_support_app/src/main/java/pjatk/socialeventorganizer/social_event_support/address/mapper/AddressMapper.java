@@ -24,6 +24,7 @@ public class AddressMapper {
 
     public static Address fromDto(AddressDto addressDto) {
         return Address.builder()
+                .id(addressDto.getId())
                 .country(addressDto.getCountry())
                 .city(addressDto.getCity())
                 .streetName(addressDto.getStreetName())

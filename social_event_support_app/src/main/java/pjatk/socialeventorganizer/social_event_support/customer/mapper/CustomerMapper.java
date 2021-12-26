@@ -21,7 +21,7 @@ public class CustomerMapper {
                 .lastName(customer.getLastName())
                 .phoneNumber(String.valueOf(customer.getPhoneNumber()))
                 .birthdate(customer.getBirthdate().toString())
-//                .user(UserMapper.toDto(customer.getUser()))
+                .user(UserMapper.toDto(customer.getUser()))
                 .build();
     }
 

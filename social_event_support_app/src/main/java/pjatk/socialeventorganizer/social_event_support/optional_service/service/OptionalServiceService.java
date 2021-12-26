@@ -14,7 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessService;
+import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
@@ -53,7 +53,7 @@ public class OptionalServiceService {
 
     private final SecurityService securityService;
 
-    private final OptionalServiceBusinessService optionalServiceBusinessService;
+    private final OptionalServiceBusinessHoursService optionalServiceBusinessService;
 
     private final TranslationLanguageService translationLanguageService;
 
