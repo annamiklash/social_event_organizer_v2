@@ -216,6 +216,12 @@ public class CateringService {
         saveCatering(catering);
     }
 
+
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return cateringRepository.countAll(keyword);
+    }
+
     private void addCateringToLocationsWithSameCity(Catering savedCatering) {
         final String city = savedCatering.getCateringAddress().getCity();
         final ImmutableList<Location> locations = locationService.findByCityWithId(city);
@@ -337,8 +343,4 @@ public class CateringService {
         }
     }
 
-    public Long count(String keyword) {
-        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
-        return cateringRepository.countAll(keyword);
-    }
 }

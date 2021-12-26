@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Optional;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
@@ -74,7 +73,7 @@ public class OptionalServiceAvailabilityService {
                 .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
     }
 
-    public OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
+    private OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
         final List<OptionalServiceAvailability> available = findAllByServiceIdAndDate(service.getId(), dto.getDate()).stream()
                 .filter(serviceAvailability -> "AVAILABLE".equals(serviceAvailability.getStatus()))
                 .collect(Collectors.toList());
@@ -124,16 +123,6 @@ public class OptionalServiceAvailabilityService {
             }
         }
     }
-
-    public void updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
-        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
-
-        final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, service, false);
-        availability.setStatus(AVAILABLE.name());
-        save(availability);
-
-    }
-
 
     private boolean isNewWithinNotAvailable(AvailabilityDto dto, List<OptionalServiceAvailability> notAvailable) {
         final LocalDateTime from = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()));
