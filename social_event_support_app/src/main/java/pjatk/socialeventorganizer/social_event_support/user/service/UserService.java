@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
-import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
 import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
@@ -75,14 +74,6 @@ public class UserService {
     }
 
     public void save(User user) {
-
-        userRepository.save(user);
-    }
-
-    public void activate(String email) {
-        final User user = getUserByEmail(email);
-        user.setActive(true);
-        user.setModifiedAt(LocalDateTime.now());
 
         userRepository.save(user);
     }

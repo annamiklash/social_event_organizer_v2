@@ -17,7 +17,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.Op
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.OptionalServiceReviewService;
+import pjatk.socialeventorganizer.social_event_support.reviews.service.service.OptionalServiceReviewService;
 import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;

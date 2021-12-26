@@ -52,7 +52,7 @@ public class CateringImageService {
             cateringImage.setCatering(catering);
             cateringImage.setImage(data);
 
-            save(cateringImage);
+            cateringImageRepository.save(cateringImage);
             result.add(cateringImage);
         }
 
@@ -75,7 +75,7 @@ public class CateringImageService {
         image.setCatering(catering);
         image.setImage(data);
 
-        save(image);
+        cateringImageRepository.save(image);
 
         return image;
     }
@@ -87,12 +87,12 @@ public class CateringImageService {
             final CateringImage cateringImage = optionalImage.get();
             cateringImage.setMain(false);
 
-            save(cateringImage);
+            cateringImageRepository.save(cateringImage);
         }
         final CateringImage newMain = get(newId);
         newMain.setMain(true);
 
-        save(newMain);
+        cateringImageRepository.save(newMain);
         cateringImageRepository.flush();
     }
 
@@ -122,7 +122,7 @@ public class CateringImageService {
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
                 cateringImage.setMain(true);
-                save(cateringImage);
+                cateringImageRepository.save(cateringImage);
             }
         }
         cateringImageRepository.delete(imageToDelete);
@@ -130,10 +130,6 @@ public class CateringImageService {
 
     public Optional<CateringImage> getMain(long serviceId) {
         return cateringImageRepository.getMain(serviceId);
-    }
-
-    private void save(CateringImage image) {
-        cateringImageRepository.save(image);
     }
 
     private CateringImage get(long imageId) {

@@ -250,7 +250,7 @@ public class CateringService {
         for (Location location : locations) {
             log.info("CATERING ID " + savedCatering.getId() + ", LOCATION ID " + location.getId());
             location.addCatering(savedCatering);
-            locationService.saveLocation(location);
+            locationService.save(location);
         }
     }
 
