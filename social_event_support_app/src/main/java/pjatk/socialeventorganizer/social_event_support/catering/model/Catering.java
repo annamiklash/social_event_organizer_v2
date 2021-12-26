@@ -20,6 +20,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "catering")

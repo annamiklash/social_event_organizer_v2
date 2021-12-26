@@ -37,13 +37,17 @@ public class CustomerController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CustomerDto>> findAll(@RequestParam(required = false) String keyword,
-                                                              @RequestParam(defaultValue = "0") Integer firstResult,
-                                                              @RequestParam(defaultValue = "50") Integer maxResult,
-                                                              @RequestParam(defaultValue = "id") String sort,
-                                                              @RequestParam(defaultValue = "desc") String order) {
+                                                              @RequestParam(defaultValue = "0") Integer pageNo,
+                                                              @RequestParam(defaultValue = "5") Integer pageSize,
+                                                              @RequestParam(defaultValue = "id") String sortBy) {
         log.info("GET ALL CUSTOMERS");
-        final ImmutableList<Customer> list = customerService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build(), keyword);
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy).build();
+        final ImmutableList<Customer> list = customerService.list(customPage, keyword);
 
+        // TODO: add count like in pjatk.socialeventorganizer.social_event_support.location.controller.LocationController.list
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(CustomerMapper::toDto)

@@ -25,28 +25,6 @@ public class CateringItemController {
 
     private final CateringItemService cateringItemService;
 
-//    @PreAuthorize("hasAuthority('ADMIN')")
-//    @RequestMapping(
-//            path = "new",
-//            method = RequestMethod.GET,
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<TableDto<CateringItemDto>> findAll(@RequestParam(required = false) String keyword,
-//                                                             @RequestParam(defaultValue = "0") Integer pageNo,
-//                                                             @RequestParam(defaultValue = "5") Integer pageSize,
-//                                                             @RequestParam(defaultValue = "id") String sortBy) {
-//        final ImmutableList<CateringItem> list = cateringItemService.list(
-//                CustomPage.builder()
-//                        .pageNo(pageNo)
-//                        .pageSize(pageSize)
-//                        .sortBy(sortBy).build(), keyword);
-//
-//        final ImmutableList<CateringItemDto> result = ImmutableList.copyOf(list.stream()
-//                .map(CateringItemMapper::toDto)
-//                .collect(Collectors.toList()));
-//
-//        return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).build(), result));
-//    }
-
     @RequestMapping(
             path = "allowed",
             method = RequestMethod.GET,

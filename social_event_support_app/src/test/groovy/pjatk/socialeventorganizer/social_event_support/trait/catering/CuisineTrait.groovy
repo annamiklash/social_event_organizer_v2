@@ -1,15 +1,16 @@
 package pjatk.socialeventorganizer.social_event_support.trait.catering
 
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto
 
 trait CuisineTrait {
 
-    Cuisine faceCuisine = Cuisine.builder()
+    Cuisine fakeCuisine = Cuisine.builder()
             .id(1)
             .name('Greek')
             .build();
 
-    Cuisine faceCuisineDto = CuisineDto.builder()
+    CuisineDto faceCuisineDto = CuisineDto.builder()
             .name('Greek')
             .build();
 }

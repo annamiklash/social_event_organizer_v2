@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LocationBusinessHoursService {
 
-    private LocationBusinessHoursRepository locationBusinessHoursRepository;
+    private final LocationBusinessHoursRepository locationBusinessHoursRepository;
 
     public List<LocationBusinessHours> create(List<BusinessHoursDto> dtos) {
 
@@ -27,7 +27,7 @@ public class LocationBusinessHoursService {
 
         return dtos.stream()
                 .map(BusinessHoursMapper::fromDtoToLocation)
-                .peek(this::save)
+                .peek(locationBusinessHoursRepository::save)
                 .collect(Collectors.toList());
     }
 
@@ -36,24 +36,20 @@ public class LocationBusinessHoursService {
     }
 
     public LocationBusinessHours edit(long id, BusinessHoursDto dto) {
-        final LocationBusinessHours businessHours = get(id);
+        final LocationBusinessHours locationBusinessHours = get(id);
 
-        businessHours.setDay(dto.getDay().name());
-        businessHours.setDay(dto.getDay().name());
-        businessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
+        locationBusinessHours.setDay(dto.getDay().name());
+        locationBusinessHours.setDay(dto.getDay().name());
+        locationBusinessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
 
-        save(businessHours);
-        return businessHours;
+        locationBusinessHoursRepository.save(locationBusinessHours);
+        return locationBusinessHours;
 
     }
 
-    public LocationBusinessHours get(long id) {
+    private LocationBusinessHours get(long id) {
         return locationBusinessHoursRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("No business hours with id " + id));
-    }
-
-    private void save(LocationBusinessHours locationBusinessHours) {
-        locationBusinessHoursRepository.save(locationBusinessHours);
     }
 
 }

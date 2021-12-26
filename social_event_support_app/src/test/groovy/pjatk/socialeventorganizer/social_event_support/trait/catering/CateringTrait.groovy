@@ -1,5 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.trait.catering
 
+
+import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
 import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto
@@ -11,7 +13,7 @@ trait CateringTrait {
 
     CateringDto fakeCateringDtoOffersOutsideCatering = CateringDto.builder()
             .name('Name')
-            .email('catering@email.com')
+            .email('email@email.com')
             .phoneNumber('123456789')
             .serviceCost('100.20')
             .description('description')
@@ -23,9 +25,24 @@ trait CateringTrait {
 
     Catering fakeCateringOffersOutsideCatering = Catering.builder()
             .name('Name')
-            .email('catering@email.com')
+            .email('email@email.com')
             .phoneNumber(new BigInteger('123456789'))
             .description('description')
+            .build()
+
+    Catering fakeCatering = Catering.builder()
+            .name('Name')
+            .email('email@email.com')
+            .phoneNumber(new BigInteger('123456789'))
+            .description('description')
+            .cateringAddress(Address.builder()
+                    .id(1L)
+                    .country('Poland')
+                    .city('Warsaw')
+                    .streetName('Piękna')
+                    .streetNumber(1)
+                    .zipCode('01-157')
+                    .build())
             .build()
 
     def buildAddressDto() {

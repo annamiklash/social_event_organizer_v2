@@ -19,9 +19,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundExcept
 public class CateringOrderChoiceService {
 
     private final CateringOrderChoiceRepository cateringOrderChoiceRepository;
-
     private final CateringForChosenEventLocationService cateringForChosenEventLocationService;
-
     private final CateringItemService cateringItemService;
 
 
@@ -37,35 +35,24 @@ public class CateringOrderChoiceService {
         orderChoice.setEventLocationCatering(catering);
         orderChoice.setItem(cateringItem);
 
-        save(orderChoice);
+        cateringOrderChoiceRepository.save(orderChoice);
 
         return orderChoice;
     }
 
     public CateringOrderChoice edit(CateringOrderChoiceDto dto, long orderChoiceId) {
-        final CateringOrderChoice orderChoice = getWithDetail(orderChoiceId);
+        final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findWithDetail(orderChoiceId)
+                .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));
         orderChoice.setAmount(dto.getAmount());
 
-        save(orderChoice);
+        cateringOrderChoiceRepository.save(orderChoice);
         return orderChoice;
     }
 
-    public CateringOrderChoice getWithDetail(long orderChoiceId) {
-        return cateringOrderChoiceRepository.findWithDetail(orderChoiceId)
-                .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));
-    }
-
-    public void save(CateringOrderChoice cateringOrderChoice) {
-        cateringOrderChoiceRepository.save(cateringOrderChoice);
-    }
-
-    public CateringOrderChoice get(long orderChoiceId) {
-        return cateringOrderChoiceRepository.findById(orderChoiceId)
-                .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));
-    }
-
     public void delete(long id) {
-        final CateringOrderChoice orderChoice = get(id);
+        final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No caatering order with id " + id));
+
         cateringOrderChoiceRepository.delete(orderChoice);
     }
 }

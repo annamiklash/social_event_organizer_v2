@@ -148,12 +148,16 @@ class AppProblemServiceTest extends Specification implements PageTrait, AppProbl
     def "create negative scenario"() {
         given:
         def id = 1
+        def user = fakeUser
         def dto = fakeAppProblemDto
+        dto.setConcern("NOT EXISTING CONCERN")
 
         when:
         appProblemService.create(dto, id)
 
         then:
+        1 * userService.get(id) >> user
+
         thrown(NotFoundException)
     }
 

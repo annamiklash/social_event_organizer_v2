@@ -13,12 +13,12 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 
+@Slf4j
 @Service
 @AllArgsConstructor
-@Slf4j
 public class CustomerAvatarService {
 
-    private CustomerAvatarRepository customerAvatarRepository;
+    private final CustomerAvatarRepository customerAvatarRepository;
 
     @Transactional(rollbackOn = Exception.class)
     public CustomerAvatar create(CustomerAvatarDto dto) {
@@ -32,10 +32,10 @@ public class CustomerAvatarService {
 
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
-            fileInputStream.read(bFile);
+            final int ignored = fileInputStream.read(bFile);
             fileInputStream.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         final CustomerAvatar customerAvatar = CustomerAvatarMapper.fromDto(dto);
@@ -45,7 +45,7 @@ public class CustomerAvatarService {
         return customerAvatar;
     }
 
-    public void delete (CustomerAvatar customerAvatar) {
+    public void delete(CustomerAvatar customerAvatar) {
         customerAvatarRepository.delete(customerAvatar);
     }
 }

@@ -25,7 +25,8 @@ import pjatk.socialeventorganizer.social_event_support.catering.repository.Cater
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto;
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService;
@@ -49,20 +50,14 @@ import java.util.stream.Collectors;
 public class CateringService {
 
     private final CateringRepository cateringRepository;
-
     private final CateringItemRepository cateringItemRepository;
-
     private final LocationService locationService;
-
     private final AddressService addressService;
-
     private final SecurityService securityService;
-
     private final BusinessRepository businessRepository;
-
     private final CateringBusinessHoursService cateringBusinessHoursService;
-
     private final CuisineService cuisineService;
+    private final TimestampHelper timestampHelper;
 
     public ImmutableList<Catering> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -131,7 +126,7 @@ public class CateringService {
         final Business business = businessRepository.findById(userCredentials.getUserId())
                 .orElseThrow(() -> new NotFoundException("Business with id " + userCredentials.getUserId() + " DOES NOT EXIST"));
 
-        if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
+        if (!BusinessVerificationStatusEnum.VERIFIED.name().equals(business.getVerificationStatus())) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
         if (locationId == null) {
@@ -146,25 +141,6 @@ public class CateringService {
                 .orElseThrow(() -> new NotFoundException("Not catering with id " + cateringId));
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public void addCateringToGivenLocation(Catering catering, long locationId) {
-
-        final Location location = locationService.get(locationId);
-
-        catering.addLocation(location);
-        saveCatering(catering);
-    }
-
-    public void addCateringToLocationsWithSameCity(Catering savedCatering) {
-        final String city = savedCatering.getCateringAddress().getCity();
-        final ImmutableList<Location> locations = locationService.findByCityWithId(city);
-        for (Location location : locations) {
-            log.info("CATERING ID " + savedCatering.getId() + ", LOCATION ID " + location.getId());
-            location.addCatering(savedCatering);
-            locationService.saveLocation(location);
-        }
-    }
-
     public Catering edit(long cateringId, CateringDto dto) {
         final Catering catering = get(cateringId);
 
@@ -173,7 +149,7 @@ public class CateringService {
         catering.setPhoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()));
         catering.setServiceCost(Converter.convertPriceString(dto.getServiceCost()));
         catering.setDescription(dto.getDescription());
-        catering.setModifiedAt(LocalDateTime.now());
+        catering.setModifiedAt(timestampHelper.now());
 
         cateringRepository.save(catering);
         log.info("UPDATED");
@@ -191,17 +167,18 @@ public class CateringService {
             throw new ActionNotAllowedException("Cannot delete catering with reservations pending");
         }
 
-        ImmutableSet.copyOf(cateringToDelete.getCateringBusinessHours())
+        CollectionUtil.emptyListIfNull(cateringToDelete.getCateringBusinessHours())
                 .forEach(cateringBusinessHoursService::delete);
 
-        ImmutableSet.copyOf(cateringToDelete.getCateringItems())
+        CollectionUtil.emptyListIfNull(cateringToDelete.getCateringItems())
                 .forEach(cateringItemRepository::delete);
 
         addressService.delete(cateringToDelete.getCateringAddress().getId());
 
-        cateringToDelete.setModifiedAt(LocalDateTime.now());
-        cateringToDelete.setDeletedAt(LocalDateTime.now());
+        cateringToDelete.setModifiedAt(timestampHelper.now());
+        cateringToDelete.setDeletedAt(timestampHelper.now());
 
+        saveCatering(cateringToDelete);
     }
 
     private List<Catering> filterByPrice(String minPrice, String maxPrice, List<Catering> caterings) {
@@ -233,7 +210,6 @@ public class CateringService {
                 .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
 
-
     public boolean cateringWithIdExists(Long id) {
         log.info("CHECKING IF CATERING WITH ID " + id + " EXISTS");
         return cateringRepository.existsById(id);
@@ -241,11 +217,8 @@ public class CateringService {
 
     public Catering get(Long id) {
         log.info("FETCHING CATERING WITH ID " + id);
-        final Optional<Catering> optionalCatering = cateringRepository.findById(id);
-        if (optionalCatering.isPresent()) {
-            return optionalCatering.get();
-        }
-        throw new NotFoundException("No catering with id " + id + " found.");
+        return cateringRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No catering with id " + id + " found."));
     }
 
     public Catering getWithImages(long cateringId) {
@@ -255,6 +228,38 @@ public class CateringService {
 
     public ImmutableList<Catering> getByLocationId(long id) {
         return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
+    }
+
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return cateringRepository.countAll(keyword);
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public void addCateringToGivenLocation(Catering catering, long locationId) {
+
+        final Location location = locationService.get(locationId);
+
+        catering.addLocation(location);
+        saveCatering(catering);
+    }
+
+    private void addCateringToLocationsWithSameCity(Catering savedCatering) {
+        final String city = savedCatering.getCateringAddress().getCity();
+        final ImmutableList<Location> locations = locationService.findByCityWithId(city);
+        for (Location location : locations) {
+            log.info("CATERING ID " + savedCatering.getId() + ", LOCATION ID " + location.getId());
+            location.addCatering(savedCatering);
+            locationService.saveLocation(location);
+        }
+    }
+
+
+    private boolean hasPendingReservations(Catering cateringToDelete) {
+        return CollectionUtil.emptyListIfNull(cateringToDelete.getCateringForChosenEventLocations())
+                .stream()
+                .map(catering -> catering.getEventLocation().getEvent())
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
 
     private void saveCatering(Catering catering) {
@@ -274,16 +279,14 @@ public class CateringService {
         }
 
         final Address address = addressService.create(dto.getAddress());
-
         final Set<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
-
         final Catering catering = CateringMapper.fromDto(dto);
 
         catering.setCateringAddress(address);
         catering.setBusiness(business);
         catering.setCateringBusinessHours(ImmutableSet.copyOf(businessHours));
-        catering.setCreatedAt(LocalDateTime.now());
-        catering.setModifiedAt(LocalDateTime.now());
+        catering.setCreatedAt(timestampHelper.now());
+        catering.setModifiedAt(timestampHelper.now());
         catering.setLocations(new HashSet<>());
 
         saveCatering(catering);
@@ -319,8 +322,8 @@ public class CateringService {
         catering.setCateringAddress(address);
         catering.setBusiness(business);
         catering.setCateringBusinessHours(ImmutableSet.copyOf(businessHours));
-        catering.setCreatedAt(LocalDateTime.now());
-        catering.setModifiedAt(LocalDateTime.now());
+        catering.setCreatedAt(timestampHelper.now());
+        catering.setModifiedAt(timestampHelper.now());
         catering.setLocations(new HashSet<>());
 
         saveCatering(catering);
@@ -340,10 +343,27 @@ public class CateringService {
         return catering;
     }
 
-
-    public Long count(String keyword) {
-        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
-        return cateringRepository.countAll(keyword);
+    private List<Catering> filterByPrice(String priceNotLessThen, String priceNotMoreThan, List<Catering> caterings) {
+        if (priceNotLessThen == null && priceNotMoreThan == null) {
+            return caterings;
+        } else if (priceNotLessThen != null && priceNotMoreThan == null) {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else if (priceNotLessThen == null) {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        }
     }
 
 }
