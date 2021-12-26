@@ -50,7 +50,7 @@ public class OptionalServiceImageService {
             image.setService(service);
             image.setImage(data);
 
-            save(image);
+            optionalServiceImageRepository.save(image);
             result.add(image);
         }
 
@@ -73,7 +73,7 @@ public class OptionalServiceImageService {
         image.setService(service);
         image.setImage(data);
 
-        save(image);
+        optionalServiceImageRepository.save(image);
 
         return image;
     }
@@ -85,12 +85,12 @@ public class OptionalServiceImageService {
             final OptionalServiceImage serviceImage = optionalImage.get();
             serviceImage.setMain(false);
 
-            save(serviceImage);
+            optionalServiceImageRepository.save(serviceImage);
         }
         final OptionalServiceImage newMain = get(newId);
         newMain.setMain(true);
 
-        save(newMain);
+        optionalServiceImageRepository.save(newMain);
         optionalServiceImageRepository.flush();
     }
 
@@ -121,7 +121,7 @@ public class OptionalServiceImageService {
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
                 serviceImage.setMain(true);
-                save(serviceImage);
+                optionalServiceImageRepository.save(serviceImage);
             }
         }
         optionalServiceImageRepository.delete(imageToDelete);
@@ -129,10 +129,6 @@ public class OptionalServiceImageService {
 
     public Optional<OptionalServiceImage> getMain(long serviceId) {
         return optionalServiceImageRepository.getMain(serviceId);
-    }
-
-    private void save(OptionalServiceImage image) {
-        optionalServiceImageRepository.save(image);
     }
 
     private OptionalServiceImage get(long imageId) {

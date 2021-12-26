@@ -5,12 +5,12 @@ import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringM
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.CateringReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.model.dto.CateringReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.LocationReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.model.dto.LocationReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.OptionalServiceReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.ServiceReviewDto;
+import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.CateringReview;
+import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.dto.CateringReviewDto;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.LocationReview;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.LocationReviewDto;
+import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview;
+import pjatk.socialeventorganizer.social_event_support.reviews.service.model.dto.ServiceReviewDto;
 
 @UtilityClass
 public class ReviewMapper {

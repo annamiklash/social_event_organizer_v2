@@ -36,7 +36,7 @@ import pjatk.socialeventorganizer.social_event_support.location.model.LocationDe
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
-import pjatk.socialeventorganizer.social_event_support.reviews.location_review.service.LocationReviewService;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.service.LocationReviewService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
@@ -119,6 +119,10 @@ public class LocationService {
     public boolean isAvailable(long locationId, String date, String timeFrom, String timeTo) {
         return locationRepository.available(locationId, date, timeFrom, timeTo).isPresent();
 
+    }
+
+    public List<String> getCities() {
+        return locationRepository.findDistinctCities();
     }
 
     public boolean exists(long id) {
@@ -215,18 +219,18 @@ public class LocationService {
         location.setModifiedAt(LocalDateTime.now());
         location.setRating(0.0);
 
-        saveLocation(location);
+        save(location);
 
         //!SERVES_FOOD && OUTSIDE_CATERING_AVAILABLE
         if (locationDescriptionEnumSet.contains(LocationDescriptionItemEnum.OUTSIDE_CATERING_AVAILABLE)) {
             addLocationOutsideCateringAvailableAndDontServeFood(location);
         } else {
-            saveLocation(location);
+            save(location);
         }
         return location;
     }
 
-    public void saveLocation(Location location) {
+    public void save(Location location) {
         log.info("TRYING TO SAVE LOCATION " + location.toString());
         locationRepository.save(location);
     }
@@ -253,7 +257,7 @@ public class LocationService {
         }
 
         location.setCaterings(new HashSet<>(cateringList));
-        saveLocation(location);
+        save(location);
     }
 
     private ImmutableList<Location> getAll() {
@@ -292,7 +296,7 @@ public class LocationService {
         }
         location.setModifiedAt(LocalDateTime.now());
 
-        saveLocation(location);
+        save(location);
 
         return location;
 
@@ -345,14 +349,7 @@ public class LocationService {
         locationToDelete.setModifiedAt(LocalDateTime.now());
         locationToDelete.setDeletedAt(LocalDateTime.now());
 
-        saveLocation(locationToDelete);
-    }
-
-    private boolean hasPendingReservations(Location locationToDelete) {
-        return locationToDelete.getLocationForEvent().stream()
-                .map(LocationForEvent::getEvent)
-                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
-
+        save(locationToDelete);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -416,10 +413,11 @@ public class LocationService {
         return modified;
     }
 
-    public List<String> getCities() {
-
-        return locationRepository.findDistinctCities();
-
+    private boolean hasPendingReservations(Location locationToDelete) {
+        return locationToDelete.getLocationForEvent().stream()
+                .map(LocationForEvent::getEvent)
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
 
     }
+
 }
