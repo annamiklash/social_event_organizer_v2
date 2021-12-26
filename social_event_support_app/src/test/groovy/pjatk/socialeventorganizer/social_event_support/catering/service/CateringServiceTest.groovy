@@ -186,7 +186,7 @@ class CateringServiceTest extends Specification
         1 * cateringRepository.saveAndFlush(catering)
 
         1 * locationService.findByCityWithId(address.getCity()) >> locations
-        1 * locationService.saveLocation(location)
+        1 * locationService.save(location)
 
         1 * cateringRepository.save(_)
 

@@ -50,7 +50,7 @@ public class LocationImageService {
             locationImage.setLocation(location);
             locationImage.setImage(data);
 
-            save(locationImage);
+            locationImageRepository.save(locationImage);
             result.add(locationImage);
         }
 
@@ -73,7 +73,7 @@ public class LocationImageService {
         locationImage.setLocation(location);
         locationImage.setImage(data);
 
-        save(locationImage);
+        locationImageRepository.save(locationImage);
 
         return locationImage;
     }
@@ -93,12 +93,12 @@ public class LocationImageService {
             final LocationImage locationImage = optionalImage.get();
             locationImage.setMain(false);
 
-            save(locationImage);
+            locationImageRepository.save(locationImage);
         }
         final LocationImage newMain = get(newId);
         newMain.setMain(true);
 
-        save(newMain);
+        locationImageRepository.save(newMain);
         locationImageRepository.flush();
     }
 
@@ -121,7 +121,7 @@ public class LocationImageService {
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
                 locationImage.setMain(true);
-                save(locationImage);
+                locationImageRepository.save(locationImage);
             }
         }
         locationImageRepository.delete(imageToDelete);
@@ -130,10 +130,6 @@ public class LocationImageService {
     public Optional<LocationImage> getMain(long serviceId) {
         return locationImageRepository.getMain(serviceId);
 
-    }
-
-    private void save(LocationImage image) {
-        locationImageRepository.save(image);
     }
 
     private LocationImage get(long imageId) {

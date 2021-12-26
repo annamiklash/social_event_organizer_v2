@@ -15,7 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.dto.Filter
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering_review.service.CateringReviewService;
+import pjatk.socialeventorganizer.social_event_support.reviews.catering.service.CateringReviewService;
 import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;

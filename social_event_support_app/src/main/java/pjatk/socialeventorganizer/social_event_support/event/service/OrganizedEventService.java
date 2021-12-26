@@ -120,10 +120,8 @@ public class OrganizedEventService {
         if (eventStatus.equals(IN_PROGRESS.name())) {
             if (organizedEvent.getLocationForEvent() == null) {
                 return false;
-//                throw new IllegalArgumentException("Cannot change status to CONFIRMED while no locations for event chosen");
             } else {
                 if (organizedEvent.getLocationForEvent().getConfirmationStatus().equals(ConfirmationStatusEnum.NOT_CONFIRMED.name())) {
-//                    throw new IllegalArgumentException("Cannot change status to CONFIRMED while no locations reservation is not confirmed");
                     return false;
                 } else {
                     if (organizedEvent.getLocationForEvent().getCateringsForEventLocation() == null &&

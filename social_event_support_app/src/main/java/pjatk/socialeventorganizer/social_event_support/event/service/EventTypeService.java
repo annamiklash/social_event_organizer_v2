@@ -9,7 +9,6 @@ import pjatk.socialeventorganizer.social_event_support.event.repository.EventRep
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -25,12 +24,8 @@ public class EventTypeService {
 
 
     public EventType getByType(String type) {
-        final Optional<EventType> optionalType = eventRepository.findByType(type);
+        return eventRepository.findByType(type)
+                .orElseThrow(() -> new NotFoundException("Event type " + type + " does not exist"));
 
-        if (optionalType.isPresent()) {
-            return optionalType.get();
-        }
-
-        throw new NotFoundException("Event type " + type + " does not exist");
     }
 }

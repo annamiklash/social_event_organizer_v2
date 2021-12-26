@@ -1,17 +1,20 @@
 package pjatk.socialeventorganizer.social_event_support.event.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
+
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Data
 @Builder
 @Entity(name = "event_type")
 public class EventType implements Serializable {
