@@ -2,14 +2,17 @@ package pjatk.socialeventorganizer.social_event_support.user.mapper;
 
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProblemMapper;
+import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppProblemDto;
 import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessMapper;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
+import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -49,7 +52,12 @@ public class UserMapper {
 
     public UserDto toDtoWithProblems(User user) {
         final UserDto dto = toDto(user);
-        dto.setAppProblems(user.getAppProblems().stream().map(AppProblemMapper::toDto).collect(Collectors.toSet()));
+        final Set<AppProblemDto> appProblemDtos =
+                CollectionUtil.emptyListIfNull(user.getAppProblems())
+                .stream()
+                .map(AppProblemMapper::toDto)
+                .collect(Collectors.toSet());
+        dto.setAppProblems(appProblemDtos);
 
         return dto;
     }

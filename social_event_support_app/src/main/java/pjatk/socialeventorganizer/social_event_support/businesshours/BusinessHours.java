@@ -1,17 +1,15 @@
 package pjatk.socialeventorganizer.social_event_support.businesshours;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalTime;
 
 @SuperBuilder(toBuilder = true)
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @MappedSuperclass

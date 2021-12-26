@@ -16,6 +16,8 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "customer")

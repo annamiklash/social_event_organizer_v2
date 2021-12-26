@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class OptionalServiceBusinessService {
+public class OptionalServiceBusinessHoursService {
 
-    private OptionalServiceBusinessHoursRepository optionalServiceBusinessHoursRepository;
+    private final OptionalServiceBusinessHoursRepository optionalServiceBusinessHoursRepository;
 
     public List<OptionalServiceBusinessHours> create(List<BusinessHoursDto> dtos) {
 
@@ -27,7 +27,7 @@ public class OptionalServiceBusinessService {
 
         return dtos.stream()
                 .map(BusinessHoursMapper::fromDtoToOptionalService)
-                .peek(this::save)
+                .peek(optionalServiceBusinessHoursRepository::save)
                 .collect(Collectors.toList());
     }
 
@@ -38,22 +38,18 @@ public class OptionalServiceBusinessService {
         businessHours.setDay(dto.getDay().name());
         businessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
 
-        save(businessHours);
+        optionalServiceBusinessHoursRepository.save(businessHours);
         return businessHours;
 
     }
 
-    public OptionalServiceBusinessHours get(long id) {
-        return optionalServiceBusinessHoursRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("No business hours with id " + id));
-    }
-
-    private void save(OptionalServiceBusinessHours optionalServiceBusinessHours) {
-        optionalServiceBusinessHoursRepository.save(optionalServiceBusinessHours);
-    }
-
     public void delete(OptionalServiceBusinessHours businessHours) {
         optionalServiceBusinessHoursRepository.delete(businessHours);
+    }
+
+    private OptionalServiceBusinessHours get(long id) {
+        return optionalServiceBusinessHoursRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No business hours with id " + id));
     }
 
 }

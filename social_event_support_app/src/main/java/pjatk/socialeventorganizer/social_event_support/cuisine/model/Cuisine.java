@@ -10,6 +10,8 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "cuisine")

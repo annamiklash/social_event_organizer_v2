@@ -2,7 +2,6 @@ package pjatk.socialeventorganizer.social_event_support.customer.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
@@ -17,9 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
-import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
-import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.*;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.service.CustomerAvatarService;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
@@ -48,11 +45,9 @@ import pjatk.socialeventorganizer.social_event_support.user.service.EmailService
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
@@ -66,34 +61,26 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     private final UserService userService;
-
     private final EmailService emailService;
-
     private final GuestService guestService;
-
     private final OrganizedEventService organizedEventService;
-
     private final LocationForEventService locationForEventService;
-
     private final CustomerAvatarService customerAvatarService;
-
     private final LocationService locationService;
-
     private final CateringService cateringService;
-
     private final OptionalServiceService optionalServiceService;
+    private final TimestampHelper timestampHelper;
 
 
     public ImmutableList<Customer> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
+        final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
                 Sort.by(customPagination.getSortBy()).descending());
         final Page<Customer> page = customerRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
-
 
     @Transactional(rollbackOn = Exception.class)
     public Customer create(CustomerDto dto) {
@@ -108,7 +95,7 @@ public class CustomerService {
         customer.setId(user.getId());
         customer.setUser(user);
         user.setActive(true);
-        user.setModifiedAt(LocalDateTime.now());
+        user.setModifiedAt(timestampHelper.now());
 
         userService.save(user);
 
@@ -118,7 +105,7 @@ public class CustomerService {
         return customer;
     }
 
-    public void sendMessage(long customerId, long receiverId, MessageDto messageDto, Class clazz) {
+    public <T> void sendMessage(long customerId, long receiverId, MessageDto messageDto, Class<T> clazz) {
         final User user = userService.get(customerId);
         final Customer customer = get(customerId);
 
@@ -145,13 +132,11 @@ public class CustomerService {
                 throw new IllegalArgumentException("Incorrect receiver type");
         }
 
-        String content = messageDto.getContent();
-        content = new StringBuilder()
-                .append("Message send from user ")
-                .append(customer.getFirstName()).append(" ").append(customer.getLastName()).append(" ")
-                .append("with email").append(" ").append(user.getEmail())
-                .append("\n\n")
-                .append(content).toString();
+        final String content = "Message send from user " +
+                customer.getFirstName() + " " +
+                customer.getLastName() + " " +
+                "with email" + " " + user.getEmail() +
+                "\n\n" + messageDto.getContent();
 
         final SimpleMailMessage inviteEmail = EmailUtil.buildEmail(content,
                 messageDto.getReceiverEmail(), messageDto.getSubject());
@@ -161,68 +146,54 @@ public class CustomerService {
     }
 
     public Customer getWithDetail(long id) {
-        final Optional<Customer> optionalCustomer = customerRepository.getWithDetail(id);
-        if (optionalCustomer.isPresent()) {
-            return optionalCustomer.get();
-        }
-        throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
-
+        return customerRepository.getWithDetail(id)
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
     public CustomerDto getWithGuests(long id) {
-        final Optional<Customer> optionalCustomer = customerRepository.getByIdWithAllGuests(id);
-        if (optionalCustomer.isPresent()) {
-            final Customer customer = optionalCustomer.get();
-            return CustomerMapper.toDtoWithGuests(customer);
-        }
-        throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
-
+        return customerRepository.getByIdWithAllGuests(id)
+                .map(CustomerMapper::toDtoWithGuests)
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
     public CustomerDto getWithProblems(long id) {
-        final Optional<Customer> optionalCustomer = customerRepository.getByIdWithProblems(id);
-        if (optionalCustomer.isPresent()) {
-            final Customer customer = optionalCustomer.get();
-            return CustomerMapper.toDtoWithProblems(customer);
-        }
-        throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
-
+        return customerRepository.getByIdWithProblems(id)
+                .map(CustomerMapper::toDtoWithProblems)
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
     public Customer getWithAllEvents(long id) {
-        final Optional<Customer> optionalCustomer = customerRepository.getByIdWithEvents(id);
-        if (optionalCustomer.isPresent()) {
-            return optionalCustomer.get();
-        }
-        throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
-
+        return customerRepository.getByIdWithEvents(id)
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
     public Customer get(long id) {
-        final Optional<Customer> optionalCustomer = customerRepository.findById(id);
-        if (optionalCustomer.isPresent()) {
-            return optionalCustomer.get();
-
-        }
-        throw new NotFoundException("Customer with id " + id + " DOES NOT EXIST");
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
+    public boolean customerExists(long id) {
+        return customerRepository.findById(id).isPresent();
+    }
 
     public void delete(long id) {
-
         final Customer customerToDelete = customerRepository.getAllCustomerInformation(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
+
         boolean hasPendingReservations = hasPendingReservations(customerToDelete);
         if (hasPendingReservations) {
             throw new ActionNotAllowedException("Cannot delete customer with reservations pending");
         }
-        ImmutableSet.copyOf(customerToDelete.getGuests()).forEach(guestService::delete);
-        ImmutableSet.copyOf(customerToDelete.getEvents()).forEach(organizedEventService::delete);
+
+        CollectionUtil.emptyListIfNull(customerToDelete.getGuests())
+                .forEach(guestService::delete);
+        CollectionUtil.emptyListIfNull(customerToDelete.getEvents())
+                .forEach(organizedEventService::delete);
 
         customerAvatarService.delete(customerToDelete.getAvatar());
         userService.delete(customerToDelete.getUser());
 
-        save(customerToDelete);
+        customerRepository.save(customerToDelete);
     }
 
 
@@ -233,19 +204,20 @@ public class CustomerService {
         customer.setLastName(dto.getLastName());
         customer.setFirstName(dto.getFirstName());
         customer.setPhoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()));
-        customer.getUser().setModifiedAt(LocalDateTime.now());
+        customer.getUser().setModifiedAt(timestampHelper.now());
 
-        save(customer);
+        customerRepository.save(customer);
 
         return customer;
     }
 
     public void addGuestsToEvent(long id, long eventId, long locationId, long[] guestIds) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("No customer with id " + id));
+        if (!customerExists(id)) {
+            throw new NotFoundException("No customer with id " + id);
+        }
         final LocationForEvent locationForEvent = locationForEventService.findByLocationIdAndEventId(locationId, eventId);
 
-        if (!locationForEvent.getConfirmationStatus().equals(CONFIRMED.toString())) {
+        if (!CONFIRMED.name().equals(locationForEvent.getConfirmationStatus())) {
             throw new IllegalArgumentException("Cannot invite guests while reservation for location is not confirmed");
         }
 
@@ -254,7 +226,7 @@ public class CustomerService {
 
         organizedEvent.setGuests(new HashSet<>(guests));
 
-        organizedEvent.setModifiedAt(LocalDateTime.now());
+        organizedEvent.setModifiedAt(timestampHelper.now());
 
         organizedEventService.save(organizedEvent);
     }
@@ -263,13 +235,13 @@ public class CustomerService {
     public void sendInvitationToGuest(long eventId, long customerId) {
         final OrganizedEvent event = organizedEventService.get(eventId);
 
-        if (!event.getEventStatus().equals(READY.toString())) {
+        if (!READY.name().equals(event.getEventStatus())) {
             throw new IllegalArgumentException("Cannot send invitations while event status is not READY");
         }
 
         final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(eventId, customerId);
 
-        final OrganizedEventDto invitationContent = createInvitationContent(organizedEvent);
+        final OrganizedEventDto invitationContent = OrganizedEventMapper.toDtoForInvite(organizedEvent);
 
         final List<GuestDto> guests = invitationContent.getGuests();
 
@@ -279,25 +251,19 @@ public class CustomerService {
 
         for (GuestDto guest : guests) {
             final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, invitationContent);
-            final String emailSubject = "Invitation From " + invitationContent.getCustomer().getFirstName() + " " + invitationContent.getCustomer().getLastName();
+            final String emailSubject = "Invitation From " + invitationContent.getCustomer().getFirstName() +
+                    " " + invitationContent.getCustomer().getLastName();
             final SimpleMailMessage inviteEmail = EmailUtil.buildEmail(emailContent, guest.getEmail(), emailSubject);
 
             emailService.sendEmail(inviteEmail);
         }
     }
 
-    private void save(Customer customer) {
-        customerRepository.save(customer);
-    }
-
-    private OrganizedEventDto createInvitationContent(OrganizedEvent organizedEvent) {
-        return OrganizedEventMapper.toDtoForInvite(organizedEvent);
-    }
-
     private boolean hasPendingReservations(Customer customerToDelete) {
         return customerToDelete.getEvents().stream()
-                .anyMatch(organizedEvent -> !organizedEvent.getEventStatus().equals(FINISHED.name())
-                        || !organizedEvent.getEventStatus().equals(CANCELLED.name()));
+                .anyMatch(organizedEvent ->
+                        !FINISHED.name().equals(organizedEvent.getEventStatus())
+                                || !CANCELLED.name().equals(organizedEvent.getEventStatus()));
 
     }
 }

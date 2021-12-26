@@ -16,7 +16,6 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.service.
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,22 +33,16 @@ public class OptionalServiceAvailabilityService {
 
     public List<OptionalServiceAvailability> update(List<AvailabilityDto> dtos, long serviceId, boolean deleteAll) {
         final OptionalService optionalService = optionalServiceService.get(serviceId);
-        final Map<String, List<AvailabilityDto>> byDate = dtos.stream().collect(Collectors.groupingBy(AvailabilityDto::getDate));
-
-
-        final List<AvailabilityDto> availabilityDtos = byDate.values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
         final List<OptionalServiceAvailability> result = new ArrayList<>();
 
-        for (AvailabilityDto availabilityDto : availabilityDtos) {
-            final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, optionalService, deleteAll);
+        for (AvailabilityDto availabilityDto : dtos) {
+            final OptionalServiceAvailability availability =
+                    resolveAvailabilitiesForDay(availabilityDto, optionalService, deleteAll);
 
             availability.setOptionalService(optionalService);
             availability.setStatus(AVAILABLE.name());
 
-            save(availability);
+            optionalServiceAvailabilityRepository.save(availability);
             result.add(availability);
         }
         return result;
@@ -61,22 +54,27 @@ public class OptionalServiceAvailabilityService {
 
     public void delete(long locationId, String date) {
         optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(locationId, date).stream()
-                .filter(cateringAvailability -> cateringAvailability.getStatus().equals(AVAILABLE.name()))
+                .filter(cateringAvailability -> AVAILABLE.name().equals(cateringAvailability.getStatus()))
                 .forEach(optionalServiceAvailabilityRepository::delete);
     }
 
+    public void updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
+        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
 
-    private void save(OptionalServiceAvailability optionalServiceAvailability) {
-        optionalServiceAvailabilityRepository.save(optionalServiceAvailability);
+        final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, service, false);
+        availability.setStatus(AVAILABLE.name());
+        optionalServiceAvailabilityRepository.save(availability);
+
     }
 
-    private void deleteById(long id) {
-        optionalServiceAvailabilityRepository.deleteById(id);
+    public OptionalServiceAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
+        return optionalServiceAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
+                .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
     }
 
-    public OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
+    private OptionalServiceAvailability resolveAvailabilitiesForDay(AvailabilityDto dto, OptionalService service, boolean deleteAll) {
         final List<OptionalServiceAvailability> available = findAllByServiceIdAndDate(service.getId(), dto.getDate()).stream()
-                .filter(serviceAvailability -> serviceAvailability.getStatus().equals("AVAILABLE"))
+                .filter(serviceAvailability -> "AVAILABLE".equals(serviceAvailability.getStatus()))
                 .collect(Collectors.toList());
 
         if (deleteAll) {
@@ -84,7 +82,7 @@ public class OptionalServiceAvailabilityService {
         }
 
         final List<OptionalServiceAvailability> notAvailable = findAllByServiceIdAndDate(service.getId(), dto.getDate()).stream()
-                .filter(locationAvailability -> locationAvailability.getStatus().equals("NOT_AVAILABLE"))
+                .filter(locationAvailability -> "NOT_AVAILABLE".equals(locationAvailability.getStatus()))
                 .collect(Collectors.toList());
 
         if (available.size() == 0 && notAvailable.size() == 0) {
@@ -114,7 +112,7 @@ public class OptionalServiceAvailabilityService {
                 final OptionalServiceAvailability upper = upperBordering.get();
 
                 upper.setTimeTo(lower.getTimeTo());
-                deleteById(lower.getId());
+                optionalServiceAvailabilityRepository.deleteById(lower.getId());
                 return upper;
             }
         } else {
@@ -125,16 +123,6 @@ public class OptionalServiceAvailabilityService {
             }
         }
     }
-
-    public void updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
-        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
-
-        final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, service, false);
-        availability.setStatus(AVAILABLE.name());
-        save(availability);
-
-    }
-
 
     private boolean isNewWithinNotAvailable(AvailabilityDto dto, List<OptionalServiceAvailability> notAvailable) {
         final LocalDateTime from = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()));
@@ -160,9 +148,4 @@ public class OptionalServiceAvailabilityService {
         return optionalServiceAvailabilityRepository.findByLocationIdAndTimeTo(locationId, timeFrom);
     }
 
-
-    public OptionalServiceAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
-        return optionalServiceAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
-                .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
-    }
 }

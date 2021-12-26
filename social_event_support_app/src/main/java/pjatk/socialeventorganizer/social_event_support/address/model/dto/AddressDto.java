@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Builder
 public class AddressDto implements Serializable {
 
-    public long id;
+    public Long id;
 
     @NotBlank(message = "Country is mandatory")
     @Size(min = 2, max = 30, message

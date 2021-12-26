@@ -1,6 +1,9 @@
 package pjatk.socialeventorganizer.social_event_support.catering.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,11 +11,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Builder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-@ToString
 @Entity(name = "catering_item")
 @Table(name = "catering_item")
 public class CateringItem implements Serializable {

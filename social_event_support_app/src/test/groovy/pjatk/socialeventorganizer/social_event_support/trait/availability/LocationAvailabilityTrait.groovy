@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.trait.availability
 import pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
+import spock.lang.Shared
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -10,6 +11,7 @@ import java.time.Month
 
 trait LocationAvailabilityTrait {
 
+    @Shared
     LocationAvailability fakeLocationAvailability = LocationAvailability.builder()
             .id(1)
             .date(LocalDate.of(2021, Month.DECEMBER, 31))

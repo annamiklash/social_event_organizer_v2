@@ -28,7 +28,7 @@ public class CuisineService {
         }
         final Cuisine cuisine = CuisineMapper.fromDto(dto);
 
-        save(cuisine);
+        cuisineRepository.save(cuisine);
 
         return cuisine;
     }
@@ -40,10 +40,5 @@ public class CuisineService {
     private boolean exists(String name) {
         return cuisineRepository.existsByName(name);
     }
-
-    private void save(Cuisine cuisine) {
-        cuisineRepository.save(cuisine);
-    }
-
 
 }
