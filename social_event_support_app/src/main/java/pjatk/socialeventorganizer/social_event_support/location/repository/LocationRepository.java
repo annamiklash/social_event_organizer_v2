@@ -20,33 +20,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
-            "WHERE la.status = 'AVAILABLE' " +
-            "AND l.deleted_at IS NULL " +
-            "AND la.date = CAST(:date as timestamp) " +
-            "AND la.time_from <= CAST(:timeFrom as timestamp) " +
-            "AND la.time_to >= CAST(:timeTo as timestamp)", nativeQuery = true)
-    List<Location> searchWithDateAndTimeFromTimeTo(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
-
-    @Query(value = "SELECT distinct l.* from location l " +
-            "LEFT JOIN location_image li on li.id_location = l.id_location " +
-            "left join address a on l.id_location_address = a.id_address " +
-            "left join location_availability la on la.id_location = l.id_location " +
-            "left join location_description ld on l.id_location = ld.id_location " +
-            "left join description_item di on ld.name = di.name " +
-            "WHERE la.status = 'AVAILABLE' " +
-            "AND l.deleted_at IS NULL " +
-            "AND la.date = CAST(:date as timestamp) " +
-            "AND la.time_from <= CAST(:timeFrom as timestamp)", nativeQuery = true)
-    List<Location> searchWithDateAndTimeFrom(@Param("date") String date, @Param("timeFrom") String timeFrom);
-
-
-    @Query(value = "SELECT distinct l.* from location l " +
-            "LEFT JOIN location_image li on li.id_location = l.id_location " +
-            "left join address a on l.id_location_address = a.id_address " +
-            "left join location_availability la on la.id_location = l.id_location " +
-            "left join location_description ld on l.id_location = ld.id_location " +
-            "left join description_item di on ld.name = di.name " +
-            "WHERE la.status = 'AVAILABLE' " +
             "AND l.deleted_at IS NULL " +
             "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
     List<Location> searchWithDate(@Param("date") String date);
@@ -84,6 +57,14 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             "AND l.deleted_at IS NULL", nativeQuery = true)
     List<Location> getAll();
 
+    @Query("SELECT distinct l from location l " +
+            "LEFT JOIN fetch l.images " +
+            "left join fetch l.locationAddress " +
+            "left join fetch l.availability " +
+            "left join fetch l.descriptions " +
+            "WHERE l.deletedAt IS NULL")
+    List<Location> getAllTest();
+
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join location_availability la on la.id_location = l.id_location " +
@@ -107,7 +88,9 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     List<Location> findAllByBusiness_Id(long id);
 
-    @Query("SELECT distinct a.city FROM address a left join location l on l.locationAddress.id = a.id")
+    @Query("SELECT distinct concat(a.city, ', ', a.country)  " +
+            "FROM address a " +
+            "left join location l on l.locationAddress.id = a.id")
     List<String> findDistinctCities();
 
 

@@ -110,22 +110,27 @@ public class LocationService {
 
         List<Location> locations;
 
-        if (dto.getDate() != null && dto.getTimeFrom() != null && dto.getTimeTo() != null) {
-            locations = locationRepository.searchWithDateAndTimeFromTimeTo(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo());
-        } else if (dto.getDate() != null && dto.getTimeFrom() != null && dto.getTimeTo() == null) {
-            locations = locationRepository.searchWithDateAndTimeFrom(dto.getDate(), dto.getTimeFrom());
-        } else if (dto.getDate() != null && (dto.getTimeFrom() == null || dto.getTimeTo() == null)) {
+        if (dto.getDate() != null) {
             locations = locationRepository.searchWithDate(dto.getDate());
         } else {
             locations = getAll();
         }
-        final List<LocationDescriptionItem> filters = dto.getDescriptionItems().stream()
-                .map(locationDescriptionItemService::getByName)
-                .collect(Collectors.toList());
 
-        if (!CollectionUtils.isEmpty(filters)) {
+        if (dto.getDescriptionItems() != null) {
+            final List<LocationDescriptionItem> filters = dto.getDescriptionItems().stream()
+                    .map(locationDescriptionItemService::getByName)
+                    .collect(Collectors.toList());
+
+            if (!CollectionUtils.isEmpty(filters)) {
+                locations = locations.stream()
+                        .filter(location -> location.getDescriptions().containsAll(filters))
+                        .collect(Collectors.toList());
+            }
+        }
+        if (dto.getCity() != null) {
+            final String city = dto.getCity().substring(0, dto.getCity().indexOf(','));
             locations = locations.stream()
-                    .filter(location -> location.getDescriptions().containsAll(filters))
+                    .filter(location -> location.getLocationAddress().getCity().equals(city))
                     .collect(Collectors.toList());
         }
 
@@ -191,6 +196,7 @@ public class LocationService {
         location.setBusiness(business);
         location.setDescriptions(descriptions);
         location.setLocationBusinessHours(new HashSet<>(businessHours));
+        location.setImages(new HashSet<>());
         location.setCreatedAt(LocalDateTime.now());
         location.setModifiedAt(LocalDateTime.now());
 
@@ -233,7 +239,7 @@ public class LocationService {
     }
 
     private ImmutableList<Location> getAll() {
-        return ImmutableList.copyOf(locationRepository.getAll());
+        return ImmutableList.copyOf(locationRepository.getAllTest());
     }
 
 

@@ -15,18 +15,13 @@ import java.util.List;
 @Builder
 public class FilterLocationsDto implements Serializable {
 
-    private List<LocationDescriptionItemEnum> descriptionItems;
-
-    private String date;
-
-    private String timeFrom;
-
-    private String timeTo;
-
     private String city;
 
     private Integer guestCount;
 
     private Boolean isSeated;
 
+    private String date;
+
+    private List<LocationDescriptionItemEnum> descriptionItems;
 }
