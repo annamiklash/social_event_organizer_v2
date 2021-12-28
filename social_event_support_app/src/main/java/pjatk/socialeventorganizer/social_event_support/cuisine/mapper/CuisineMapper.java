@@ -9,7 +9,6 @@ public class CuisineMapper {
 
     public CuisineDto toDto(Cuisine cuisine) {
         return CuisineDto.builder()
-                .id(cuisine.getId())
                 .name(cuisine.getName())
                 .build();
     }

@@ -15,6 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
+import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.service.CateringBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
@@ -25,6 +26,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.repository.Cater
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto;
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService;
@@ -39,10 +41,7 @@ import pjatk.socialeventorganizer.social_event_support.security.service.Security
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,42 +76,41 @@ public class CateringService {
     }
 
     public ImmutableList<Catering> search(FilterCateringsDto dto) {
-        String keyword = dto.getKeyword();
-        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        String city = dto.getCity();
+        city = Strings.isNullOrEmpty(city) ? null : city.substring(0, dto.getCity().indexOf(','));
 
-        final Set<Long> cuisines = dto.getCuisines().stream()
-                .map(cuisineService::getByName)
-                .map(Cuisine::getId)
-                .collect(Collectors.toSet());
+        List<Catering> caterings = new ArrayList<>();
+        if (dto.getCuisines() != null) {
+            final Set<Long> cuisines = dto.getCuisines().stream()
+                    .filter(Objects::nonNull)
+                    .map(cuisineService::getByName)
+                    .map(Cuisine::getId)
+                    .collect(Collectors.toSet());
+            caterings = cateringRepository.search(cuisines, city);
+        } else {
+            caterings = cateringRepository.search(null, city);
+        }
 
-        List<Catering> caterings = cateringRepository.search(cuisines, keyword);
+        if (dto.getDate() != null) {
+            final LocalDate date = DateTimeUtil.fromStringToFormattedDate(dto.getDate());
+            final String dateDayOfTheWeek = date.getDayOfWeek().name();
 
-        caterings = filterByPrice(dto.getPriceNotLessThen(), dto.getPriceNotMoreThan(), caterings);
+            caterings = caterings.stream()
+                    .filter(catering -> catering.getCateringBusinessHours()
+                            .stream()
+                            .anyMatch(cateringBusinessHours -> cateringBusinessHours.getDay().equalsIgnoreCase(dateDayOfTheWeek)))
+                    .collect(Collectors.toList());
+        }
 
+        if (dto.getMinPrice() != null && dto.getMaxPrice() != null) {
+            caterings = filterByPrice(String.valueOf(dto.getMinPrice()), String.valueOf(dto.getMaxPrice()), caterings);
+        }
         return ImmutableList.copyOf(caterings);
     }
 
-    private List<Catering> filterByPrice(String priceNotLessThen, String priceNotMoreThan, List<Catering> caterings) {
-        if (priceNotLessThen == null && priceNotMoreThan == null) {
-            return caterings;
-        } else if (priceNotLessThen != null && priceNotMoreThan == null) {
-            return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
-                    .collect(Collectors.toList());
-        } else if (priceNotLessThen == null) {
-            return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
-                    .collect(Collectors.toList());
-        } else {
-            return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
-                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
-                    .collect(Collectors.toList());
-        }
+    public boolean isOpen(Catering catering, String day) {
+        return catering.getCateringBusinessHours().stream()
+                .anyMatch(cateringBusinessHours -> cateringBusinessHours.getDay().equals(DayEnum.valueOfLabel(day).name()));
     }
 
     public Catering get(long id) {
@@ -225,6 +223,29 @@ public class CateringService {
         cateringToDelete.setModifiedAt(LocalDateTime.now());
         cateringToDelete.setDeletedAt(LocalDateTime.now());
 
+    }
+
+    private List<Catering> filterByPrice(String priceNotLessThen, String priceNotMoreThan, List<Catering> caterings) {
+        if (priceNotLessThen == null && priceNotMoreThan == null) {
+            return caterings;
+        } else if (priceNotLessThen != null && priceNotMoreThan == null) {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else if (priceNotLessThen == null) {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else {
+            return caterings.stream()
+                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        }
     }
 
     private boolean hasPendingReservations(Catering cateringToDelete) {

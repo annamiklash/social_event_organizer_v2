@@ -15,9 +15,11 @@ public class FilterCateringsDto {
 
     private List<String> cuisines;
 
-    private String priceNotLessThen;
+    private Integer minPrice;
 
-    private String priceNotMoreThan;
+    private Integer maxPrice;
 
-    private String keyword;
+    private String city;
+
+    private String date;
 }

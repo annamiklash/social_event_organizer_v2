@@ -3,7 +3,6 @@ package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.s
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper;
@@ -109,8 +108,7 @@ public class CateringForChosenEventLocationService {
 
     private boolean isOpen(long cateringId, String day) {
         final Catering catering = cateringService.getWithBusinessHours(cateringId);
-        return catering.getCateringBusinessHours().stream()
-                .anyMatch(cateringBusinessHours -> cateringBusinessHours.getDay().equals(DayEnum.valueOfLabel(day).name()));
+        return cateringService.isOpen(catering, day);
     }
 
     public CateringForChosenEventLocation get(long cateringId) {
