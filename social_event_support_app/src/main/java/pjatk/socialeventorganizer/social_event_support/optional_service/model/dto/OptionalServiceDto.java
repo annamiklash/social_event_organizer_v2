@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto;
 import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
@@ -54,6 +55,9 @@ public class OptionalServiceDto implements Serializable {
 
     @NotNull
     private List<BusinessHoursDto> businessHours;
+
+    @NotNull
+    private AddressDto address;
 
     private Set<MusicStyleDto> musicStyle;
 

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.repository.MusicStyleRepository;
 
@@ -16,6 +17,11 @@ public class MusicStyleService {
 
     public ImmutableList<MusicStyle> getByServiceId(long serviceId) {
         return ImmutableList.copyOf(musicStyleRepository.findByServiceId(serviceId));
+    }
+
+    public MusicStyle getByName(String name) {
+        return musicStyleRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException("No music style with name " + name));
     }
 
 }

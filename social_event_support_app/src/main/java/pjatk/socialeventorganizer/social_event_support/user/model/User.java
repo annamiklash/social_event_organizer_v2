@@ -1,6 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.user.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.appproblem.AppProblem;
 
 import javax.persistence.*;
@@ -8,11 +9,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Builder
+@SuperBuilder
+@Inheritance(strategy = InheritanceType.JOINED)
 @Entity(name = "users")
 @Table(name = "users")
 public class User implements Serializable {

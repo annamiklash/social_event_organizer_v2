@@ -4,13 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.builder.HashCodeExclude;
+import org.hibernate.annotations.DiscriminatorFormula;
+import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.catering.model.CateringImage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,7 +28,7 @@ import java.util.Set;
 @Table(name = "optional_service")
 @Entity(name = "optional_service")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type",
+@DiscriminatorColumn(name = "d_type",
         discriminatorType = DiscriminatorType.STRING)
 public class OptionalService {
 
@@ -41,7 +46,10 @@ public class OptionalService {
     @Column
     private String alias;
 
-    @Column(insertable = false, updatable = false, nullable = false)
+    @Column(name = "d_type", nullable = false, length = 20,
+            insertable = false, updatable = false)
+    private String dType;
+
     private String type;
 
     @Column(nullable = false)
@@ -62,9 +70,14 @@ public class OptionalService {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @HashCodeExclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_service_address")
+    private Address serviceAddress;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_optional_service")
@@ -73,6 +86,10 @@ public class OptionalService {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceAvailability> availability;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_optional_service")
+    private Set<OptionalServiceImage> images;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

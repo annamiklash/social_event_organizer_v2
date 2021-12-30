@@ -155,6 +155,7 @@ public class LocationService {
                                 .collect(Collectors.toList()));
             }
         }
+        locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
 
         return ImmutableList.copyOf(locations);
     }
@@ -239,7 +240,7 @@ public class LocationService {
     }
 
     private ImmutableList<Location> getAll() {
-        return ImmutableList.copyOf(locationRepository.getAllTest());
+        return ImmutableList.copyOf(locationRepository.getAll());
     }
 
 
@@ -351,6 +352,29 @@ public class LocationService {
 
         modified.forEach(locationAvailabilityRepository::saveAndFlush);
 
+    }
+
+    private List<Location> filterByPrice(String minPrice, String maxPrice, List<Location> locations) {
+        if (minPrice == null && maxPrice == null) {
+            return locations;
+        } else if (minPrice != null && maxPrice == null) {
+            return locations.stream()
+                    .filter(location -> Converter.convertPriceString(minPrice).compareTo(location.getDailyRentCost()) < 0 ||
+                            Converter.convertPriceString(minPrice).compareTo(location.getDailyRentCost()) == 0)
+                    .collect(Collectors.toList());
+        } else if (minPrice == null) {
+            return locations.stream()
+                    .filter(location -> Converter.convertPriceString(maxPrice).compareTo(location.getDailyRentCost()) > 0 ||
+                            Converter.convertPriceString(maxPrice).compareTo(location.getDailyRentCost()) == 0)
+                    .collect(Collectors.toList());
+        } else {
+            return locations.stream()
+                    .filter(location -> Converter.convertPriceString(minPrice).compareTo(location.getDailyRentCost()) < 0 ||
+                            Converter.convertPriceString(minPrice).compareTo(location.getDailyRentCost()) == 0)
+                    .filter(location -> Converter.convertPriceString(maxPrice).compareTo(location.getDailyRentCost()) > 0 ||
+                            Converter.convertPriceString(maxPrice).compareTo(location.getDailyRentCost()) == 0)
+                    .collect(Collectors.toList());
+        }
     }
 
     private List<LocationAvailability> modify(LocationAvailability availability, LocalDate bookingDate, LocalDateTime bookingTimeFrom, LocalDateTime bookingTimeTo) {

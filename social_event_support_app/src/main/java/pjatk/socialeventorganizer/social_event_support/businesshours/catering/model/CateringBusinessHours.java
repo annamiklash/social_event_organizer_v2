@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Table(name = "catering_business_hours")
 public class CateringBusinessHours extends BusinessHours {
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
     private Catering catering;
 

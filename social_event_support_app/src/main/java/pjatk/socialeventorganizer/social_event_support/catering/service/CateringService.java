@@ -102,9 +102,7 @@ public class CateringService {
                     .collect(Collectors.toList());
         }
 
-        if (dto.getMinPrice() != null && dto.getMaxPrice() != null) {
-            caterings = filterByPrice(String.valueOf(dto.getMinPrice()), String.valueOf(dto.getMaxPrice()), caterings);
-        }
+        caterings = filterByPrice(String.valueOf(dto.getMinPrice()), String.valueOf(dto.getMaxPrice()), caterings);
         return ImmutableList.copyOf(caterings);
     }
 
@@ -225,25 +223,25 @@ public class CateringService {
 
     }
 
-    private List<Catering> filterByPrice(String priceNotLessThen, String priceNotMoreThan, List<Catering> caterings) {
-        if (priceNotLessThen == null && priceNotMoreThan == null) {
+    private List<Catering> filterByPrice(String minPrice, String maxPrice, List<Catering> caterings) {
+        if (minPrice == null && maxPrice == null) {
             return caterings;
-        } else if (priceNotLessThen != null && priceNotMoreThan == null) {
+        } else if (minPrice != null && maxPrice == null) {
             return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) == 0)
                     .collect(Collectors.toList());
-        } else if (priceNotLessThen == null) {
+        } else if (minPrice == null) {
             return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) == 0)
                     .collect(Collectors.toList());
         } else {
             return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
-                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) == 0)
                     .collect(Collectors.toList());
         }
     }

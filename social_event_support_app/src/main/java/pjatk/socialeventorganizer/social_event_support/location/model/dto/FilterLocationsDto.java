@@ -23,5 +23,9 @@ public class FilterLocationsDto implements Serializable {
 
     private String date;
 
+    private String minPrice;
+
+    private String maxPrice;
+
     private List<LocationDescriptionItemEnum> descriptionItems;
 }

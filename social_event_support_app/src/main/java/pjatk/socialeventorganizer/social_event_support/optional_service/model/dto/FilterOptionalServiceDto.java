@@ -15,13 +15,9 @@ public class FilterOptionalServiceDto {
 
     private String date;
 
-    private String timeFrom;
+    private String minPrice;
 
-    private String timeTo;
-
-    private String priceNotLessThen;
-
-    private String priceNotMoreThan;
+    private String maxPrice;
 
     private String type;
 
@@ -35,5 +31,5 @@ public class FilterOptionalServiceDto {
 
     private List<String> languages;
 
-    private String keyword;
+    private String city;
 }

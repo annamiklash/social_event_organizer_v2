@@ -57,6 +57,10 @@ public class Validator {
                     throw new ValidationException("Music related services must specify at least 1 style they perform in");
                 }
                 break;
+
+            case HOST:
+            default:
+                break;
         }
     }
 }

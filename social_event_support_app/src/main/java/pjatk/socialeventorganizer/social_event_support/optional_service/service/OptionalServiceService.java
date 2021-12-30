@@ -5,16 +5,21 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.address.model.Address;
+import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessService;
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
+import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
@@ -27,7 +32,10 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.dt
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.Interpreter;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.kidperformer.KidsPerformer;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.MusicBand;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.service.MusicStyleService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.repostory.OptionalServiceForChosenLocationRepository;
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
@@ -38,6 +46,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
@@ -52,6 +61,10 @@ public class OptionalServiceService {
     private final BusinessRepository businessRepository;
 
     private final SecurityService securityService;
+
+    private final AddressService addressService;
+
+    private final MusicStyleService musicStyleService;
 
     private final OptionalServiceBusinessService optionalServiceBusinessService;
 
@@ -117,11 +130,13 @@ public class OptionalServiceService {
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
+        final Address address = addressService.create(dto.getAddress());
 
         final List<OptionalServiceBusinessHours> businessHours = optionalServiceBusinessService.create(dto.getBusinessHours());
 
         final OptionalService optionalService = OptionalServiceMapper.fromDto(dto);
 
+        optionalService.setServiceAddress(address);
         optionalService.setBusiness(business);
         optionalService.setOptionalServiceBusinessHours(new HashSet<>(businessHours));
         optionalService.setCreatedAt(LocalDateTime.now());
@@ -150,24 +165,39 @@ public class OptionalServiceService {
     }
 
     public ImmutableList<OptionalService> search(FilterOptionalServiceDto dto) {
-        String keyword = dto.getKeyword();
-        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        String city = dto.getCity();
+        city = Strings.isNullOrEmpty(city) ? "" : city.substring(0, dto.getCity().indexOf(','));
 
         List<OptionalService> optionalServices;
-        if (dto.getDate() != null && dto.getTimeFrom() != null && dto.getTimeTo() != null) {
-            optionalServices = optionalServiceRepository.search(dto.getDate(), dto.getTimeFrom(), dto.getTimeTo(), dto.getType());
-        }
-        if (dto.getDate() != null && (dto.getTimeFrom() == null || dto.getTimeTo() == null)) {
-            optionalServices = optionalServiceRepository.searchWithoutDateTime(dto.getType());
 
+        if (dto.getDate() != null && dto.getType() != null) {
+            optionalServices = optionalServiceRepository.search(dto.getDate(), dto.getType(), city);
+            optionalServices = filterByType(optionalServices, dto);
+
+        } else if (dto.getType() != null && dto.getDate() == null) {
+            optionalServices = optionalServiceRepository.searchByType(dto.getType(), city);
+            optionalServices = filterByType(optionalServices, dto);
+
+        } else if (dto.getDate() != null && dto.getType() == null) {
+            optionalServices = optionalServiceRepository.searchByDate(dto.getDate(), city);
+
+        } else {
+            optionalServices = optionalServiceRepository.getAll();
         }
-        //TODO: FINISH
-        return null;
+
+        optionalServices = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), optionalServices);
+
+        return ImmutableList.copyOf(optionalServices);
     }
+
 
     public boolean isAvailable(long serviceId, String date, String timeFrom, String timeTo) {
         return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
 
+    }
+
+    public ImmutableList<OptionalService> getByBusinessId(long id) {
+        return ImmutableList.copyOf(optionalServiceRepository.findAllByBusiness_Id(id));
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -220,7 +250,87 @@ public class OptionalServiceService {
                 .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
 
-    public ImmutableList<OptionalService> getByBusinessId(long id) {
-        return ImmutableList.copyOf(optionalServiceRepository.findAllByBusiness_Id(id));
+    private List<OptionalService> filterByPrice(String minPrice, String maxPrice, List<OptionalService> services) {
+        if (minPrice == null && maxPrice == null) {
+            return services;
+        } else if (minPrice != null && maxPrice == null) {
+            return services.stream()
+                    .filter(service -> Converter.convertPriceString(minPrice).compareTo(service.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(minPrice).compareTo(service.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else if (minPrice == null) {
+            return services.stream()
+                    .filter(service -> Converter.convertPriceString(maxPrice).compareTo(service.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(maxPrice).compareTo(service.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        } else {
+            return services.stream()
+                    .filter(service -> Converter.convertPriceString(minPrice).compareTo(service.getServiceCost()) < 0 ||
+                            Converter.convertPriceString(minPrice).compareTo(service.getServiceCost()) == 0)
+                    .filter(service -> Converter.convertPriceString(maxPrice).compareTo(service.getServiceCost()) > 0 ||
+                            Converter.convertPriceString(maxPrice).compareTo(service.getServiceCost()) == 0)
+                    .collect(Collectors.toList());
+        }
+    }
+
+
+    private List<OptionalService> filterByType(List<OptionalService> optionalServices, FilterOptionalServiceDto dto) {
+
+        if (dto.getMusicStyles() != null && dto.getBandPeopleCount() != null) {
+            final Set<MusicStyle> musicStyles = dto.getMusicStyles()
+                    .stream()
+                    .map(musicStyleService::getByName)
+                    .collect(Collectors.toSet());
+
+            return optionalServices.stream()
+                    .filter(optionalService -> CollectionUtils.containsAny(musicStyles, optionalService.getStyles()) &&
+                            ((MusicBand) optionalService).getPeopleCount() == dto.getBandPeopleCount())
+                    .collect(Collectors.toList());
+        }
+
+        if (dto.getMusicStyles() != null && dto.getBandPeopleCount() == null) {
+            final Set<MusicStyle> musicStyles = dto.getMusicStyles()
+                    .stream()
+                    .map(musicStyleService::getByName)
+                    .collect(Collectors.toSet());
+
+            return optionalServices.stream()
+                    .filter(optionalService -> CollectionUtils.containsAny(musicStyles, optionalService.getStyles()))
+                    .collect(Collectors.toList());
+        }
+
+        if (dto.getBandPeopleCount() != null && dto.getMusicStyles() == null) {
+            return optionalServices.stream()
+                    .filter(optionalService -> ((MusicBand) optionalService).getPeopleCount() == dto.getBandPeopleCount())
+                    .collect(Collectors.toList());
+        }
+
+        if (dto.getAgeFrom() != null && dto.getAgeTo() != null) {
+            return optionalServices.stream()
+                    .filter(optionalService -> ((KidsPerformer) optionalService).getAgeFrom() >= dto.getAgeFrom() &&
+                            ((KidsPerformer) optionalService).getAgeTo() <= dto.getAgeTo())
+                    .collect(Collectors.toList());
+        }
+        if (dto.getAgeFrom() != null && dto.getAgeTo() == null) {
+            return optionalServices.stream()
+                    .filter(optionalService -> ((KidsPerformer) optionalService).getAgeFrom() >= dto.getAgeFrom())
+                    .collect(Collectors.toList());
+        }
+
+        if (dto.getAgeFrom() == null && dto.getAgeTo() != null) {
+            return optionalServices.stream()
+                    .filter(optionalService -> ((KidsPerformer) optionalService).getAgeTo() <= dto.getAgeTo())
+                    .collect(Collectors.toList());
+        }
+
+        if (dto.getLanguages() != null) {
+            final Set<TranslationLanguage> languages = dto.getLanguages().stream()
+                    .map(translationLanguageService::getByName)
+                    .collect(Collectors.toSet());
+            return optionalServices.stream()
+                    .filter(optionalService -> CollectionUtils.containsAny(languages, ((Interpreter) optionalService).getLanguages()))
+                    .collect(Collectors.toList());
+        }
+        return optionalServices;
     }
 }

@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Table(name = "optional_service_business_hours")
 public class OptionalServiceBusinessHours extends BusinessHours {
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private OptionalService optionalService;
 }

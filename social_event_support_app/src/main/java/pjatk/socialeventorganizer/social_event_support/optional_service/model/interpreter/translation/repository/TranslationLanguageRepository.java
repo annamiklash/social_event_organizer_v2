@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TranslationLanguageRepository extends JpaRepository<TranslationLanguage, Long> {
@@ -15,4 +16,6 @@ public interface TranslationLanguageRepository extends JpaRepository<Translation
             "left join fetch l.interpreters i " +
             "where i.id = :id ")
     List<TranslationLanguage> getByInterpreterId(@Param("id") long id);
+
+    Optional<TranslationLanguage> getByName(String name);
 }

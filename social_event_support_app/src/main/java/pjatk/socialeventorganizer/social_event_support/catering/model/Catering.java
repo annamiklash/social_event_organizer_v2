@@ -87,6 +87,10 @@ public class Catering implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_cuisine"))
     private Set<Cuisine> cuisines;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_catering")
+    private Set<CateringImage> images;
+
     public void addCateringItem(CateringItem cateringItem) {
         if (cateringItem == null) {
             throw new IllegalArgumentException("CateringItem cannot be null");

@@ -47,23 +47,13 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     List<Location> findByLocationAddress_City(String city);
 
-    @Query(value = "SELECT distinct l.* from location l " +
-            "LEFT JOIN location_image li on li.id_location = l.id_location " +
-            "left join address a on l.id_location_address = a.id_address " +
-            "left join location_availability la on la.id_location = l.id_location " +
-            "left join location_description ld on l.id_location = ld.id_location " +
-            "left join description_item di on ld.name = di.name " +
-            "WHERE la.status = 'AVAILABLE' " +
-            "AND l.deleted_at IS NULL", nativeQuery = true)
-    List<Location> getAll();
-
     @Query("SELECT distinct l from location l " +
             "LEFT JOIN fetch l.images " +
             "left join fetch l.locationAddress " +
             "left join fetch l.availability " +
             "left join fetch l.descriptions " +
             "WHERE l.deletedAt IS NULL")
-    List<Location> getAllTest();
+    List<Location> getAll();
 
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +

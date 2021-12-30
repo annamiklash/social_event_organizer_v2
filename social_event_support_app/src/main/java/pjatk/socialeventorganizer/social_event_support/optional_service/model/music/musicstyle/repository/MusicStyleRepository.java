@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -16,4 +17,6 @@ public interface MusicStyleRepository extends JpaRepository<MusicStyle, Long> {
             "LEFT JOIN FETCH ms.optionalServices os " +
             "WHERE os.id = :serviceId")
     List<MusicStyle> findByServiceId(@Param("serviceId") long serviceId);
+
+    Optional<MusicStyle> findByName(String name);
 }
