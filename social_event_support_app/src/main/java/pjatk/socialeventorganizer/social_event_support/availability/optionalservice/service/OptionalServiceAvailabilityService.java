@@ -141,11 +141,11 @@ public class OptionalServiceAvailabilityService {
     }
 
     private Optional<OptionalServiceAvailability> findByLocationIdAndTimeFrom(String timeTo, long locationId) {
-        return optionalServiceAvailabilityRepository.findByLocationIdAndTimeFrom(locationId, timeTo);
+        return optionalServiceAvailabilityRepository.findByServiceIdAndTimeFrom(locationId, timeTo);
     }
 
     private Optional<OptionalServiceAvailability> findByLocationIdAndTimeTo(String timeFrom, long locationId) {
-        return optionalServiceAvailabilityRepository.findByLocationIdAndTimeTo(locationId, timeFrom);
+        return optionalServiceAvailabilityRepository.findByServiceIdAndTimeTo(locationId, timeFrom);
     }
 
 }

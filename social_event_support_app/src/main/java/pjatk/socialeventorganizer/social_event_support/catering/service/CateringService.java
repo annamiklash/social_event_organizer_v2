@@ -24,9 +24,10 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.dto.Filter
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto;
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService;
@@ -181,35 +182,6 @@ public class CateringService {
         saveCatering(cateringToDelete);
     }
 
-    private List<Catering> filterByPrice(String minPrice, String maxPrice, List<Catering> caterings) {
-        if (minPrice == null && maxPrice == null) {
-            return caterings;
-        } else if (minPrice != null && maxPrice == null) {
-            return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) == 0)
-                    .collect(Collectors.toList());
-        } else if (minPrice == null) {
-            return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) == 0)
-                    .collect(Collectors.toList());
-        } else {
-            return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(minPrice).compareTo(catering.getServiceCost()) == 0)
-                    .filter(catering -> Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(maxPrice).compareTo(catering.getServiceCost()) == 0)
-                    .collect(Collectors.toList());
-        }
-    }
-
-    private boolean hasPendingReservations(Catering cateringToDelete) {
-        return cateringToDelete.getCateringForChosenEventLocations().stream()
-                .map(catering -> catering.getEventLocation().getEvent())
-                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
-    }
-
     public boolean cateringWithIdExists(Long id) {
         log.info("CHECKING IF CATERING WITH ID " + id + " EXISTS");
         return cateringRepository.existsById(id);
@@ -253,7 +225,6 @@ public class CateringService {
             locationService.save(location);
         }
     }
-
 
     private boolean hasPendingReservations(Catering cateringToDelete) {
         return CollectionUtil.emptyListIfNull(cateringToDelete.getCateringForChosenEventLocations())

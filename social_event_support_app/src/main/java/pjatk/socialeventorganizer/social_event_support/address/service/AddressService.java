@@ -14,7 +14,6 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.address.repository.AddressRepository;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.stream.Collectors;

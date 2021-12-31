@@ -2,7 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.catering.service
 
 import com.google.common.collect.ImmutableList
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringItemTrait
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringTrait

@@ -11,8 +11,6 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundExcept
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
-import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
-import pjatk.socialeventorganizer.social_event_support.image.model.request.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
 

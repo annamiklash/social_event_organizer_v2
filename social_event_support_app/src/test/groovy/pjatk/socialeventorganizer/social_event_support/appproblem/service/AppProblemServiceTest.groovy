@@ -4,7 +4,7 @@ import org.apache.commons.collections4.CollectionUtils
 import org.springframework.data.domain.Page
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.AppProblemStatusEnum
 import pjatk.socialeventorganizer.social_event_support.appproblem.repository.AppProblemRepository
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
 import pjatk.socialeventorganizer.social_event_support.trait.problem.AppProblemTrait

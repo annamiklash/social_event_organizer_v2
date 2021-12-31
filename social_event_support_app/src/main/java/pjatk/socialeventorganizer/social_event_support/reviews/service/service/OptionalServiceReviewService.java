@@ -81,19 +81,6 @@ public class OptionalServiceReviewService {
         return bd.doubleValue();
     }
 
-    public double getRating(long serviceId) {
-        final List<OptionalServiceReview> reviews = serviceReviewRepository.getByServiceId(serviceId);
-        if (CollectionUtils.isEmpty(reviews)) {
-            return 0;
-        }
-        final Double rating = reviews.stream()
-                .collect(Collectors.averagingDouble(OptionalServiceReview::getStarRating));
-
-        BigDecimal bd = new BigDecimal(Double.toString(rating));
-        bd = bd.setScale(1, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
-
     public boolean exists(long id) {
         return serviceReviewRepository.existsByOptionalService_Id(id);
     }
