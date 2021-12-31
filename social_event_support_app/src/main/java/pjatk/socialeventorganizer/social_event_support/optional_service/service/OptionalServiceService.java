@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessHoursService;
-import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
@@ -46,7 +45,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
@@ -79,7 +78,7 @@ public class OptionalServiceService {
 
         final Pageable paging = PageRequest.of(customPage.getPageNo(), customPage.getPageSize(),
                 Sort.by(customPage.getSortBy()));
-        final Page<OptionalService > page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
+        final Page<OptionalService> page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
 
         final List<OptionalService> result = page.get().collect(Collectors.toList());
         for (OptionalService optionalService : result) {
@@ -306,8 +305,6 @@ public class OptionalServiceService {
                     .stream()
                     .map(musicStyleService::getByName)
                     .collect(Collectors.toSet());
-        ImmutableSet.copyOf(serviceToDelete.getServiceForLocation())
-                .forEach(optionalServiceForChosenLocationRepository::delete);
 
             return optionalServices.stream()
                     .filter(optionalService -> CollectionUtils.containsAny(musicStyles, optionalService.getStyles()))

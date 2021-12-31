@@ -10,7 +10,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.CateringIt
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringItemDto;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.List;

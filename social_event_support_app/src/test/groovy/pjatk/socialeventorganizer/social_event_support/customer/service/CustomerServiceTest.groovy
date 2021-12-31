@@ -5,10 +5,10 @@ import org.springframework.data.domain.PageImpl
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.service.CustomerAvatarService
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService

@@ -33,8 +33,6 @@ public class LocationAvailabilityService {
 
     private final LocationRepository locationRepository;
 
-    private final LocationRepository locationRepository;
-
     @Transactional(rollbackOn = Exception.class)
     public List<LocationAvailability> update(List<AvailabilityDto> dtos, long locationId, boolean deleteAll) {
         final Location location = locationRepository.findById(locationId)
@@ -100,11 +98,6 @@ public class LocationAvailabilityService {
                 locationAvailabilityRepository.delete(locationAvailability);
                 locationAvailabilityRepository.flush();
             }
-        }
-
-        final List<LocationAvailability> notAvailable = findAllByLocationIdAndDate(location.getId(), dto.getDate()).stream()
-        if (availabilityDto.getId() != null && "NOT_AVAILABLE".equals(availabilityDto.getStatus())) {
-            availabilityDto.setStatus("AVAILABLE");
         }
 
         final List<LocationAvailability> notAvailable =

@@ -98,32 +98,6 @@ VALUES ('Happy Olympia', 'happyolympia@gmail.com', 12345678910, '50.00',
         'Sophisticated and subtlev with use of the many spices, vegetables, grains and fruits grown across India. ', 6,
         4, (select current_timestamp), (select current_timestamp), null);
 
-insert into catering_image (image, alt, id_catering)
-VALUES ('https://www.definitelygreece.com/wp-content/uploads/2020/05/traditional-greek-food-meals.jpg', 'food_pic_1',
-        1),
-       ('https://media-cdn.tripadvisor.com/media/photo-s/19/ed/29/f0/fall-food-spread.jpg', 'food_pic_2',
-        1),
-       ('https://media-cdn.tripadvisor.com/media/photo-s/16/72/7f/07/mediterranean-bento-box.jpg', 'food_pic_1',
-        2),
-       ('https://res.cloudinary.com/jerrick/image/upload/fl_progressive,q_auto,w_1024/h1ztpdytqbip9kf3t7ua.jpg',
-        'food_pic_2',
-        2),
-       ('https://d2joqs9jfh6k92.cloudfront.net/wp-content/uploads/2020/09/09113140/platzki-table-tp.jpg', 'food_pic_1',
-        3),
-       ('https://polishcuisine.net/wp-content/uploads/2020/09/2020.8.13KiebaskaPolishCuisineAuburnUberEatsJPEGS-6-1080x675.jpeg',
-        'food_pic_2',
-        3),
-       ('https://www.rinag.com/wp-content/uploads/2020/02/Asian-Street-Kitchen-Festival-2019-min-1024x501.jpg',
-        'food_pic_1',
-        4),
-       ('https://media.timeout.com/images/105441129/image.jpg', 'food_pic_2',
-        4),
-       ('http://images.ctfassets.net/3s5io6mnxfqz/6ZImCEzx6UuvuKaAiZEDDN/50479ee4a0902deb4eb1bab720ce248a/image1.jpg',
-        'food_pic_1',
-        5),
-       ('https://www.wallpaperup.com/uploads/wallpapers/2014/11/09/511920/45482ae7629d9bbc982b907b8d90e776-700.jpg',
-        'food_pic_2',
-        5);
 
 
 insert into catering_item (name, type, description, serving_price, is_vegan, is_vegetarian, is_gluten_free, id_catering,
@@ -289,28 +263,6 @@ VALUES (1, 'Outside Catering Available'),
        (6, 'Has Patio'),
        (6, 'Serves Food');
 
-insert into location_image (image, alt, id_location)
-VALUES ('https://infatuation.s3.amazonaws.com/media/images/guides/greek-restaurants-nyc/kasinger_nyc_zenontaverna_exterior002.jpg',
-        'outside_pic_1', 1),
-       ('https://infatuation.s3.amazonaws.com/media/images/guides/greek-restaurants-nyc/kasinger_nyc_tellys004.jpg',
-        'interior_pic_2', 1),
-       ('https://iadsb.tmgrup.com.tr/61c5f5/1200/627/0/512/800/930?u=https://idsb.tmgrup.com.tr/2019/12/22/1577016108432.jpg',
-        'interior_pic_1', 2),
-       ('https://d32dm0rphc51dk.cloudfront.net/cdojTownvkIDQ3_N4877nw/wide.jpg', 'interior_pic_2', 2),
-       ('https://sleep-fly.com/wp-content/uploads/2019/07/Fotograf%C3%ADa-010.jpg', 'interior_pic_1', 3),
-       ('https://image.freepik.com/free-photo/modern-meeting-room-with-table-chairs-concept-conventon-room-conference-room_82984-136.jpg',
-        'interior_pic_2', 3),
-       ('https://harriman.com/wp-content/uploads/presque-isle-preferred.jpg', 'outside_pic_1', 4),
-       ('https://www.primeeng.com/wp-content/uploads/2019/02/Glenwood-Recreation-2.jpg', 'interior_pic_2', 4),
-       ('https://assets.simpleviewinc.com/simpleview/image/upload/c_fill,h_280,q_50,w_640/v1/clients/denver/OPEHLIAS_9491_2a725b87-78af-4bfd-9d09-d81338089cf7.jpg',
-        'interior_pic_1', 5),
-       ('https://i.pinimg.com/originals/f8/5e/aa/f85eaa36ed5536ce28b9c56e17d66ced.jpg', 'interior_pic_1', 5),
-       ('http://retaildesignblog.net/wp-content/uploads/2016/03/Hookah-Bar-Nargile-by-KMAN-Studio-Sofia-Bulgaria-03.jpg',
-        'interior_pic_1', 6),
-       ('http://www.itsliquid.com/wp-content/uploads/2016/04/002-13.jpg', 'interior_pic_2', 6),
-       ('https://i.pinimg.com/originals/42/06/92/420692b178ff8b05aea4a48176744a30.jpg', 'outside_pic_1', 6);
-
-
 
 INSERT INTO customer (id_customer_user, first_name, last_name, birthdate, phone_number)
 VALUES (9, 'Lacy', 'Botsford', '1988-06-30', 123456789),
@@ -333,17 +285,17 @@ insert into optional_service(alias, type, email, description, service_cost, id_b
                              deleted_at, kids_performer_type, age_from, age_to, instrument, people_count, first_name,
                              last_name, d_type, id_service_address)
 values ('alias1', 'SINGER', 'email@gmail.com', 'description1', '100.00', 8, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'SINGER',22),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'SINGER', 22),
        ('alias2', 'DJ', 'email@gmail.com', 'description2', '200.00', 6, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'DJ',23),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'DJ', 23),
        ('alias3', 'MUSIC BAND', 'email@gmail.com', 'description3', '300.00', 3, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, 4, 'Jon', 'Doe', 'MUSIC BAND',24),
+        (select current_timestamp), null, null, null, null, null, 4, 'Jon', 'Doe', 'MUSIC BAND', 24),
        ('alias4', 'INTERPRETER', 'email@gmail.com', 'description4', '400.00', 4, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'INTERPRETER',25),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'INTERPRETER', 25),
        ('alia5', 'SINGER', 'email@gmail.com', 'description5', '250.00', 5, (select current_timestamp),
-        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'SINGER',26),
+        (select current_timestamp), null, null, null, null, null, null, 'Jon', 'Doe', 'SINGER', 26),
        ('alias6', 'KIDS PERFORMER', 'email@gmail.com', 'description6', '160.00', 6, (select current_timestamp),
-        (select current_timestamp), null, 'CLOWN', 5, 12, null, null, 'Jon', 'Doe','KIDS PERFORMER', 27),
+        (select current_timestamp), null, 'CLOWN', 5, 12, null, null, 'Jon', 'Doe', 'KIDS PERFORMER', 27),
        ('alias7', 'MUSICIAN', 'email@gmail.com', 'description7', '70.00', 7, (select current_timestamp),
         (select current_timestamp), null, null, null, null, 'GUITAR', null, 'Jon', 'Doe', 'MUSICIAN', 28),
        ('alias8', 'MUSICIAN', 'email@gmail.com', 'description8', '180.00', 4, (select current_timestamp),
@@ -395,18 +347,6 @@ VALUES (4, 7),
        (10, 1),
        (10, 5),
        (10, 7);
-
-insert into optional_service_image(image, alt, id_optional_service)
-values ('img1', 'alt1', 1),
-       ('img2', 'alt2', 2),
-       ('img3', 'alt3', 3),
-       ('img4', 'alt4', 4),
-       ('img5', 'alt5', 5),
-       ('img6', 'alt6', 6),
-       ('img7', 'alt7', 7),
-       ('img8', 'alt8', 8),
-       ('img9', 'alt9', 9),
-       ('img10', 'alt10', 10);
 
 
 insert into service_review(title, comment, star_rating, id_optional_service, id_customer, created_at)

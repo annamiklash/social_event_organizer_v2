@@ -11,7 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService
 import pjatk.socialeventorganizer.social_event_support.location.model.Location

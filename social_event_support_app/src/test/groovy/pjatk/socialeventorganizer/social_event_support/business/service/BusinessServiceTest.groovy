@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageImpl
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
-import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait

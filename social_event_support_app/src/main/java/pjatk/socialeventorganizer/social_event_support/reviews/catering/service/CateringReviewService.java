@@ -56,17 +56,6 @@ public class CateringReviewService {
         return cateringReview;
     }
 
-    public List<CateringReview> getByCateringId(CustomPage paging, long id) {
-        if (!exists(id)) {
-            throw new NotFoundException("Catering with id " + id + " does not exist");
-        }
-        final Pageable pageable = PageRequest.of(paging.getPageNo(), paging.getPageSize(),
-                Sort.by(paging.getSortBy()));
-        final Page<CateringReview> page = cateringReviewRepository.getByCateringId(id, pageable);
-
-        return ImmutableList.copyOf(page.get()
-                .collect(Collectors.toList()));
-    }
 
     public List<CateringReview> getByCateringId(CustomPage paging, long id) {
         if (!exists(id)) {
@@ -78,19 +67,6 @@ public class CateringReviewService {
 
         return ImmutableList.copyOf(page.get()
                 .collect(Collectors.toList()));
-    }
-
-    public double getRating(long cateringId) {
-        final List<CateringReview> reviews = cateringReviewRepository.getByCateringId(cateringId);
-        if (CollectionUtils.isEmpty(reviews)) {
-            return 0;
-        }
-        final Double rating = reviews.stream()
-                .collect(Collectors.averagingDouble(CateringReview::getStarRating));
-
-        BigDecimal bd = new BigDecimal(Double.toString(rating));
-        bd = bd.setScale(1, RoundingMode.HALF_UP);
-        return bd.doubleValue();
     }
 
     public double getRating(long cateringId) {
