@@ -74,7 +74,7 @@ public class CateringService {
         String city = dto.getCity();
         city = Strings.isNullOrEmpty(city) ? null : city.substring(0, dto.getCity().indexOf(','));
 
-        List<Catering> caterings = new ArrayList<>();
+        List<Catering> caterings;
         if (dto.getCuisines() != null) {
             final Set<Long> cuisines = dto.getCuisines().stream()
                     .filter(Objects::nonNull)
@@ -196,15 +196,6 @@ public class CateringService {
     public Catering getWithImages(long cateringId) {
         return cateringRepository.findWithImages(cateringId)
                 .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " DOES NOT EXIST"));
-    }
-
-    public ImmutableList<Catering> getByLocationId(long id) {
-        return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
-    }
-
-    public Long count(String keyword) {
-        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
-        return cateringRepository.countAll(keyword);
     }
 
     @Transactional(rollbackOn = Exception.class)
