@@ -100,6 +100,10 @@ public class LocationAvailabilityService {
             }
         }
 
+        if (availabilityDto.getId() != null && "NOT_AVAILABLE".equals(availabilityDto.getStatus())) {
+            availabilityDto.setStatus("AVAILABLE");
+        }
+
         final List<LocationAvailability> notAvailable =
                 findAllByLocationIdAndDate(location.getId(), availabilityDto.getDate())
                 .stream()

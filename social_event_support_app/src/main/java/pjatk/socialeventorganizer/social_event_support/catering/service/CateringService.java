@@ -226,6 +226,15 @@ public class CateringService {
         }
     }
 
+    public ImmutableList<Catering> getByLocationId(long id) {
+        return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
+    }
+
+    public Long count(String keyword) {
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        return cateringRepository.countAll(keyword);
+    }
+
     private boolean hasPendingReservations(Catering cateringToDelete) {
         return CollectionUtil.emptyListIfNull(cateringToDelete.getCateringForChosenEventLocations())
                 .stream()

@@ -46,7 +46,6 @@ public class CateringForChosenEventLocationService {
         final CateringForChosenEventLocation catering =
         cateringForLocationRepository.findByCateringIdAndEventId(cateringId, eventId)
                 .orElseThrow(() -> new NotFoundException("No catering for event " + eventId));
-
         catering.setConfirmationStatus(CONFIRMED.name());
         cateringForLocationRepository.save(catering);
 

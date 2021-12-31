@@ -78,7 +78,7 @@ public class OptionalServiceService {
 
         final Pageable paging = PageRequest.of(customPage.getPageNo(), customPage.getPageSize(),
                 Sort.by(customPage.getSortBy()));
-        final Page<OptionalService> page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
+        final Page<OptionalService > page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
 
         final List<OptionalService> result = page.get().collect(Collectors.toList());
         for (OptionalService optionalService : result) {

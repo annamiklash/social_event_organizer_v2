@@ -2,7 +2,11 @@ package pjatk.socialeventorganizer.social_event_support.address.service
 
 import org.springframework.data.domain.Page
 import pjatk.socialeventorganizer.social_event_support.address.repository.AddressRepository
+<<<<<<< HEAD
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
+=======
+import pjatk.socialeventorganizer.social_event_support.common.util.TimestampHelper
+>>>>>>> origin/hanna_changes
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait

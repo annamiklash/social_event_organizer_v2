@@ -47,7 +47,6 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "AND l.deletedAt IS NULL")
     long countAll(@Param("keyword") String keyword);
 
-
     @Query(value = "SELECT distinct l.* from location l " +
             "left join location_availability la on la.id_location = l.id_location " +
             "WHERE l.id_location = :id AND la.date = CAST(:date as timestamp)", nativeQuery = true)
@@ -90,7 +89,6 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "FROM address a " +
             "left join location l on l.locationAddress.id = a.id")
     List<String> findDistinctCities();
-
 
     @Query("SELECT l from location l " +
             "LEFT JOIN FETCH l.images i " +
