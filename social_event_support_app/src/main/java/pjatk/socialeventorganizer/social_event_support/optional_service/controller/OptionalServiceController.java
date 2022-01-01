@@ -74,6 +74,16 @@ public class OptionalServiceController {
 
     @RequestMapping(
             method = RequestMethod.GET,
+            path = "allowed/cities",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getCities() {
+        final List<String> result = optionalServiceService.getCities();
+
+        return ResponseEntity.ok(result);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
             path = "allowed/{id}/detail",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OptionalServiceDto> getWithDetail(@PathVariable long id) {

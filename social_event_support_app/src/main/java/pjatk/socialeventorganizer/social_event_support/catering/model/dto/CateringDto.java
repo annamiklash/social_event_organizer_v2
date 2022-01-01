@@ -13,10 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.Cuisine
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -57,13 +54,13 @@ public class CateringDto implements Serializable {
             = "Description can be no more than 300 symbols")
     private String description;
 
-    @NotBlank(message = "Flag is mandatory")
+    @NotNull(message = "Flag is mandatory")
     private boolean offersOutsideCatering;
 
-    @NotBlank(message = "Business hours is mandatory")
+    @NotNull(message = "Business hours is mandatory")
     private List<BusinessHoursDto> businessHours;
 
-    @NotBlank(message = "Cuisines is mandatory")
+    @NotNull(message = "Cuisines is mandatory")
     private List<CuisineDto> cuisines;
 
     private List<AvailabilityDto> availability;

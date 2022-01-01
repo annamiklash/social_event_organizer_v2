@@ -19,11 +19,14 @@ import pjatk.socialeventorganizer.social_event_support.business.repository.Busin
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.image.repository.OptionalServiceImageRepository;
+import pjatk.socialeventorganizer.social_event_support.image.service.OptionalServiceImageService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto;
@@ -37,12 +40,12 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.mu
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.service.MusicStyleService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.repostory.OptionalServiceForChosenLocationRepository;
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
+import pjatk.socialeventorganizer.social_event_support.reviews.service.service.OptionalServiceReviewService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,12 +76,18 @@ public class OptionalServiceService {
 
     private final OptionalServiceForChosenLocationRepository optionalServiceForChosenLocationRepository;
 
+    private final OptionalServiceReviewService optionalServiceReviewService;
+
+    private final OptionalServiceImageRepository optionalServiceImageRepository;
+
+    private final TimestampHelper timestampHelper;
+
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
         final Pageable paging = PageRequest.of(customPage.getPageNo(), customPage.getPageSize(),
                 Sort.by(customPage.getSortBy()));
-        final Page<OptionalService > page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
+        final Page<OptionalService> page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
 
         final List<OptionalService> result = page.get().collect(Collectors.toList());
         for (OptionalService optionalService : result) {
@@ -88,18 +97,26 @@ public class OptionalServiceService {
                 );
             }
         }
-        return ImmutableList.copyOf(result);
+        return ImmutableList.copyOf(page.get()
+                .peek(location -> location.setRating(optionalServiceReviewService.getRating(location.getId())))
+                .collect(Collectors.toList()));
     }
 
     public OptionalService get(long id) {
-        return optionalServiceRepository.findById(id)
+        return optionalServiceRepository.findWithImages(id)
                 .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
     }
 
-    public OptionalService getWithDetail(long id) {
-        final OptionalService optionalService = optionalServiceRepository.findWithDetail(id)
-                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
+    public List<String> getCities() {
+        return optionalServiceRepository.findDistinctCities();
+    }
 
+
+    public OptionalService getWithDetail(long serviceId) {
+        final OptionalService optionalService = optionalServiceRepository.findWithDetail(serviceId)
+                .orElseThrow(() -> new NotFoundException("Service with serviceId " + serviceId + " DOES NOT EXIST"));
+
+        optionalService.setRating(optionalServiceReviewService.getRating(serviceId));
         final String type = optionalService.getType();
         switch (type) {
             case "INTERPRETER":
@@ -138,18 +155,16 @@ public class OptionalServiceService {
 
         optionalService.setServiceAddress(address);
         optionalService.setBusiness(business);
+        optionalService.setRating(0.0);
         optionalService.setOptionalServiceBusinessHours(new HashSet<>(businessHours));
-        optionalService.setCreatedAt(LocalDateTime.now());
-        optionalService.setModifiedAt(LocalDateTime.now());
+        optionalService.setCreatedAt(timestampHelper.now());
+        optionalService.setModifiedAt(timestampHelper.now());
 
-        save(optionalService);
+        optionalServiceRepository.save(optionalService);
 
         return optionalService;
     }
 
-    public void save(OptionalService optionalService) {
-        optionalServiceRepository.save(optionalService);
-    }
 
     public OptionalService edit(OptionalServiceDto dto, long id) {
         final OptionalService optionalService = get(id);
@@ -157,9 +172,9 @@ public class OptionalServiceService {
         optionalService.setAlias(dto.getAlias());
         optionalService.setDescription(dto.getDescription());
         optionalService.setType(optionalService.getType());
-        optionalService.setModifiedAt(LocalDateTime.now());
+        optionalService.setModifiedAt(timestampHelper.now());
 
-        save(optionalService);
+        optionalServiceRepository.save(optionalService);
 
         return optionalService;
     }
@@ -186,14 +201,13 @@ public class OptionalServiceService {
         }
 
         optionalServices = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), optionalServices);
+        optionalServices.forEach(optionalService -> optionalService.setRating(optionalServiceReviewService.getRating(optionalService.getId())));
 
         return ImmutableList.copyOf(optionalServices);
     }
 
-
     public boolean isAvailable(long serviceId, String date, String timeFrom, String timeTo) {
         return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
-
     }
 
     public OptionalService getWithImages(long id) {
@@ -223,6 +237,11 @@ public class OptionalServiceService {
         return ImmutableList.copyOf(optionalServiceRepository.findAllByBusiness_Id(id));
     }
 
+    public OptionalService getWithImages(long serviceId) {
+        return optionalServiceRepository.findWithImages(serviceId)
+                .orElseThrow(() -> new NotFoundException("Service with id " + serviceId + " does not exist"));
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long id) {
         final OptionalService serviceToDelete = optionalServiceRepository.getAllServiceInformation(id)
@@ -241,6 +260,9 @@ public class OptionalServiceService {
 
         ImmutableSet.copyOf(serviceToDelete.getServiceForLocation())
                 .forEach(optionalServiceForChosenLocationRepository::delete);
+
+        ImmutableList.copyOf(serviceToDelete.getImages())
+                .forEach(optionalServiceImageRepository::delete);
 
         final String type = serviceToDelete.getType();
         switch (type) {
@@ -263,8 +285,8 @@ public class OptionalServiceService {
             default:
                 break;
         }
-        serviceToDelete.setModifiedAt(LocalDateTime.now());
-        serviceToDelete.setDeletedAt(LocalDateTime.now());
+        serviceToDelete.setModifiedAt(timestampHelper.now());
+        serviceToDelete.setDeletedAt(timestampHelper.now());
     }
 
     private boolean hasPendingReservations(OptionalService serviceToDelete) {
