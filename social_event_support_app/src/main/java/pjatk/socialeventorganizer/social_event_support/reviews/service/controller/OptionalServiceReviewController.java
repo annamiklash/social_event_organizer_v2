@@ -35,11 +35,11 @@ public class OptionalServiceReviewController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServiceReviewDto> reviewService(@RequestParam long id,
+    public ResponseEntity<ServiceReviewDto> reviewService(@RequestParam long customerId,
                                                           @RequestParam long serviceId,
                                                           @Valid @RequestBody ServiceReviewDto dto) {
 
-        final OptionalServiceReview review = optionalServiceReviewService.leaveServiceReview(id, serviceId, dto);
+        final OptionalServiceReview review = optionalServiceReviewService.leaveServiceReview(customerId, serviceId, dto);
         return ResponseEntity.ok(ReviewMapper.toServiceReviewDto(review));
     }
 
@@ -50,13 +50,13 @@ public class OptionalServiceReviewController {
     public ResponseEntity<TableDto<ServiceReviewDto>> listAllByServiceId(@RequestParam(defaultValue = "0") Integer pageNo,
                                                                          @RequestParam(defaultValue = "5") Integer pageSize,
                                                                          @RequestParam(defaultValue = "id") String sortBy,
-                                                                         @RequestParam long id) {
+                                                                         @RequestParam long serviceId) {
         final List<OptionalServiceReview> review = optionalServiceReviewService.getByServiceId(CustomPage.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
-                .sortBy(sortBy).build(), id);
+                .sortBy(sortBy).build(), serviceId);
 
-        final Long count = optionalServiceReviewService.count(id);
+        final Long count = optionalServiceReviewService.count(serviceId);
 
         final ImmutableList<ServiceReviewDto> result = ImmutableList.copyOf(
                 review.stream()
