@@ -15,7 +15,7 @@ import static pjatk.socialeventorganizer.social_event_support.enums.Confirmation
 trait CateringForChosenEventLocationTrait {
 
     CateringForChosenEventLocation fakeCateringForChosenEventLocation = CateringForChosenEventLocation.builder()
-            .time(LocalTime.parse('10:15:30'))
+            .time(LocalTime.parse('10:15'))
             .comment("SAMPLE COMMENT")
             .confirmationStatus(NOT_CONFIRMED.name())
             .eventLocation(LocationForEvent.builder()
@@ -28,7 +28,7 @@ trait CateringForChosenEventLocationTrait {
 
     CateringForChosenEventLocationDto fakeCateringForChosenEventLocationDto = CateringForChosenEventLocationDto.builder()
             .id(1L)
-            .time('10:15:30')
+            .time('10:15')
             .comment("SAMPLE COMMENT")
             .confirmationStatus(CONFIRMED.name())
             .build()

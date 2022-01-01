@@ -13,8 +13,8 @@ trait BusinessHoursTrait {
 
     BusinessHoursDto fakeBusinessHoursDto = BusinessHoursDto.builder()
             .day(DayEnum.MONDAY)
-            .timeFrom('10:00:00')
-            .timeTo('20:00:00')
+            .timeFrom('10:00')
+            .timeTo('20:00')
             .build()
 
     CateringBusinessHours fakeCateringBusinessHours = CateringBusinessHours.builder()

@@ -31,12 +31,12 @@ public class AvailabilityDto implements Serializable {
 
     @NotBlank(message = "Time from is mandatory")
     @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
-    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
+    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT)
     private String timeFrom;
 
     @NotBlank(message = "Time to is mandatory")
     @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
-    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
+    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT)
     private String timeTo;
 
     private String status;

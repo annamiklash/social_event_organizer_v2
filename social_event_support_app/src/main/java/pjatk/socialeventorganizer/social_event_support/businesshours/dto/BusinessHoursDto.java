@@ -29,12 +29,11 @@ public class BusinessHoursDto implements Serializable {
 
     @NotBlank(message = "Time from is mandatory")
     @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
-    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
+    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT)
     private String timeFrom;
 
     @NotBlank(message = "Time from is mandatory")
     @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
-    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
     private String timeTo;
 
     private LocationDto location;

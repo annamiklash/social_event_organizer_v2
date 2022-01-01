@@ -37,12 +37,12 @@ public class OrganizedEventDto implements Serializable {
 
     @NotBlank(message = "Start time is mandatory")
     @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
-    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
+    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT)
     private String startTime;
 
     @NotBlank(message = "End time is mandatory")
     @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
-    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT_WITH_SECONDS)
+    @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT)
     private String endTime;
 
     @Min(1)
