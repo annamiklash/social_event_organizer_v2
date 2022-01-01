@@ -121,7 +121,7 @@ public class LocationController {
                         .collect(Collectors.toList())));
     }
 
-    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS', 'ADMIN')")
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/{id}/availability",
