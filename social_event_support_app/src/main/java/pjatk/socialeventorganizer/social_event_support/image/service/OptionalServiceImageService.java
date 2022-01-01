@@ -102,6 +102,10 @@ public class OptionalServiceImageService {
         return optionalServiceImageRepository.findAllByService_Id(serviceId);
     }
 
+    public void delete(OptionalServiceImage image) {
+        optionalServiceImageRepository.delete(image);
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void deleteById(long serviceId, Long toDelete) {
         final List<OptionalServiceImage> list = findByServiceId(serviceId);

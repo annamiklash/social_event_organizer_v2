@@ -52,7 +52,10 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "WHERE l.id_location = :id AND la.date = CAST(:date as timestamp)", nativeQuery = true)
     Optional<Location> getByIdWithAvailability(@Param("id") long id, @Param("date") String date);
 
-    List<Location> findByLocationAddress_City(String city);
+    @Query("SELECT l from location l " +
+            "left join fetch l.locationAddress a " +
+            "WHERE a.city = :city")
+    List<Location> findAllByCity(@Param("city") String city);
 
     @Query("SELECT distinct l from location l " +
             "LEFT JOIN fetch l.images " +
@@ -98,10 +101,10 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
     @Query("SELECT l from location l " +
             "LEFT JOIN FETCH l.images i " +
             "WHERE l.id = :locationId AND i.isMain = true")
-    Optional<Location> getByIdWithImages(@Param("locationId")long locationId);
+    Optional<Location> getByIdWithImages(@Param("locationId") long locationId);
 
     @Query("SELECT l FROM location l " +
             "LEFT JOIN FETCH l.caterings c " +
             "WHERE c.id = :cateringId")
-    List<Location> findAllByCateringId(@Param("cateringId")long cateringId);
+    List<Location> findAllByCateringId(@Param("cateringId") long cateringId);
 }

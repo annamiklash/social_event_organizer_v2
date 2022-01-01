@@ -11,10 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
-import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
-import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.model.dto.ServiceReviewDto;
@@ -33,18 +33,20 @@ public class OptionalServiceReviewService {
 
     private final ServiceReviewRepository serviceReviewRepository;
 
-    private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
 
-    private final OptionalServiceService optionalServiceService;
+    private final OptionalServiceRepository optionalServiceRepository;
 
     public void save(OptionalServiceReview optionalServiceReview) {
         serviceReviewRepository.save(optionalServiceReview);
     }
 
     public OptionalServiceReview leaveServiceReview(long id, long serviceId, ServiceReviewDto dto) {
-        final Customer customer = customerService.get(id);
+        final Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " does not exist"));
 
-        final OptionalService optionalService = optionalServiceService.get(serviceId);
+        final OptionalService optionalService = optionalServiceRepository.findById(serviceId)
+                .orElseThrow(() -> new NotFoundException("Service with id " + serviceId + " does not exist"));
 
         final OptionalServiceReview optionalServiceReview = ReviewMapper.fromServiceReviewDto(dto);
         optionalServiceReview.setOptionalService(optionalService);

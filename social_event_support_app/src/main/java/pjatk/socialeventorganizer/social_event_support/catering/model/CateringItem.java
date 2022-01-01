@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.catering.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Builder
 @Data
+@EqualsAndHashCode(exclude="catering")
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity(name = "catering_item")
@@ -50,6 +48,7 @@ public class CateringItem implements Serializable {
     @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering", nullable = false)
     private Catering catering;

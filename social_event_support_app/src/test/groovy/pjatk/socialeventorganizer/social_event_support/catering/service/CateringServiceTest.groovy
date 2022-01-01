@@ -14,7 +14,6 @@ import pjatk.socialeventorganizer.social_event_support.common.convertors.Convert
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService
-import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
@@ -166,6 +165,7 @@ class CateringServiceTest extends Specification
         catering.setModifiedAt(now)
         catering.setLocations(new HashSet<>())
         catering.setServiceCost(new BigDecimal("100.20"))
+        catering.setRating(0.0)
 
         def target = Catering.builder().build()
         InvokerHelper.setProperties(target, catering.properties)
@@ -183,12 +183,9 @@ class CateringServiceTest extends Specification
         2 * timestampHelper.now() >> now
         1 * cuisineService.getByName(cuisineDto.getName()) >> cuisine
 
-        1 * cateringRepository.saveAndFlush(catering)
-
         1 * locationService.findByCityWithId(address.getCity()) >> locations
-        1 * locationService.save(location)
 
-        1 * cateringRepository.save(_)
+        1 * cateringRepository.saveAndFlush(_)
 
         result == target
     }
@@ -206,24 +203,6 @@ class CateringServiceTest extends Specification
         1 * cateringRepository.getWithBusinessHours(cateringId) >> Optional.of(catering)
 
         result == target
-    }
-
-    def "addCateringToGivenLocation() positive test scenario"() {
-        given:
-        def catering = fakeCatering
-        catering.setLocations(new HashSet<Location>())
-
-        def locationId = 2L
-        def location = fakeLocation
-        catering.addLocation(location)
-
-        when:
-        cateringService.addCateringToGivenLocation(catering, locationId)
-
-        then:
-        1 * locationService.get(locationId) >> location
-        1 * cateringRepository.saveAndFlush(catering)
-
     }
 
     def "edit() positive test scenario"() {
@@ -314,6 +293,7 @@ class CateringServiceTest extends Specification
 
         result == target
     }
+
     def "count() positive test scenario"() {
         given:
         def keyword = '123'

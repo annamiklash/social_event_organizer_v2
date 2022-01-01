@@ -1,10 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.location.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
@@ -69,7 +66,7 @@ public class Location implements Serializable {
     private LocalDateTime deletedAt;
 
     @Column(name = "rating")
-    private double rating;
+    private Double rating;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -88,6 +85,7 @@ public class Location implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_catering"))
     private Set<Catering> caterings = new HashSet<>();
 
+    @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "location_description",
@@ -99,15 +97,17 @@ public class Location implements Serializable {
     @JoinColumn(name = "id_location")
     private Set<LocationImage> images = new HashSet<>();
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Set<LocationForEvent> locationForEvent = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Set<LocationAvailability> availability;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Set<LocationBusinessHours> locationBusinessHours;
 

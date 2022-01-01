@@ -79,7 +79,6 @@ public class LocationService {
     public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-
         final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
                 Sort.by(customPagination.getSortBy()));
         final Page<Location> page = locationRepository.findAllWithKeyword(paging, keyword);
@@ -185,12 +184,7 @@ public class LocationService {
     }
 
     public ImmutableList<Location> findByCityWithId(String city) {
-        final List<Location> locationList = locationRepository.findByLocationAddress_City(city);
-        if (locationList != null && !locationList.isEmpty()) {
-            return ImmutableList.copyOf(locationList);
-        } else {
-            throw new NotFoundException("No locations in the city " + city + " was found");
-        }
+       return ImmutableList.copyOf(locationRepository.findAllByCity(city));
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -222,18 +216,17 @@ public class LocationService {
         location.setDescriptions(descriptions);
         location.setLocationBusinessHours(new HashSet<>(businessHours));
         location.setImages(new HashSet<>());
+        location.setRating(0.0);
         location.setCreatedAt(LocalDateTime.now());
         location.setModifiedAt(LocalDateTime.now());
-        location.setRating(0.0);
-
-        save(location);
 
         //!SERVES_FOOD && OUTSIDE_CATERING_AVAILABLE
         if (locationDescriptionEnumSet.contains(LocationDescriptionItemEnum.OUTSIDE_CATERING_AVAILABLE)) {
-            addLocationOutsideCateringAvailableAndDontServeFood(location);
-        } else {
-            save(location);
+            final List<Catering> caterings = cateringRepository.findByCateringAddress_City(address.getCity());
+            location.setCaterings(new HashSet<>(caterings));
+
         }
+        save(location);
         return location;
     }
 
@@ -250,22 +243,22 @@ public class LocationService {
         return location;
     }
 
-    private void addLocationOutsideCateringAvailableAndDontServeFood(Location location) {
-        final String locationCity = location.getLocationAddress().getCity();
-        final List<Catering> cateringList = cateringRepository.findByCateringAddress_City(locationCity);
-
-        for (Catering catering : cateringList) {
-            log.info("CATERING ID " + catering.getId() + ", LOCATION ID " + location.getId());
-
-            catering.addLocation(location);
-            catering.setModifiedAt(LocalDateTime.now());
-
-            cateringRepository.save(catering);
-        }
-
-        location.setCaterings(new HashSet<>(cateringList));
-        save(location);
-    }
+//    private void addLocationOutsideCateringAvailableAndDontServeFood(Location location) {
+//        final String locationCity = location.getLocationAddress().getCity();
+//        final List<Catering> cateringList = cateringRepository.findByCateringAddress_City(locationCity);
+//
+//        for (Catering catering : cateringList) {
+//            log.info("CATERING ID " + catering.getId() + ", LOCATION ID " + location.getId());
+//
+//            catering.addLocation(location);
+//            catering.setModifiedAt(LocalDateTime.now());
+//
+//            cateringRepository.save(catering);
+//        }
+//
+//        location.setCaterings(new HashSet<>(cateringList));
+//        save(location);
+//    }
 
     private ImmutableList<Location> getAll() {
         return ImmutableList.copyOf(locationRepository.getAll());

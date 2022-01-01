@@ -41,8 +41,10 @@ import pjatk.socialeventorganizer.social_event_support.security.service.Security
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -198,23 +200,9 @@ public class CateringService {
                 .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " DOES NOT EXIST"));
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public void addCateringToGivenLocation(Catering catering, long locationId) {
-
-        final Location location = locationService.get(locationId);
-
-        catering.addLocation(location);
-        saveCatering(catering);
-    }
-
-    private void addCateringToLocationsWithSameCity(Catering savedCatering) {
+    private ImmutableList<Location> getLocationsInSameCity(Catering savedCatering) {
         final String city = savedCatering.getCateringAddress().getCity();
-        final ImmutableList<Location> locations = locationService.findByCityWithId(city);
-        for (Location location : locations) {
-            log.info("CATERING ID " + savedCatering.getId() + ", LOCATION ID " + location.getId());
-            location.addCatering(savedCatering);
-            locationService.save(location);
-        }
+        return locationService.findByCityWithId(city);
     }
 
     public ImmutableList<Catering> getByLocationId(long id) {
@@ -239,15 +227,7 @@ public class CateringService {
     }
 
     private Catering createCateringWithLocation(CateringDto dto, Long locationId, Business business) {
-        if (!locationService.exists(locationId)) {
-            throw new IllegalArgumentException("Location does not exist");
-        }
-
-        final Location location = locationService.getWithDetail(locationId);
-
-        if (business.getId() != (location.getBusiness().getId())) {
-            throw new InvalidCredentialsException(InvalidCredentialsException.Enum.INCORRECT_CREDENTIALS);
-        }
+        final Location location = locationService.get(locationId);
 
         final Address address = addressService.create(dto.getAddress());
         final Set<CateringBusinessHours> businessHours = cateringBusinessHoursService.create(dto.getBusinessHours());
@@ -256,27 +236,24 @@ public class CateringService {
         catering.setCateringAddress(address);
         catering.setBusiness(business);
         catering.setCateringBusinessHours(ImmutableSet.copyOf(businessHours));
-        catering.setCreatedAt(timestampHelper.now());
-        catering.setModifiedAt(timestampHelper.now());
-        catering.setLocations(new HashSet<>());
-
-        saveCatering(catering);
 
         final List<CuisineDto> cuisineDtos = dto.getCuisines();
-
         final Set<Cuisine> cuisines = cuisineDtos.stream()
                 .map(CuisineDto::getName)
                 .map(cuisineService::getByName)
                 .collect(Collectors.toSet());
 
-        catering.setCuisines(cuisines);
-
+        catering.setCuisines(ImmutableSet.copyOf(cuisines));
         if (dto.isOffersOutsideCatering()) {
-            addCateringToLocationsWithSameCity(catering);
+            catering.setLocations(new HashSet<>(getLocationsInSameCity(catering)));
         } else {
-            addCateringToGivenLocation(catering, locationId);
+            catering.setLocations(ImmutableSet.of(location));
         }
-        cateringRepository.save(catering);
+
+        catering.setCreatedAt(timestampHelper.now());
+        catering.setModifiedAt(timestampHelper.now());
+
+        saveCatering(catering);
         return catering;
     }
 
@@ -291,13 +268,12 @@ public class CateringService {
         final Catering catering = CateringMapper.fromDto(dto);
 
         catering.setCateringAddress(address);
+        catering.setRating(0.0);
         catering.setBusiness(business);
         catering.setCateringBusinessHours(ImmutableSet.copyOf(businessHours));
         catering.setCreatedAt(timestampHelper.now());
         catering.setModifiedAt(timestampHelper.now());
         catering.setLocations(new HashSet<>());
-
-        saveCatering(catering);
 
         final List<CuisineDto> cuisineDtos = dto.getCuisines();
 
@@ -308,8 +284,8 @@ public class CateringService {
 
         catering.setCuisines(cuisines);
 
-        addCateringToLocationsWithSameCity(catering);
-        cateringRepository.save(catering);
+        catering.setLocations(new HashSet<>(getLocationsInSameCity(catering)));
+        saveCatering(catering);
 
         return catering;
     }

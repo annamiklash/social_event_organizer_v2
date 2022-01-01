@@ -38,7 +38,6 @@ public class LocationMapper {
         final LocationDto dto = LocationDto.builder()
                 .id(Math.toIntExact(location.getId()))
                 .name(location.getName())
-                .rating(location.getRating())
                 .description(location.getDescription())
                 .email(location.getEmail())
                 .phoneNumber(String.valueOf(location.getPhoneNumber()))

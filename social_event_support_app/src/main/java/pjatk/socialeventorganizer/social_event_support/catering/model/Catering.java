@@ -1,6 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.catering.model;
 
 import lombok.*;
+import org.apache.commons.lang3.builder.HashCodeExclude;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
@@ -18,9 +19,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Builder
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
+@EqualsAndHashCode(exclude={"locations", "cuisines", "cateringForChosenEventLocations"})
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "catering")
@@ -48,7 +48,7 @@ public class Catering implements Serializable {
     private String description;
 
     @Column(name = "rating")
-    private double rating;
+    private Double rating;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -59,6 +59,7 @@ public class Catering implements Serializable {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;
@@ -79,13 +80,16 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_catering")
     private Set<CateringImage> images;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
     private Set<Location> locations;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
     private Set<CateringForChosenEventLocation> cateringForChosenEventLocations;
 
+    @ToString.Exclude
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "catering_cuisine",

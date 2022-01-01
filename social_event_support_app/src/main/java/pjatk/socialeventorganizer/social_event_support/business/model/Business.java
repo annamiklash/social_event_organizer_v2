@@ -1,9 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.business.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import org.apache.commons.lang3.builder.HashCodeExclude;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
@@ -19,6 +17,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode(exclude={"caterings", "locations", "services"})
 @Entity(name = "business")
 @Table(name = "business")
 public class Business implements Serializable {
@@ -46,10 +45,12 @@ public class Business implements Serializable {
     @JoinColumn(name = "id_business_address")
     private Address address;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business")
     private Set<Catering> caterings;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business")
     private Set<Location> locations;

@@ -58,6 +58,9 @@ public class OptionalService {
     @Column(nullable = false)
     private String description;
 
+    @Column(name = "rating")
+    private Double rating;
+
     @Column(name = "service_cost", nullable = false)
     private BigDecimal serviceCost;
 
