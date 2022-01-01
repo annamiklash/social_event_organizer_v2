@@ -102,6 +102,10 @@ public class LocationImageService {
         locationImageRepository.flush();
     }
 
+    public void delete(LocationImage image) {
+        locationImageRepository.delete(image);
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void deleteById(long locationId, Long toDelete) {
         final List<LocationImage> list = findByLocationId(locationId);

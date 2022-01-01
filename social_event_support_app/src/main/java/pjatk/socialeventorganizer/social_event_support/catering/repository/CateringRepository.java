@@ -18,6 +18,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     List<Catering> findByCateringAddress_City(String city);
 
     @Query("SELECT c FROM catering AS c " +
+            "LEFT JOIN FETCH c.images i " +
             "JOIN c.business cb join cb.user cbu " +
             "WHERE  c.name LIKE %:keyword% " +
             "OR c.description LIKE %:keyword% " +
@@ -26,6 +27,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     Page<Catering> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
     @Query("SELECT c from catering c " +
+            "LEFT JOIN FETCH c.images i " +
             "left join fetch c.cateringItems ci " +
             "left join fetch c.cateringBusinessHours cbh " +
             "left join fetch c.locations cl " +
@@ -33,6 +35,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     Optional<Catering> findByIdWithDetail(@Param("id") long id);
 
     @Query("SELECT distinct c from catering c " +
+            "LEFT JOIN FETCH c.images i " +
             "left join c.cuisines cu " +
             "left join c.cateringBusinessHours bh " +
             "left join c.cateringAddress ca " +
@@ -48,6 +51,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     List<Catering> findAllByBusiness_Id(long id);
 
     @Query("SELECT c FROM catering c " +
+            "LEFT JOIN FETCH c.images i " +
             "LEFT JOIN FETCH c.cateringAddress cad " +
             "LEFT JOIN FETCH c.cateringBusinessHours bh " +
             "LEFT JOIN FETCH c.locations cl " +
@@ -59,6 +63,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     Optional<Catering> findAllCateringInformation(@Param("cateringId") long cateringId);
 
     @Query("SELECT c FROM catering c " +
+            "LEFT JOIN FETCH c.images i " +
             "LEFT JOIN FETCH c.locations l " +
             "WHERE l.id = :locationId")
     List<Catering> findAllByLocationId(@Param("locationId") long locationId);

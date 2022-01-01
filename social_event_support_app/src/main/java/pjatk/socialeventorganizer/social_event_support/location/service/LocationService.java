@@ -23,12 +23,14 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.image.repository.LocationImageRepository;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
@@ -74,6 +76,8 @@ public class LocationService {
     private final SecurityService securityService;
 
     private final LocationReviewService locationReviewService;
+
+    private final LocationImageRepository locationImageRepository;
 
 
     public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
@@ -334,22 +338,21 @@ locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
         if (hasPendingReservations) {
             throw new ActionNotAllowedException("Cannot delete location with reservations pending");
         }
-        final Set<LocationBusinessHours> businessHours = ImmutableSet.copyOf(locationToDelete.getLocationBusinessHours());
-        for (LocationBusinessHours businessHour : businessHours) {
-            locationBusinessHoursService.delete(businessHour);
-        }
+        CollectionUtil.emptyListIfNull(locationToDelete.getLocationBusinessHours())
+                .forEach(locationBusinessHoursService::delete);
 
-        final Set<LocationDescriptionItem> descriptions = ImmutableSet.copyOf(locationToDelete.getDescriptions());
+        CollectionUtil.emptyListIfNull(locationToDelete.getAvailability())
+                .forEach(locationAvailabilityRepository::delete);
+
+        CollectionUtil.emptyListIfNull(locationToDelete.getImages())
+                .forEach(locationImageRepository::delete);
+
+        final ImmutableList<LocationDescriptionItem> descriptions = CollectionUtil.emptyListIfNull(locationToDelete.getDescriptions());
         for (LocationDescriptionItem description : descriptions) {
             locationToDelete.removeDescriptionItem(description);
         }
 
-        final Set<LocationAvailability> availabilities = ImmutableSet.copyOf(locationToDelete.getAvailability());
-        for (LocationAvailability availability : availabilities) {
-            locationToDelete.removeAvailability(availability);
-        }
-
-        final Set<Catering> caterings = ImmutableSet.copyOf(locationToDelete.getCaterings());
+        final ImmutableList<Catering> caterings = CollectionUtil.emptyListIfNull(locationToDelete.getCaterings());
         for (Catering catering : caterings) {
             locationToDelete.removeCatering(catering);
         }
