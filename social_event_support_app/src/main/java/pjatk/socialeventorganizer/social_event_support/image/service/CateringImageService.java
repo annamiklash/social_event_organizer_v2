@@ -10,6 +10,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
+import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
@@ -96,6 +97,10 @@ public class CateringImageService {
 
     public List<CateringImage> findByCateringId(long cateringId) {
         return cateringImageRepository.findAllByCatering_Id(cateringId);
+    }
+
+    public void delete(CateringImage image) {
+        cateringImageRepository.delete(image);
     }
 
     public int count(long cateringId) {

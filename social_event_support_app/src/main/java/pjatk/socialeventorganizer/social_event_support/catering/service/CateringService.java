@@ -34,6 +34,8 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineSe
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.*;
+import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
+import pjatk.socialeventorganizer.social_event_support.image.service.CateringImageService;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
@@ -61,6 +63,7 @@ public class CateringService {
     private final CateringBusinessHoursService cateringBusinessHoursService;
     private final CuisineService cuisineService;
     private final TimestampHelper timestampHelper;
+    private final CateringImageRepository cateringImageRepository;
 
     public ImmutableList<Catering> list(CustomPage customPagination, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -169,6 +172,8 @@ public class CateringService {
         if (hasPendingReservations) {
             throw new ActionNotAllowedException("Cannot delete catering with reservations pending");
         }
+        CollectionUtil.emptyListIfNull(cateringToDelete.getImages())
+                .forEach(cateringImageRepository::delete);
 
         CollectionUtil.emptyListIfNull(cateringToDelete.getCateringBusinessHours())
                 .forEach(cateringBusinessHoursService::delete);

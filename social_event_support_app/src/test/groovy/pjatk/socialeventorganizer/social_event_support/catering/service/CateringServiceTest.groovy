@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.common.convertors.Convert
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService
+import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
@@ -48,6 +49,7 @@ class CateringServiceTest extends Specification
     BusinessRepository businessRepository
     CateringBusinessHoursService cateringBusinessHoursService
     CuisineService cuisineService
+    CateringImageRepository cateringImageRepository
     TimestampHelper timestampHelper
 
     def setup() {
@@ -61,6 +63,7 @@ class CateringServiceTest extends Specification
         cateringBusinessHoursService = Mock()
         cuisineService = Mock()
         timestampHelper = Mock()
+        cateringImageRepository = Mock()
 
         cateringService = new CateringService(cateringRepository,
                 cateringItemRepository,
@@ -70,7 +73,8 @@ class CateringServiceTest extends Specification
                 businessRepository,
                 cateringBusinessHoursService,
                 cuisineService,
-                timestampHelper)
+                timestampHelper,
+                cateringImageRepository)
     }
 
     def "list() positive test scenario"() {
