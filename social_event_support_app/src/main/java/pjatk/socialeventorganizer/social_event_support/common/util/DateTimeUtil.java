@@ -19,12 +19,10 @@ public class DateTimeUtil {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HH:mm";
-    public static final String TIME_FORMAT_WITH_SECONDS = "HH:mm:ss";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
-    private static final DateTimeFormatter TIME_FORMATTER_WITH_SECONDS = DateTimeFormatter.ofPattern(TIME_FORMAT_WITH_SECONDS);
 
     public LocalDateTime fromStringToFormattedDateTime(String date) {
         if (date == null || date.equals("null")) {
@@ -65,15 +63,11 @@ public class DateTimeUtil {
     }
 
     public String joinDateAndTime(String date, String time) {
-        if (time.length() != TIME_FORMAT_WITH_SECONDS.length()) {
-            time = time + ":00";
-        }
-
         return date + " " + time;
     }
 
     public String fromLocalTimeToString(LocalTime time) {
-        return time.format(TIME_FORMATTER_WITH_SECONDS);
+        return time.format(TIME_FORMATTER);
     }
 
 
@@ -96,8 +90,7 @@ public class DateTimeUtil {
         if (time == null) {
             return null;
         }
-        return LocalTime.parse(time,
-                DateTimeFormatter.ofPattern(TIME_FORMAT_WITH_SECONDS));
+        return LocalTime.parse(time, TIME_FORMATTER);
     }
 
     public Time toTimeFromString(String time) {
