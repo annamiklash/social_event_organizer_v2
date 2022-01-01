@@ -9,12 +9,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
-import pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum;
 import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
+import pjatk.socialeventorganizer.social_event_support.event.helper.StatusChangeHelper;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
@@ -22,9 +23,7 @@ import pjatk.socialeventorganizer.social_event_support.event.repository.Organize
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
 
@@ -34,36 +33,34 @@ import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusE
 public class OrganizedEventService {
 
     private final OrganizedEventRepository organizedEventRepository;
-
     private final EventTypeService eventTypeService;
-
     private final CustomerRepository customerRepository;
+    private final StatusChangeHelper statusChangeHelper;
+    private final TimestampHelper timestampHelper;
 
-    public ImmutableList<OrganizedEventDto> list(CustomPage customPagination, String keyword) {
+    public ImmutableList<OrganizedEventDto> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(),
-                Sort.by(customPagination.getSortBy()).descending());
+        final Pageable paging = PageRequest.of(customPage.getPageNo(),
+                customPage.getPageSize(),
+                Sort.by(customPage.getSortBy()).descending()
+        );
         final Page<OrganizedEvent> page = organizedEventRepository.findAll(paging);
 
-        return page.get().map(OrganizedEventMapper::toDtoWithCustomer).collect(ImmutableList.toImmutableList());
+        return page.get()
+                .map(OrganizedEventMapper::toDtoWithCustomer)
+                .collect(ImmutableList.toImmutableList());
     }
 
     public OrganizedEvent get(long orgEventId) {
-        final Optional<OrganizedEvent> optionalEvent = organizedEventRepository.findById(orgEventId);
-        if (optionalEvent.isPresent()) {
-            return optionalEvent.get();
-        }
-        throw new NotFoundException("No organized event with id " + orgEventId);
+        return organizedEventRepository.findById(orgEventId)
+                .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
     }
 
     //TODO: controller method + mapper
     public OrganizedEvent getWithDetail(long orgEventId) {
-        final Optional<OrganizedEvent> optionalEvent = organizedEventRepository.getWithDetail(orgEventId);
-        if (optionalEvent.isPresent()) {
-            return optionalEvent.get();
-        }
-        throw new NotFoundException("No organized event with id " + orgEventId);
+        return organizedEventRepository.getWithDetail(orgEventId)
+                .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
     }
 
     public void save(OrganizedEvent organizedEvent) {
@@ -71,12 +68,8 @@ public class OrganizedEventService {
     }
 
     public OrganizedEvent getWithAllInformationForSendingInvitations(long eventId, long customerId) {
-        final Optional<OrganizedEvent> organizedEvent = organizedEventRepository.getWithAllInformationForSendingInvitations(eventId, customerId);
-
-        if (organizedEvent.isPresent()) {
-            return organizedEvent.get();
-        }
-        throw new NotFoundException("No organized event with eventId " + eventId);
+        return organizedEventRepository.getWithAllInformationForSendingInvitations(eventId, customerId)
+                .orElseThrow(() -> new NotFoundException("No organized event with eventId " + eventId));
     }
 
     public OrganizedEvent changeStatus(long customerId, long eventId, EventStatusEnum status) {
@@ -87,17 +80,17 @@ public class OrganizedEventService {
 
         switch (status) {
             case IN_PROGRESS: //possible only when current status CONFIRMED
-                if (organizedEvent.getEventStatus().equals(CONFIRMED.name())) {
+                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
                     organizedEvent.setEventStatus(IN_PROGRESS.name());
                 }
                 break;
             case CONFIRMED: //if current IN_PROGRESS
-                if (possibleToChangeStatusFromInProgressToConfirmed(organizedEvent)) {
+                if (statusChangeHelper.possibleToChangeStatusFromInProgressToConfirmed(organizedEvent)) {
                     organizedEvent.setEventStatus(CONFIRMED.name());
                 }
                 break;
             case READY: //if current CONFIRMED
-                if (organizedEvent.getEventStatus().equals(CONFIRMED.name())) {
+                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
                     organizedEvent.setEventStatus(READY.name());
                 }
                 break;
@@ -115,38 +108,10 @@ public class OrganizedEventService {
         return organizedEvent;
     }
 
-    private boolean possibleToChangeStatusFromInProgressToConfirmed(OrganizedEvent organizedEvent) {
-        final String eventStatus = organizedEvent.getEventStatus();
-        if (eventStatus.equals(IN_PROGRESS.name())) {
-            if (organizedEvent.getLocationForEvent() == null) {
-                return false;
-            } else {
-                if (organizedEvent.getLocationForEvent().getConfirmationStatus().equals(ConfirmationStatusEnum.NOT_CONFIRMED.name())) {
-                    return false;
-                } else {
-                    if (organizedEvent.getLocationForEvent().getCateringsForEventLocation() == null &&
-                            organizedEvent.getLocationForEvent().getServices() == null) {
-                        return true;
-                    }
-                    if (organizedEvent.getLocationForEvent().getCateringsForEventLocation() != null) {
-                        return organizedEvent.getLocationForEvent().getCateringsForEventLocation().stream()
-                                .allMatch(catering -> catering.getConfirmationStatus().equals(ConfirmationStatusEnum.CONFIRMED.name()));
-                    }
-                    if (organizedEvent.getLocationForEvent().getServices() != null) {
-                        return organizedEvent.getLocationForEvent().getServices().stream()
-                                .allMatch(service -> service.getConfirmationStatus().equals(ConfirmationStatusEnum.CONFIRMED.name()));
-                    }
-                }
-            }
-        } else {
-            return false;
-        }
-        return false;
-    }
-
-
     public List<OrganizedEvent> getAllByCustomerIdAndTab(long customerId, CustomerReservationTabEnum tabEnum) {
-        customerRepository.findById(customerId).orElseThrow(() -> new NotFoundException("No customer with " + customerId));
+        if (!customerRepository.existsById(customerId)) {
+            throw new NotFoundException("No customer with " + customerId);
+        }
 
         switch (tabEnum) {
             case ALL:
@@ -165,10 +130,6 @@ public class OrganizedEventService {
                 .orElseThrow(() -> new NotFoundException("No event with id " + eventId));
     }
 
-    private boolean eventWithIdAndCustomerIdExists(long customerId, long eventId) {
-        return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId);
-    }
-
     public OrganizedEvent create(long customerId, OrganizedEventDto dto) {
         final Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
@@ -177,8 +138,8 @@ public class OrganizedEventService {
 
         organizedEvent.setEventType(eventTypeService.getByType(dto.getEventType()));
         organizedEvent.setCustomer(customer);
-        organizedEvent.setCreatedAt(LocalDateTime.now());
-        organizedEvent.setModifiedAt(LocalDateTime.now());
+        organizedEvent.setCreatedAt(timestampHelper.now());
+        organizedEvent.setModifiedAt(timestampHelper.now());
 
         save(organizedEvent);
 
@@ -186,9 +147,13 @@ public class OrganizedEventService {
     }
 
     public void delete(OrganizedEvent organizedEvent) {
-        organizedEvent.setModifiedAt(LocalDateTime.now());
-        organizedEvent.setDeletedAt(LocalDateTime.now());
+        organizedEvent.setModifiedAt(timestampHelper.now());
+        organizedEvent.setDeletedAt(timestampHelper.now());
 
         save(organizedEvent);
+    }
+
+    private boolean eventWithIdAndCustomerIdExists(long customerId, long eventId) {
+        return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId);
     }
 }

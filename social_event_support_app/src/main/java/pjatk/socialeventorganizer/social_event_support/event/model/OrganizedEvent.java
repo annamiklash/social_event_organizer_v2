@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
-@Getter
-@Setter
+@NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
+@Data
 @Builder
+@With
 @Entity(name = "organized_event")
 public class OrganizedEvent implements Serializable {
 
