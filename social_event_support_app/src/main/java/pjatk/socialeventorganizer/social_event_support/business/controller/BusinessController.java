@@ -15,7 +15,6 @@ import pjatk.socialeventorganizer.social_event_support.business.service.Business
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 
 import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -30,22 +29,22 @@ public class BusinessController {
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<BusinessDto>> list(@RequestParam(defaultValue = "0") Integer firstResult,
-                                                           @RequestParam(defaultValue = "50") Integer maxResult,
+    public ResponseEntity<ImmutableList<BusinessDto>> list(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                           @RequestParam(defaultValue = "50") Integer pageSize,
                                                            @RequestParam(defaultValue = "id") String sort,
                                                            @RequestParam(defaultValue = "asc") String order) {
         final CustomPage customPage = CustomPage.builder()
-                .pageNo(maxResult)
-                .pageSize(firstResult)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
                 .sortBy(sort)
                 .order(order)
                 .build();
-        final ImmutableList<Business> list = businessService.list(customPage);
+        final ImmutableList<Business> businessList = businessService.list(customPage);
+        final ImmutableList<BusinessDto> resultList = businessList.stream()
+                .map(BusinessMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(BusinessMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

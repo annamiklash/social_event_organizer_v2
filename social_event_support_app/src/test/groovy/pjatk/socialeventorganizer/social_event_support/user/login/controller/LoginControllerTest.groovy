@@ -1,6 +1,5 @@
 package pjatk.socialeventorganizer.social_event_support.user.login.controller
 
-
 import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -14,7 +13,9 @@ import pjatk.socialeventorganizer.social_event_support.user.login.model.request.
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService
 import spock.lang.Specification
 
+import static org.mockito.ArgumentMatchers.any
 import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.Mockito.times
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -49,8 +50,6 @@ class LoginControllerTest extends Specification implements UserTrait {
                 .willReturn(true)
         BDDMockito.given(userService.getUserByEmail(eq(loginDto.getEmail())))
                 .willReturn(fakeUser)
-//        BDDMockito.verify(securityService, times(1))
-//                .buildSecurityContext(eq(loginDto), any())
 
         expect:
         mockMvc.perform(
@@ -62,6 +61,9 @@ class LoginControllerTest extends Specification implements UserTrait {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json(jsonResponse))
+
+        BDDMockito.verify(securityService, times(1))
+                .buildSecurityContext(eq(loginDto), any())
     }
 
     def "POST /api/login returns 403 positive test scenario"() {
