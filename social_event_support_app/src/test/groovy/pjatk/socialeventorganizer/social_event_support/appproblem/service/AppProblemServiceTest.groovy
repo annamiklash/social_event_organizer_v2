@@ -131,6 +131,7 @@ class AppProblemServiceTest extends Specification implements PageTrait, AppProbl
         def id = 1
         def user = fakeUser
         def appProblem = fakeAppProblem
+        appProblem.setId(null)
         def dto = fakeAppProblemDto
         def now = LocalDateTime.parse('2007-12-03T10:15:30')
         appProblem.setCreatedAt(now)

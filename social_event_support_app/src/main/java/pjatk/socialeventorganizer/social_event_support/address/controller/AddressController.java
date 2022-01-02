@@ -17,8 +17,6 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 
-import java.util.stream.Collectors;
-
 @Slf4j
 @AllArgsConstructor
 @Validated
@@ -32,24 +30,23 @@ public class AddressController {
     @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<AddressDto>> list(@RequestParam(defaultValue = "0") Integer firstResult,
-                                                          @RequestParam(defaultValue = "50") Integer maxResult,
+    public ResponseEntity<ImmutableList<AddressDto>> list(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                          @RequestParam(defaultValue = "50") Integer pageSize,
                                                           @RequestParam(defaultValue = "id") String sort,
                                                           @RequestParam(defaultValue = "desc") String order) {
 
         final CustomPage customPage = CustomPage.builder()
-                .pageNo(maxResult)
-                .pageSize(firstResult)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
                 .sortBy(sort)
                 .order(order)
                 .build();
         final ImmutableList<Address> addressList = addressService.list(customPage);
+        final ImmutableList<AddressDto> resultList = addressList.stream()
+                .map(AddressMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(
-                        addressList.stream()
-                                .map(AddressMapper::toDto)
-                                .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
 

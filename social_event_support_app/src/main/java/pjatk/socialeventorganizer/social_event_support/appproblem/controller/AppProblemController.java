@@ -18,7 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.enums.AppProblemTypeEnum;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @AllArgsConstructor
@@ -34,23 +34,25 @@ public class AppProblemController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<AppProblemDto>> list(@RequestParam(required = false) String keyword,
-                                                             @RequestParam(defaultValue = "0") Integer firstResult,
-                                                             @RequestParam(defaultValue = "50") Integer maxResult,
+                                                             @RequestParam(defaultValue = "0") Integer pageNo,
+                                                             @RequestParam(defaultValue = "50") Integer pageSize,
                                                              @RequestParam(defaultValue = "id") String sort,
                                                              @RequestParam(defaultValue = "desc") String order,
                                                              @RequestParam AppProblemStatusEnum status) {
         log.info("GET ALL APP_PROBLEMS");
         final CustomPage customPage = CustomPage.builder()
-                .pageNo(maxResult)
-                .pageSize(firstResult)
+                .pageNo(pageNo)
+                .pageSize(pageSize)
                 .sortBy(sort)
                 .order(order)
                 .build();
-        List<AppProblem> list = appProblemService.list(customPage, keyword, status);
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(AppProblemMapper::toDtoWithUser)
-                        .collect(Collectors.toList())));
+        final List<AppProblem> appProblemList = appProblemService.list(customPage, keyword, status);
+
+        final ImmutableList<AppProblemDto> resultList = appProblemList.stream()
+                .map(AppProblemMapper::toDtoWithUser)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 
 
@@ -72,9 +74,11 @@ public class AppProblemController {
             path = "/types",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<String>> concerns() {
-        final List<AppProblemTypeEnum> enumList = List.of(AppProblemTypeEnum.values());
+        final ImmutableList<String> resultList = Stream.of(AppProblemTypeEnum.values())
+                .map(AppProblemTypeEnum::getValue)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(ImmutableList.copyOf(enumList.stream().map(AppProblemTypeEnum::getValue).collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
 

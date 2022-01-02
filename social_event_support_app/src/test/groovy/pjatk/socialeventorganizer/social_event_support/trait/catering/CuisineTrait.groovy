@@ -8,9 +8,9 @@ trait CuisineTrait {
     Cuisine fakeCuisine = Cuisine.builder()
             .id(1)
             .name('Greek')
-            .build();
+            .build()
 
     CuisineDto faceCuisineDto = CuisineDto.builder()
             .name('Greek')
-            .build();
+            .build()
 }

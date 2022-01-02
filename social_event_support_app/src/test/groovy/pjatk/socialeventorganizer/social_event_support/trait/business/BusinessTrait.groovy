@@ -1,10 +1,12 @@
 package pjatk.socialeventorganizer.social_event_support.trait.business
 
+import com.google.common.collect.ImmutableSet
 import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
 import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto
@@ -61,6 +63,20 @@ trait BusinessTrait {
                             .email('catering@email.com')
                             .phoneNumber(new BigInteger('123456789'))
                             .description('description')
+                            .cateringAddress(Address.builder()
+                                    .id(1)
+                                    .country('Poland')
+                                    .city('Warsaw')
+                                    .streetName('Piękna')
+                                    .streetNumber(1)
+                                    .zipCode('01-157')
+                                    .build())
+                            .cuisines(ImmutableSet.of(
+                                    Cuisine.builder()
+                                            .id(1)
+                                            .name('Greek')
+                                            .build()
+                            ))
                             .build()
             ))
             .locations(Set.of(
@@ -68,6 +84,14 @@ trait BusinessTrait {
                             .id(1)
                             .name('Name')
                             .email('email@email.com')
+                            .locationAddress(Address.builder()
+                                    .id(1)
+                                    .country('Poland')
+                                    .city('Warsaw')
+                                    .streetName('Piękna')
+                                    .streetNumber(1)
+                                    .zipCode('01-157')
+                                    .build())
                             .build()
             ))
             .address(Address.builder()
