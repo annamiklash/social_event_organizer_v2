@@ -5,10 +5,9 @@ import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
@@ -32,10 +31,10 @@ public class GuestService {
 
     private CustomerRepository customerRepository;
 
-    public ImmutableList<Guest> list(CustomPage customPagination, String keyword) {
+    public ImmutableList<Guest> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getFirstResult(), customPagination.getMaxResult(), Sort.by(customPagination.getSortBy()).descending());
+        final Pageable paging = PageableMapper.map(customPage);
         final Page<Guest> page = guestRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

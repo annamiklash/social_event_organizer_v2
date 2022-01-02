@@ -34,7 +34,13 @@ public class BusinessController {
                                                            @RequestParam(defaultValue = "50") Integer maxResult,
                                                            @RequestParam(defaultValue = "id") String sort,
                                                            @RequestParam(defaultValue = "asc") String order) {
-        final ImmutableList<Business> list = businessService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build());
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(maxResult)
+                .pageSize(firstResult)
+                .sortBy(sort)
+                .order(order)
+                .build();
+        final ImmutableList<Business> list = businessService.list(customPage);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()

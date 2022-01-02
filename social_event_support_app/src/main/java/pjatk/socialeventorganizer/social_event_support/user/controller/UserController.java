@@ -70,14 +70,18 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<UserDto>> list(@RequestParam(required = false) String keyword,
                                                   @RequestParam(defaultValue = "0") Integer pageNo,
-                                                  @RequestParam(defaultValue = "5") Integer pageSize,
-                                                  @RequestParam(defaultValue = "id") String sortBy) {
+                                                  @RequestParam(defaultValue = "50") Integer pageSize,
+                                                  @RequestParam(defaultValue = "id") String sortBy,
+                                                  @RequestParam(defaultValue = "asc") String order) {
 
-        final ImmutableList<User> users = userService.list(
-                CustomPage.builder()
-                        .pageNo(pageNo)
-                        .pageSize(pageSize)
-                        .sortBy(sortBy).build(), keyword);
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy)
+                .order(order)
+                .build();
+
+        final ImmutableList<User> users = userService.list(customPage, keyword);
         final Long count = userService.count(keyword);
 
         final ImmutableList<UserDto> result = ImmutableList.copyOf(
@@ -85,7 +89,14 @@ public class UserController {
                         .map(UserMapper::toDto)
                         .collect(Collectors.toList()));
 
-        return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().total(count).pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).build(), result));
+        return ResponseEntity.ok(new TableDto<>(
+                TableDto.MetaDto.builder()
+                        .total(count)
+                        .pageNo(pageNo)
+                        .pageSize(pageSize)
+                        .sortBy(sortBy)
+                        .build(),
+                result));
 
     }
 

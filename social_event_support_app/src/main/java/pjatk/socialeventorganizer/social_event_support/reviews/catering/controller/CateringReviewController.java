@@ -33,13 +33,17 @@ public class CateringReviewController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<CateringReviewDto>> listAllByCateringId(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                                           @RequestParam(defaultValue = "5") Integer pageSize,
+                                                                           @RequestParam(defaultValue = "50") Integer pageSize,
                                                                            @RequestParam(defaultValue = "id") String sortBy,
+                                                                           @RequestParam(defaultValue = "asc") String order,
                                                                            @RequestParam long id) {
-        final List<CateringReview> review = cateringReviewService.getByCateringId(CustomPage.builder()
+        final CustomPage customPage = CustomPage.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
-                .sortBy(sortBy).build(), id);
+                .sortBy(sortBy)
+                .order(order)
+                .build();
+        final List<CateringReview> review = cateringReviewService.getByCateringId(customPage, id);
 
         final Long count = cateringReviewService.count(id);
 

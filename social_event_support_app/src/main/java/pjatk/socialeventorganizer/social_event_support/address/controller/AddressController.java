@@ -37,7 +37,13 @@ public class AddressController {
                                                           @RequestParam(defaultValue = "id") String sort,
                                                           @RequestParam(defaultValue = "desc") String order) {
 
-        final ImmutableList<Address> addressList = addressService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build());
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(maxResult)
+                .pageSize(firstResult)
+                .sortBy(sort)
+                .order(order)
+                .build();
+        final ImmutableList<Address> addressList = addressService.list(customPage);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(

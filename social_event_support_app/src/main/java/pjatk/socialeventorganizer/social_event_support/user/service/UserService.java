@@ -5,13 +5,12 @@ import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
@@ -54,12 +53,10 @@ public class UserService {
 
     private final EntityManager em;
 
-    public ImmutableList<User> list(CustomPage customPagination, String keyword) {
+    public ImmutableList<User> list(CustomPage customPage, String keyword) {
          keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
-                Sort.by(customPagination.getSortBy()));
-
+        final Pageable paging = PageableMapper.map(customPage);
         final Page<User> page = userRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

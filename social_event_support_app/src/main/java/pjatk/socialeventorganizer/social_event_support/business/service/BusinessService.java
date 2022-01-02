@@ -5,9 +5,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
@@ -18,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.business.repository.Busin
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
@@ -52,12 +51,7 @@ public class BusinessService {
     private final TimestampHelper timestampHelper;
 
     public ImmutableList<Business> list(CustomPage customPage) {
-
-        final Pageable paging = PageRequest.of(
-                customPage.getPageNo(),
-                customPage.getPageSize(),
-                Sort.by(customPage.getSortBy()).descending()
-        );
+        final Pageable paging = PageableMapper.map(customPage);
         final Page<Business> page = businessRepository.findAll(paging);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

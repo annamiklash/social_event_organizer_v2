@@ -5,10 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
@@ -58,13 +57,12 @@ public class OptionalServiceReviewService {
         return optionalServiceReview;
     }
 
-    public List<OptionalServiceReview> getByServiceId(CustomPage paging, long id) {
+    public List<OptionalServiceReview> getByServiceId(CustomPage customPage, long id) {
         if (!exists(id)) {
             throw new NotFoundException("Catering with id " + id + " does not exist");
         }
-        final Pageable pageable = PageRequest.of(paging.getPageNo(), paging.getPageSize(),
-                Sort.by(paging.getSortBy()));
-        final Page<OptionalServiceReview> page = serviceReviewRepository.getByServiceId(id, pageable);
+        final Pageable paging = PageableMapper.map(customPage);
+        final Page<OptionalServiceReview> page = serviceReviewRepository.getByServiceId(id, paging);
 
         return ImmutableList.copyOf(page.get()
                 .collect(Collectors.toList()));

@@ -25,7 +25,6 @@ import javax.validation.Valid;
 public class LoginController {
 
     private final SecurityService securityService;
-
     private final UserService userService;
 
     @RequestMapping(

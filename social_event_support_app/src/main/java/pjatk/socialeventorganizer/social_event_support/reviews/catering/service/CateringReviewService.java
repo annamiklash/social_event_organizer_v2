@@ -5,12 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
@@ -57,13 +56,12 @@ public class CateringReviewService {
     }
 
 
-    public List<CateringReview> getByCateringId(CustomPage paging, long id) {
+    public List<CateringReview> getByCateringId(CustomPage customPage, long id) {
         if (!exists(id)) {
             throw new NotFoundException("Catering with id " + id + " does not exist");
         }
-        final Pageable pageable = PageRequest.of(paging.getPageNo(), paging.getPageSize(),
-                Sort.by(paging.getSortBy()));
-        final Page<CateringReview> page = cateringReviewRepository.getByCateringId(id, pageable);
+        final Pageable paging = PageableMapper.map(customPage);
+        final Page<CateringReview> page = cateringReviewRepository.getByCateringId(id, paging);
 
         return ImmutableList.copyOf(page.get()
                 .collect(Collectors.toList()));
