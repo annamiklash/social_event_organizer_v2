@@ -15,9 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.mapper.Avail
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -36,11 +34,11 @@ public class LocationAvailabilityController {
                                                                @RequestParam String date) {
 
         final List<LocationAvailability> availabilities = locationAvailabilityService.findAllByLocationIdAndDate(id, date);
+        final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(availabilities.stream()
-                        .map(AvailabilityMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -50,12 +48,13 @@ public class LocationAvailabilityController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<AvailabilityDto>> update(@Valid @RequestBody AvailabilityDto[] dtos,
                                                                  @RequestParam @NotNull long id) {
-        final List<LocationAvailability> availabilities = locationAvailabilityService.update(Arrays.asList(dtos), id, true);
+        final List<AvailabilityDto> availabilityDtos = ImmutableList.copyOf(dtos);
+        final List<LocationAvailability> availabilities = locationAvailabilityService.update(availabilityDtos, id, true);
+        final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(availabilities.stream()
-                        .map(AvailabilityMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
 
@@ -66,7 +65,8 @@ public class LocationAvailabilityController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@Valid @RequestBody AvailabilityDto[] dtos,
                                                                  @RequestParam @NotNull long id) {
-        locationAvailabilityService.delete(Arrays.asList(dtos), id);
+        final List<AvailabilityDto> availabilityDtos = ImmutableList.copyOf(dtos);
+        locationAvailabilityService.delete(availabilityDtos, id);
 
         return ResponseEntity.ok().build();
     }

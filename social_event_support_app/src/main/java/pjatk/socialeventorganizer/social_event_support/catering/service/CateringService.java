@@ -193,12 +193,6 @@ public class CateringService {
         return cateringRepository.existsById(id);
     }
 
-    public Catering get(Long id) {
-        log.info("FETCHING CATERING WITH ID " + id);
-        return cateringRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("No catering with id " + id + " found."));
-    }
-
     public Catering getWithImages(long cateringId) {
         return cateringRepository.findWithImages(cateringId)
                 .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " DOES NOT EXIST"));

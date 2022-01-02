@@ -3,6 +3,9 @@ package pjatk.socialeventorganizer.social_event_support.trait.availability.optio
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE
 
 trait OptionalServiceAvailabilityTrait {
@@ -20,6 +23,9 @@ trait OptionalServiceAvailabilityTrait {
                             .email("Test@test.com")
                             .build()
             )
+            .date(LocalDate.parse('2007-12-03'))
+            .timeFrom(LocalDateTime.parse('2007-12-03T10:15:30'))
+            .timeTo(LocalDateTime.parse('2007-12-03T10:15:30'))
             .status(AVAILABLE.name())
             .build()
 }

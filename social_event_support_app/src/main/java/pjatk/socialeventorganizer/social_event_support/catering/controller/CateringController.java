@@ -20,7 +20,6 @@ import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -41,7 +40,7 @@ public class CateringController {
                                                       @RequestParam(defaultValue = "0") Integer pageNo,
                                                       @RequestParam(defaultValue = "50") Integer pageSize,
                                                       @RequestParam(defaultValue = "id") String sortBy,
-                                                      @RequestParam(defaultValue = "asc") String order)  {
+                                                      @RequestParam(defaultValue = "asc") String order) {
 
         log.info("GET ALL CATERING");
         final CustomPage customPage = CustomPage.builder()
@@ -53,12 +52,15 @@ public class CateringController {
         final List<Catering> cateringList = cateringService.list(customPage, keyword);
         final Long count = cateringService.count(keyword);
 
-        final ImmutableList<CateringDto> result = ImmutableList.copyOf(cateringList.stream()
+        final ImmutableList<CateringDto> resultList = cateringList.stream()
                 .map(CateringMapper::toDto)
-                .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
-                .collect(Collectors.toList()));
+                .peek(this::setRating)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(count, pageNo, pageSize, sortBy), result));
+        final TableDto<CateringDto> cateringTableDto =
+                new TableDto<>(new TableDto.MetaDto(count, pageNo, pageSize, sortBy), resultList);
+
+        return ResponseEntity.ok(cateringTableDto);
     }
 
     @RequestMapping(
@@ -66,14 +68,13 @@ public class CateringController {
             path = "allowed/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringDto>> searchByAppliedFilters(@RequestBody FilterCateringsDto dto) {
-
         final ImmutableList<Catering> list = cateringService.search(dto);
+        final ImmutableList<CateringDto> resultList = list.stream()
+                .map(CateringMapper::toDto)
+                .peek(this::setRating)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(CateringMapper::toDto)
-                        .peek(cateringDto -> cateringDto.setRating(cateringReviewService.getRating(cateringDto.getId())))
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @RequestMapping(
@@ -84,7 +85,7 @@ public class CateringController {
         log.info("GET " + id);
         final Catering catering = cateringService.get(id);
         final CateringDto cateringDto = CateringMapper.toDto(catering);
-        cateringDto.setRating(cateringReviewService.getRating(id));
+        setRating(cateringDto);
 
         return ResponseEntity.ok(cateringDto);
     }
@@ -99,7 +100,7 @@ public class CateringController {
         final Catering catering = cateringService.getWithDetail(id);
 
         final CateringDto cateringDto = CateringMapper.toDtoWithDetail(catering);
-        cateringDto.setRating(cateringReviewService.getRating(id));
+        setRating(cateringDto);
 
         return ResponseEntity.ok(cateringDto);
     }
@@ -111,12 +112,12 @@ public class CateringController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringDto>> getByBusinessId(@RequestParam long id) {
         final ImmutableList<Catering> caterings = cateringService.getByBusinessId(id);
+        final ImmutableList<CateringDto> resultList = caterings.stream()
+                .map(CateringMapper::toDto)
+                .peek(this::setRating)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(caterings.stream()
-                        .map(CateringMapper::toDto)
-                        .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
@@ -126,12 +127,12 @@ public class CateringController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringDto>> getByLocationId(@RequestParam long id) {
         final ImmutableList<Catering> caterings = cateringService.getByLocationId(id);
+        final ImmutableList<CateringDto> resultList = caterings.stream()
+                .map(CateringMapper::toDto)
+                .peek(this::setRating)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(caterings.stream()
-                        .map(CateringMapper::toDto)
-                        .peek(dto -> dto.setRating(cateringReviewService.getRating(dto.getId())))
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -181,7 +182,7 @@ public class CateringController {
             final Catering catering = cateringService.edit(id, dto);
 
             final CateringDto cateringDto = CateringMapper.toDtoWithDetail(catering);
-            cateringDto.setRating(cateringReviewService.getRating(id));
+            setRating(cateringDto);
 
             return ResponseEntity.ok(cateringDto);
         } catch (IllegalArgumentException e) {
@@ -189,4 +190,8 @@ public class CateringController {
         }
     }
 
+    private void setRating(CateringDto cateringDto) {
+        final double rating = cateringReviewService.getRating(cateringDto.getId());
+        cateringDto.setRating(rating);
+    }
 }
