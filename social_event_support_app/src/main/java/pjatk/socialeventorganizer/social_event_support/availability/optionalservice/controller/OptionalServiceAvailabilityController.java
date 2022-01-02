@@ -15,9 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -36,11 +34,11 @@ public class OptionalServiceAvailabilityController {
 
         final List<OptionalServiceAvailability> availabilities =
                 optionalServiceAvailabilityService.findAllByServiceIdAndDate(id, date);
+        final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(availabilities.stream()
-                        .map(AvailabilityMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -50,12 +48,15 @@ public class OptionalServiceAvailabilityController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<AvailabilityDto>> create(@Valid @RequestBody AvailabilityDto[] dtos,
                                                                  @RequestParam @NotNull long id) {
-        final List<OptionalServiceAvailability> availabilities = optionalServiceAvailabilityService.update(Arrays.asList(dtos), id, true);
+        final ImmutableList<AvailabilityDto> availabilityDtoList = ImmutableList.copyOf(dtos);
+        final List<OptionalServiceAvailability> availabilities =
+                optionalServiceAvailabilityService.update(availabilityDtoList, id, true);
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(availabilities.stream()
-                        .map(AvailabilityMapper::toDto)
-                        .collect(Collectors.toList())));
+        final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 
 

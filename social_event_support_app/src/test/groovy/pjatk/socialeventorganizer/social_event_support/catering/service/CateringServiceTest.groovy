@@ -153,6 +153,7 @@ class CateringServiceTest extends Specification
 
         def cuisineDto = cateringDto.getCuisines().get(0)
         def catering = fakeCatering
+        fakeCatering.setId(null)
         def now = LocalDateTime.parse('2007-12-03T10:15:30')
         def cuisine = Cuisine.builder().name(cuisineDto.getName()).build()
 
