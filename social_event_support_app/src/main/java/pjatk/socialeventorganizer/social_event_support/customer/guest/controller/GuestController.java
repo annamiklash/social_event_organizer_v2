@@ -33,12 +33,19 @@ public class GuestController {
             path = "all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<GuestDto>> listGuests(@RequestParam(required = false) String keyword,
-                                                              @RequestParam(defaultValue = "0") Integer firstResult,
-                                                              @RequestParam(defaultValue = "50") Integer maxResult,
-                                                              @RequestParam(defaultValue = "id") String sort,
-                                                              @RequestParam(defaultValue = "desc") String order) {
+                                                              @RequestParam(defaultValue = "0") Integer pageNo,
+                                                              @RequestParam(defaultValue = "50") Integer pageSize,
+                                                              @RequestParam(defaultValue = "id") String sortBy,
+                                                              @RequestParam(defaultValue = "asc") String order)  {
         log.info("GET GUESTS");
-        final ImmutableList<Guest> list = guestService.list(CustomPage.builder().maxResult(maxResult).firstResult(firstResult).sortBy(sort).build(), keyword);
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy)
+                .order(order)
+                .build();
+
+        final ImmutableList<Guest> list = guestService.list(customPage, keyword);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream().map(GuestMapper::toDto).collect(Collectors.toList())));

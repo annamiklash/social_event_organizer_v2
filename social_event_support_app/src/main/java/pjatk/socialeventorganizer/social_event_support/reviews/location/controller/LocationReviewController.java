@@ -32,14 +32,17 @@ public class LocationReviewController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<LocationReviewDto>> listAllByLocationId(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                                           @RequestParam(defaultValue = "5") Integer pageSize,
+                                                                           @RequestParam(defaultValue = "50") Integer pageSize,
                                                                            @RequestParam(defaultValue = "id") String sortBy,
+                                                                           @RequestParam(defaultValue = "asc") String order,
                                                                            @RequestParam long locationId) {
-        final List<LocationReview> review = locationReviewService.getByLocationId(
-                CustomPage.builder()
-                        .pageNo(pageNo)
-                        .pageSize(pageSize)
-                        .sortBy(sortBy).build(), locationId);
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy)
+                .order(order)
+                .build();
+        final List<LocationReview> review = locationReviewService.getByLocationId(customPage, locationId);
 
         final Long count = locationReviewService.count(locationId);
 

@@ -7,17 +7,19 @@ import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.common.util.*;
+import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.service.CustomerAvatarService;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
@@ -73,11 +75,10 @@ public class CustomerService {
     private final TimestampHelper timestampHelper;
 
 
-    public ImmutableList<Customer> list(CustomPage customPagination, String keyword) {
+    public ImmutableList<Customer> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
-                Sort.by(customPagination.getSortBy()).descending());
+        final Pageable paging = PageableMapper.map(customPage);
         final Page<Customer> page = customerRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));

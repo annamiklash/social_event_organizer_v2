@@ -35,14 +35,18 @@ public class LocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<LocationDto>> list(@RequestParam(required = false) String keyword,
                                                       @RequestParam(defaultValue = "0") Integer pageNo,
-                                                      @RequestParam(defaultValue = "5") Integer pageSize,
-                                                      @RequestParam(defaultValue = "id") String sortBy) {
+                                                      @RequestParam(defaultValue = "50") Integer pageSize,
+                                                      @RequestParam(defaultValue = "id") String sortBy,
+                                                      @RequestParam(defaultValue = "asc") String order) {
         log.info("GET ALL LOCATIONS");
-        final List<Location> list = locationService.list(
-                CustomPage.builder()
-                        .pageNo(pageNo)
-                        .pageSize(pageSize)
-                        .sortBy(sortBy).build(), keyword);
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy)
+                .order(order)
+                .build();
+
+        final List<Location> list = locationService.list(customPage, keyword);
         final Long count = locationService.count(keyword);
 
         final ImmutableList<LocationDto> result = ImmutableList.copyOf(list.stream()

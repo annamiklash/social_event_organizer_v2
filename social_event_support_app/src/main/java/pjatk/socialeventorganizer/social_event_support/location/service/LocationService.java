@@ -2,14 +2,11 @@ package pjatk.socialeventorganizer.social_event_support.location.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
@@ -22,6 +19,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.location.se
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
@@ -80,11 +78,10 @@ public class LocationService {
     private final LocationImageRepository locationImageRepository;
 
 
-    public ImmutableList<Location> list(CustomPage customPagination, String keyword) {
+    public ImmutableList<Location> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPagination.getPageNo(), customPagination.getPageSize(),
-                Sort.by(customPagination.getSortBy()));
+        final Pageable paging = PageableMapper.map(customPage);
         final Page<Location> page = locationRepository.findAllWithKeyword(paging, keyword);
 
         return ImmutableList.copyOf(page.get()

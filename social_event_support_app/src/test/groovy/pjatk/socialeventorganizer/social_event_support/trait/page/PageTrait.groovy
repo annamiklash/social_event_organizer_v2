@@ -11,8 +11,9 @@ trait PageTrait {
             .pageNo(0)
             .pageSize(10)
             .sortBy("id")
-            .build();
+            .order('desc')
+            .build()
 
-    Pageable fakePaging = PageRequest.of(0, 10, Sort.by("id").descending());
+    Pageable fakePaging = PageRequest.of(0, 10, Sort.by("id").descending())
 
 }

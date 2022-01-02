@@ -41,13 +41,17 @@ public class OptionalServiceController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<OptionalServiceDto>> list(@RequestParam(required = false) String keyword,
                                                              @RequestParam(defaultValue = "0") Integer pageNo,
-                                                             @RequestParam(defaultValue = "5") Integer pageSize,
-                                                             @RequestParam(defaultValue = "id") String sortBy) {
+                                                             @RequestParam(defaultValue = "50") Integer pageSize,
+                                                             @RequestParam(defaultValue = "id") String sortBy,
+                                                             @RequestParam(defaultValue = "asc") String order) {
         log.info("GET ALL SERVICES");
-        final ImmutableList<OptionalService> list = optionalServiceService.list( CustomPage.builder()
-                        .pageNo(pageNo)
-                        .pageSize(pageSize)
-                        .sortBy(sortBy).build(), keyword);final Long count = optionalServiceService.count(keyword);
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy)
+                .order(order)
+                .build();
+        final ImmutableList<OptionalService> list = optionalServiceService.list( customPage, keyword);final Long count = optionalServiceService.count(keyword);
 
         final ImmutableList<OptionalServiceDto> result = ImmutableList.copyOf(list.stream()
                         .map(OptionalServiceMapper::toDto)

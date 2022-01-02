@@ -38,13 +38,16 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CustomerDto>> findAll(@RequestParam(required = false) String keyword,
                                                               @RequestParam(defaultValue = "0") Integer pageNo,
-                                                              @RequestParam(defaultValue = "5") Integer pageSize,
-                                                              @RequestParam(defaultValue = "id") String sortBy) {
+                                                              @RequestParam(defaultValue = "50") Integer pageSize,
+                                                              @RequestParam(defaultValue = "id") String sortBy,
+                                                              @RequestParam(defaultValue = "asc") String order)  {
         log.info("GET ALL CUSTOMERS");
         final CustomPage customPage = CustomPage.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
-                .sortBy(sortBy).build();
+                .sortBy(sortBy)
+                .order(order)
+                .build();
         final ImmutableList<Customer> list = customerService.list(customPage, keyword);
 
         // TODO: add count like in pjatk.socialeventorganizer.social_event_support.location.controller.LocationController.list

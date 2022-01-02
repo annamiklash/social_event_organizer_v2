@@ -7,9 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
@@ -20,13 +18,13 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.service.mod
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessHoursService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
+import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.repository.OptionalServiceImageRepository;
-import pjatk.socialeventorganizer.social_event_support.image.service.OptionalServiceImageService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto;
@@ -85,8 +83,7 @@ public class OptionalServiceService {
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
-        final Pageable paging = PageRequest.of(customPage.getPageNo(), customPage.getPageSize(),
-                Sort.by(customPage.getSortBy()));
+        final Pageable paging = PageableMapper.map(customPage);
         final Page<OptionalService> page = optionalServiceRepository.findAllWithKeyword(paging, keyword);
 
         final List<OptionalService> result = page.get().collect(Collectors.toList());

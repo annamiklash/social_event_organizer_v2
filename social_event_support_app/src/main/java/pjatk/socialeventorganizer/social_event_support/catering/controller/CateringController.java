@@ -38,17 +38,19 @@ public class CateringController {
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<CateringDto>> list(@RequestParam(required = false) String keyword,
-                                                           @RequestParam(defaultValue = "0") Integer pageNo,
-                                                           @RequestParam(defaultValue = "5") Integer pageSize,
-                                                           @RequestParam(defaultValue = "id") String sortBy) {
+                                                      @RequestParam(defaultValue = "0") Integer pageNo,
+                                                      @RequestParam(defaultValue = "50") Integer pageSize,
+                                                      @RequestParam(defaultValue = "id") String sortBy,
+                                                      @RequestParam(defaultValue = "asc") String order)  {
 
         log.info("GET ALL CATERING");
-        final List<Catering> cateringList = cateringService.list(
-                CustomPage.builder()
-                        .pageNo(pageNo)
-                        .pageSize(pageSize)
-                        .sortBy(sortBy).build(), keyword);
-
+        final CustomPage customPage = CustomPage.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .sortBy(sortBy)
+                .order(order)
+                .build();
+        final List<Catering> cateringList = cateringService.list(customPage, keyword);
         final Long count = cateringService.count(keyword);
 
         final ImmutableList<CateringDto> result = ImmutableList.copyOf(cateringList.stream()
