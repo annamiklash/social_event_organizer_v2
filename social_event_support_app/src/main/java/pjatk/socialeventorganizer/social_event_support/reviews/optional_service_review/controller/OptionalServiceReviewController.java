@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.OptionalServiceReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.model.dto.ServiceReviewDto;
-import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.ServiceReviewService;
+import pjatk.socialeventorganizer.social_event_support.reviews.optional_service_review.service.OptionalServiceReviewService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/reviews/service")
 public class OptionalServiceReviewController {
 
-    private final ServiceReviewService serviceReviewService;
+    private final OptionalServiceReviewService serviceReviewService;
 
 
     @PreAuthorize("hasAuthority('CUSTOMER')")

@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class ServiceReviewService {
+public class OptionalServiceReviewService {
 
     private final ServiceReviewRepository serviceReviewRepository;
 
