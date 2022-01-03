@@ -15,6 +15,7 @@ import java.util.Set;
 @Builder
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @With
 @Entity(name = "location_for_event")
 public class LocationForEvent implements Serializable {

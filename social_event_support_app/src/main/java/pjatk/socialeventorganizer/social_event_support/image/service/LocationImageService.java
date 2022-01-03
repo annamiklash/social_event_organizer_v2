@@ -46,7 +46,7 @@ public class LocationImageService {
         for (ImageDto dto : new HashSet<>(dtos)) {
             final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
 
-            final LocationImage locationImage = (LocationImage) ImageMapper.fromDto(dto);
+            final LocationImage locationImage = ImageMapper.fromDtoToLocationImage(dto);
             locationImage.setLocation(location);
             locationImage.setImage(data);
 
@@ -69,7 +69,7 @@ public class LocationImageService {
         }
         final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
 
-        final LocationImage locationImage = (LocationImage) ImageMapper.fromDto(dto);
+        final LocationImage locationImage = ImageMapper.fromDtoToLocationImage(dto);
         locationImage.setLocation(location);
         locationImage.setImage(data);
 
@@ -141,15 +141,6 @@ public class LocationImageService {
                 .orElseThrow(() -> new NotFoundException("Image not found"));
     }
 
-    private LocationImage get(long imageId) {
-        return locationImageRepository.findById(imageId)
-                .orElseThrow(() -> new NotFoundException("Image not found"));
-    }
-
-    private LocationImage get(long imageId) {
-        return locationImageRepository.findById(imageId)
-                .orElseThrow(() -> new NotFoundException("Image not found"));
-    }
 
     private boolean mainExists(long serviceId) {
         return getMain(serviceId).isPresent();

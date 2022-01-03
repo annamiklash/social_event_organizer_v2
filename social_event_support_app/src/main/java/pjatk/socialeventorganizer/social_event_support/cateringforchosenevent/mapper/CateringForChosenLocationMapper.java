@@ -15,7 +15,7 @@ public class CateringForChosenLocationMapper {
     public CateringForChosenEventLocationDto toDto(CateringForChosenEventLocation catering) {
         return CateringForChosenEventLocationDto.builder()
                 .id(catering.getId())
-                .time(DateTimeUtil.toTimeOnlyFromLocalTime(catering.getTime()))
+                .time(DateTimeUtil.fromLocalTimeToTimeString(catering.getTime()))
                 .comment(catering.getComment())
                 .confirmationStatus(catering.getConfirmationStatus())
                 .catering(CateringMapper.toDto(catering.getCatering()))
@@ -24,7 +24,7 @@ public class CateringForChosenLocationMapper {
 
     public CateringForChosenEventLocation fromDto(CateringForChosenEventLocationDto dto) {
         return CateringForChosenEventLocation.builder()
-                .time(DateTimeUtil.toLocalTimeFromTimeString(dto.getTime()))
+                .time(DateTimeUtil.fromTimeStringToLocalTime(dto.getTime()))
                 .comment(Converter.convertDescriptionsString(dto.getComment()))
                 .confirmationStatus(NOT_CONFIRMED.name())
                 .build();

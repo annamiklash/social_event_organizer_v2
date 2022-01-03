@@ -18,24 +18,23 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     List<Catering> findByCateringAddress_City(String city);
 
     @Query("SELECT c FROM catering AS c " +
-            "LEFT JOIN FETCH c.images i " +
-            "JOIN c.business cb join cb.user cbu " +
-            "WHERE  c.name LIKE %:keyword% " +
-            "OR c.description LIKE %:keyword% " +
-            "AND c.deletedAt IS NULL " +
+            "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
+            "JOIN c.business cb " +
+            "join cb.user cbu " +
+            "WHERE (:keyword = '' or (c.name LIKE %:keyword% OR c.description LIKE %:keyword%)) " +
             "AND cbu.isActive = true")
     Page<Catering> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
     @Query("SELECT c from catering c " +
-            "LEFT JOIN FETCH c.images i " +
-            "left join fetch c.cateringItems ci " +
+            "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
+            "left join fetch c.cateringItems it " +
             "left join fetch c.cateringBusinessHours cbh " +
             "left join fetch c.locations cl " +
             "WHERE c.id = :id")
     Optional<Catering> findByIdWithDetail(@Param("id") long id);
 
     @Query("SELECT distinct c from catering c " +
-            "LEFT JOIN FETCH c.images i " +
+            "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "left join c.cuisines cu " +
             "left join c.cateringBusinessHours bh " +
             "left join c.cateringAddress ca " +
@@ -51,7 +50,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     List<Catering> findAllByBusiness_Id(long id);
 
     @Query("SELECT c FROM catering c " +
-            "LEFT JOIN FETCH c.images i " +
+            "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "LEFT JOIN FETCH c.cateringAddress cad " +
             "LEFT JOIN FETCH c.cateringBusinessHours bh " +
             "LEFT JOIN FETCH c.locations cl " +
@@ -59,33 +58,26 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "LEFT JOIN FETCH c.cateringForChosenEventLocations cfel " +
             "LEFT JOIN FETCH cfel.eventLocation el " +
             "LEFT JOIN FETCH el.event " +
+            "LEFT JOIN FETCH c.cateringItems " +
             "WHERE c.id = :cateringId")
     Optional<Catering> findAllCateringInformation(@Param("cateringId") long cateringId);
 
     @Query("SELECT c FROM catering c " +
-            "LEFT JOIN FETCH c.images i " +
+            "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "LEFT JOIN FETCH c.locations l " +
             "WHERE l.id = :locationId")
-    List<Catering> findAllByLocationId(@Param("locationId") long locationId);
+    List<Catering> findAllByLocationIdAAndDeletedAtIsNull(@Param("locationId") long locationId);
 
     @Query("SELECT count(c) FROM catering AS c " +
             "JOIN c.business cb join cb.user cbu " +
-            "WHERE  c.name LIKE %:keyword% " +
+            "WHERE c.name LIKE %:keyword% " +
             "OR c.description LIKE %:keyword% " +
-            "AND c.deletedAt IS NULL " +
             "AND cbu.isActive = true")
     Long countAll(@Param("keyword") String keyword);
 
     @Query("SELECT c FROM catering c " +
-            "LEFT JOIN FETCH c.images i " +
+            "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "WHERE c.id = :cateringId")
     Optional<Catering> findWithImages(@Param("cateringId") long cateringId);
 
-    @Query("SELECT count(c) FROM catering AS c " +
-            "JOIN c.business cb join cb.user cbu " +
-            "WHERE  c.name LIKE %:keyword% " +
-            "OR c.description LIKE %:keyword% " +
-            "AND c.deletedAt IS NULL " +
-            "AND cbu.isActive = true")
-    Long countAll(@Param("keyword")String keyword);
 }

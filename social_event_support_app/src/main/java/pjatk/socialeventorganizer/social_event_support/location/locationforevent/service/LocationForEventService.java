@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
+import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
@@ -39,7 +40,7 @@ public class LocationForEventService {
 
     private final LocationForEventRepository locationForEventRepository;
 
-    private final OrganizedEventService organizedEventService;
+    private final OrganizedEventRepository organizedEventRepository;
 
     private final CustomerRepository customerRepository;
 
@@ -47,21 +48,14 @@ public class LocationForEventService {
 
     private final LocationAvailabilityService locationAvailabilityService;
 
-    public List<LocationForEvent> getLocationInfoByOrganizedEventId(long eventId) {
-        final Optional<List<LocationForEvent>> optionalLocationForEvent = locationForEventRepository.findLocationForEventByOrganizedEventId(eventId);
-        if (optionalLocationForEvent.isPresent()) {
-            return optionalLocationForEvent.get();
-        }
-        throw new NotFoundException("Event with id " + eventId + " does not exist");
-    }
-
     @Transactional(rollbackOn = Exception.class)
     public LocationForEvent create(long customerId, long eventId, long locationId, LocationForEventDto dto) {
         final Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new NotFoundException("No customer with id " + customerId));
-        final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
+        final OrganizedEvent organizedEvent = organizedEventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event does not exist"));
 
-        final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getDate());
+        final String date = DateTimeUtil.fromLocalDateToDateString(organizedEvent.getDate());
         final String timeFrom = DateTimeUtil.joinDateAndTime(date, dto.getTimeFrom());
         final String timeTo = DateTimeUtil.joinDateAndTime(date, dto.getTimeTo());
 
@@ -111,9 +105,7 @@ public class LocationForEventService {
     @Transactional(rollbackOn = Exception.class)
     public LocationForEvent setAsCancelled(long locationForEventId) {
         final LocationForEvent locationForEvent = getWithLocationAndEvent(locationForEventId);
-        if (!locationForEvent.getConfirmationStatus().equals(CANCELLATION_PENDING.name())) {
-            throw new ActionNotAllowedException("Cannot confirm cancellation");
-        }
+
         locationForEvent.setConfirmationStatus(CANCELLED.name());
 
         final OrganizedEvent event = locationForEvent.getEvent();
@@ -127,14 +119,14 @@ public class LocationForEventService {
             throw new ActionNotAllowedException("Cannot cancel reservation");
         }
 
-        final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
-        final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeTo));
+        final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
+        final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeTo));
 
-        LocationAvailability locationAvailability = locationAvailabilityService.getByDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), stringTimeFrom, stringTimeTo);
+        LocationAvailability locationAvailability = locationAvailabilityService.getByDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), stringTimeFrom, stringTimeTo);
         locationAvailabilityService.updateToAvailable(locationAvailability, locationForEvent.getLocation());
 
         event.setModifiedAt(LocalDateTime.now());
-        organizedEventService.save(event);
+        organizedEventRepository.save(event);
 
         return locationForEvent;
     }
@@ -153,7 +145,7 @@ public class LocationForEventService {
         final OrganizedEvent organizedEvent = locationForEvent.getEvent();
 
         organizedEvent.setModifiedAt(LocalDateTime.now());
-        organizedEventService.save(organizedEvent);
+        organizedEventRepository.save(organizedEvent);
 
         return locationForEvent;
     }
@@ -168,13 +160,8 @@ public class LocationForEventService {
     }
 
     public LocationForEvent findByLocationIdAndEventId(long id, long eventId) {
-
-        final Optional<LocationForEvent> optionalLocationForEvent = locationForEventRepository.findByEventIdAndLocationId(eventId, id);
-
-        if (optionalLocationForEvent.isPresent()) {
-            return optionalLocationForEvent.get();
-        }
-        throw new NotFoundException("Location for event does not exist");
+        return locationForEventRepository.findByEventIdAndLocationId(eventId, id)
+                .orElseThrow(() -> new NotFoundException("Location for event does not exist"));
     }
 
     private boolean isAllowedToCancel(LocalDateTime dateTime) {

@@ -16,9 +16,9 @@ public class AddressMapper {
                 .streetName(address.getStreetName())
                 .streetNumber(address.getStreetNumber())
                 .zipCode(address.getZipCode())
-                .createdAt(DateTimeUtil.toStringFromLocalDateTime(address.getCreatedAt()))
-                .modifiedAt(DateTimeUtil.toStringFromLocalDateTime(address.getModifiedAt()))
-                .deletedAt(DateTimeUtil.toStringFromLocalDateTime(address.getDeletedAt()))
+                .createdAt(DateTimeUtil.fromLocalDateTimetoString(address.getCreatedAt()))
+                .modifiedAt(DateTimeUtil.fromLocalDateTimetoString(address.getModifiedAt()))
+                .deletedAt(DateTimeUtil.fromLocalDateTimetoString(address.getDeletedAt()))
                 .build();
     }
 

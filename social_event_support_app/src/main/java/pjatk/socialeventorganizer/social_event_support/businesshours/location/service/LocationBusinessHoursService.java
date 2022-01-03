@@ -40,7 +40,7 @@ public class LocationBusinessHoursService {
 
         locationBusinessHours.setDay(dto.getDay().name());
         locationBusinessHours.setDay(dto.getDay().name());
-        locationBusinessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
+        locationBusinessHours.setTimeTo(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeTo()));
 
         locationBusinessHoursRepository.save(locationBusinessHours);
         return locationBusinessHours;

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.Optional;
 public interface CateringImageRepository extends JpaRepository<CateringImage, Long> {
 
     List<CateringImage> findAllByCatering_Id(long locationId);
+
+    Optional<CateringImage> getCateringImageByIdAndCatering_Id(long id, long cateringId);
 
     @Query("SELECT i from catering_image i " +
             "LEFT JOIN FETCH i.catering c " +

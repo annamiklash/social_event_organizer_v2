@@ -168,7 +168,7 @@ class BusinessServiceTest extends Specification
         then:
         1 * businessRepository.findAllBusinessInformation(businessId) >> Optional.of(business)
         1 * locationService.deleteLogical(business.getLocations().iterator().next().getId())
-        1 * cateringService.deleteLogical(business.getCaterings().iterator().next().getId())
+        1 * cateringService.delete(business.getCaterings().iterator().next().getId())
         1 * optionalServiceService.deleteLogical(business.getServices().iterator().next().getId())
         1 * addressService.delete(business.getAddress())
         1 * userService.delete(business.getUser())

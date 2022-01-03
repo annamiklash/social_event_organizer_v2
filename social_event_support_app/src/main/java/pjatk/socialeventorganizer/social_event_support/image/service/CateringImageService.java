@@ -10,7 +10,6 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
-import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
@@ -47,7 +46,7 @@ public class CateringImageService {
         for (ImageDto dto : new HashSet<>(dtos)) {
             final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
 
-            final CateringImage cateringImage = (CateringImage) ImageMapper.fromDto(dto);
+            final CateringImage cateringImage = ImageMapper.fromDtoToCateringImage(dto);
             cateringImage.setCatering(catering);
             cateringImage.setImage(data);
 
@@ -70,7 +69,7 @@ public class CateringImageService {
         }
 
         final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
-        final CateringImage image = (CateringImage) ImageMapper.fromDto(dto);
+        final CateringImage image = ImageMapper.fromDtoToCateringImage(dto);
         image.setCatering(catering);
         image.setImage(data);
 
@@ -99,36 +98,14 @@ public class CateringImageService {
         return cateringImageRepository.findAllByCatering_Id(cateringId);
     }
 
-    public void delete(CateringImage image) {
-        cateringImageRepository.delete(image);
-    }
-
     public int count(long cateringId) {
         return cateringImageRepository.countAll(cateringId);
     }
 
-    public void deleteById(long locationId, Long toDelete) {
-        List<CateringImage> list = findByCateringId(locationId);
-        if (list.size() == 1) {
-            cateringImageRepository.deleteById(toDelete);
-            return;
-        }
-        if (list.size() == 0){
-            return;
-        }
-        final CateringImage imageToDelete = get(toDelete);
-        if (imageToDelete.isMain()) {
-            final Optional<CateringImage> optionalMain = getMain(locationId);
-            if (optionalMain.isEmpty() || optionalMain.get().getId() == toDelete) {
-                final CateringImage cateringImage = list.stream()
-                        .filter(image -> !image.isMain() && image.getId() != toDelete)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
-                cateringImage.setMain(true);
-                cateringImageRepository.save(cateringImage);
-            }
-        }
-        cateringImageRepository.delete(imageToDelete);
+    public void deleteById(long locationId, Long imageId) {
+        final CateringImage image = cateringImageRepository.getCateringImageByIdAndCatering_Id(imageId, locationId)
+                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " does not have image with id " + imageId));
+        cateringImageRepository.delete(image);
     }
 
     public Optional<CateringImage> getMain(long serviceId) {

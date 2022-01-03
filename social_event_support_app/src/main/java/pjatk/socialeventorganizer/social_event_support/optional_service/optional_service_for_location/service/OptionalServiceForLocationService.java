@@ -12,7 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
-import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.LocationNotBookedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
@@ -47,7 +47,7 @@ public class OptionalServiceForLocationService {
 
     private final CustomerService customerService;
 
-    private final OrganizedEventService organizedEventService;
+    private final OrganizedEventRepository organizedEventRepository;
 
     private final OptionalServiceService optionalServiceService;
 
@@ -58,13 +58,14 @@ public class OptionalServiceForLocationService {
     @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation create(long customerId, long eventId, long serviceId, OptionalServiceForChosenLocationDto dto) {
         final Customer customer = customerService.get(customerId);
-        final OrganizedEvent organizedEvent = organizedEventService.getWithLocation(eventId);
+        final OrganizedEvent organizedEvent = organizedEventRepository.getWithLocation(eventId)
+                .orElseThrow(() -> new NotFoundException("Organized event does not exist"));
 
         if (organizedEvent.getLocationForEvent() == null) {
             throw new LocationNotBookedException("You cannot book service prior to booking services");
         }
 
-        final String date = DateTimeUtil.toDateOnlyStringFromLocalDateTime(organizedEvent.getDate());
+        final String date = DateTimeUtil.fromLocalDateToDateString(organizedEvent.getDate());
         final boolean isAvailable = optionalServiceService.isAvailable(serviceId, date, dto.getTimeFrom(), dto.getTimeTo());
 
         if (!isAvailable) {
@@ -120,7 +121,7 @@ public class OptionalServiceForLocationService {
         final OrganizedEvent organizedEvent = optionalService.getLocationForEvent().getEvent();
 
         organizedEvent.setModifiedAt(LocalDateTime.now());
-        organizedEventService.save(organizedEvent);
+        organizedEventRepository.save(organizedEvent);
 
         return optionalService;
     }
@@ -181,22 +182,20 @@ public class OptionalServiceForLocationService {
         final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(id);
         final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
 
-        serviceForEvent.setConfirmationStatus(CANCELLATION_PENDING.name());
+        serviceForEvent.setConfirmationStatus(CANCELLED.name());
         event.setModifiedAt(LocalDateTime.now());
 
-        organizedEventService.save(event);
+        organizedEventRepository.save(event);
         save(serviceForEvent);
 
         return serviceForEvent;
 
     }
+    //TODO: delete one of two methods
 
     @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation setAsCancelled(long locationForEventId) {
         final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(locationForEventId);
-        if (!serviceForEvent.getConfirmationStatus().equals(CANCELLATION_PENDING.name())) {
-            throw new ActionNotAllowedException("Cannot confirm cancellation");
-        }
         serviceForEvent.setConfirmationStatus(CANCELLED.name());
 
         final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
@@ -210,15 +209,15 @@ public class OptionalServiceForLocationService {
             throw new ActionNotAllowedException("Cannot cancel reservation");
         }
 
-        final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
-        final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), DateTimeUtil.fromLocalTimeToString(timeTo));
+        final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
+        final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeTo));
 
         OptionalServiceAvailability locationAvailability =
-                optionalServiceAvailabilityService.getByDateAndTime(DateTimeUtil.toDateOnlyStringFromLocalDateTime(date), stringTimeFrom, stringTimeTo);
+                optionalServiceAvailabilityService.getByDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), stringTimeFrom, stringTimeTo);
         optionalServiceAvailabilityService.updateToAvailable(locationAvailability, serviceForEvent.getOptionalService());
 
         event.setModifiedAt(LocalDateTime.now());
-        organizedEventService.save(event);
+        organizedEventRepository.save(event);
 
         return serviceForEvent;
     }

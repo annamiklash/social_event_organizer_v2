@@ -26,6 +26,7 @@ public class LocationDescriptionItem implements Serializable {
     @Column
     String description;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "descriptions")
     @JsonIgnore
     Set<Location> locations = new HashSet<>();

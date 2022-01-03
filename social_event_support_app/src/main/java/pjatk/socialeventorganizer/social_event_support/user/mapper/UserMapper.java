@@ -36,10 +36,10 @@ public class UserMapper {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .type(user.getType())
-                .createdAt(DateTimeUtil.toStringFromLocalDateTime(user.getCreatedAt()))
-                .modifiedAt(DateTimeUtil.toStringFromLocalDateTime(user.getModifiedAt()))
-                .deletedAt(DateTimeUtil.toStringFromLocalDateTime(user.getDeletedAt()))
-                .blockedAt(DateTimeUtil.toStringFromLocalDateTime(user.getBlockedAt()))
+                .createdAt(DateTimeUtil.fromLocalDateTimetoString(user.getCreatedAt()))
+                .modifiedAt(DateTimeUtil.fromLocalDateTimetoString(user.getModifiedAt()))
+                .deletedAt(DateTimeUtil.fromLocalDateTimetoString(user.getDeletedAt()))
+                .blockedAt(DateTimeUtil.fromLocalDateTimetoString(user.getBlockedAt()))
                 .isActive(user.isActive())
                 .build();
     }

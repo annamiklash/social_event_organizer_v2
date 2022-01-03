@@ -11,10 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -36,18 +33,18 @@ public class OrganizedEventDto implements Serializable {
     private String date;
 
     @NotBlank(message = "Start time is mandatory")
-    @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
+    @Pattern(regexp = RegexConstants.TIME_REGEX)
     @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT)
     private String startTime;
 
     @NotBlank(message = "End time is mandatory")
-    @Pattern(regexp = RegexConstants.TIME_REGEX_WITH_SECONDS)
+    @Pattern(regexp = RegexConstants.TIME_REGEX)
     @JsonFormat(pattern = DateTimeUtil.TIME_FORMAT)
     private String endTime;
 
     @Min(1)
-    @NotBlank(message = "Guest amount is mandatory")
-    private int guestCount;
+    @NotNull(message = "Guest amount is mandatory")
+    private Integer guestCount;
 
     @NotBlank(message = "Event type is mandatory")
     private String eventType;

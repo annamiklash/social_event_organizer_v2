@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 
 import java.util.Optional;
@@ -24,8 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findUserByResetPasswordToken(String resetPasswordToken);
 
     @Query("SELECT u from users u where u.email = :email " +
-            "and u.blockedAt is null " +
-            "and (u.isActive = true OR u.isActive = false)")
+            "and u.blockedAt is null")
     Optional<User> active(@Param("email") String email);
 
     @Query("SELECT u from users u " +

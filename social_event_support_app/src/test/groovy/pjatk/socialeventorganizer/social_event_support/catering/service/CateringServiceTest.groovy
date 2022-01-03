@@ -244,7 +244,7 @@ class CateringServiceTest extends Specification
         def now = LocalDateTime.parse('2007-12-03T10:15:30')
 
         when:
-        cateringService.deleteLogical(id)
+        cateringService.delete(id)
 
         then:
         1 * cateringRepository.findAllCateringInformation(id) >> Optional.of(catering)

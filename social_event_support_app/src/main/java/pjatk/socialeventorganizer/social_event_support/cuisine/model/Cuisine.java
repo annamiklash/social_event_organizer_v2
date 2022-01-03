@@ -8,10 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Builder
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "cuisine")
@@ -25,6 +22,7 @@ public class Cuisine {
 
     private String name;
 
+    @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "cuisines", fetch = FetchType.LAZY)
     private Set<Catering> caterings = new HashSet<>();
 }

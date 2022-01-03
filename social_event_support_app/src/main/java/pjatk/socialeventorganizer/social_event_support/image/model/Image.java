@@ -1,21 +1,19 @@
 package pjatk.socialeventorganizer.social_event_support.image.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
 @SuperBuilder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @MappedSuperclass
-public abstract class Image {
+public  class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

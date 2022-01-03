@@ -72,6 +72,7 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_catering")
     private Set<CateringItem> cateringItems;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
     private Set<CateringBusinessHours> cateringBusinessHours;
@@ -97,19 +98,6 @@ public class Catering implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_cuisine"))
     private Set<Cuisine> cuisines;
 
-    public void addCateringItem(CateringItem cateringItem) {
-        if (cateringItem == null) {
-            throw new IllegalArgumentException("CateringItem cannot be null");
-        }
-        cateringItems.add(cateringItem);
-    }
-
-    public void removeCateringItem(CateringItem cateringItem) {
-        if (cateringItem == null) {
-            throw new IllegalArgumentException("CateringItem cannot be null");
-        }
-        cateringItems.remove(cateringItem);
-    }
 
     public void addLocation(Location location) {
         if (location == null) {
@@ -124,6 +112,21 @@ public class Catering implements Serializable {
         }
         locations.remove(location);
     }
+
+    public void addCuisine(Cuisine cuisine) {
+        if (cuisine == null) {
+            throw new IllegalArgumentException("Cuisine cannot be null");
+        }
+        cuisines.add(cuisine);
+    }
+
+    public void removeCuisine(Cuisine cuisine) {
+        if (cuisine == null) {
+            throw new IllegalArgumentException("Cuisine cannot be null");
+        }
+        cuisines.remove(cuisine);
+    }
+
 
 
 }

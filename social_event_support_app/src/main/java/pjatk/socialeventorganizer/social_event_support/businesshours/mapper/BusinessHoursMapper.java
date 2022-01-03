@@ -18,16 +18,16 @@ public class BusinessHoursMapper {
         return BusinessHoursDto.builder()
                 .id(businessHours.getId())
                 .day(DayEnum.valueOf(businessHours.getDay()))
-                .timeFrom(DateTimeUtil.toTimeOnlyFromLocalTime(businessHours.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTimeOnlyFromLocalTime(businessHours.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(businessHours.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromLocalTimeToTimeString(businessHours.getTimeTo()))
                 .build();
     }
 
     public LocationBusinessHours fromDtoToLocation(BusinessHoursDto dto) {
         return LocationBusinessHours.builder()
                 .day(dto.getDay().name())
-                .timeFrom(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeTo()))
                 .build();
     }
 

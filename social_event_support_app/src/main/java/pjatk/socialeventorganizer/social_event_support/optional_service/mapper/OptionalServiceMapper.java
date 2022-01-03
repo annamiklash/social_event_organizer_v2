@@ -29,9 +29,9 @@ public class OptionalServiceMapper {
                 .description(optionalService.getDescription())
                 .serviceCost(String.valueOf(optionalService.getServiceCost()))
                 .email(optionalService.getEmail())
-                .createdAt(DateTimeUtil.toStringFromLocalDateTime(optionalService.getCreatedAt()))
-                .modifiedAt(DateTimeUtil.toStringFromLocalDateTime(optionalService.getModifiedAt()))
-                .deletedAt(DateTimeUtil.toStringFromLocalDateTime(optionalService.getDeletedAt()))
+                .createdAt(DateTimeUtil.fromLocalDateTimetoString(optionalService.getCreatedAt()))
+                .modifiedAt(DateTimeUtil.fromLocalDateTimetoString(optionalService.getModifiedAt()))
+                .deletedAt(DateTimeUtil.fromLocalDateTimetoString(optionalService.getDeletedAt()))
                 .build();
 
         final OptionalServiceTypeEnum type = OptionalServiceTypeEnum.valueOfLabel(optionalService.getType());

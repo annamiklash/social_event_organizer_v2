@@ -36,7 +36,7 @@ public class OptionalServiceBusinessHoursService {
 
         businessHours.setDay(dto.getDay().name());
         businessHours.setDay(dto.getDay().name());
-        businessHours.setTimeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()));
+        businessHours.setTimeTo(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeTo()));
 
         optionalServiceBusinessHoursRepository.save(businessHours);
         return businessHours;

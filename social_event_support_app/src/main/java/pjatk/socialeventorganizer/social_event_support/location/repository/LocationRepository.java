@@ -20,7 +20,6 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
-            "AND l.deleted_at IS NULL " +
             "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
     List<Location> searchWithDate(@Param("date") String date);
 
@@ -34,24 +33,12 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
     Optional<Location> getByIdWithDetail(@Param("id") Long id);
 
     @Query("SELECT distinct l FROM location AS l " +
-            "JOIN location_image li on li.location.id = l.id " +
-            "WHERE l.name LIKE %:keyword% " +
-            "OR  l.description LIKE %:keyword% " +
-            "AND l.deletedAt IS NULL")
+            "LEFT JOIN location_image li on li.location.id = l.id " +
+            "WHERE (:keyword = '' or (l.name LIKE %:keyword% OR l.description LIKE %:keyword%))")
     Page<Location> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
     @Query("SELECT count(l) FROM location AS l " +
-            "LEFT JOIN location_image li on li.location.id = l.id " +
-            "WHERE l.name LIKE %:keyword% " +
-            "OR  l.description LIKE %:keyword% " +
-            "AND l.deletedAt IS NULL")
-    long countAll(@Param("keyword") String keyword);
-
-
-    @Query("SELECT count(l) FROM location AS l " +
-            "LEFT JOIN location_image li on li.location.id = l.id " +
-            "WHERE l.name LIKE %:keyword% " +
-            "OR  l.description LIKE %:keyword% " +
+            "WHERE (:keyword like '' or (l.name LIKE %:keyword% OR l.description LIKE %:keyword%)) " +
             "AND l.deletedAt IS NULL")
     long countAll(@Param("keyword") String keyword);
 
@@ -66,24 +53,23 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
     List<Location> findAllByCity(@Param("city") String city);
 
     @Query("SELECT distinct l from location l " +
-            "LEFT JOIN fetch l.images " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
             "left join fetch l.locationAddress " +
             "left join fetch l.availability " +
-            "left join fetch l.descriptions " +
-            "WHERE l.deletedAt IS NULL")
+            "left join fetch l.descriptions ")
     List<Location> getAll();
 
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join location_availability la on la.id_location = l.id_location " +
             "WHERE l.id_location = :locationId " +
-            "AND l.deleted_at IS NULL " +
             "AND la.date = CAST(:date as timestamp) " +
             "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
             "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
     Optional<Location> available(@Param("locationId") long locationId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query("SELECT l from location l " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
             "LEFT JOIN FETCH l.locationAddress lad " +
             "LEFT JOIN FETCH l.descriptions d " +
             "LEFT JOIN FETCH l.caterings cat " +
@@ -103,13 +89,13 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
 
 
     @Query("SELECT l from location l " +
-            "LEFT JOIN FETCH l.images i " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
             "WHERE l.id = :locationId")
     Optional<Location> findWithImages(@Param("locationId") long locationId);
 
     @Query("SELECT l from location l " +
-            "LEFT JOIN FETCH l.images i " +
-            "WHERE l.id = :locationId AND i.isMain = true")
+            "LEFT JOIN location_image li on li.location.id = l.id " +
+            "WHERE l.id = :locationId AND li.isMain = true")
     Optional<Location> getByIdWithImages(@Param("locationId") long locationId);
 
     @Query("SELECT l FROM location l " +
@@ -117,8 +103,4 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "WHERE c.id = :cateringId")
     List<Location> findAllByCateringId(@Param("cateringId") long cateringId);
 
-    @Query("SELECT l FROM location l " +
-            "LEFT JOIN FETCH l.caterings c " +
-            "WHERE c.id = :cateringId")
-    List<Location> findAllByCateringId(long cateringId);
 }

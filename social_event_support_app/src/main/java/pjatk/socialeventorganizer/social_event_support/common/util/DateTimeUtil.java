@@ -1,22 +1,16 @@
 package pjatk.socialeventorganizer.social_event_support.common.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-@Slf4j
 @UtilityClass
 public class DateTimeUtil {
 
-    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HH:mm";
 
@@ -44,21 +38,17 @@ public class DateTimeUtil {
         if (date == null || date.equals("null")) {
             return null;
         }
-
         return LocalDate.parse(date, DATE_FORMATTER);
     }
 
-    public String toStringFromLocalDateTime(LocalDateTime dateTime) {
+    public String fromLocalDateTimetoString(LocalDateTime dateTime) {
         if (dateTime == null) {
             return null;
         }
-
-        log.info(String.valueOf(dateTime));
-
         return dateTime.format(DATE_TIME_FORMATTER);
     }
 
-    public LocalDate parseFromString(String date) {
+    public LocalDate fromStringToLocalDate(String date) {
         return LocalDate.parse(date, DATE_FORMATTER);
     }
 
@@ -71,50 +61,26 @@ public class DateTimeUtil {
     }
 
 
-    public String toDateOnlyStringFromLocalDateTime(LocalDate date) {
+    public String fromLocalDateToDateString(LocalDate date) {
         return date.format(DATE_FORMATTER);
     }
 
-    public String toTimeOnlyStringFromLocalDateTime(LocalDateTime dateTime) {
+    public String fromLocalDateTimeToTimeOnlyString(LocalDateTime dateTime) {
         final LocalTime localTime = dateTime.toLocalTime();
 
         return localTime.format(TIME_FORMATTER);
     }
 
-    public String toTimeOnlyFromLocalTime(LocalTime localTime) {
+    public String fromLocalTimeToTimeString(LocalTime localTime) {
 
         return localTime.format(TIME_FORMATTER);
     }
 
-    public LocalTime toLocalTimeFromTimeString(String time) {
+    public LocalTime fromTimeStringToLocalTime(String time) {
         if (time == null) {
             return null;
         }
         return LocalTime.parse(time, TIME_FORMATTER);
     }
 
-    public Time toTimeFromString(String time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
-        Time formattedTime = null;
-        try {
-            if (time != null) {
-                long ms = sdf.parse(time).getTime();
-                formattedTime = new Time(ms);
-                return formattedTime;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public String fromTimeToString(Time time) {
-        String pattern = "HH:mm:ss";
-
-        DateFormat df = new SimpleDateFormat(pattern);
-
-// Using DateFormat format method we can create a string
-// representation of a date with the defined format.
-        return df.format(time);
-    }
 }

@@ -20,6 +20,7 @@ import pjatk.socialeventorganizer.social_event_support.common.convertors.Convert
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
@@ -218,26 +219,11 @@ public class OptionalServiceService {
         return optionalServiceRepository.countAll(keyword);
     }
 
-    public OptionalService getWithImages(long id) {
-        return optionalServiceRepository.findWithImages(id)
-                .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
-
-    }
-
-
-    public Long count(String keyword) {
-        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
-        return optionalServiceRepository.countAll(keyword);
-    }
 
     public ImmutableList<OptionalService> getByBusinessId(long id) {
         return ImmutableList.copyOf(optionalServiceRepository.findAllByBusiness_Id(id));
     }
 
-    public OptionalService getWithImages(long serviceId) {
-        return optionalServiceRepository.findWithImages(serviceId)
-                .orElseThrow(() -> new NotFoundException("Service with id " + serviceId + " does not exist"));
-    }
 
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long id) {
@@ -249,17 +235,19 @@ public class OptionalServiceService {
             throw new ActionNotAllowedException("Cannot delete service with reservations pending");
         }
 
-        ImmutableSet.copyOf(serviceToDelete.getOptionalServiceBusinessHours())
+        CollectionUtil.emptyListIfNull(serviceToDelete.getOptionalServiceBusinessHours())
                 .forEach(optionalServiceBusinessService::delete);
 
-        ImmutableSet.copyOf(serviceToDelete.getAvailability())
+        CollectionUtil.emptyListIfNull(serviceToDelete.getAvailability())
                 .forEach(optionalServiceAvailabilityRepository::delete);
 
-        ImmutableSet.copyOf(serviceToDelete.getServiceForLocation())
+        CollectionUtil.emptyListIfNull(serviceToDelete.getServiceForLocation())
                 .forEach(optionalServiceForChosenLocationRepository::delete);
 
-        ImmutableList.copyOf(serviceToDelete.getImages())
+        CollectionUtil.emptyListIfNull(serviceToDelete.getImages())
                 .forEach(optionalServiceImageRepository::delete);
+
+        addressService.delete(serviceToDelete.getServiceAddress());
 
         final String type = serviceToDelete.getType();
         switch (type) {
@@ -282,8 +270,8 @@ public class OptionalServiceService {
             default:
                 break;
         }
-        serviceToDelete.setModifiedAt(timestampHelper.now());
-        serviceToDelete.setDeletedAt(timestampHelper.now());
+
+        optionalServiceRepository.delete(serviceToDelete);
     }
 
     private boolean hasPendingReservations(OptionalService serviceToDelete) {

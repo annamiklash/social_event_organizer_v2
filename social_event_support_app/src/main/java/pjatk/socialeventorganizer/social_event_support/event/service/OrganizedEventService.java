@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
@@ -19,10 +21,17 @@ import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEve
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.service.OptionalServiceForLocationService;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
 
@@ -34,6 +43,9 @@ public class OrganizedEventService {
     private final OrganizedEventRepository organizedEventRepository;
     private final EventTypeService eventTypeService;
     private final CustomerRepository customerRepository;
+    private final CateringForChosenEventLocationService cateringForChosenEventLocationService;
+    private final LocationForEventService locationForEventService;
+    private final OptionalServiceForLocationService optionalServiceForLocationService;
     private final StatusChangeHelper statusChangeHelper;
     private final TimestampHelper timestampHelper;
 
@@ -92,6 +104,10 @@ public class OrganizedEventService {
                 break;
             case CANCELLED:  //any stage except for FINISHED
                 //TODO: check if possible to cancel
+                if (!cancel(organizedEvent)) {
+                    throw new ActionNotAllowedException("Cannot cancel due to breaking cancellation policies");
+                }
+
                 organizedEvent.setEventStatus(CANCELLED.name());
                 break;
             case FINISHED:
@@ -102,6 +118,23 @@ public class OrganizedEventService {
         save(organizedEvent);
 
         return organizedEvent;
+    }
+
+    private void cancel(OrganizedEvent organizedEvent) {
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
+        final Set<OptionalServiceForChosenLocation> services = locationForEvent.getServices();
+        final Set<CateringForChosenEventLocation> caterings = locationForEvent.getCateringsForEventLocation();
+
+        locationForEventService.cancelReservation(locationForEvent.getId());
+        services.stream()
+                .filter(Objects::nonNull)
+                .forEach(optionalServiceForChosenLocation ->
+                        optionalServiceForLocationService.cancelReservation(optionalServiceForChosenLocation.getId()));
+
+        caterings.stream()
+                .filter(Objects::nonNull)
+                .forEach(catering -> cateringForChosenEventLocationService.cancelReservation(catering.getId()));
+
     }
 
     public List<OrganizedEvent> getAllByCustomerIdAndTab(long customerId, CustomerReservationTabEnum tabEnum) {

@@ -18,8 +18,7 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "LEFT JOIN optional_service_image i " +
             "WHERE os.type LIKE %:keyword% " +
             "OR os.description LIKE %:keyword% " +
-            "OR os.alias LIKE %:keyword% " +
-            "AND os.deletedAt is null")
+            "OR os.alias LIKE %:keyword% ")
     Page<OptionalService> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
     @Query(value = "SELECT os.* from optional_service os " +
@@ -27,7 +26,6 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "left join optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
             "LEFT JOIN address a on os.id_service_address = a.id_address " +
             "WHERE sa.date = CAST(:date as timestamp) " +
-            "AND os.deleted_at IS NULL " +
             "AND (:type like '' or os.type = :type) " +
             "AND (:city like '' or a.city = :city)", nativeQuery = true)
     List<OptionalService> search(@Param("date") String date, @Param("type") String type, @Param("city") String city);
@@ -48,27 +46,32 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
     Optional<OptionalService> available(@Param("serviceId") long serviceId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query("SELECT os from optional_service os " +
-            "LEFT JOIN os.images i " +
+            "LEFT JOIN optional_service_image si on si.service.id = os.id " +
+            "LEFT JOIN FETCH os.serviceAddress sa " +
             "LEFT JOIN FETCH os.styles ms " +
             "LEFT JOIN FETCH os.availability osa " +
             "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
             "LEFT JOIN FETCH os.serviceForLocation sfl " +
             "LEFT JOIN FETCH sfl.locationForEvent lfe " +
-            "LEFT JOIN FETCH os.images i " +
             "LEFT JOIN FETCH lfe.event " +
             "WHERE os.id = :serviceId")
     Optional<OptionalService> getAllServiceInformation(@Param("serviceId") long serviceId);
 
+    @Query("SELECT distinct concat(a.city, ', ', a.country)  " +
+            "FROM address a " +
+            "left join optional_service os on os.serviceAddress.id = a.id")
+    List<String> findDistinctCities();
+
     @Query("SELECT os from optional_service os " +
             "LEFT JOIN FETCH os.styles ms " +
             "LEFT JOIN FETCH os.availability osa " +
-            "LEFT JOIN FETCH os.images i " +
+            "LEFT JOIN optional_service_image si on si.service.id = os.id " +
             "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
             "WHERE os.id = :serviceId")
     Optional<OptionalService> findWithDetail(@Param("serviceId") long serviceId);
 
     @Query("SELECT os from optional_service os " +
-            "LEFT JOIN os.images i " +
+            "LEFT JOIN optional_service_image si on si.service.id = os.id " +
             "WHERE os.id = :serviceId")
     Optional<OptionalService> findWithImages(@Param("serviceId") long serviceId);
 
@@ -81,7 +84,7 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
     List<OptionalService> findAllByBusiness_Id(long id);
 
     @Query(value = "SELECT os.* from optional_service os " +
-            "left join optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
+            "LEFT JOIN optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
             "LEFT JOIN address a on os.id_service_address = a.id_address " +
             "LEFT JOIN optional_service_image osi on os.id_optional_service = osi.id_optional_service " +
             "WHERE sa.date = CAST(:date as timestamp) " +
@@ -89,32 +92,10 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
     List<OptionalService> searchByDate(@Param("date") String date, @Param("city") String city);
 
     @Query("SELECT distinct s from optional_service s " +
-            "LEFT JOIN FETCH s.images i " +
+            "LEFT JOIN optional_service_image si on si.service.id = s.id " +
             "left join fetch s.serviceAddress sa " +
             "left join fetch s.availability " +
-            "left join fetch s.optionalServiceBusinessHours bh " +
-            "WHERE s.deletedAt IS NULL")
+            "left join fetch s.optionalServiceBusinessHours bh ")
     List<OptionalService> getAll();
 
-    @Query("SELECT os from optional_service os " +
-            "LEFT JOIN FETCH os.styles ms " +
-            "LEFT JOIN FETCH os.availability osa " +
-            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
-            "LEFT JOIN FETCH os.serviceForLocation sfl " +
-            "LEFT JOIN FETCH sfl.locationForEvent lfe " +
-            "LEFT JOIN FETCH lfe.event " +
-            "WHERE os.id = :serviceId")
-    Optional<OptionalService> getAllServiceInformation(@Param("serviceId") long serviceId);
-
-    @Query("SELECT os from optional_service os " +
-            "LEFT JOIN FETCH os.styles ms " +
-            "LEFT JOIN FETCH os.availability osa " +
-            "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
-            "WHERE os.id = :serviceId")
-    Optional<OptionalService> findWithDetail(@Param("serviceId") long serviceId);
-
-    @Query("SELECT os from optional_service os " +
-            "LEFT JOIN FETCH os.images i " +
-            "WHERE os.id = :serviceId")
-    Optional<OptionalService> findWithImages(@Param("serviceId") long serviceId);
 }

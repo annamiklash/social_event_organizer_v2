@@ -248,7 +248,7 @@ class CateringControllerTest extends Specification
                 .andExpect(status().isNoContent())
 
         BDDMockito.verify(cateringService, times(1))
-                .deleteLogical(eq(id))
+                .delete(eq(id))
     }
 
     @WithMockUser(authorities = ['ADMIN'])
@@ -256,7 +256,7 @@ class CateringControllerTest extends Specification
         given:
         def id = 1L
 
-        BDDMockito.given(cateringService.deleteLogical(eq(id)))
+        BDDMockito.given(cateringService.delete(eq(id)))
                 .willThrow(new IllegalArgumentException("SAMPLE ERROR MESSAGE"))
 
         expect:

@@ -16,7 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUti
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
-import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
+import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.LocationNotBookedException;
@@ -37,7 +37,7 @@ import static pjatk.socialeventorganizer.social_event_support.enums.Confirmation
 public class CateringForChosenEventLocationService {
 
     private final CateringForLocationRepository cateringForLocationRepository;
-    private final OrganizedEventService organizedEventService;
+    private final OrganizedEventRepository organizedEventRepository;
     private final CustomerService customerService;
     private final CateringService cateringService;
     private final TimestampHelper timestampHelper;
@@ -53,7 +53,7 @@ public class CateringForChosenEventLocationService {
         final OrganizedEvent organizedEvent = catering.getEventLocation().getEvent();
 
         organizedEvent.setModifiedAt(timestampHelper.now());
-        organizedEventService.save(organizedEvent);
+        organizedEventRepository.save(organizedEvent);
 
         return catering;
     }
@@ -63,7 +63,9 @@ public class CateringForChosenEventLocationService {
         if (!customerService.customerExists(customerId)) {
             throw new NotFoundException("Customer with id " + customerId + " DOES NOT EXIST");
         }
-        final OrganizedEvent organizedEvent = organizedEventService.getWithLocation(eventId);
+        final OrganizedEvent organizedEvent = organizedEventRepository.getWithLocation(eventId)
+                .orElseThrow(() -> new NotFoundException("Organized event does not exist"));
+
         if (organizedEvent.getLocationForEvent() == null) {
             throw new LocationNotBookedException("You cannot book catering prior to booking location");
         }
@@ -107,29 +109,13 @@ public class CateringForChosenEventLocationService {
         if (!isAllowedToCancel(dateTime)) {
             throw new ActionNotAllowedException("Cannot cancel reservation");
         }
-        cateringForLocation.setConfirmationStatus(CANCELLATION_PENDING.name());
+        cateringForLocation.setConfirmationStatus(CANCELLED.name());
         event.setModifiedAt(timestampHelper.now());
 
-        organizedEventService.save(event);
+        organizedEventRepository.save(event);
         cateringForLocationRepository.save(cateringForLocation);
 
         return cateringForLocation;
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public CateringForChosenEventLocation setAsCancelled(long locationForEventId) {
-        final CateringForChosenEventLocation cateringForChosenEventLocation = getWithCateringAndEvent(locationForEventId);
-        if (!CANCELLATION_PENDING.name().equals(cateringForChosenEventLocation.getConfirmationStatus())) {
-            throw new ActionNotAllowedException("Cannot confirm cancellation");
-        }
-        cateringForChosenEventLocation.setConfirmationStatus(CANCELLED.name());
-
-        final OrganizedEvent event = cateringForChosenEventLocation.getEventLocation().getEvent();
-
-        event.setModifiedAt(timestampHelper.now());
-        organizedEventService.save(event);
-
-        return cateringForChosenEventLocation;
     }
 
 
@@ -159,7 +145,7 @@ public class CateringForChosenEventLocationService {
     }
 
     private boolean dateValid(LocalTime startTime, LocalTime endTime, String bookingTime) {
-        return DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isBefore(endTime)
-                && DateTimeUtil.toLocalTimeFromTimeString(bookingTime).isAfter(startTime);
+        return DateTimeUtil.fromTimeStringToLocalTime(bookingTime).isBefore(endTime)
+                && DateTimeUtil.fromTimeStringToLocalTime(bookingTime).isAfter(startTime);
     }
 }

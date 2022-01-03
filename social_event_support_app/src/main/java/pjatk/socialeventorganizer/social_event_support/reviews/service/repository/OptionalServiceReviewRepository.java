@@ -11,7 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.reviews.service.model.Opt
 import java.util.List;
 
 @Repository
-public interface ServiceReviewRepository extends JpaRepository<OptionalServiceReview, Long> {
+public interface OptionalServiceReviewRepository extends JpaRepository<OptionalServiceReview, Long> {
 
     boolean existsByOptionalService_Id(long id);
 

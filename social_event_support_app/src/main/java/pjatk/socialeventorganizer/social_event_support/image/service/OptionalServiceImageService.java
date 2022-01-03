@@ -46,7 +46,7 @@ public class OptionalServiceImageService {
         for (ImageDto dto : new HashSet<>(dtos)) {
             final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
 
-            final OptionalServiceImage image = (OptionalServiceImage) ImageMapper.fromDto(dto);
+            final OptionalServiceImage image = ImageMapper.fromDtoToServiceImage(dto);
             image.setService(service);
             image.setImage(data);
 
@@ -69,7 +69,7 @@ public class OptionalServiceImageService {
         }
         final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
 
-        final OptionalServiceImage image = (OptionalServiceImage) ImageMapper.fromDto(dto);
+        final OptionalServiceImage image = ImageMapper.fromDtoToServiceImage(dto);
         image.setService(service);
         image.setImage(data);
 

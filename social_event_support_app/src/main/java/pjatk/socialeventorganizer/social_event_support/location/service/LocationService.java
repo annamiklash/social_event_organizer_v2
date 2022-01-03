@@ -77,7 +77,6 @@ public class LocationService {
 
     private final LocationImageRepository locationImageRepository;
 
-
     public ImmutableList<Location> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -100,19 +99,11 @@ public class LocationService {
     }
 
     public Location getWithMainImage(long id) {
-        final Location location = locationRepository.getByIdWithImages(id)
+        final Location location = locationRepository.findWithImages(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
 
         location.setRating(locationReviewService.getRating(id));
         return location;
-    }
-
-    public Location getWithMainImage(long id) {
-        final Optional<Location> optionalLocation = locationRepository.getByIdWithImages(id);
-        if (optionalLocation.isPresent()) {
-            return optionalLocation.get();
-        }
-        throw new NotFoundException("Location with id " + id + " DOES NOT EXIST");
     }
 
 
@@ -138,7 +129,6 @@ public class LocationService {
     }
 
     public ImmutableList<Location> search(FilterLocationsDto dto) {
-
         List<Location> locations;
 
         if (dto.getDate() != null) {
@@ -186,7 +176,7 @@ public class LocationService {
                                 .collect(Collectors.toList()));
             }
         }
-locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
+        locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
 
         return ImmutableList.copyOf(locations.stream()
                 .peek(location -> locationReviewService.getRating(location.getId()))
@@ -194,7 +184,7 @@ locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
     }
 
     public ImmutableList<Location> findByCityWithId(String city) {
-       return ImmutableList.copyOf(locationRepository.findAllByCity(city));
+        return ImmutableList.copyOf(locationRepository.findAllByCity(city));
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -252,23 +242,6 @@ locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
         location.setRating(locationReviewService.getRating(locationId));
         return location;
     }
-
-//    private void addLocationOutsideCateringAvailableAndDontServeFood(Location location) {
-//        final String locationCity = location.getLocationAddress().getCity();
-//        final List<Catering> cateringList = cateringRepository.findByCateringAddress_City(locationCity);
-//
-//        for (Catering catering : cateringList) {
-//            log.info("CATERING ID " + catering.getId() + ", LOCATION ID " + location.getId());
-//
-//            catering.addLocation(location);
-//            catering.setModifiedAt(LocalDateTime.now());
-//
-//            cateringRepository.save(catering);
-//        }
-//
-//        location.setCaterings(new HashSet<>(cateringList));
-//        save(location);
-//    }
 
     private ImmutableList<Location> getAll() {
         return ImmutableList.copyOf(locationRepository.getAll());
@@ -353,12 +326,9 @@ locations = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), locations);
         for (Catering catering : caterings) {
             locationToDelete.removeCatering(catering);
         }
-        addressService.delete(locationToDelete.getLocationAddress().getId());
+        addressService.delete(locationToDelete.getLocationAddress());
 
-        locationToDelete.setModifiedAt(LocalDateTime.now());
-        locationToDelete.setDeletedAt(LocalDateTime.now());
-
-        save(locationToDelete);
+        locationRepository.delete(locationToDelete);
     }
 
     @Transactional(rollbackOn = Exception.class)

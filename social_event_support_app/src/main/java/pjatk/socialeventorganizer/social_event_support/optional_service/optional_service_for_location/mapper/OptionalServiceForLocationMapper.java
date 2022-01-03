@@ -15,8 +15,8 @@ public class OptionalServiceForLocationMapper {
 
     public OptionalServiceForChosenLocation fromDto(OptionalServiceForChosenLocationDto dto) {
         return OptionalServiceForChosenLocation.builder()
-                .timeFrom(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeTo()))
                 .comment(Converter.convertDescriptionsString(dto.getComment()))
                 .confirmationStatus(NOT_CONFIRMED.name())
                 .build();
@@ -24,8 +24,8 @@ public class OptionalServiceForLocationMapper {
 
     public OptionalServiceForChosenLocationDto toDto(OptionalServiceForChosenLocation optionalService) {
         return OptionalServiceForChosenLocationDto.builder()
-                .timeFrom(DateTimeUtil.toTimeOnlyFromLocalTime(optionalService.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTimeOnlyFromLocalTime(optionalService.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeTo()))
                 .comment(optionalService.getComment())
                 .confirmationStatus(optionalService.getConfirmationStatus())
                 .build();
@@ -33,8 +33,8 @@ public class OptionalServiceForLocationMapper {
 
     public OptionalServiceForChosenLocationDto toDtoWithOptionalService(OptionalServiceForChosenLocation optionalService) {
         return OptionalServiceForChosenLocationDto.builder()
-                .timeFrom(DateTimeUtil.toTimeOnlyFromLocalTime(optionalService.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTimeOnlyFromLocalTime(optionalService.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeTo()))
                 .comment(optionalService.getComment())
                 .confirmationStatus(optionalService.getConfirmationStatus())
                 .optionalService(OptionalServiceMapper.toDto(optionalService.getOptionalService()))
@@ -43,8 +43,8 @@ public class OptionalServiceForLocationMapper {
 
     public OptionalServiceForChosenLocationDto toDtoWithOptionalServiceAndLocation(OptionalServiceForChosenLocation optionalService) {
         return OptionalServiceForChosenLocationDto.builder()
-                .timeFrom(DateTimeUtil.toTimeOnlyFromLocalTime(optionalService.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTimeOnlyFromLocalTime(optionalService.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeTo()))
                 .comment(optionalService.getComment())
                 .confirmationStatus(optionalService.getConfirmationStatus())
                 .optionalService(OptionalServiceMapper.toDto(optionalService.getOptionalService()))

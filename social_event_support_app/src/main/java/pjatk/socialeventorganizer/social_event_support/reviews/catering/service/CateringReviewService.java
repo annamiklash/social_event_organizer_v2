@@ -72,10 +72,8 @@ public class CateringReviewService {
             throw new NotFoundException("Catering with id " + id + " does not exist");
         }
         return cateringReviewRepository.getByCateringId(id);
-
-        return ImmutableList.copyOf(page.get()
-                .collect(Collectors.toList()));
     }
+
 
     public double getRating(long cateringId) {
         final List<CateringReview> reviews = cateringReviewRepository.getByCateringId(cateringId);

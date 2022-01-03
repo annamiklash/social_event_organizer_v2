@@ -35,7 +35,7 @@ public class Location implements Serializable {
     @Column
     private String name;
 
-    @Column(unique = true)
+    @Column
     private String email;
 
     @Column(name = "phone_number")
@@ -85,7 +85,7 @@ public class Location implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "id_catering"))
     private Set<Catering> caterings = new HashSet<>();
 
-    @ToString.Exclude
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "location_description",
@@ -110,14 +110,6 @@ public class Location implements Serializable {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Set<LocationBusinessHours> locationBusinessHours;
-
-    public void addAvailability(LocationAvailability locationAvailability) {
-        availability.add(locationAvailability);
-    }
-
-    public void removeAvailability(LocationAvailability locationAvailability) {
-        availability.remove(locationAvailability);
-    }
 
     public void addDescriptionItem(LocationDescriptionItem locationDescriptionItem) {
         if (locationDescriptionItem == null) {

@@ -42,6 +42,7 @@ import pjatk.socialeventorganizer.social_event_support.security.model.UserCreden
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -101,7 +102,7 @@ public class CateringService {
                     .collect(Collectors.toList());
         }
 
-        caterings = filterByPrice(String.valueOf(dto.getMinPrice()), String.valueOf(dto.getMaxPrice()), caterings);
+        caterings = filterByPrice(dto.getMinPrice(), dto.getMaxPrice(), caterings);
         return ImmutableList.copyOf(caterings);
     }
 
@@ -163,7 +164,7 @@ public class CateringService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void deleteLogical(long id) {
+    public void delete(long id) {
         final Catering cateringToDelete = cateringRepository.findAllCateringInformation(id)
                 .orElseThrow(() -> new NotFoundException("No catering with id " + id));
 
@@ -171,6 +172,17 @@ public class CateringService {
         if (hasPendingReservations) {
             throw new ActionNotAllowedException("Cannot delete catering with reservations pending");
         }
+
+        final ImmutableList<Location> locations = CollectionUtil.emptyListIfNull(cateringToDelete.getLocations());
+        for (Location location : locations) {
+            cateringToDelete.removeLocation(location);
+        }
+
+        final ImmutableList<Cuisine> cuisines = CollectionUtil.emptyListIfNull(cateringToDelete.getCuisines());
+        for (Cuisine cuisine : cuisines) {
+            cateringToDelete.removeCuisine(cuisine);
+        }
+
         CollectionUtil.emptyListIfNull(cateringToDelete.getImages())
                 .forEach(cateringImageRepository::delete);
 
@@ -180,12 +192,9 @@ public class CateringService {
         CollectionUtil.emptyListIfNull(cateringToDelete.getCateringItems())
                 .forEach(cateringItemRepository::delete);
 
-        addressService.delete(cateringToDelete.getCateringAddress().getId());
+        addressService.delete(cateringToDelete.getCateringAddress());
 
-        cateringToDelete.setModifiedAt(timestampHelper.now());
-        cateringToDelete.setDeletedAt(timestampHelper.now());
-
-        saveCatering(cateringToDelete);
+        cateringRepository.delete(cateringToDelete);
     }
 
     public boolean cateringWithIdExists(Long id) {
@@ -198,24 +207,14 @@ public class CateringService {
                 .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " DOES NOT EXIST"));
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public void addCateringToGivenLocation(Catering catering, long locationId) {
 
-        final Location location = locationService.get(locationId);
-
-        catering.addLocation(location);
-        saveCatering(catering);
+    public ImmutableList<Catering> getByLocationId(long id) {
+        return ImmutableList.copyOf(cateringRepository.findAllByLocationIdAAndDeletedAtIsNull(id));
     }
-
 
     public Long count(String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
         return cateringRepository.countAll(keyword);
-    }
-
-    private void addCateringToLocationsWithSameCity(Catering savedCatering) {
-        final String city = savedCatering.getCateringAddress().getCity();
-        return locationService.findByCityWithId(city);
     }
 
     private boolean hasPendingReservations(Catering cateringToDelete) {
@@ -294,27 +293,36 @@ public class CateringService {
         return catering;
     }
 
-    private List<Catering> filterByPrice(String priceNotLessThen, String priceNotMoreThan, List<Catering> caterings) {
+    private List<Catering> filterByPrice(Integer priceNotLessThen, Integer priceNotMoreThan, List<Catering> caterings) {
         if (priceNotLessThen == null && priceNotMoreThan == null) {
             return caterings;
-        } else if (priceNotLessThen != null && priceNotMoreThan == null) {
+        }
+        final BigDecimal minPrice = priceNotLessThen == null ? null : new BigDecimal(priceNotLessThen);
+        final BigDecimal maxPrice = priceNotMoreThan == null ? null : new BigDecimal(priceNotMoreThan);
+
+        if (minPrice != null && maxPrice == null) {
             return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> minPrice.compareTo(catering.getServiceCost()) < 0 ||
+                            minPrice.compareTo(catering.getServiceCost()) == 0)
                     .collect(Collectors.toList());
-        } else if (priceNotLessThen == null) {
+        } else if (minPrice == null) {
             return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> maxPrice.compareTo(catering.getServiceCost()) > 0 ||
+                            maxPrice.compareTo(catering.getServiceCost()) == 0)
                     .collect(Collectors.toList());
         } else {
             return caterings.stream()
-                    .filter(catering -> Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) < 0 ||
-                            Converter.convertPriceString(priceNotLessThen).compareTo(catering.getServiceCost()) == 0)
-                    .filter(catering -> Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) > 0 ||
-                            Converter.convertPriceString(priceNotMoreThan).compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> minPrice.compareTo(catering.getServiceCost()) < 0 ||
+                            minPrice.compareTo(catering.getServiceCost()) == 0)
+                    .filter(catering -> maxPrice.compareTo(catering.getServiceCost()) > 0 ||
+                            maxPrice.compareTo(catering.getServiceCost()) == 0)
                     .collect(Collectors.toList());
         }
+    }
+
+    private ImmutableList<Location> getLocationsInSameCity(Catering savedCatering) {
+        final String city = savedCatering.getCateringAddress().getCity();
+        return locationService.findByCityWithId(city);
     }
 
 }

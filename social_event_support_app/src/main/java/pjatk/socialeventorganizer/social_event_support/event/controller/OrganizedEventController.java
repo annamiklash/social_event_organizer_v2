@@ -55,7 +55,7 @@ public class OrganizedEventController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrganizedEventDto> get(@RequestParam long eventId) {
-        final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
+        final OrganizedEvent organizedEvent = organizedEventService.getWithDetail(eventId);
 
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithDetail(organizedEvent));
     }
@@ -75,7 +75,6 @@ public class OrganizedEventController {
                         .collect(Collectors.toList())));
     }
 
-    //TODO: test
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.PUT,

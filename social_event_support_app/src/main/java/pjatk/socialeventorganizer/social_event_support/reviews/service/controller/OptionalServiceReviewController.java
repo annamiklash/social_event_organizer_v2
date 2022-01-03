@@ -49,6 +49,7 @@ public class OptionalServiceReviewController {
     public ResponseEntity<TableDto<ServiceReviewDto>> listAllByServiceId(@RequestParam(defaultValue = "0") Integer pageNo,
                                                                          @RequestParam(defaultValue = "5") Integer pageSize,
                                                                          @RequestParam(defaultValue = "id") String sortBy,
+                                                                         @RequestParam(defaultValue = "asc") String order,
                                                                          @RequestParam long serviceId) {
         final List<OptionalServiceReview> review = optionalServiceReviewService.getByServiceId(CustomPage.builder()
                 .pageNo(pageNo)

@@ -106,7 +106,6 @@ public class LocationController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT,
-            params = {"id"},
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationDto> edit(@Valid @RequestBody LocationDto dto, @RequestParam long id) {
@@ -129,7 +128,6 @@ public class LocationController {
         return ResponseEntity.ok(
                 ImmutableList.copyOf(list.stream()
                         .map(LocationMapper::toDto)
-//                        .peek(locationDto -> locationDto.setRating(locationReviewService.getRating(locationDto.getId())))
                         .collect(Collectors.toList())));
     }
 
@@ -140,8 +138,6 @@ public class LocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationDto> getWithAvailability(@PathVariable long id, @RequestParam String date) {
         final Location location = locationService.getWithAvailability(id, date);
-        final LocationDto locationDto = LocationMapper.toDto(location);
-
         final LocationDto locationDto = LocationMapper.toDto(location);
 
         return ResponseEntity.ok(locationDto);

@@ -12,8 +12,8 @@ public class AppProblemMapper {
     public AppProblemDto toDto(AppProblem appProblem) {
         return AppProblemDto.builder()
                 .id(appProblem.getId())
-                .createdAt(DateTimeUtil.toStringFromLocalDateTime(appProblem.getCreatedAt()))
-                .resolvedAt(DateTimeUtil.toStringFromLocalDateTime(appProblem.getResolvedAt()))
+                .createdAt(DateTimeUtil.fromLocalDateTimetoString(appProblem.getCreatedAt()))
+                .resolvedAt(DateTimeUtil.fromLocalDateTimetoString(appProblem.getResolvedAt()))
                 .concern(appProblem.getConcern())
                 .description(appProblem.getDescription())
                 .build();

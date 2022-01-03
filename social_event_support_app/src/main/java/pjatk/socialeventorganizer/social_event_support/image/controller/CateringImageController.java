@@ -82,16 +82,16 @@ public class CateringImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long cateringId, @RequestParam long id) {
-        cateringImageService.setNewMain(cateringId, id);
+    public ResponseEntity<Void> changeMain(@RequestParam long cateringId, @RequestParam long imageId) {
+        cateringImageService.setNewMain(cateringId, imageId);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long cateringId, @RequestParam long id) {
-        cateringImageService.deleteById(cateringId, id);
+    public ResponseEntity<Void> delete(@RequestParam long cateringId, @RequestParam long imageId) {
+        cateringImageService.deleteById(cateringId, imageId);
         return ResponseEntity.ok().build();
 
     }

@@ -13,16 +13,16 @@ public class AvailabilityMapper {
     public AvailabilityDto toDto(Availability availability) {
         return AvailabilityDto.builder()
                 .id(availability.getId())
-                .date(DateTimeUtil.toDateOnlyStringFromLocalDateTime(availability.getDate()))
-                .timeFrom(DateTimeUtil.toTimeOnlyStringFromLocalDateTime(availability.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTimeOnlyStringFromLocalDateTime(availability.getTimeTo()))
+                .date(DateTimeUtil.fromLocalDateToDateString(availability.getDate()))
+                .timeFrom(DateTimeUtil.fromLocalDateTimeToTimeOnlyString(availability.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromLocalDateTimeToTimeOnlyString(availability.getTimeTo()))
                 .status(availability.getStatus())
                 .build();
     }
 
     public LocationAvailability fromDtoToLocationAvailability(AvailabilityDto dto) {
         return LocationAvailability.builder()
-                .date(DateTimeUtil.parseFromString(dto.getDate()))
+                .date(DateTimeUtil.fromStringToLocalDate(dto.getDate()))
                 .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
                 .timeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo())))
                 .status(dto.getStatus())
@@ -31,7 +31,7 @@ public class AvailabilityMapper {
 
     public OptionalServiceAvailability fromDtoToOptionalServiceAvailability(AvailabilityDto dto) {
         return OptionalServiceAvailability.builder()
-                .date(DateTimeUtil.parseFromString(dto.getDate()))
+                .date(DateTimeUtil.fromStringToLocalDate(dto.getDate()))
                 .timeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
                 .timeTo(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo())))
                 .status(dto.getStatus())

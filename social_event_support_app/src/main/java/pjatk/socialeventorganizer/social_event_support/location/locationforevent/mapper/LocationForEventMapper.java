@@ -19,9 +19,9 @@ public class LocationForEventMapper {
     public LocationForEventDto toDto(LocationForEvent location) {
         return LocationForEventDto.builder()
                 .id(location.getId())
-                .date(DateTimeUtil.toDateOnlyStringFromLocalDateTime(location.getEvent().getDate()))
-                .timeFrom(DateTimeUtil.toTimeOnlyFromLocalTime(location.getTimeFrom()))
-                .timeTo(DateTimeUtil.toTimeOnlyFromLocalTime(location.getTimeTo()))
+                .date(DateTimeUtil.fromLocalDateToDateString(location.getEvent().getDate()))
+                .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(location.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromLocalTimeToTimeString(location.getTimeTo()))
                 .guestCount(location.getGuestCount())
                 .confirmationStatus(location.getConfirmationStatus())
                 .location(LocationMapper.toDto(location.getLocation()))
@@ -62,8 +62,8 @@ public class LocationForEventMapper {
     public LocationForEvent fromDto(LocationForEventDto dto) {
         return LocationForEvent.builder()
                 .guestCount(dto.getGuestCount())
-                .timeFrom(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeFrom()))
-                .timeTo(DateTimeUtil.toLocalTimeFromTimeString(dto.getTimeTo()))
+                .timeFrom(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromTimeStringToLocalTime(dto.getTimeTo()))
                 .confirmationStatus(NOT_CONFIRMED.name())
                 .build();
     }

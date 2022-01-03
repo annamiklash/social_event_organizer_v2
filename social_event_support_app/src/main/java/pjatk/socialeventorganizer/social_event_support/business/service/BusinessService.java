@@ -118,7 +118,7 @@ public class BusinessService {
                 .forEach(location -> locationService.deleteLogical(location.getId()));
 
         CollectionUtil.emptyListIfNull(businessToDelete.getCaterings())
-                .forEach(catering -> cateringService.deleteLogical(catering.getId()));
+                .forEach(catering -> cateringService.delete(catering.getId()));
 
         CollectionUtil.emptyListIfNull(businessToDelete.getServices())
                 .forEach(service -> optionalServiceService.deleteLogical(service.getId()));
