@@ -51,7 +51,8 @@ public class OptionalServiceController {
                 .sortBy(sortBy)
                 .order(order)
                 .build();
-        final ImmutableList<OptionalService> list = optionalServiceService.list( customPage, keyword);final Long count = optionalServiceService.count(keyword);
+        final ImmutableList<OptionalService> list = optionalServiceService.list( customPage, keyword);
+        final Long count = optionalServiceService.count(keyword);
 
         final ImmutableList<OptionalServiceDto> result = ImmutableList.copyOf(list.stream()
                         .map(OptionalServiceMapper::toDto)

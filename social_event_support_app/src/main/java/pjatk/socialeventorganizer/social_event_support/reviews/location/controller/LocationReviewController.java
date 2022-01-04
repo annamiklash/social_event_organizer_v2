@@ -29,6 +29,7 @@ public class LocationReviewController {
     private final LocationReviewService locationReviewService;
 
     @RequestMapping(
+            path = "allowed/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<LocationReviewDto>> listAllByLocationId(@RequestParam(defaultValue = "0") Integer pageNo,

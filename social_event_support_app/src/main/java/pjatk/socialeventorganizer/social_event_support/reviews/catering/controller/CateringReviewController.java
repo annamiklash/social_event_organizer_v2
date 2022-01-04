@@ -28,8 +28,8 @@ public class CateringReviewController {
 
     private final CateringReviewService cateringReviewService;
 
-    @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')")
     @RequestMapping(
+            path = "allowed/all",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<CateringReviewDto>> listAllByCateringId(@RequestParam(defaultValue = "0") Integer pageNo,
