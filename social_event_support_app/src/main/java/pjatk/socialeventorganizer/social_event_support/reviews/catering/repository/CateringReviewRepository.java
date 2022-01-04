@@ -22,7 +22,7 @@ public interface CateringReviewRepository extends JpaRepository<CateringReview, 
 
     Long countAllByCatering_Id(long id);
 
-    @Query("SELECT count(cr) from catering_review cr " +
+    @Query("SELECT cr from catering_review cr " +
             "left join customer c on c.id = cr.customer.id " +
             "left join catering cat on cat.id = cr.catering.id WHERE cat.id = :id")
     Page<CateringReview> getByCateringId(long id, Pageable pageable);
