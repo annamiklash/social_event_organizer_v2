@@ -102,32 +102,9 @@ public class OptionalServiceImageService {
         return optionalServiceImageRepository.findAllByService_Id(serviceId);
     }
 
-    public void delete(OptionalServiceImage image) {
-        optionalServiceImageRepository.delete(image);
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public void deleteById(long serviceId, Long toDelete) {
-        final List<OptionalServiceImage> list = findByServiceId(serviceId);
-        if (list.size() == 1) {
-            optionalServiceImageRepository.deleteById(toDelete);
-            return;
-        }
-        if (list.size() == 0) {
-            return;
-        }
-        final OptionalServiceImage imageToDelete = get(toDelete);
-        if (imageToDelete.isMain()) {
-            final Optional<OptionalServiceImage> optionalMain = getMain(serviceId);
-            if (optionalMain.isEmpty() || optionalMain.get().getId() == toDelete) {
-                final OptionalServiceImage serviceImage = findByServiceId(serviceId).stream()
-                        .filter(image -> !image.isMain() && image.getId() != toDelete)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("You should have at least 2 images to delete one"));
-                serviceImage.setMain(true);
-                optionalServiceImageRepository.save(serviceImage);
-            }
-        }
+    public void deleteById(long serviceId, Long imageId) {
+        final OptionalServiceImage imageToDelete = optionalServiceImageRepository.findByIdAndService_Id(imageId, serviceId)
+                .orElseThrow(() -> new NotFoundException("Catering with id " + serviceId + " does not have image with id " + imageId));
         optionalServiceImageRepository.delete(imageToDelete);
     }
 

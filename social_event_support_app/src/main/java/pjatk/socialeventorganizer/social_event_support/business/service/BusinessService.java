@@ -114,19 +114,19 @@ public class BusinessService {
         final Business businessToDelete = businessRepository.findAllBusinessInformation(businessId)
                 .orElseThrow(() -> new NotFoundException("Business with businessId " + businessId + " DOES NOT EXIST"));
 
-        CollectionUtil.emptyListIfNull(businessToDelete.getLocations())
-                .forEach(location -> locationService.deleteLogical(location.getId()));
+        CollectionUtil.emptyListIfNull(businessToDelete.getServices())
+                .forEach(service -> optionalServiceService.delete(service.getId()));
 
         CollectionUtil.emptyListIfNull(businessToDelete.getCaterings())
                 .forEach(catering -> cateringService.delete(catering.getId()));
 
-        CollectionUtil.emptyListIfNull(businessToDelete.getServices())
-                .forEach(service -> optionalServiceService.deleteLogical(service.getId()));
+        CollectionUtil.emptyListIfNull(businessToDelete.getLocations())
+                .forEach(location -> locationService.delete(location.getId()));
 
         addressService.delete(businessToDelete.getAddress());
         userService.delete(businessToDelete.getUser());
 
-        businessRepository.save(businessToDelete);
+        businessRepository.delete(businessToDelete);
     }
 
 

@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
@@ -38,7 +39,7 @@ public class CateringForChosenEventLocationService {
 
     private final CateringForLocationRepository cateringForLocationRepository;
     private final OrganizedEventRepository organizedEventRepository;
-    private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
     private final CateringService cateringService;
     private final TimestampHelper timestampHelper;
 
@@ -60,7 +61,7 @@ public class CateringForChosenEventLocationService {
 
     @Transactional(rollbackOn = Exception.class)
     public CateringForChosenEventLocation create(long customerId, long eventId, long cateringId, CateringForChosenEventLocationDto dto) {
-        if (!customerService.customerExists(customerId)) {
+        if (customerRepository.findById(customerId).isEmpty()) {
             throw new NotFoundException("Customer with id " + customerId + " DOES NOT EXIST");
         }
         final OrganizedEvent organizedEvent = organizedEventRepository.getWithLocation(eventId)

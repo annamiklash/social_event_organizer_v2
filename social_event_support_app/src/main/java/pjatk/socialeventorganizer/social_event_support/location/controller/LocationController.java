@@ -175,7 +175,7 @@ public class LocationController {
     @RequestMapping(
             method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@RequestParam long id) {
-        locationService.deleteLogical(id);
+        locationService.delete(id);
 
         return ResponseEntity.noContent().build();
     }

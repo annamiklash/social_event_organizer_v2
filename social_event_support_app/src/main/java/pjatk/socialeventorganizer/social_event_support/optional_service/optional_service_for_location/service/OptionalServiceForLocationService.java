@@ -10,6 +10,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
@@ -45,7 +46,7 @@ public class OptionalServiceForLocationService {
 
     private final OptionalServiceForChosenLocationRepository optionalServiceForChosenLocationRepository;
 
-    private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
 
     private final OrganizedEventRepository organizedEventRepository;
 
@@ -57,7 +58,9 @@ public class OptionalServiceForLocationService {
 
     @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation create(long customerId, long eventId, long serviceId, OptionalServiceForChosenLocationDto dto) {
-        final Customer customer = customerService.get(customerId);
+        if (customerRepository.findById(customerId).isEmpty()) {
+            throw new NotFoundException("Customer with id " + customerId + " DOES NOT EXIST");
+        }
         final OrganizedEvent organizedEvent = organizedEventRepository.getWithLocation(eventId)
                 .orElseThrow(() -> new NotFoundException("Organized event does not exist"));
 
@@ -177,24 +180,9 @@ public class OptionalServiceForLocationService {
 
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public OptionalServiceForChosenLocation cancelReservation(long id) {
-        final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(id);
-        final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
-
-        serviceForEvent.setConfirmationStatus(CANCELLED.name());
-        event.setModifiedAt(LocalDateTime.now());
-
-        organizedEventRepository.save(event);
-        save(serviceForEvent);
-
-        return serviceForEvent;
-
-    }
-    //TODO: delete one of two methods
 
     @Transactional(rollbackOn = Exception.class)
-    public OptionalServiceForChosenLocation setAsCancelled(long locationForEventId) {
+    public OptionalServiceForChosenLocation cancelReservation(long locationForEventId) {
         final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(locationForEventId);
         serviceForEvent.setConfirmationStatus(CANCELLED.name());
 

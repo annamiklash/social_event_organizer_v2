@@ -69,19 +69,6 @@ public class LocationForEventController {
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithLocation(locationForEvent.getEvent()));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.PUT,
-            path = "cancel",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LocationForEventDto> confirmCancelled(@RequestParam long id) {
-
-        final LocationForEvent locationForEvent = locationForEventService.setAsCancelled(id);
-
-        return ResponseEntity.ok(LocationForEventMapper.toDto(locationForEvent));
-    }
-
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.DELETE,

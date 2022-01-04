@@ -14,6 +14,8 @@ public interface OptionalServiceImageRepository extends JpaRepository<OptionalSe
 
     List<OptionalServiceImage> findAllByService_Id(long locationId);
 
+    Optional<OptionalServiceImage> findByIdAndService_Id(long id, long serviceId);
+
     @Query("SELECT i from optional_service_image i " +
             "LEFT JOIN FETCH i.service s " +
             "WHERE s.id = :serviceId AND i.isMain = TRUE")

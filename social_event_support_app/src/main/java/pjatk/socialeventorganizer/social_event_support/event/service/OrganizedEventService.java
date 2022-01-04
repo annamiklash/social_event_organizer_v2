@@ -21,7 +21,6 @@ import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEve
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
-import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
@@ -103,11 +102,7 @@ public class OrganizedEventService {
                 }
                 break;
             case CANCELLED:  //any stage except for FINISHED
-                //TODO: check if possible to cancel
-                if (!cancel(organizedEvent)) {
-                    throw new ActionNotAllowedException("Cannot cancel due to breaking cancellation policies");
-                }
-
+                cancel(organizedEvent);
                 organizedEvent.setEventStatus(CANCELLED.name());
                 break;
             case FINISHED:
@@ -125,7 +120,6 @@ public class OrganizedEventService {
         final Set<OptionalServiceForChosenLocation> services = locationForEvent.getServices();
         final Set<CateringForChosenEventLocation> caterings = locationForEvent.getCateringsForEventLocation();
 
-        locationForEventService.cancelReservation(locationForEvent.getId());
         services.stream()
                 .filter(Objects::nonNull)
                 .forEach(optionalServiceForChosenLocation ->
@@ -134,6 +128,8 @@ public class OrganizedEventService {
         caterings.stream()
                 .filter(Objects::nonNull)
                 .forEach(catering -> cateringForChosenEventLocationService.cancelReservation(catering.getId()));
+
+        locationForEventService.cancelReservation(locationForEvent.getId());
 
     }
 

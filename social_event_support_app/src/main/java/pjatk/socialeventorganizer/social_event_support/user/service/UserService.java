@@ -51,7 +51,6 @@ public class UserService {
 
     private final BusinessRepository businessRepository;
 
-    private final EntityManager em;
 
     public ImmutableList<User> list(CustomPage customPage, String keyword) {
          keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -148,7 +147,6 @@ public class UserService {
         save(user);
     }
 
-    @Transactional(rollbackOn = Exception.class)
     public void setNewPassword(String token, NewPasswordDto newPasswordDto) {
         final User user = getByResetPasswordToken(token);
 
@@ -160,9 +158,6 @@ public class UserService {
     public boolean isNewAccount(long id, char type) {
         final Optional<User> optionalUser = userRepository.isNewAccount(id, type);
         return optionalUser.isEmpty();
-    }
-    public void clear(){
-        em.clear();
     }
 
     private boolean userExists(String email) {
@@ -182,10 +177,7 @@ public class UserService {
     }
 
     public void delete(User user) {
-        user.setModifiedAt(LocalDateTime.now());
-        user.setDeletedAt(LocalDateTime.now());
-
-        save(user);
+       userRepository.delete(user);
     }
 
     public Long count(String keyword) {

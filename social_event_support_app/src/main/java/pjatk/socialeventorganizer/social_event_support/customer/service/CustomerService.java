@@ -174,7 +174,7 @@ public class CustomerService {
                 .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
-    public boolean customerExists(long id) {
+    private boolean customerExists(long id) {
         return customerRepository.findById(id).isPresent();
     }
 

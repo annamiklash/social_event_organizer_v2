@@ -8,10 +8,9 @@ import javax.persistence.*;
 import java.time.LocalTime;
 
 @Builder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Entity(name = "service_for_event")
 @Table(name = "service_for_event")
 public class OptionalServiceForChosenLocation {

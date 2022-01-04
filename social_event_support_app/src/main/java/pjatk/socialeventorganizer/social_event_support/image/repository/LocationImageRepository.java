@@ -14,6 +14,8 @@ public interface LocationImageRepository extends JpaRepository<LocationImage, Lo
 
     List<LocationImage> findAllByLocation_Id(long locationId);
 
+    Optional<LocationImage> findByIdAndLocation_Id(long id, long locationId);
+
     @Query("SELECT i from location_image i " +
             "LEFT JOIN FETCH i.location l " +
             "WHERE l.id = :locationId AND i.isMain = TRUE")

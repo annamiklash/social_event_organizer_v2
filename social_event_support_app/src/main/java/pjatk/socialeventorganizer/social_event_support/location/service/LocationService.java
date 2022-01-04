@@ -300,7 +300,7 @@ public class LocationService {
 
     //TODO: delete reviews, change email to ---@----DELETED_TIMESTAMP
     @Transactional(rollbackOn = Exception.class)
-    public void deleteLogical(long id) {
+    public void delete(long id) {
         final Location locationToDelete = locationRepository.getAllLocationInformation(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
 

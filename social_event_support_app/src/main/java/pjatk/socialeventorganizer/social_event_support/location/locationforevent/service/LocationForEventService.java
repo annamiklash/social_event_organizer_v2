@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.location.service.LocationAvailabilityService;
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
@@ -47,11 +48,14 @@ public class LocationForEventService {
     private final LocationService locationService;
 
     private final LocationAvailabilityService locationAvailabilityService;
+    
+    private final TimestampHelper timestampHelper;
 
     @Transactional(rollbackOn = Exception.class)
     public LocationForEvent create(long customerId, long eventId, long locationId, LocationForEventDto dto) {
-        final Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new NotFoundException("No customer with id " + customerId));
+        if (customerRepository.findById(customerId).isEmpty()) {
+            throw new NotFoundException("Customer with id " + customerId + " DOES NOT EXIST");
+        }
         final OrganizedEvent organizedEvent = organizedEventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event does not exist"));
 
@@ -83,6 +87,7 @@ public class LocationForEventService {
                 .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
     }
 
+
     @Transactional(rollbackOn = Exception.class)
     public LocationForEvent cancelReservation(long locationForEventId) {
         final LocationForEvent locationForEvent = getWithLocationAndEvent(locationForEventId);
@@ -94,17 +99,6 @@ public class LocationForEventService {
         if (!CollectionUtils.isEmpty(locationForEvent.getCateringsForEventLocation())) {
             throw new ActionNotAllowedException("Cannot cancel reservation for venue while there are catering reservation for given event");
         }
-
-        locationForEvent.setConfirmationStatus(CANCELLATION_PENDING.name());
-        locationForEvent.getEvent().setModifiedAt(LocalDateTime.now());
-        save(locationForEvent);
-
-        return locationForEvent;
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public LocationForEvent setAsCancelled(long locationForEventId) {
-        final LocationForEvent locationForEvent = getWithLocationAndEvent(locationForEventId);
 
         locationForEvent.setConfirmationStatus(CANCELLED.name());
 
@@ -125,7 +119,7 @@ public class LocationForEventService {
         LocationAvailability locationAvailability = locationAvailabilityService.getByDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), stringTimeFrom, stringTimeTo);
         locationAvailabilityService.updateToAvailable(locationAvailability, locationForEvent.getLocation());
 
-        event.setModifiedAt(LocalDateTime.now());
+        event.setModifiedAt(timestampHelper.now());
         organizedEventRepository.save(event);
 
         return locationForEvent;
@@ -144,7 +138,7 @@ public class LocationForEventService {
 
         final OrganizedEvent organizedEvent = locationForEvent.getEvent();
 
-        organizedEvent.setModifiedAt(LocalDateTime.now());
+        organizedEvent.setModifiedAt(timestampHelper.now());
         organizedEventRepository.save(organizedEvent);
 
         return locationForEvent;
@@ -165,7 +159,7 @@ public class LocationForEventService {
     }
 
     private boolean isAllowedToCancel(LocalDateTime dateTime) {
-        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(LocalDateTime.now());
+        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(timestampHelper.now());
     }
 
 

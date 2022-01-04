@@ -47,12 +47,12 @@ public class LocationForEvent implements Serializable {
     private OrganizedEvent event;
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location_for_event")
     private Set<CateringForChosenEventLocation> cateringsForEventLocation;
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location_for_event")
     private Set<OptionalServiceForChosenLocation> services;
 

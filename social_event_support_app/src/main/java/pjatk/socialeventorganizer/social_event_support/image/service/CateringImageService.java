@@ -102,9 +102,9 @@ public class CateringImageService {
         return cateringImageRepository.countAll(cateringId);
     }
 
-    public void deleteById(long locationId, Long imageId) {
-        final CateringImage image = cateringImageRepository.getCateringImageByIdAndCatering_Id(imageId, locationId)
-                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " does not have image with id " + imageId));
+    public void deleteById(long cateringId, Long imageId) {
+        final CateringImage image = cateringImageRepository.getCateringImageByIdAndCatering_Id(imageId, cateringId)
+                .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " does not have image with id " + imageId));
         cateringImageRepository.delete(image);
     }
 

@@ -1,10 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.event.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,7 +24,8 @@ public class EventType implements Serializable {
     @Column(unique = true)
     private String type;
 
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_event_type")
     @JsonIgnore
     Set<OrganizedEvent> events = new HashSet<>();

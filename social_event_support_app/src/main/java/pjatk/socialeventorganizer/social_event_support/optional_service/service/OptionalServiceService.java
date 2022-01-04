@@ -226,7 +226,7 @@ public class OptionalServiceService {
 
 
     @Transactional(rollbackOn = Exception.class)
-    public void deleteLogical(long id) {
+    public void delete(long id) {
         final OptionalService serviceToDelete = optionalServiceRepository.getAllServiceInformation(id)
                 .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
 
@@ -304,8 +304,8 @@ public class OptionalServiceService {
     }
 
 
-    private List<OptionalService> filterByType(List<OptionalService> optionalServices, FilterOptionalServiceDto dto) {
 
+    private List<OptionalService> filterByType(List<OptionalService> optionalServices, FilterOptionalServiceDto dto) {
         if (dto.getMusicStyles() != null && dto.getBandPeopleCount() != null) {
             final Set<MusicStyle> musicStyles = dto.getMusicStyles()
                     .stream()

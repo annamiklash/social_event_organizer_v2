@@ -79,7 +79,7 @@ public class OptionalServiceForLocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OptionalServiceForChosenLocationDto> confirmCancelled(@RequestParam long id) {
 
-        final OptionalServiceForChosenLocation serviceForChosenLocation = optionalServiceForLocationService.setAsCancelled(id);
+        final OptionalServiceForChosenLocation serviceForChosenLocation = optionalServiceForLocationService.cancelReservation(id);
 
         return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(serviceForChosenLocation));
     }

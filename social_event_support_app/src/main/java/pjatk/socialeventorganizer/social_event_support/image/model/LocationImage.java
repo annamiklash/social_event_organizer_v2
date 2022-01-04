@@ -16,6 +16,7 @@ import java.io.Serializable;
 @Entity(name = "location_image")
 public class LocationImage extends Image implements Serializable {
 
+    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
