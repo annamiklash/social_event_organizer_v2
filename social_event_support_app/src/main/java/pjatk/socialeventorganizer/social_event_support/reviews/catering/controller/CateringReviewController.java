@@ -36,16 +36,16 @@ public class CateringReviewController {
                                                                            @RequestParam(defaultValue = "50") Integer pageSize,
                                                                            @RequestParam(defaultValue = "id") String sortBy,
                                                                            @RequestParam(defaultValue = "asc") String order,
-                                                                           @RequestParam long id) {
+                                                                           @RequestParam long cateringId) {
         final CustomPage customPage = CustomPage.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
                 .sortBy(sortBy)
                 .order(order)
                 .build();
-        final List<CateringReview> review = cateringReviewService.getByCateringId(customPage, id);
+        final List<CateringReview> review = cateringReviewService.getByCateringId(customPage, cateringId);
 
-        final Long count = cateringReviewService.count(id);
+        final Long count = cateringReviewService.count(cateringId);
 
         final ImmutableList<CateringReviewDto> result = ImmutableList.copyOf(
                 review.stream()
