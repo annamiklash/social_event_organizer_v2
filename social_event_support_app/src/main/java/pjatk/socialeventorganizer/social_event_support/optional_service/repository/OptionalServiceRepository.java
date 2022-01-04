@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface OptionalServiceRepository extends JpaRepository<OptionalService, Long> {
 
     @Query("SELECT os from optional_service os " +
-            "LEFT JOIN optional_service_image i " +
+            "LEFT JOIN optional_service_image si on si.service.id = os.id " +
             "WHERE os.type LIKE %:keyword% " +
             "OR os.description LIKE %:keyword% " +
             "OR os.alias LIKE %:keyword% ")
