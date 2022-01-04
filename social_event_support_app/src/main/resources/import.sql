@@ -1,19 +1,3 @@
-create or replace function get_file_contents(filename text) returns bytea
-as
-'
-declare
-    lo_oid oid;
-    retval bytea;
-begin
-    lo_oid := lo_import(filename);
-    retval := lo_get(lo_oid);
-    perform lo_unlink(lo_oid);
-    return retval;
-end;
-'
-LANGUAGE plpgsql;
-
-
 insert into address(country, city, street_name, street_number, zip_code, created_at, modified_at, deleted_at)
 VALUES ('Poland', 'Warsaw', 'Street 1', 1, '123456', (select current_timestamp), (select current_timestamp), null),
        ('Poland', 'Warsaw', 'Street 2', 1, '123456', (select current_timestamp), (select current_timestamp), null),
@@ -45,8 +29,9 @@ VALUES ('Poland', 'Warsaw', 'Street 1', 1, '123456', (select current_timestamp),
        ('Poland', 'Warsaw', 'Streetttttt', 1, '123456', (select current_timestamp), (select current_timestamp), null),
        ('Poland', 'Warsaw', 'Streetttttt', 1, '123456', (select current_timestamp), (select current_timestamp), null),
        ('Poland', 'Warsaw', 'Streetttttt', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Streetttttt', 1, '123456', (select current_timestamp), (select current_timestamp), null),
+       ('Poland', 'Warsaw', 'Streetttttt', 1, '123456', (select current_timestamp), (select current_timestamp), null),
        ('Poland', 'Warsaw', 'Streetttttt', 1, '123456', (select current_timestamp), (select current_timestamp), null);
-
 
 
 INSERT into users (email, hashed_password, user_type, created_at, modified_at, deleted_at, blocked_at, is_active)
@@ -77,6 +62,10 @@ VALUES ('admin@gmail.com', '$2y$12$CYhR7h46nkRx/tfFJn094eOKmWdMd1KEC.cyKcmLJNG76
        ('customer5@email.com', '$2y$12$xCfIcKwTBTLrhv6XLIDMKuvnYJkWJajqdodBEh5SJqFaHdS6RZUyC', 'C',
         (select current_timestamp), (select current_timestamp), null, null, true),
        ('new_business@gmail.com', '$2a$10$gkZPL4pIC.nMV6ynCjkhjeW4/Jqd7hCmtb06ISOvXhCDNshqjYF9i', 'B',
+        (select current_timestamp), (select current_timestamp), null, null, true),
+       ('c@c.com', '$2a$10$PpyNb2ZSV70q7Ul2.gWxS.F1FM3.h3kbhtriUMWaYbT6Izrkorwde', 'C',
+        (select current_timestamp), (select current_timestamp), null, null, true),
+       ('b@b.com', '$2a$10$PpyNb2ZSV70q7Ul2.gWxS.F1FM3.h3kbhtriUMWaYbT6Izrkorwde', 'B',
         (select current_timestamp), (select current_timestamp), null, null, true);
 
 
@@ -94,7 +83,7 @@ values (2, 'firstName', 'lastName', 'businessName1', 123456789, 'VERIFIED', 1),
        (6, 'firstName6', 'lastName6', 'businessName6', 123456789, 'VERIFIED', 5),
        (7, 'firstName7', 'lastName7', 'businessName7', 123456789, 'VERIFIED', 6),
        (8, 'firstName9', 'lastName8', 'businessName8', 12345678, 'VERIFIED', 7),
-       (14, 'Test', 'Test', 'businessName8', 12345678, 'VERIFIED', 21);
+       (16, 'firstName9', 'lastName8', 'businessName8', 12345678, 'VERIFIED', 16);
 
 
 
@@ -287,7 +276,8 @@ VALUES (9, 'Lacy', 'Botsford', '1988-06-30', 123456789),
        (13, 'Tommie', 'Bechtelar', '1990-09-24', 123456789),
        (11, 'Delia', 'Koch', '1985-11-16', 123456789),
        (12, 'Tracey', 'Metz', '2000-03-16', 123456789),
-       (10, 'Oma', 'Walter', '1975-11-08', 123456789);
+       (10, 'Oma', 'Walter', '1975-11-08', 123456789),
+       (15, 'Test', 'User', '1975-11-08', 123456789);
 
 
 INSERT INTO guest (first_name, last_name, email, id_customer, created_at, modified_at)
