@@ -23,6 +23,7 @@ import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService
+import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringTrait
 import pjatk.socialeventorganizer.social_event_support.trait.customer.CustomerTrait
@@ -69,6 +70,7 @@ class CustomerServiceTest extends Specification
     CateringService cateringService
     OptionalServiceService optionalServiceService
     TimestampHelper timestampHelper
+    PasswordEncoderSecurity passwordEncoderSecurity
 
     LocalDateTime now
 
@@ -84,6 +86,7 @@ class CustomerServiceTest extends Specification
         cateringService = Mock()
         optionalServiceService = Mock()
         timestampHelper = Mock()
+        passwordEncoderSecurity = Mock()
 
         now = LocalDateTime.parse('2007-12-03T10:15:30')
         timestampHelper.now() >> now
@@ -99,7 +102,8 @@ class CustomerServiceTest extends Specification
                 locationService,
                 cateringService,
                 optionalServiceService,
-                timestampHelper
+                timestampHelper,
+                passwordEncoderSecurity
         )
     }
 
@@ -137,7 +141,7 @@ class CustomerServiceTest extends Specification
 
         def target = customer
         when:
-        def result = customerService.create(fakeCustomerDTO)
+        def result = customerService.createCustomerAccount(fakeCustomerDTO)
 
         then:
         1 * customerAvatarService.create(dto.getAvatar()) >> avatar

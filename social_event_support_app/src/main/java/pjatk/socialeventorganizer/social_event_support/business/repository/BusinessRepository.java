@@ -11,11 +11,8 @@ import java.util.Optional;
 @Repository
 public interface BusinessRepository extends JpaRepository<Business, Long> {
 
-    Optional<Business> findBusinessByUser_EmailAndUser_Password(String email, String password);
-
-    Boolean existsByUser_Id(Long id);
-
     @Query("SELECT b FROM business b " +
+            "LEFT JOIN users u on b.id = u.id " +
             "left join fetch b.address ba " +
             "left join fetch b.caterings bc " +
             "left join fetch b.locations bl " +
@@ -23,12 +20,12 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     Optional<Business> getWithDetail(@Param("id") long id);
 
     @Query("SELECT b FROM business b " +
-            "left join fetch b.user " +
+            "LEFT JOIN users u on b.id = u.id " +
             "WHERE b.id = :id")
     Optional<Business> findById(@Param("id") long id);
 
     @Query("SELECT b FROM business b " +
-            "LEFT JOIN FETCH b.user u " +
+            "LEFT JOIN users u on b.id = u.id " +
             "LEFT JOIN FETCH b.caterings c " +
             "LEFT JOIN FETCH b.locations l " +
             "LEFT JOIN FETCH b.services s " +
@@ -37,19 +34,19 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
     Optional<Business> findAllBusinessInformation(@Param("id") long id);
 
     @Query("SELECT b FROM business b " +
+            "LEFT JOIN users u on b.id=u.id " +
             "LEFT JOIN FETCH b.address a " +
             "WHERE b.id = :id")
     Optional<Business> findByIdWithAddress(@Param("id") long id);
 
     @Query("SELECT b FROM business b " +
-            "LEFT JOIN FETCH b.user u " +
+            "LEFT JOIN users u on b.id = u.id " +
             "LEFT JOIN FETCH b.caterings c " +
             "LEFT JOIN FETCH b.locations l " +
             "LEFT JOIN FETCH b.services s " +
             "LEFT JOIN FETCH b.address a " +
             "WHERE b.id = :id")
     Optional<Business> getWithAddress(@Param("id") long id);
-
 
 
 }

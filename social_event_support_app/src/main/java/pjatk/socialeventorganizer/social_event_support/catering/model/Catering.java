@@ -20,7 +20,6 @@ import java.util.Set;
 
 @Builder
 @Data
-@EqualsAndHashCode(exclude={"locations", "cuisines", "cateringForChosenEventLocations"})
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "catering")
@@ -59,6 +58,7 @@ public class Catering implements Serializable {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business", nullable = false)
@@ -81,6 +81,7 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_catering")
     private Set<CateringImage> images;
 
+    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
     private Set<Location> locations;

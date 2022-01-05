@@ -11,7 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -23,6 +23,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class CustomerDto {
+
+    private long id;
 
     private UserDto user;
 

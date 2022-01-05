@@ -52,5 +52,5 @@ public class User implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
-    Set<AppProblem> appProblems;
+    private Set<AppProblem> appProblems;
 }

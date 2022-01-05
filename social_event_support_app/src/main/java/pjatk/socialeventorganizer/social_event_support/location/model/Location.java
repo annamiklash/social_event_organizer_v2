@@ -68,6 +68,7 @@ public class Location implements Serializable {
     @Column(name = "rating")
     private Double rating;
 
+    @EqualsAndHashCode.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business", nullable = false)

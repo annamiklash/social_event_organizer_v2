@@ -4,7 +4,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto
 import pjatk.socialeventorganizer.social_event_support.user.model.User
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 
 import java.time.LocalDate
 

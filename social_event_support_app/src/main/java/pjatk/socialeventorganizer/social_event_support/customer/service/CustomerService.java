@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
+import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -37,13 +39,17 @@ import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEv
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
+import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
+import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.CustomerUserRegistrationDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -55,6 +61,7 @@ import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
+import static pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException.ENUM.USER_EXISTS;
 
 @Service
 @AllArgsConstructor
@@ -73,7 +80,7 @@ public class CustomerService {
     private final CateringService cateringService;
     private final OptionalServiceService optionalServiceService;
     private final TimestampHelper timestampHelper;
-
+    private final PasswordEncoderSecurity passwordEncoderSecurity;
 
     public ImmutableList<Customer> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -85,21 +92,21 @@ public class CustomerService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public Customer create(CustomerDto dto) {
-        final Customer customer = CustomerMapper.fromDto(dto);
+    public Customer createCustomerAccount(CustomerUserRegistrationDto dto) {
+        if (userService.userExists(dto.getEmail())) {
+            throw new UserExistsException(USER_EXISTS);
+        }
+        final Customer customer = CustomerMapper.fromCustomerRegistrationDto(dto);
+
+        final String hashedPassword = passwordEncoderSecurity.bcryptEncryptor(dto.getPassword());
+        customer.setPassword(hashedPassword);
 
         if (dto.getAvatar() != null) {
             final CustomerAvatar avatar = customerAvatarService.create(dto.getAvatar());
             customer.setAvatar(avatar);
         }
-        final User user = userService.get(dto.getUser().getId());
-
-        customer.setId(user.getId());
-        customer.setUser(user);
-        user.setActive(true);
-        user.setModifiedAt(timestampHelper.now());
-
-        userService.save(user);
+        customer.setCreatedAt(timestampHelper.now());
+        customer.setModifiedAt(timestampHelper.now());
 
         log.info("TRYING TO SAVE CUSTOMER");
         customerRepository.save(customer);
@@ -165,12 +172,12 @@ public class CustomerService {
     }
 
     public Customer getWithAllEvents(long id) {
-        return customerRepository.getByIdWithEvents(id)
+        return customerRepository.getWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
     public Customer get(long id) {
-        return customerRepository.findById(id)
+        return customerRepository.getByIdWithUser(id)
                 .orElseThrow(() -> new NotFoundException("Customer with id " + id + " DOES NOT EXIST"));
     }
 
@@ -193,7 +200,6 @@ public class CustomerService {
                 .forEach(organizedEventService::delete);
 
         customerAvatarService.delete(customerToDelete.getAvatar());
-        userService.delete(customerToDelete.getUser());
 
         customerRepository.save(customerToDelete);
     }
@@ -206,7 +212,7 @@ public class CustomerService {
         customer.setLastName(dto.getLastName());
         customer.setFirstName(dto.getFirstName());
         customer.setPhoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()));
-        customer.getUser().setModifiedAt(timestampHelper.now());
+        customer.setModifiedAt(timestampHelper.now());
 
         customerRepository.save(customer);
 

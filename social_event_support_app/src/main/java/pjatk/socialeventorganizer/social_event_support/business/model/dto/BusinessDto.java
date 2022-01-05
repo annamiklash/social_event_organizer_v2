@@ -8,7 +8,8 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -59,5 +60,7 @@ public class BusinessDto implements Serializable {
     private Set<LocationDto> locations;
 
     private Set<CateringDto> caterings;
+
+    private Set<OptionalServiceDto> services;
 
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

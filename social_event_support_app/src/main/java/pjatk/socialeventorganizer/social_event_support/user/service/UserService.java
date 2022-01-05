@@ -16,17 +16,15 @@ import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException;
-import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
-import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.ChangePasswordDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.NewPasswordDto;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -34,7 +32,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.exceptions.InvalidCredentialsException.Enum.*;
-import static pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException.ENUM.USER_EXISTS;
 
 @Service
 @AllArgsConstructor
@@ -53,7 +50,7 @@ public class UserService {
 
 
     public ImmutableList<User> list(CustomPage customPage, String keyword) {
-         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
+        keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
         final Pageable paging = PageableMapper.map(customPage);
         final Page<User> page = userRepository.findAllWithKeyword(paging, keyword);
@@ -100,23 +97,6 @@ public class UserService {
         throw new InvalidCredentialsException(USER_NOT_EXISTS);
     }
 
-    public User registerUser(UserDto dto) {
-        if (userExists(dto.getEmail())) {
-            throw new UserExistsException(USER_EXISTS);
-        }
-        final String hashedPassword = passwordEncoderSecurity.bcryptEncryptor(dto.getPassword());
-        dto.setPassword(hashedPassword);
-
-        final User user = UserMapper.fromDto(dto);
-
-        user.setCreatedAt(LocalDateTime.now());
-        user.setModifiedAt(LocalDateTime.now());
-
-        userRepository.save(user);
-
-        return user;
-    }
-
     public User getByResetPasswordToken(String token) {
         return userRepository.findUserByResetPasswordToken(token);
     }
@@ -160,7 +140,7 @@ public class UserService {
         return optionalUser.isEmpty();
     }
 
-    private boolean userExists(String email) {
+    public boolean userExists(String email) {
         return userRepository.existsByEmail(email);
     }
 
@@ -177,7 +157,7 @@ public class UserService {
     }
 
     public void delete(User user) {
-       userRepository.delete(user);
+        userRepository.delete(user);
     }
 
     public Long count(String keyword) {

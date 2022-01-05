@@ -1,6 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.business.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.HashCodeExclude;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
@@ -13,18 +14,14 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Set;
 
-@Builder
+@SuperBuilder
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(exclude={"caterings", "locations", "services"})
+@EqualsAndHashCode(callSuper = false)
 @Entity(name = "business")
 @Table(name = "business")
-public class Business implements Serializable {
-
-    @Id
-    @Column(name = "id_business_user", nullable = false)
-    private long id;
+public class Business extends User implements Serializable {
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -59,7 +56,4 @@ public class Business implements Serializable {
     @JoinColumn(name = "id_business")
     private Set<OptionalService> services;
 
-    @PrimaryKeyJoinColumn
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    private User user;
 }

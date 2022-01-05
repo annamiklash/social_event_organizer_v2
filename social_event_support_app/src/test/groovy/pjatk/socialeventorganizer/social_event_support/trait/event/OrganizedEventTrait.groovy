@@ -12,7 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.location.locationforevent
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation
 import pjatk.socialeventorganizer.social_event_support.user.model.User
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 import spock.lang.Shared
 
 import java.time.LocalDate

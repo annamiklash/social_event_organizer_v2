@@ -3,21 +3,30 @@ package pjatk.socialeventorganizer.social_event_support.user.controller;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessMapper;
+import pjatk.socialeventorganizer.social_event_support.business.model.Business;
+import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
+import pjatk.socialeventorganizer.social_event_support.business.service.BusinessService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
+import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
+import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
+import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
-import pjatk.socialeventorganizer.social_event_support.user.model.dto.ChangePasswordDto;
-import pjatk.socialeventorganizer.social_event_support.user.model.dto.NewPasswordDto;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.*;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @Validated
@@ -27,7 +36,56 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserController {
 
+    private final SecurityService securityService;
     private final UserService userService;
+    private final CustomerService customerService;
+    private final BusinessService businessService;
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "register/business",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BusinessDto> businessSignup(@RequestBody @Valid BusinessUserRegistrationDto dto) {
+
+        final Business business = businessService.createBusinessAccount(dto);
+        return ResponseEntity.ok(BusinessMapper.toDtoWithUser(business));
+    }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "register/customer",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CustomerDto> customerSignup(@RequestBody @Valid CustomerUserRegistrationDto dto) {
+        final Customer customer = customerService.createCustomerAccount(dto);
+        return ResponseEntity.ok(CustomerMapper.toDto(customer));
+    }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "login",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> login(@RequestBody @Valid LoginDto loginDto, HttpServletRequest request) {
+        request.getSession().invalidate();
+
+        if (!userService.isActive(loginDto)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (!securityService.isPasswordMatch(loginDto)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        securityService.buildSecurityContext(loginDto, request);
+        final User user = userService.getUserByEmail(loginDto.getEmail());
+        if ('B' == user.getType()) {
+            return ResponseEntity.ok(
+                    BusinessMapper.toDtoWithUser(businessService.get(user.getId())));
+        }
+        if ('C' == user.getType()) {
+            return ResponseEntity.ok(
+                    CustomerMapper.toDto(customerService.get(user.getId())));
+        }
+        return ResponseEntity.ok(UserMapper.toDto(user));
+    }
 
     @PostMapping("/reset_password")
     public ResponseEntity<Void> sendResetPasswordEmail(HttpServletRequest request, @RequestParam String email) {
@@ -110,4 +168,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getWithDetail(id));
     }
 
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "logout")
+    ResponseEntity<Void> logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return ResponseEntity.ok().build();
+    }
 }

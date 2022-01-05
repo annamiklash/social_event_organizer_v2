@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.optional_service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.HashCodeExclude;
@@ -73,7 +74,7 @@ public class OptionalService {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @HashCodeExclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;

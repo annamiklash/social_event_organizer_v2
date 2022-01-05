@@ -20,9 +20,9 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     @Query("SELECT c FROM catering AS c " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "JOIN c.business cb " +
-            "join cb.user cbu " +
+            "left join users u on u.id = cb.id " +
             "WHERE (:keyword = '' or (c.name LIKE %:keyword% OR c.description LIKE %:keyword%)) " +
-            "AND cbu.isActive = true")
+            "AND u.isActive = true")
     Page<Catering> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
     @Query("SELECT c from catering c " +
@@ -69,10 +69,11 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     List<Catering> findAllByLocationIdAAndDeletedAtIsNull(@Param("locationId") long locationId);
 
     @Query("SELECT count(c) FROM catering AS c " +
-            "JOIN c.business cb join cb.user cbu " +
+            "JOIN c.business cb " +
+            "left join users u on u.id = cb.id " +
             "WHERE c.name LIKE %:keyword% " +
             "OR c.description LIKE %:keyword% " +
-            "AND cbu.isActive = true")
+            "AND u.isActive = true")
     Long countAll(@Param("keyword") String keyword);
 
     @Query("SELECT c FROM catering c " +

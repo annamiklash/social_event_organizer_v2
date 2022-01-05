@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GuestService {
 
-    private GuestRepository guestRepository;
+    private final GuestRepository guestRepository;
 
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
     public ImmutableList<Guest> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -41,8 +41,7 @@ public class GuestService {
     }
 
     public List<Guest> listAllByCustomerId(long id) {
-        final Optional<Customer> customer = customerRepository.findById(id);
-        if (customer.isEmpty()) {
+        if (!customerRepository.existsById(id)) {
             throw new NotFoundException("No customer with id " + id);
         }
 
@@ -51,23 +50,20 @@ public class GuestService {
 
     public List<Guest> getGuestsByIds(List<Long> guestIds) {
         return guestIds.stream()
-                .map(id -> guestRepository.findById(id))
+                .map(guestRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }
 
     public Guest get(long id) {
-        final Optional<Guest> optionalGuest = guestRepository.findById(id);
+        return guestRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No guest with id " + id));
 
-        if (optionalGuest.isPresent()) {
-            return optionalGuest.get();
-        }
-        throw new NotFoundException("No guest with id " + id);
     }
 
     public Guest create(long customerId, GuestDto dto) {
-        final Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        final Optional<Customer> optionalCustomer = customerRepository.getByIdWithUser(customerId);
         if (optionalCustomer.isEmpty()) {
             throw new NotFoundException("No optionalCustomer with id " + customerId);
         }
@@ -83,7 +79,7 @@ public class GuestService {
     }
 
     public void delete(long customerId, long guestId) {
-        final Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        final Optional<Customer> optionalCustomer = customerRepository.getByIdWithUser(customerId);
         if (optionalCustomer.isEmpty()) {
             throw new NotFoundException("No optionalCustomer with id " + customerId);
         }

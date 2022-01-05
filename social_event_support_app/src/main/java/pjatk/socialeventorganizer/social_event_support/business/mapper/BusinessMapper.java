@@ -6,11 +6,15 @@ import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.location.mapper.LocationMapper;
-import pjatk.socialeventorganizer.social_event_support.user.mapper.UserMapper;
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.BusinessUserRegistrationDto;
+import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.BusinessUserRegistrationDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 
 import java.util.stream.Collectors;
+
+import static pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum.NOT_VERIFIED;
 
 
 @UtilityClass
@@ -25,14 +29,17 @@ public class BusinessMapper {
                 .build();
     }
 
-    public BusinessDto fromBusinessUserRegistrationDto(BusinessUserRegistrationDto dto) {
-        return BusinessDto.builder()
+    public Business fromBusinessUserRegistrationDto(BusinessUserRegistrationDto dto) {
+        return Business.builder()
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
+                .email(dto.getEmail())
                 .businessName(dto.getBusinessName())
-                .address(dto.getAddress())
-                .phoneNumber(dto.getPhoneNumber())
-                .user(dto.getUser())
+                .phoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()))
+                .type(dto.getType())
+                .businessName(dto.getBusinessName())
+                .isActive(true)
+                .verificationStatus(NOT_VERIFIED.name())
                 .build();
     }
 
@@ -58,14 +65,30 @@ public class BusinessMapper {
                 .verificationStatus(business.getVerificationStatus())
                 .phoneNumber(String.valueOf(business.getPhoneNumber()))
                 .address(AddressMapper.toDto(business.getAddress()))
-                .user(UserMapper.toDto(business.getUser()))
+                .user(UserDto.builder()
+                        .id(business.getId())
+                        .email(business.getEmail())
+                        .type(business.getType())
+                        .createdAt(DateTimeUtil.fromLocalDateTimetoString(business.getCreatedAt()))
+                        .modifiedAt(DateTimeUtil.fromLocalDateTimetoString(business.getModifiedAt()))
+                        .build())
                 .build();
     }
 
     public BusinessDto toDtoWithDetail(Business business) {
         final BusinessDto dto = toDto(business);
-        dto.setLocations(business.getLocations().stream().map(LocationMapper::toDto).collect(Collectors.toSet()));
-        dto.setCaterings(business.getCaterings().stream().map(CateringMapper::toDto).collect(Collectors.toSet()));
+
+        dto.setLocations(business.getLocations().stream()
+                .map(LocationMapper::toDto)
+                .collect(Collectors.toSet()));
+
+        dto.setCaterings(business.getCaterings().stream()
+                .map(CateringMapper::toDto)
+                .collect(Collectors.toSet()));
+
+        dto.setServices(business.getServices().stream()
+                .map(OptionalServiceMapper::toDto)
+                .collect(Collectors.toSet()));
 
         return dto;
     }

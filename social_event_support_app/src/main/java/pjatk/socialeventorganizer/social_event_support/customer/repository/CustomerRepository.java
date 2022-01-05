@@ -13,43 +13,52 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    @Query("SELECT c FROM customer c LEFT JOIN c.user cu " +
+    @Query("SELECT c FROM customer c " +
+            "LEFT JOIN users u on c.id=u.id " +
             "WHERE (:keyword is null or c.firstName LIKE %:keyword%) " +
             "OR (:keyword is null or c.lastName LIKE %:keyword%) " +
-            "OR (:keyword is null or cu.email LIKE %:keyword%)")
+            "OR (:keyword is null or u.email LIKE %:keyword%)")
     Page<Customer> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
     @Query("SELECT c FROM customer c " +
+            "LEFT JOIN users u on c.id=u.id " +
             "left join fetch c.guests cg " +
             "WHERE c.id = :id")
     Optional<Customer> getByIdWithAllGuests(@Param("id") long id);
 
     @Query("SELECT c FROM customer c " +
-            "left join fetch c.user cu " +
-            "left join fetch cu.appProblems cup " +
+            "LEFT JOIN users u on c.id = u.id " +
+            "left join u.appProblems cup " +
             "WHERE c.id = :id")
     Optional<Customer> getByIdWithProblems(@Param("id") long id);
 
+    @Query("SELECT c FROM customer c " +
+            "LEFT JOIN users u on c.id = u.id " +
+            "left join u.appProblems cup " +
+            "left join fetch c.guests cg " +
+            "left join fetch c.events ce " +
+            "left join fetch ce.eventType cee " +
+            "WHERE c.id = :id")
+    Optional<Customer> getWithDetail(@Param("id") long id);
+
     @Query("SELECT c from customer c " +
-            "left join fetch c.user cu " +
+            "LEFT JOIN users u on c.id=u.id " +
             "left join fetch c.events ce " +
             "left join fetch ce.eventType cee " +
             "WHERE c.id = :id ")
     Optional<Customer> getByIdWithEvents(@Param("id") long id);
 
     @Query("SELECT c FROM customer c " +
-            "left join fetch c.guests cg " +
-            "left join fetch c.user cu " +
-            "left join fetch cu.appProblems cup " +
-            "left join fetch c.events ce " +
-            "left join fetch ce.eventType cee " +
-            "WHERE c.id = :id")
-    Optional<Customer> getWithDetail(@Param("id") long id);
-
-    @Query("SELECT c FROM customer c " +
-            "LEFT JOIN FETCH c.user u " +
+            "LEFT JOIN users u on c.id=u.id " +
             "LEFT JOIN FETCH c.guests g " +
             "LEFT JOIN FETCH c.events " +
             "WHERE c.id = :id")
     Optional<Customer> getAllCustomerInformation(@Param("id") long id);
+
+    @Query("SELECT c FROM customer c " +
+            "LEFT JOIN users u on c.id=u.id " +
+            "WHERE c.id = :id")
+    Optional<Customer>getByIdWithUser(@Param("id") long id);
+
+
 }

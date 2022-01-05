@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.customer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
@@ -13,20 +14,15 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Builder
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@SuperBuilder
+@Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "customer")
 @Entity(name = "customer")
-public class Customer implements Serializable {
+public class Customer extends User implements Serializable {
 
-    @Id
-    @Column(name = "id_customer_user")
-    private long id;
 
     @Column(nullable = false)
     private String firstName;
@@ -49,10 +45,6 @@ public class Customer implements Serializable {
     @JoinColumn(name = "id_customer")
     @JsonIgnore
     private Set<OrganizedEvent> events;
-
-    @PrimaryKeyJoinColumn
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
-    private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_avatar")

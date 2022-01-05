@@ -17,9 +17,9 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
     @Query("SELECT os from optional_service os " +
             "LEFT JOIN optional_service_image si on si.service.id = os.id " +
             "JOIN os.business ob " +
-            "join ob.user cbu " +
+            "LEFT JOIN users u on ob.id = u.id " +
             "WHERE (:keyword = '' or (os.alias LIKE %:keyword% OR os.type LIKE %:keyword%)) " +
-            "AND cbu.isActive = true")
+            "AND u.isActive = true")
     Page<OptionalService> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
     @Query(value = "SELECT os.* from optional_service os " +

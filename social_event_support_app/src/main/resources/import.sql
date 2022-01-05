@@ -61,7 +61,7 @@ VALUES ('admin@gmail.com', '$2y$12$CYhR7h46nkRx/tfFJn094eOKmWdMd1KEC.cyKcmLJNG76
         (select current_timestamp), (select current_timestamp), null, null, true),
        ('customer5@email.com', '$2y$12$xCfIcKwTBTLrhv6XLIDMKuvnYJkWJajqdodBEh5SJqFaHdS6RZUyC', 'C',
         (select current_timestamp), (select current_timestamp), null, null, true),
-       ('new_business@gmail.com', '$2a$10$gkZPL4pIC.nMV6ynCjkhjeW4/Jqd7hCmtb06ISOvXhCDNshqjYF9i', 'B',
+       ('new_business999@gmail.com', '$2a$10$gkZPL4pIC.nMV6ynCjkhjeW4/Jqd7hCmtb06ISOvXhCDNshqjYF9i', 'B',
         (select current_timestamp), (select current_timestamp), null, null, true),
        ('c@c.com', '$2a$10$PpyNb2ZSV70q7Ul2.gWxS.F1FM3.h3kbhtriUMWaYbT6Izrkorwde', 'C',
         (select current_timestamp), (select current_timestamp), null, null, true),
@@ -74,7 +74,7 @@ INSERT INTO admins (id_admin_user, access)
 VALUES (1, 'FULL');
 
 
-insert into business (id_business_user, first_name, last_name, business_name, phone_number,
+insert into business (id_user, first_name, last_name, business_name, phone_number,
                       verification_status, id_business_address)
 values (2, 'firstName', 'lastName', 'businessName1', 123456789, 'VERIFIED', 1),
        (3, 'firstName3', 'lastName3', 'businessName3', 123456789, 'VERIFIED', 2),
@@ -82,9 +82,7 @@ values (2, 'firstName', 'lastName', 'businessName1', 123456789, 'VERIFIED', 1),
        (5, 'firstName5', 'lastName5', 'businessName5', 123456789, 'VERIFIED', 4),
        (6, 'firstName6', 'lastName6', 'businessName6', 123456789, 'VERIFIED', 5),
        (7, 'firstName7', 'lastName7', 'businessName7', 123456789, 'VERIFIED', 6),
-       (8, 'firstName9', 'lastName8', 'businessName8', 12345678, 'VERIFIED', 7),
-       (16, 'firstName9', 'lastName8', 'businessName8', 12345678, 'VERIFIED', 16);
-
+       (8, 'firstName9', 'lastName8', 'businessName8', 12345678, 'VERIFIED', 7);
 
 
 insert into catering(name, email, phone_number, service_cost, description, id_business, id_catering_address, created_at,
@@ -271,7 +269,7 @@ VALUES (1, 'Outside Catering Available'),
        (6, 'Serves Food');
 
 
-INSERT INTO customer (id_customer_user, first_name, last_name, birthdate, phone_number)
+INSERT INTO customer (id_user, first_name, last_name, birthdate, phone_number)
 VALUES (9, 'Lacy', 'Botsford', '1988-06-30', 123456789),
        (13, 'Tommie', 'Bechtelar', '1990-09-24', 123456789),
        (11, 'Delia', 'Koch', '1985-11-16', 123456789),

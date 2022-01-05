@@ -1,7 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.trait.user
 
 import pjatk.socialeventorganizer.social_event_support.user.model.User
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 
 trait UserTrait {
 

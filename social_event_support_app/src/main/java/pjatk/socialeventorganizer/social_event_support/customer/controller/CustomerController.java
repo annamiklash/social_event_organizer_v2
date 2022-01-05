@@ -126,7 +126,7 @@ public class CustomerController {
     public ResponseEntity<CustomerDto> getWithAllEvents(@PathVariable long id) {
         log.info("GET CUSTOMER ALL EVENTS");
         try {
-            return ResponseEntity.ok(CustomerMapper.toDtoWithEvents(customerService.getWithAllEvents(id)));
+            return ResponseEntity.ok(CustomerMapper.toDtoWithDetail(customerService.getWithAllEvents(id)));
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest().build();
         }

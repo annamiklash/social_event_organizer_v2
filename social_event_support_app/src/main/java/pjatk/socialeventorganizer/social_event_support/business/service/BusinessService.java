@@ -21,15 +21,17 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
-import pjatk.socialeventorganizer.social_event_support.user.model.User;
+import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.BusinessUserRegistrationDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.util.stream.Collectors;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum.NOT_VERIFIED;
+import static pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException.ENUM.USER_EXISTS;
 
 @Service
 @AllArgsConstructor
@@ -48,6 +50,8 @@ public class BusinessService {
 
     private final OptionalServiceService optionalServiceService;
 
+    private final PasswordEncoderSecurity passwordEncoderSecurity;
+
     private final TimestampHelper timestampHelper;
 
     public ImmutableList<Business> list(CustomPage customPage) {
@@ -58,21 +62,19 @@ public class BusinessService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public Business createBusinessAccount(BusinessDto businessDto) {
-
+    public Business createBusinessAccount(BusinessUserRegistrationDto businessDto) {
+        if (userService.userExists(businessDto.getEmail())) {
+            throw new UserExistsException(USER_EXISTS);
+        }
         final Address address = addressService.create(businessDto.getAddress());
-        final Business business = BusinessMapper.fromDto(businessDto);
-        final User user = userService.get(businessDto.getUser().getId());
+        final Business business = BusinessMapper.fromBusinessUserRegistrationDto(businessDto);
 
-        business.setId(user.getId());
-        business.setVerificationStatus(NOT_VERIFIED.name());
-        business.setUser(user);
+        final String hashedPassword = passwordEncoderSecurity.bcryptEncryptor(businessDto.getPassword());
+        business.setPassword(hashedPassword);
+
         business.setAddress(address);
-
-        user.setActive(true);
-        user.setModifiedAt(timestampHelper.now());
-
-        userService.save(user);
+        business.setCreatedAt(timestampHelper.now());
+        business.setModifiedAt(timestampHelper.now());
 
         log.info("TRYING TO SAVE BUSINESS");
         businessRepository.save(business);
@@ -107,8 +109,6 @@ public class BusinessService {
                 .orElseThrow(() -> new NotFoundException("Business with businessId " + businessId + " DOES NOT EXIST"));
     }
 
-
-
     @Transactional(rollbackOn = Exception.class)
     public void deleteLogical(long businessId) {
         final Business businessToDelete = businessRepository.findAllBusinessInformation(businessId)
@@ -124,8 +124,6 @@ public class BusinessService {
                 .forEach(location -> locationService.delete(location.getId()));
 
         addressService.delete(businessToDelete.getAddress());
-        userService.delete(businessToDelete.getUser());
-
         businessRepository.delete(businessToDelete);
     }
 

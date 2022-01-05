@@ -71,18 +71,6 @@ public class BusinessController {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BusinessDto> create(@Valid @RequestBody BusinessDto dto) {
-
-        final Business business = businessService.createBusinessAccount(dto);
-
-        return ResponseEntity.ok(BusinessMapper.toDto(business));
-    }
-
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT,

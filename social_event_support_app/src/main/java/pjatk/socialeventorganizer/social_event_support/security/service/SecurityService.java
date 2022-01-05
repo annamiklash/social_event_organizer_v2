@@ -14,7 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.enums.UserTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.security.model.AuthenticationToken;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
-import pjatk.socialeventorganizer.social_event_support.user.login.model.request.LoginDto;
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.LoginDto;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
@@ -32,10 +32,6 @@ public class SecurityService {
    private final PasswordEncoderSecurity passwordEncoderUtility;
 
    private final UserService userService;
-
-   private final BusinessRepository businessRepository;
-
-   private final CustomerRepository customerRepository;
 
     public boolean isPasswordMatch(LoginDto loginDto) {
         final String passwordFromRequest = loginDto.getPassword();
@@ -66,10 +62,6 @@ public class SecurityService {
 
         final HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-    }
-
-    private boolean isNewAccount(Long id, char type) {
-        return userService.isNewAccount(id, type);
     }
 
     public UserCredentials getUserCredentials() {

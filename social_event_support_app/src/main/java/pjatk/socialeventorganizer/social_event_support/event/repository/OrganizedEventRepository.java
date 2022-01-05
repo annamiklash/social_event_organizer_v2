@@ -15,7 +15,7 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
     @Query("SELECT oe from organized_event oe " +
             "left join fetch oe.eventType et " +
             "left join fetch oe.customer c " +
-            "left join fetch c.user cu " +
+            "left join users u on u.id = c.id " +
             "left join fetch oe.locationForEvent lfe " +
             "left join fetch lfe.cateringsForEventLocation cfl " +
             "left join fetch cfl.catering cflc " +

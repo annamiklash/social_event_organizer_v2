@@ -9,7 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
-import pjatk.socialeventorganizer.social_event_support.user.registration.model.request.UserDto
+import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 
 trait BusinessTrait {
 
@@ -35,7 +35,7 @@ trait BusinessTrait {
             .businessName('Name')
             .verificationStatus('NOT_VERIFIED')
             .address(buildAddress())
-            .build();
+            .build()
 
     Business fakeVerifiedBusiness = Business.builder()
             .id(1)

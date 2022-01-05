@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.user.registration.model.request;
+package pjatk.socialeventorganizer.social_event_support.user.model.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -11,6 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.common.constants.RegexCon
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 
 import javax.validation.constraints.*;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -47,7 +48,7 @@ public class UserDto {
 
     private boolean isActive;
 
-    private Set<AppProblemDto> appProblems;
+    private List<AppProblemDto> appProblems;
 
     private BusinessDto business;
 
