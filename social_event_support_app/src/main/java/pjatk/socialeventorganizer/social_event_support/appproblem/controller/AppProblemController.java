@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.model.dto.AppP
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.AppProblemStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.common.tools.CsvTools;
 import pjatk.socialeventorganizer.social_event_support.enums.AppProblemTypeEnum;
 
 import javax.validation.Valid;
@@ -28,6 +29,8 @@ import java.util.stream.Stream;
 public class AppProblemController {
 
     private final AppProblemService appProblemService;
+
+    private final CsvTools csvTools;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
@@ -55,6 +58,23 @@ public class AppProblemController {
         return ResponseEntity.ok(resultList);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(
+            path = "export",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> list(@RequestParam String dateFrom,
+                                     @RequestParam String dateTo) {
+
+        final List<AppProblem> appProblemList = appProblemService.list(dateFrom, dateTo);
+
+        final ImmutableList<AppProblemDto> resultList = appProblemList.stream()
+                .map(AppProblemMapper::toDtoWithUser)
+                .collect(ImmutableList.toImmutableList());
+
+        csvTools.writeToFile(resultList);
+        return ResponseEntity.ok().build();
+    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(

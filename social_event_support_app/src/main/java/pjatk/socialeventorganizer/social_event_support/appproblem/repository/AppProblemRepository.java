@@ -18,6 +18,11 @@ public interface AppProblemRepository extends JpaRepository<AppProblem, Long> {
             "left join users u on u.id = a.user.id")
     Page<AppProblem> findAllWithKeyword(Pageable paging);
 
+    @Query(value = "SELECT a FROM app_problem AS a " +
+            "WHERE a.created_at <= CAST(:dateTo as timestamp) " +
+            "AND  a.created_at >= CAST(:dateFrom as timestamp)", nativeQuery = true)
+    List<AppProblem> findAll(@Param("dateFrom") String dateFrom, @Param("dateTo") String dateTo);
+
     @Query("SELECT a FROM app_problem AS a " +
             "left join users u on u.id = a.user.id WHERE a.resolvedAt is null")
     Page<AppProblem> findAllWithKeywordNotResolved(Pageable paging);
