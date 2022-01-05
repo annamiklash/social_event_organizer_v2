@@ -85,6 +85,7 @@ public class CustomerMapper {
                 .lastName(dto.getLastName())
                 .birthdate(DateTimeUtil.fromStringToLocalDate(dto.getBirthdate()))
                 .isActive(true)
+                .type(dto.getType())
                 .phoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()))
                 .build();
     }

@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.appproblem.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 
 import javax.persistence.*;
@@ -35,6 +32,7 @@ public class AppProblem implements Serializable {
     @Column(nullable = false)
     private String description;
 
+    @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
     private User user;
