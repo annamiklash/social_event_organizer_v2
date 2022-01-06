@@ -10,9 +10,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.service.model.dto.ServiceReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.service.OptionalServiceReviewService;
 import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
@@ -34,19 +34,19 @@ public class OptionalServiceReviewController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServiceReviewDto> reviewService(@RequestParam long customerId,
+    public ResponseEntity<ReviewDto> reviewService(@RequestParam long customerId,
                                                           @RequestParam long serviceId,
-                                                          @Valid @RequestBody ServiceReviewDto dto) {
+                                                          @Valid @RequestBody ReviewDto dto) {
 
         final OptionalServiceReview review = optionalServiceReviewService.leaveServiceReview(customerId, serviceId, dto);
-        return ResponseEntity.ok(ReviewMapper.toServiceReviewDto(review));
+        return ResponseEntity.ok(ReviewMapper.toDto(review));
     }
 
     @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TableDto<ServiceReviewDto>> listAllByServiceId(@RequestParam(defaultValue = "0") Integer pageNo,
+    public ResponseEntity<TableDto<ReviewDto>> listAllByServiceId(@RequestParam(defaultValue = "0") Integer pageNo,
                                                                          @RequestParam(defaultValue = "5") Integer pageSize,
                                                                          @RequestParam(defaultValue = "id") String sortBy,
                                                                          @RequestParam(defaultValue = "asc") String order,
@@ -58,9 +58,9 @@ public class OptionalServiceReviewController {
 
         final Long count = optionalServiceReviewService.count(serviceId);
 
-        final ImmutableList<ServiceReviewDto> result = ImmutableList.copyOf(
+        final ImmutableList<ReviewDto> result = ImmutableList.copyOf(
                 review.stream()
-                        .map(ReviewMapper::toServiceReviewDto)
+                        .map(ReviewMapper::toDto)
                         .collect(Collectors.toList()));
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));

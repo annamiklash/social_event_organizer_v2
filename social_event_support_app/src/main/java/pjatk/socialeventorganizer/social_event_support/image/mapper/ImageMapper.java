@@ -11,31 +11,24 @@ import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 @UtilityClass
 public class ImageMapper {
 
-    public Image fromDto(ImageDto imageDto) {
-        return Image.builder()
-                .isMain(imageDto.isMain())
-                .name(imageDto.getName())
-                .build();
-    }
-
     public LocationImage fromDtoToLocationImage(ImageDto imageDto) {
         return LocationImage.builder()
                 .isMain(imageDto.isMain())
-                .name(imageDto.getName())
+                .fileName(imageDto.getName())
                 .build();
     }
 
     public OptionalServiceImage fromDtoToServiceImage(ImageDto imageDto) {
         return OptionalServiceImage.builder()
                 .isMain(imageDto.isMain())
-                .name(imageDto.getName())
+                .fileName(imageDto.getName())
                 .build();
     }
 
     public CateringImage fromDtoToCateringImage(ImageDto imageDto) {
         return CateringImage.builder()
                 .isMain(imageDto.isMain())
-                .name(imageDto.getName())
+                .fileName(imageDto.getName())
                 .build();
     }
 
@@ -43,7 +36,7 @@ public class ImageMapper {
         return ImageDto.builder()
                 .id(image.getId())
                 .isMain(image.isMain())
-                .name(image.getName())
+                .name(image.getFileName())
                 .encodedImage(Base64Utils.encodeToString(image.getImage()))
                 .build();
     }

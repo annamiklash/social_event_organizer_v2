@@ -20,10 +20,13 @@ public abstract class BusinessHours {
     @Column(name = "id_business_hours")
     private long id;
 
+    @Column(nullable = false)
     private String day;
 
+    @Column(nullable = false)
     private LocalTime timeFrom;
 
+    @Column(nullable = false)
     private LocalTime timeTo;
 
 

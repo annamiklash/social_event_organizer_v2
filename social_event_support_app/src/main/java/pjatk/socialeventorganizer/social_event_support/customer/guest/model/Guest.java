@@ -24,7 +24,7 @@ public class Guest implements Serializable {
     @Column(name = "id_guest")
     Long id;
 
-    @Column(name = "first_name")
+    @Column( nullable = false)
     String firstName;
 
     @Column(name = "last_name")

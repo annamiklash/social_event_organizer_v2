@@ -14,9 +14,9 @@ import pjatk.socialeventorganizer.social_event_support.customer.repository.Custo
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.service.model.dto.ServiceReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.repository.OptionalServiceReviewRepository;
 
 import java.math.BigDecimal;
@@ -40,7 +40,7 @@ public class OptionalServiceReviewService {
         serviceReviewRepository.save(optionalServiceReview);
     }
 
-    public OptionalServiceReview leaveServiceReview(long id, long serviceId, ServiceReviewDto dto) {
+    public OptionalServiceReview leaveServiceReview(long id, long serviceId, ReviewDto dto) {
         final Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Customer with id " + id + " does not exist"));
 

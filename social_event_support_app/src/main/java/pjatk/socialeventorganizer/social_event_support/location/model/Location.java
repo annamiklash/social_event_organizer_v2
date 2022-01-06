@@ -32,29 +32,29 @@ public class Location implements Serializable {
     @Column(name = "id_location")
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "phone_number")
+    @Column(nullable = false)
     private BigInteger phoneNumber;
 
-    @Column(name = "seating_capacity")
+    @Column(nullable = false)
     private Integer seatingCapacity;
 
-    @Column(name = "standing_capacity")
+    @Column(nullable = false)
     private Integer standingCapacity;
 
-    @Column
+    @Column(nullable = false)
     private String description;
 
-    @Column(name = "daily_rent_cost")
+    @Column(nullable = false)
     private BigDecimal dailyRentCost;
 
-    @Column(name = "size_in_sq_meters")
-    private Integer sizeSqMeters;
+    @Column(nullable = false)
+    private Integer sizeInSqMeters;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -62,10 +62,9 @@ public class Location implements Serializable {
     @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
 
-    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @Column(name = "rating")
+    @Column(nullable = false)
     private Double rating;
 
     @EqualsAndHashCode.Exclude

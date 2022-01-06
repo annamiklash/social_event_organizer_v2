@@ -7,9 +7,13 @@ import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto
 @UtilityClass
 public class CustomerAvatarMapper {
 
+    private static final String NAME = "AVATAR";
+
     public CustomerAvatar fromDto(CustomerAvatarDto dto) {
         return CustomerAvatar.builder()
                 .image(dto.getImage())
+                .isMain(true)
+                .fileName(NAME)
                 .build();
     }
 }

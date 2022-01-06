@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
@@ -16,9 +17,9 @@ import javax.persistence.*;
 @RequiredArgsConstructor
 @Table(name = "optional_service_image")
 @Entity(name = "optional_service_image")
-public class OptionalServiceImage extends Image{
+public class OptionalServiceImage extends Image implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_optional_image")
+    @JoinColumn(name = "id_optional_service")
     private OptionalService service;
 }

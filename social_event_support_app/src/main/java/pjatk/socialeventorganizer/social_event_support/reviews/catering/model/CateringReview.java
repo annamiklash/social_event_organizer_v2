@@ -1,43 +1,23 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.catering.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
-import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.reviews.Review;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
-@Builder
+@SuperBuilder
 @Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "catering_review")
 @Entity(name = "catering_review")
-public class CateringReview {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_catering_review")
-    private Long id;
-
-    @Column
-    private String title;
-
-    @Column
-    private String comment;
-
-    @Column(name = "star_rating")
-    private Integer starRating;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_customer", nullable = false)
-    private Customer customer;
+public class CateringReview extends Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering", nullable = false)

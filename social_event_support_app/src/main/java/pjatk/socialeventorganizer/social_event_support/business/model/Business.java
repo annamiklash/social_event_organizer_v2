@@ -2,7 +2,6 @@ package pjatk.socialeventorganizer.social_event_support.business.model;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
@@ -38,7 +37,7 @@ public class Business extends User implements Serializable {
     @Column(name = "verification_status", nullable = false)
     private String verificationStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_business_address")
     private Address address;
 

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
@@ -15,7 +16,6 @@ import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.service.LocationImageService;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -66,17 +66,13 @@ public class LocationImageController {
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
+            path = "upload",
             method = RequestMethod.POST,
-            path = "multiple",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<ImageDto>> saveMultiple(@RequestParam long locationId, @Valid @RequestBody ImageDto[] dtos) {
-        final List<LocationImage> list = locationImageService.saveMultiple(locationId, Arrays.asList(dtos));
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(ImageMapper::toDto)
-                        .collect(Collectors.toList()))
-        );
+    public ResponseEntity<Void> upload(@RequestParam long locationId, @RequestParam("file") MultipartFile file) {
+        locationImageService.upload(locationId, file);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")

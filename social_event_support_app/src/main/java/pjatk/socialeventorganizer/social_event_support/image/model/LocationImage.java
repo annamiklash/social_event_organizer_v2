@@ -21,4 +21,5 @@ public class LocationImage extends Image implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Location location;
+
 }

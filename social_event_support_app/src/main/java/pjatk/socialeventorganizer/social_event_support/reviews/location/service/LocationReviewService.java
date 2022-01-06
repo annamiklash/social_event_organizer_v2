@@ -15,7 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundExcept
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
 import pjatk.socialeventorganizer.social_event_support.reviews.location.model.LocationReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.LocationReviewDto;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.location.repository.LocationReviewRepository;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 
@@ -40,7 +40,7 @@ public class LocationReviewService {
         locationReviewRepository.save(locationReview);
     }
 
-    public LocationReview leaveLocationReview(long id, long locationId, LocationReviewDto dto) {
+    public LocationReview leaveLocationReview(long id, long locationId, ReviewDto dto) {
         final Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Customer with id " + id + " does not exist"));
 

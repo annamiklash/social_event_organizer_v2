@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @MappedSuperclass
-public  class Image {
+public abstract class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +24,8 @@ public  class Image {
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] image;
 
-    @Column(nullable = false)
     private boolean isMain;
 
-    @Column(nullable = false)
-    private String name;
+    private String fileName;
 
 }

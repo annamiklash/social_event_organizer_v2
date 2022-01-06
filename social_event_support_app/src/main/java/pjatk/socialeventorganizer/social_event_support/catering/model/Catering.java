@@ -1,7 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.catering.model;
 
 import lombok.*;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours;
@@ -31,31 +30,29 @@ public class Catering implements Serializable {
     @Column(name = "id_catering")
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "phone_number")
+    @Column(nullable = false)
     private BigInteger phoneNumber;
 
-    @Column(name = "service_cost")
+    @Column(nullable = false)
     private BigDecimal serviceCost;
 
-    @Column
+    @Column(nullable = false)
     private String description;
 
-    @Column(name = "rating")
-    private Double rating;
+    private double rating;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "modified_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
-    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @EqualsAndHashCode.Exclude
@@ -65,7 +62,7 @@ public class Catering implements Serializable {
     private Business business;
 
     @OneToOne( fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_catering_address")
+    @JoinColumn(name = "id_catering_address", nullable = false)
     private Address cateringAddress;
 
     @OneToMany(fetch = FetchType.LAZY)

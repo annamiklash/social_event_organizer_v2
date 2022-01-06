@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.builder.HashCodeExclude;
-import org.hibernate.annotations.DiscriminatorFormula;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
@@ -16,10 +14,8 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.mu
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @SuperBuilder
@@ -44,13 +40,13 @@ public class OptionalService {
     @Column(nullable = false)
     private String lastName;
 
-    @Column
     private String alias;
 
-    @Column(name = "d_type", nullable = false, length = 20,
+    @Column(name = "d_type", nullable = false,
             insertable = false, updatable = false)
     private String dType;
 
+    @Column(nullable = false)
     private String type;
 
     @Column(nullable = false)
@@ -59,19 +55,18 @@ public class OptionalService {
     @Column(nullable = false)
     private String description;
 
-    @Column(name = "rating")
+    @Column(nullable = false)
     private Double rating;
 
-    @Column(name = "service_cost", nullable = false)
+    @Column(nullable = false)
     private BigDecimal serviceCost;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "modified_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
-    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @EqualsAndHashCode.Exclude
@@ -79,15 +74,15 @@ public class OptionalService {
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_service_address")
     private Address serviceAddress;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceBusinessHours> optionalServiceBusinessHours;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceAvailability> availability;
 
@@ -100,7 +95,7 @@ public class OptionalService {
             name = "service_music_style",
             joinColumns = @JoinColumn(name = "id_optional_service"),
             inverseJoinColumns = @JoinColumn(name = "id_music_style"))
-    private Set<MusicStyle> styles = new HashSet<>();
+    private Set<MusicStyle> styles;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")

@@ -15,8 +15,8 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.CateringReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.dto.CateringReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.repository.CateringReviewRepository;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 
 import java.math.BigDecimal;
@@ -40,7 +40,7 @@ public class CateringReviewService {
         cateringReviewRepository.save(cateringReview);
     }
 
-    public CateringReview leaveCateringReview(long id, long cateringId, CateringReviewDto dto) {
+    public CateringReview leaveCateringReview(long id, long cateringId, ReviewDto dto) {
         final Customer customer = customerService.get(id);
 
         final Catering catering = cateringService.get(cateringId);

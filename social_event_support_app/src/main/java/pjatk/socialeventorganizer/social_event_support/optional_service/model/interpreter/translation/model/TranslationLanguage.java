@@ -22,7 +22,6 @@ public class TranslationLanguage {
 
     private String name;
 
-
     @ManyToMany(mappedBy = "languages", fetch = FetchType.LAZY)
     private Set<Interpreter> interpreters = new HashSet<>();
 

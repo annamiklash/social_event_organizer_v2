@@ -1,25 +1,21 @@
 package pjatk.socialeventorganizer.social_event_support.customer.avatar.model;
 
-import lombok.*;
-import org.hibernate.annotations.Type;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
+import pjatk.socialeventorganizer.social_event_support.image.model.Image;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.io.Serializable;
 
-@Builder
-@Getter
-@Setter
+@SuperBuilder
+@Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Table(name = "customer_avatar")
 @Entity(name = "customer_avatar")
-public class CustomerAvatar {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_avatar")
-    private Long id;
-
-    @Type(type="org.hibernate.type.BinaryType")
-    private byte[] image;
+public class CustomerAvatar extends Image implements Serializable {
 
 }
