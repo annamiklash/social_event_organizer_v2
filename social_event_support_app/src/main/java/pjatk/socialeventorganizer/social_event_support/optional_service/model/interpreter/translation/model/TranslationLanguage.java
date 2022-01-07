@@ -9,7 +9,6 @@ import java.util.Set;
 
 @Builder
 @Data
-@EqualsAndHashCode(exclude = "interpreters")
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity(name = "translation_language")
@@ -22,6 +21,8 @@ public class TranslationLanguage {
 
     private String name;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToMany(mappedBy = "languages", fetch = FetchType.LAZY)
     private Set<Interpreter> interpreters = new HashSet<>();
 

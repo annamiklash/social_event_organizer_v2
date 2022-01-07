@@ -8,7 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.Op
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @Entity

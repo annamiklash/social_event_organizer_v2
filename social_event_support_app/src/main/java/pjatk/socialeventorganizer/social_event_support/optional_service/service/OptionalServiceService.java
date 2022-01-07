@@ -45,6 +45,7 @@ import pjatk.socialeventorganizer.social_event_support.security.service.Security
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -149,12 +150,26 @@ public class OptionalServiceService {
 
         final List<OptionalServiceBusinessHours> businessHours = optionalServiceBusinessService.create(dto.getBusinessHours());
 
-        final OptionalService optionalService = OptionalServiceMapper.fromDto(dto);
+        List<MusicStyle> musicStyles = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(dto.getMusicStyle())) {
+            musicStyles = dto.getMusicStyle().stream()
+                    .map(musicStyleDto -> musicStyleService.getByName(musicStyleDto.getName()))
+                    .collect(Collectors.toList());
+        }
+
+        List<TranslationLanguage> translationLanguages = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(dto.getTranslationLanguages())) {
+            translationLanguages = dto.getTranslationLanguages().stream()
+                    .map(language -> translationLanguageService.getByName(language.getName()))
+                    .collect(Collectors.toList());
+        }
+
+        final OptionalService optionalService = OptionalServiceMapper.fromDto(dto, musicStyles, translationLanguages);
 
         optionalService.setServiceAddress(address);
         optionalService.setBusiness(business);
-        optionalService.setRating(0.0);
         optionalService.setOptionalServiceBusinessHours(new HashSet<>(businessHours));
+        optionalService.setRating(0.0);
         optionalService.setCreatedAt(timestampHelper.now());
         optionalService.setModifiedAt(timestampHelper.now());
 
@@ -162,7 +177,6 @@ public class OptionalServiceService {
 
         return optionalService;
     }
-
 
     public OptionalService edit(OptionalServiceDto dto, long id) {
         final OptionalService optionalService = get(id);
@@ -302,7 +316,6 @@ public class OptionalServiceService {
                     .collect(Collectors.toList());
         }
     }
-
 
 
     private List<OptionalService> filterByType(List<OptionalService> optionalServices, FilterOptionalServiceDto dto) {

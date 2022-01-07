@@ -11,7 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.in
 import javax.persistence.*;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @Data
 @AllArgsConstructor

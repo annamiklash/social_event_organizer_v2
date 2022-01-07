@@ -84,6 +84,8 @@ public class OptionalServiceDto implements Serializable {
 
     private Integer kidAgeTo;
 
+    private String otherType;
+
     private String createdAt;
 
     private String modifiedAt;

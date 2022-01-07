@@ -6,17 +6,26 @@ import pjatk.socialeventorganizer.social_event_support.availability.mapper.Avail
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.Interpreter;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.kidperformer.KidsPerformer;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.DJ;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.MusicBand;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.Musician;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.Singer;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.other.Host;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.other.OtherService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.validator.Validator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -90,63 +99,131 @@ public class OptionalServiceMapper {
         }
     }
 
-    public OptionalService fromDto(OptionalServiceDto dto) {
-        OptionalService optionalService = OptionalService.builder()
-                .type(dto.getType())
-                .alias(dto.getAlias())
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .description(dto.getDescription())
-                .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
-                .email(dto.getEmail())
-                .build();
-
-        final OptionalServiceTypeEnum type = OptionalServiceTypeEnum.valueOfLabel(dto.getType());
-
+    public OptionalService fromDto(OptionalServiceDto dto, List<MusicStyle> musicStyles, List<TranslationLanguage> translationLanguages) {
         Validator.validateType(dto);
+        final OptionalServiceTypeEnum type = OptionalServiceTypeEnum.valueOfLabel(dto.getType());
 
         switch (type) {
             case KIDS_PERFORMER:
-                ((KidsPerformer) optionalService).setAgeFrom(dto.getKidAgeFrom());
-                ((KidsPerformer) optionalService).setAgeTo(dto.getKidAgeTo());
-                ((KidsPerformer) optionalService).setKidsPerformerType(dto.getKidPerformerType());
-                return optionalService;
+                return KidsPerformer.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .ageFrom(dto.getKidAgeFrom())
+                        .ageTo(dto.getKidAgeTo())
+                        .kidsPerformerType(dto.getKidPerformerType())
+                        .build();
 
             case INTERPRETER:
-                ((Interpreter) optionalService).setLanguages(
-                        dto.getTranslationLanguages().stream()
-                                .map(TranslationLanguageMapper::fromDto)
-                                .collect(Collectors.toSet()));
-                return optionalService;
+                final Interpreter interpreter = Interpreter.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .languages(new HashSet<>())
+                        .build();
+
+                translationLanguages.forEach(interpreter::addLanguage);
+
+                return interpreter;
 
             case MUSIC_BAND:
-                ((MusicBand) optionalService).setPeopleCount(dto.getMusicBandPeopleCount());
-                optionalService.setStyles(
-                        dto.getMusicStyle().stream()
-                                .map(MusicStyleMapper::fromDto)
-                                .collect(Collectors.toSet()));
-                return optionalService;
+                final MusicBand musicBand = MusicBand.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .peopleCount(dto.getMusicBandPeopleCount())
+                        .styles(new HashSet<>())
+                        .build();
+
+                musicStyles.forEach(musicBand::addMusicStyle);
+
+                return musicBand;
 
             case MUSICIAN:
-                optionalService.setStyles(
-                        dto.getMusicStyle().stream()
-                                .map(MusicStyleMapper::fromDto)
-                                .collect(Collectors.toSet()));
-                ((Musician) optionalService).setInstrument(dto.getInstrument());
-                return optionalService;
+                final Musician musician = Musician.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .instrument(dto.getInstrument())
+                        .styles(new HashSet<>())
+                        .build();
+
+                musicStyles.forEach(musician::addMusicStyle);
+
+                return musician;
 
             case DJ:
+                final DJ dj = DJ.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .styles(new HashSet<>())
+                        .build();
+
+                musicStyles.forEach(dj::addMusicStyle);
+                return dj;
+
+
             case SINGER:
-                optionalService.setStyles(
-                        dto.getMusicStyle().stream()
-                                .map(MusicStyleMapper::fromDto)
-                                .collect(Collectors.toSet()));
-                return optionalService;
+                final OptionalService singer = Singer.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .styles(new HashSet<>())
+                        .build();
+
+                musicStyles.forEach(singer::addMusicStyle);
+
+                return singer;
 
             case HOST:
+                return Host.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .build();
+
             case OTHER:
+                return OtherService.builder()
+                        .type(dto.getType())
+                        .alias(dto.getAlias())
+                        .firstName(dto.getFirstName())
+                        .lastName(dto.getLastName())
+                        .description(dto.getDescription())
+                        .serviceCost(Converter.convertPriceString(dto.getServiceCost()))
+                        .email(dto.getEmail())
+                        .otherType(dto.getOtherType())
+                        .build();
             default:
-                return optionalService;
+                throw new ActionNotAllowedException("Invalid type");
         }
     }
 
