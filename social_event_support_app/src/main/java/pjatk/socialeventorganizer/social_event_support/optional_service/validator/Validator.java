@@ -58,6 +58,12 @@ public class Validator {
                 }
                 break;
 
+            case OTHER:
+                if (StringUtils.isEmpty(dto.getOtherType())) {
+                    throw new ValidationException("Must describe what service they offer");
+                }
+                break;
+
             case HOST:
             default:
                 break;
