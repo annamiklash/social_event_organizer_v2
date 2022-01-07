@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.KidPerformerTypeEnum;
+import pjatk.socialeventorganizer.social_event_support.optional_service.enums.LanguagesEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.MusicStyleEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
@@ -183,6 +184,16 @@ public class OptionalServiceController {
 
         return ResponseEntity.ok(ImmutableList.copyOf(List.of(MusicStyleEnum.values())));
     }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "allowed/languages",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<LanguagesEnum>> languages() {
+
+        return ResponseEntity.ok(ImmutableList.copyOf(List.of(LanguagesEnum.values())));
+    }
+
 
     @RequestMapping(
             method = RequestMethod.POST,

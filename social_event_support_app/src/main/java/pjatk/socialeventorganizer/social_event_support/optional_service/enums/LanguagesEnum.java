@@ -1,0 +1,33 @@
+package pjatk.socialeventorganizer.social_event_support.optional_service.enums;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public enum LanguagesEnum {
+
+    SPANISH("SPANISH"),
+    ENGLISH("ENGLISH"),
+    POLISH("POLISH"),
+    RUSSIAN("RUSSIAN"),
+    GERMAN("GERMAN"),
+    JAPANESE("JAPANESE"),
+    ASL("ASL");
+
+    private final String value;
+
+    LanguagesEnum(String value) {
+        this.value = value;
+    }
+
+    private static final Map<String, LanguagesEnum> VALUES = new HashMap<>();
+
+    static {
+        for (LanguagesEnum e : values()) {
+            VALUES.put(e.value, e);
+        }
+    }
+
+    public static LanguagesEnum valueOfLabel(String label) {
+        return VALUES.get(label);
+    }
+}
