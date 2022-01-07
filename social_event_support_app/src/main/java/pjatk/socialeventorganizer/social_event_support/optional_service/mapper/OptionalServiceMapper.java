@@ -1,10 +1,12 @@
 package pjatk.socialeventorganizer.social_event_support.optional_service.mapper;
 
 import lombok.experimental.UtilityClass;
+import org.apache.commons.collections4.CollectionUtils;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto;
@@ -14,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.mu
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.Musician;
 import pjatk.socialeventorganizer.social_event_support.optional_service.validator.Validator;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -33,6 +36,12 @@ public class OptionalServiceMapper {
                 .modifiedAt(DateTimeUtil.fromLocalDateTimetoString(optionalService.getModifiedAt()))
                 .deletedAt(DateTimeUtil.fromLocalDateTimetoString(optionalService.getDeletedAt()))
                 .build();
+
+        if (!CollectionUtils.isEmpty(optionalService.getImages())) {
+            dto.setImages(optionalService.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()));
+        } else {
+            dto.setImages(new ArrayList<>());
+        }
 
         final OptionalServiceTypeEnum type = OptionalServiceTypeEnum.valueOfLabel(optionalService.getType());
 
@@ -144,6 +153,11 @@ public class OptionalServiceMapper {
     public OptionalServiceDto toDtoWithDetails(OptionalService optionalService) {
         final OptionalServiceDto dto = toDto(optionalService);
 //        dto.setBusiness(BusinessMapper.toDto(optionalService.getBusiness()));
+        if (!CollectionUtils.isEmpty(optionalService.getImages())) {
+            dto.setImages(optionalService.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()));
+        } else {
+            dto.setImages(new ArrayList<>());
+        }
 
         dto.setBusinessHours(optionalService.getOptionalServiceBusinessHours().stream()
                 .map(BusinessHoursMapper::toDto)
