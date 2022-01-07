@@ -68,7 +68,7 @@ public class LocationImageController {
     @RequestMapping(
             path = "upload",
             method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> upload(@RequestParam long locationId, @RequestParam("file") MultipartFile file) {
         locationImageService.upload(locationId, file);

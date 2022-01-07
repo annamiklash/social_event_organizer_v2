@@ -59,11 +59,8 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        final Optional<User> optionalUser = userRepository.findUserByEmail(email);
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
-        }
-        throw new InvalidCredentialsException(INCORRECT_CREDENTIALS);
+        return userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException(INCORRECT_CREDENTIALS));
     }
 
     public void save(User user) {

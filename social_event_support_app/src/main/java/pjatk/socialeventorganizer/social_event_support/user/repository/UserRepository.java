@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 
 import java.util.Optional;
@@ -20,10 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> isNewAccount(@Param("id") long id, @Param("type") char type);
 
     @Query("SELECT u from users u " +
-            "left join business b on b.id = u.id " +
-            "left join customer c on c.id = u.id " +
             "where u.email = :email")
-    Optional<User> findUserByEmail(String email);
+    Optional<User> findUserByEmail (String email);
 
     boolean existsByEmail(String email);
 

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
@@ -62,6 +63,17 @@ public class CateringImageController {
     public ResponseEntity<ImageDto> save(@RequestParam long cateringId, @Valid @RequestBody ImageDto dto) {
         final CateringImage cateringImage = cateringImageService.create(cateringId, dto);
         return ResponseEntity.ok(ImageMapper.toDto(cateringImage));
+    }
+
+    @PreAuthorize("hasAuthority('BUSINESS')")
+    @RequestMapping(
+            path = "upload",
+            method = RequestMethod.POST,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> upload(@RequestParam long cateringId, @RequestParam("file") MultipartFile file) {
+        cateringImageService.upload(cateringId, file);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")

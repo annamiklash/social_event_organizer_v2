@@ -135,7 +135,12 @@ public class LocationImageService {
             throw new ActionNotAllowedException("Cannot upload from empty path");
         }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        ImageValidator.validateFileExtension(fileName);
+
         final Location location = locationService.getWithImages(locationId);
+        if (location.getImages().size() >= MAX_IMAGE_COUNT) {
+            throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
+        }
         final boolean exists = mainExists(locationId);
 
         final LocationImage locationImage = LocationImage.builder().location(location)
@@ -143,7 +148,7 @@ public class LocationImageService {
                 .isMain(!exists)
                 .image(file.getBytes())
                 .build();
-        locationImageRepository.save(locationImage);
 
+        locationImageRepository.save(locationImage);
     }
 }

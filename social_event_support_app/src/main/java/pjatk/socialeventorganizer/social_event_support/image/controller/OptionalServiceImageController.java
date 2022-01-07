@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.OptionalServiceImage;
@@ -57,13 +58,15 @@ public class OptionalServiceImageController {
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
+            path = "upload",
             method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImageDto> save(@RequestParam long serviceId, @Valid @RequestBody ImageDto dto) {
-        final OptionalServiceImage serviceImage = optionalServiceImageService.create(serviceId, dto);
-        return ResponseEntity.ok(ImageMapper.toDto(serviceImage));
+    public ResponseEntity<Void> upload(@RequestParam long serviceId, @RequestParam("file") MultipartFile file) {
+        optionalServiceImageService.upload(serviceId, file);
+        return ResponseEntity.ok().build();
     }
+
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(

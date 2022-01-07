@@ -1,11 +1,15 @@
 package pjatk.socialeventorganizer.social_event_support.image.service;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.validator.ImageValidator;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
@@ -15,6 +19,7 @@ import pjatk.socialeventorganizer.social_event_support.image.repository.Catering
 import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +60,30 @@ public class CateringImageService {
         }
 
         return result;
+    }
+
+    @SneakyThrows(IOException.class)
+    public void upload(long cateringId, MultipartFile file) {
+        if (file.getOriginalFilename() == null) {
+            throw new ActionNotAllowedException("Cannot upload from empty path");
+        }
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        ImageValidator.validateFileExtension(fileName);
+
+        final Catering catering = cateringService.getWithImages(cateringId);
+        if (catering.getImages().size() >= MAX_IMAGE_COUNT) {
+            throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
+        }
+        final boolean exists = mainExists(cateringId);
+
+        final CateringImage locationImage = CateringImage.builder()
+                .catering(catering)
+                .fileName(fileName)
+                .isMain(!exists)
+                .image(file.getBytes())
+                .build();
+
+        cateringImageRepository.save(locationImage);
     }
 
     public CateringImage create(long cateringId, ImageDto dto) {
@@ -120,5 +149,6 @@ public class CateringImageService {
     private boolean mainExists(long serviceId) {
         return getMain(serviceId).isPresent();
     }
+
 
 }
