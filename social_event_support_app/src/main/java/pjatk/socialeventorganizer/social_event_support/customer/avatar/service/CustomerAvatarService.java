@@ -1,16 +1,20 @@
 package pjatk.socialeventorganizer.social_event_support.customer.avatar.service;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.customer.avatar.mapper.CustomerAvatarMapper;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
-import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.repository.CustomerAvatarRepository;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.validator.ImageValidator;
-import pjatk.socialeventorganizer.social_event_support.image.util.ImageUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
-import javax.transaction.Transactional;
+import java.io.IOException;
 
 @Slf4j
 @Service
@@ -19,18 +23,28 @@ public class CustomerAvatarService {
 
     private final CustomerAvatarRepository customerAvatarRepository;
 
-    @Transactional(rollbackOn = Exception.class)
-    public CustomerAvatar create(CustomerAvatarDto dto) {
-        ImageValidator.validateFileExtension(dto.getPath());
+    private final CustomerRepository customerRepository;
 
-        final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
-        dto.setImage(data);
+    @SneakyThrows(IOException.class)
+    public void upload(long customerId, MultipartFile file) {
+        if (file.getOriginalFilename() == null) {
+            throw new ActionNotAllowedException("Cannot upload from empty path");
+        }
+        final Customer customer = customerRepository.getByIdWithAvatar(customerId)
+                .orElseThrow(() -> new NotFoundException("Customer does not exist"));
+        if (customer.getAvatar() != null) {
+            delete(customer.getAvatar());
+        }
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        ImageValidator.validateFileExtension(fileName);
 
-        final CustomerAvatar customerAvatar = CustomerAvatarMapper.fromDto(dto);
+        final CustomerAvatar avatar = CustomerAvatar.builder()
+                .customer(customer)
+                .fileName(fileName)
+                .image(file.getBytes())
+                .build();
 
-        customerAvatarRepository.save(customerAvatar);
-
-        return customerAvatar;
+        customerAvatarRepository.save(avatar);
     }
 
     public void delete(CustomerAvatar customerAvatar) {

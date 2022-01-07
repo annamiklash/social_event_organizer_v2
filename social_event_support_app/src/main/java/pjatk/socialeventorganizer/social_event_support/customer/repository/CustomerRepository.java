@@ -14,6 +14,12 @@ import java.util.Optional;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     @Query("SELECT c FROM customer c " +
+            "LEFT JOIN customer_avatar a on c.avatar.id = a.id " +
+            "WHERE c.id = :customerId")
+    Optional<Customer> getByIdWithAvatar(@Param("customerId") long customerId);
+
+    @Query("SELECT c FROM customer c " +
+            "LEFT JOIN customer_avatar a on c.avatar.id = a.id " +
             "LEFT JOIN users u on c.id=u.id " +
             "WHERE (:keyword is null or c.firstName LIKE %:keyword%) " +
             "OR (:keyword is null or c.lastName LIKE %:keyword%) " +
@@ -33,6 +39,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> getByIdWithProblems(@Param("id") long id);
 
     @Query("SELECT c FROM customer c " +
+            "LEFT JOIN customer_avatar a on c.avatar.id = a.id " +
             "LEFT JOIN users u on c.id = u.id " +
             "left join u.appProblems cup " +
             "left join fetch c.guests cg " +
@@ -58,7 +65,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM customer c " +
             "LEFT JOIN users u on c.id=u.id " +
             "WHERE c.id = :id")
-    Optional<Customer>getByIdWithUser(@Param("id") long id);
+    Optional<Customer> getByIdWithUser(@Param("id") long id);
 
 
 }

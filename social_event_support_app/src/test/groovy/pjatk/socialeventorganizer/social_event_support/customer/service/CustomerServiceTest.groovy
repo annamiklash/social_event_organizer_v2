@@ -144,7 +144,7 @@ class CustomerServiceTest extends Specification
         def result = customerService.createCustomerAccount(fakeCustomerDTO)
 
         then:
-        1 * customerAvatarService.create(dto.getAvatar()) >> avatar
+        1 * customerAvatarService.upload(dto.getAvatar()) >> avatar
         1 * userService.get(dto.getUser().getId()) >> user
         1 * userService.save(user)
         1 * customerRepository.save(customer)

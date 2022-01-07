@@ -62,26 +62,6 @@ public class LocationImageService {
         return result;
     }
 
-    public LocationImage create(long locationId, ImageDto dto) {
-        ImageValidator.validateFileExtension(dto.getPath());
-
-        final boolean exists = mainExists(locationId);
-        dto.setMain(!exists);
-
-        final Location location = locationService.getWithImages(locationId);
-        if (location.getImages().size() >= MAX_IMAGE_COUNT) {
-            throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
-        }
-        final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
-
-        final LocationImage locationImage = ImageMapper.fromDtoToLocationImage(dto);
-        locationImage.setLocation(location);
-        locationImage.setImage(data);
-
-        locationImageRepository.save(locationImage);
-
-        return locationImage;
-    }
 
     public List<LocationImage> findByLocationId(long locationId) {
         return locationImageRepository.findAllByLocation_Id(locationId);
@@ -89,22 +69,6 @@ public class LocationImageService {
 
     public int count(long locationId) {
         return locationImageRepository.countAll(locationId);
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public void setNewMain(long locationId, long newId) {
-        final Optional<LocationImage> optionalImage = getMain(locationId);
-        if (optionalImage.isPresent()) {
-            final LocationImage locationImage = optionalImage.get();
-            locationImage.setMain(false);
-
-            locationImageRepository.save(locationImage);
-        }
-        final LocationImage newMain = get(newId);
-        newMain.setMain(true);
-
-        locationImageRepository.save(newMain);
-        locationImageRepository.flush();
     }
 
     public void deleteById(long locationId, Long imageId) {
@@ -119,16 +83,6 @@ public class LocationImageService {
 
     }
 
-    private LocationImage get(long imageId) {
-        return locationImageRepository.findById(imageId)
-                .orElseThrow(() -> new NotFoundException("Image not found"));
-    }
-
-
-    private boolean mainExists(long serviceId) {
-        return getMain(serviceId).isPresent();
-    }
-
     @SneakyThrows(IOException.class)
     public void upload(long locationId, MultipartFile file) {
         if (file.getOriginalFilename() == null) {
@@ -141,14 +95,24 @@ public class LocationImageService {
         if (location.getImages().size() >= MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
         }
-        final boolean exists = mainExists(locationId);
 
         final LocationImage locationImage = LocationImage.builder().location(location)
                 .fileName(fileName)
-                .isMain(!exists)
                 .image(file.getBytes())
                 .build();
 
         locationImageRepository.save(locationImage);
     }
+
+    private LocationImage get(long imageId) {
+        return locationImageRepository.findById(imageId)
+                .orElseThrow(() -> new NotFoundException("Image not found"));
+    }
+
+
+    private boolean mainExists(long serviceId) {
+        return getMain(serviceId).isPresent();
+    }
+
+
 }

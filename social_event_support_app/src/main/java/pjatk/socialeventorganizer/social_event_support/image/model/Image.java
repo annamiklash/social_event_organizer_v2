@@ -24,8 +24,6 @@ public abstract class Image {
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] image;
 
-    private boolean isMain;
-
     private String fileName;
 
 }

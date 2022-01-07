@@ -7,18 +7,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.service.CateringImageService;
 
-import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,27 +42,6 @@ public class CateringImageController {
         );
     }
 
-    @RequestMapping(
-            method = RequestMethod.GET,
-            path = "allowed/main",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImageDto> main(@RequestParam long cateringId) {
-        final Optional<CateringImage> main = cateringImageService.getMain(cateringId);
-        if (main.isEmpty()) {
-            throw new NotFoundException("No main image");
-        }
-        return ResponseEntity.ok(ImageMapper.toDto(main.get()));
-    }
-
-    @PreAuthorize("hasAuthority('BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImageDto> save(@RequestParam long cateringId, @Valid @RequestBody ImageDto dto) {
-        final CateringImage cateringImage = cateringImageService.create(cateringId, dto);
-        return ResponseEntity.ok(ImageMapper.toDto(cateringImage));
-    }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
@@ -76,28 +54,6 @@ public class CateringImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            path = "multiple",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<ImageDto>> saveMultiple(@RequestParam long cateringId, @Valid @RequestBody ImageDto[] dtos) {
-        final List<CateringImage> list = cateringImageService.saveMultiple(cateringId, Arrays.asList(dtos));
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(ImageMapper::toDto)
-                        .collect(Collectors.toList()))
-        );
-    }
-
-    @PreAuthorize("hasAuthority('BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long cateringId, @RequestParam long imageId) {
-        cateringImageService.setNewMain(cateringId, imageId);
-        return ResponseEntity.ok().build();
-    }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(

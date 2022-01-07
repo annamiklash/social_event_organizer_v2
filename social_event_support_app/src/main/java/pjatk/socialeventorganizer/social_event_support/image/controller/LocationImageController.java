@@ -7,17 +7,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.service.LocationImageService;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,28 +42,6 @@ public class LocationImageController {
         );
     }
 
-    @RequestMapping(
-            method = RequestMethod.GET,
-            path = "allowed/main",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImageDto> main(@RequestParam long locationId) {
-        final Optional<LocationImage> main = locationImageService.getMain(locationId);
-        if (main.isEmpty()) {
-            throw new NotFoundException("No main image");
-        }
-        return ResponseEntity.ok(ImageMapper.toDto(main.get()));
-    }
-
-    @PreAuthorize("hasAuthority('BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImageDto> save(@RequestParam long locationId, @Valid @RequestBody ImageDto dto) {
-        final LocationImage cateringImage = locationImageService.create(locationId, dto);
-        return ResponseEntity.ok(ImageMapper.toDto(cateringImage));
-    }
-
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             path = "upload",
@@ -75,14 +53,6 @@ public class LocationImageController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.PUT)
-    public ResponseEntity<Void> changeMain(@RequestParam long locationId, @RequestParam long id) {
-        locationImageService.setNewMain(locationId, id);
-        return ResponseEntity.ok().build();
-
-    }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(

@@ -95,7 +95,7 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
 
     @Query("SELECT l from location l " +
             "LEFT JOIN location_image li on li.location.id = l.id " +
-            "WHERE l.id = :locationId AND li.isMain = true")
+            "WHERE l.id = :locationId")
     Optional<Location> getByIdWithImages(@Param("locationId") long locationId);
 
     @Query("SELECT l FROM location l " +

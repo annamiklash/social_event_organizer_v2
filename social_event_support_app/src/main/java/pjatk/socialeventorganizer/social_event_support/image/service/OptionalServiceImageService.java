@@ -62,66 +62,30 @@ public class OptionalServiceImageService {
         return result;
     }
 
-    public OptionalServiceImage create(long serviceId, ImageDto dto) {
-        ImageValidator.validateFileExtension(dto.getPath());
-
-        final boolean exists = mainExists(serviceId);
-        dto.setMain(!exists);
-
-        final OptionalService service = optionalServiceService.getWithImages(serviceId);
-        if (service.getImages().size() >= MAX_IMAGE_COUNT) {
-            throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
-        }
-        final byte[] data = ImageUtil.fromPathToByteArray(dto.getPath());
-
-        final OptionalServiceImage image = ImageMapper.fromDtoToServiceImage(dto);
-        image.setService(service);
-        image.setImage(data);
-
-        optionalServiceImageRepository.save(image);
-
-        return image;
-    }
 
     @SneakyThrows(IOException.class)
     public void upload(long serviceId, MultipartFile file) {
         if (file.getOriginalFilename() == null) {
             throw new ActionNotAllowedException("Cannot upload from empty path");
         }
+        final OptionalService service = optionalServiceService.getWithImages(serviceId);
+
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         ImageValidator.validateFileExtension(fileName);
 
-        final OptionalService service = optionalServiceService.getWithImages(serviceId);
         if (service.getImages().size() >= MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException("Can only have no more than " + MAX_IMAGE_COUNT + " images");
         }
-        final boolean exists = mainExists(serviceId);
 
         final OptionalServiceImage locationImage = OptionalServiceImage.builder()
                 .service(service)
                 .fileName(fileName)
-                .isMain(!exists)
                 .image(file.getBytes())
                 .build();
 
         optionalServiceImageRepository.save(locationImage);
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public void setNewMain(long cateringId, long newId) {
-        final Optional<OptionalServiceImage> optionalImage = getMain(cateringId);
-        if (optionalImage.isPresent()) {
-            final OptionalServiceImage serviceImage = optionalImage.get();
-            serviceImage.setMain(false);
-
-            optionalServiceImageRepository.save(serviceImage);
-        }
-        final OptionalServiceImage newMain = get(newId);
-        newMain.setMain(true);
-
-        optionalServiceImageRepository.save(newMain);
-        optionalServiceImageRepository.flush();
-    }
 
     public int count(long serviceId) {
         return optionalServiceImageRepository.countAll(serviceId);
@@ -146,7 +110,4 @@ public class OptionalServiceImageService {
                 .orElseThrow(() -> new NotFoundException("Image not found"));
     }
 
-    private boolean mainExists(long serviceId) {
-        return getMain(serviceId).isPresent();
-    }
 }

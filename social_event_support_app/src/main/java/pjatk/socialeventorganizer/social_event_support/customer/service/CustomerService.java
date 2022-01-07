@@ -10,8 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
-import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -22,7 +20,6 @@ import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUti
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
-import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.service.CustomerAvatarService;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
@@ -47,7 +44,6 @@ import pjatk.socialeventorganizer.social_event_support.location.service.Location
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
-import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.CustomerUserRegistrationDto;
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService;
@@ -101,10 +97,6 @@ public class CustomerService {
         final String hashedPassword = passwordEncoderSecurity.bcryptEncryptor(dto.getPassword());
         customer.setPassword(hashedPassword);
 
-        if (dto.getAvatar() != null) {
-            final CustomerAvatar avatar = customerAvatarService.create(dto.getAvatar());
-            customer.setAvatar(avatar);
-        }
         customer.setCreatedAt(timestampHelper.now());
         customer.setModifiedAt(timestampHelper.now());
 

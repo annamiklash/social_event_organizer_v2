@@ -12,7 +12,6 @@ public class CustomerAvatarMapper {
     public CustomerAvatar fromDto(CustomerAvatarDto dto) {
         return CustomerAvatar.builder()
                 .image(dto.getImage())
-                .isMain(true)
                 .fileName(NAME)
                 .build();
     }
