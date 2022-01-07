@@ -19,6 +19,7 @@ import javax.persistence.*;
 @Table(name = "optional_service_business_hours")
 public class OptionalServiceBusinessHours extends BusinessHours {
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private OptionalService optionalService;
