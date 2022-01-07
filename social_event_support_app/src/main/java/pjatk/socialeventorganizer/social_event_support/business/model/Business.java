@@ -51,6 +51,7 @@ public class Business extends User implements Serializable {
     @JoinColumn(name = "id_business")
     private Set<Location> locations;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_business")
     private Set<OptionalService> services;
