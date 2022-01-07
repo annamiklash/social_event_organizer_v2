@@ -78,6 +78,7 @@ public class Location implements Serializable {
     @JoinColumn(name = "id_location_address")
     private Address locationAddress;
 
+    @EqualsAndHashCode.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "catering_location",

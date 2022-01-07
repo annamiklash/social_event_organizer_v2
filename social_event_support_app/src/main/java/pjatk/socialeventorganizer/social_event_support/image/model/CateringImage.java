@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.image.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 
@@ -19,6 +16,7 @@ import java.io.Serializable;
 @Entity(name = "catering_image")
 public class CateringImage extends Image implements Serializable {
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
