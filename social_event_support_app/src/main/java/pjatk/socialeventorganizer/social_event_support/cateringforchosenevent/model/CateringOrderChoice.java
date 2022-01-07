@@ -19,7 +19,7 @@ public class CateringOrderChoice implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_catering_item")
+    @Column(name = "id_catering_order_choice")
     private Long id;
 
     @Min(1)

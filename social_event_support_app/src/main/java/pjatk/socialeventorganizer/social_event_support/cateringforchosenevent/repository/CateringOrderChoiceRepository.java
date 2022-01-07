@@ -16,6 +16,13 @@ public interface CateringOrderChoiceRepository extends JpaRepository<CateringOrd
             "LEFT JOIN FETCH ch.item it " +
             "LEFT JOIN FETCH ch.eventLocationCatering lcat " +
             "LEFT JOIN FETCH lcat.catering cat " +
+            "WHERE cat.id = :cateringId and lcat.id = :reservationId")
+    List<CateringOrderChoice> getAll(@Param("cateringId") long cateringId, @Param("reservationId") long reservationId);
+
+    @Query("SELECT ch FROM catering_order_choice ch " +
+            "LEFT JOIN FETCH ch.item it " +
+            "LEFT JOIN FETCH ch.eventLocationCatering lcat " +
+            "LEFT JOIN FETCH lcat.catering cat " +
             "WHERE cat.id = :cateringId")
     List<CateringOrderChoice> getAll(@Param("cateringId") long cateringId);
 

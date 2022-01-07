@@ -39,6 +39,23 @@ public class CateringOrderChoiceController {
                         .collect(Collectors.toList())));
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER', 'BUSINESS')")
+    @RequestMapping(
+            path = "reservation",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<CateringOrderChoiceDto>> getAll(@RequestParam long cateringId,
+                                                                        @RequestParam long reservationId) {
+
+        final ImmutableList<CateringOrderChoice> orders = cateringOrderChoiceService.getAll(cateringId, reservationId);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(orders.stream()
+                        .map(CateringOrderChoiceMapper::toDtoWithItem)
+                        .collect(Collectors.toList())));
+    }
+
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,

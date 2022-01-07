@@ -19,6 +19,7 @@ import java.io.Serializable;
 @Entity(name = "optional_service_image")
 public class OptionalServiceImage extends Image implements Serializable {
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private OptionalService service;

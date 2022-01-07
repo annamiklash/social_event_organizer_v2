@@ -23,6 +23,10 @@ public class CateringOrderChoiceService {
     private final CateringItemService cateringItemService;
 
 
+    public ImmutableList<CateringOrderChoice> getAll(long cateringId, long reservationId) {
+        return ImmutableList.copyOf(cateringOrderChoiceRepository.getAll(cateringId, reservationId));
+    }
+
     public ImmutableList<CateringOrderChoice> getAll(long cateringId) {
         return ImmutableList.copyOf(cateringOrderChoiceRepository.getAll(cateringId));
     }

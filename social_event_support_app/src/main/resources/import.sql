@@ -97,7 +97,6 @@ VALUES (4.5,'Happy Olympia', 'happyolympia@gmail.com', 12345678910, '50.00',
         4, (select current_timestamp), (select current_timestamp), null);
 
 
-
 insert into catering_item (name, type, description, serving_price, is_vegan, is_vegetarian, is_gluten_free, id_catering,
                            created_at, modified_at)
 VALUES ('App 1', 'Appetizer', 'App 1 description', '10.00', false, true, true, 1, (select current_timestamp),

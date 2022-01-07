@@ -19,6 +19,7 @@ import java.io.Serializable;
 @Entity(name = "catering_image")
 public class CateringImage extends Image implements Serializable {
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
     private Catering catering;

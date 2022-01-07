@@ -76,14 +76,14 @@ public class CateringImageService {
         }
         final boolean exists = mainExists(cateringId);
 
-        final CateringImage locationImage = CateringImage.builder()
+        final CateringImage cateringImage = CateringImage.builder()
                 .catering(catering)
                 .fileName(fileName)
                 .isMain(!exists)
                 .image(file.getBytes())
                 .build();
 
-        cateringImageRepository.save(locationImage);
+        cateringImageRepository.save(cateringImage);
     }
 
     public CateringImage create(long cateringId, ImageDto dto) {

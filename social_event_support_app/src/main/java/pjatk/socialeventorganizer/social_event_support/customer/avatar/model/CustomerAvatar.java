@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 @SuperBuilder
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @Table(name = "customer_avatar")
 @Entity(name = "customer_avatar")
