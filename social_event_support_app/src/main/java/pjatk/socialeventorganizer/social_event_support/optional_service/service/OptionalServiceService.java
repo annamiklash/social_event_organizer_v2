@@ -146,9 +146,6 @@ public class OptionalServiceService {
         if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
-        final Address address = addressService.create(dto.getAddress());
-
-        final List<OptionalServiceBusinessHours> businessHours = optionalServiceBusinessService.create(dto.getBusinessHours());
 
         List<MusicStyle> musicStyles = new ArrayList<>();
         if (!CollectionUtils.isEmpty(dto.getMusicStyle())) {
@@ -165,6 +162,10 @@ public class OptionalServiceService {
         }
 
         final OptionalService optionalService = OptionalServiceMapper.fromDto(dto, musicStyles, translationLanguages);
+
+        final Address address = addressService.create(dto.getAddress());
+
+        final List<OptionalServiceBusinessHours> businessHours = optionalServiceBusinessService.create(dto.getBusinessHours());
 
         optionalService.setServiceAddress(address);
         optionalService.setBusiness(business);

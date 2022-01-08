@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.KidPerformerTypeEnum;
-import pjatk.socialeventorganizer.social_event_support.optional_service.enums.LanguagesEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.MusicStyleEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum;
 import pjatk.socialeventorganizer.social_event_support.optional_service.mapper.OptionalServiceMapper;
@@ -162,36 +161,44 @@ public class OptionalServiceController {
             method = RequestMethod.GET,
             value = "allowed/types",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<OptionalServiceTypeEnum>> types() {
-
-        return ResponseEntity.ok(ImmutableList.copyOf(List.of(OptionalServiceTypeEnum.values())));
+    public ResponseEntity<ImmutableList<String>> types() {
+        final List<String> result = List.of(OptionalServiceTypeEnum.values()).stream()
+                .map(OptionalServiceTypeEnum::getValue)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ImmutableList.copyOf(result));
     }
 
     @RequestMapping(
             method = RequestMethod.GET,
             value = "allowed/kid/performer/types",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<KidPerformerTypeEnum>> kidPerformerTypes() {
-
-        return ResponseEntity.ok(ImmutableList.copyOf(List.of(KidPerformerTypeEnum.values())));
+    public ResponseEntity<ImmutableList<String>> kidPerformerTypes() {
+        final List<String> result = List.of(KidPerformerTypeEnum.values()).stream()
+                .map(KidPerformerTypeEnum::getValue)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ImmutableList.copyOf(result));
     }
 
     @RequestMapping(
             method = RequestMethod.GET,
             value = "allowed/music/styles",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<MusicStyleEnum>> musicStyles() {
-
-        return ResponseEntity.ok(ImmutableList.copyOf(List.of(MusicStyleEnum.values())));
+    public ResponseEntity<ImmutableList<String>> musicStyles() {
+        final List<String> result = List.of(MusicStyleEnum.values()).stream()
+                .map(MusicStyleEnum::getValue)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ImmutableList.copyOf(result));
     }
 
     @RequestMapping(
             method = RequestMethod.GET,
             value = "allowed/languages",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<LanguagesEnum>> languages() {
-
-        return ResponseEntity.ok(ImmutableList.copyOf(List.of(LanguagesEnum.values())));
+    public ResponseEntity<ImmutableList<String>> languages() {
+        final List<String> result = List.of(MusicStyleEnum.values()).stream()
+                .map(MusicStyleEnum::getValue)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ImmutableList.copyOf(result));
     }
 
 
