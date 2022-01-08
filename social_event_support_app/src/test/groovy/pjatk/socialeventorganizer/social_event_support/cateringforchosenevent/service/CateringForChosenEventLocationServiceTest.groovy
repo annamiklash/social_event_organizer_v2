@@ -1,13 +1,14 @@
 package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service
 
+
 import org.codehaus.groovy.runtime.InvokerHelper
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringForLocationRepository
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
-import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService
-import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService
+import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository
+import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository
 import pjatk.socialeventorganizer.social_event_support.exceptions.LocationNotBookedException
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
@@ -32,8 +33,8 @@ class CateringForChosenEventLocationServiceTest extends Specification
     CateringForChosenEventLocationService cateringForChosenEventLocationService
 
     CateringForLocationRepository cateringForLocationRepository
-    OrganizedEventService organizedEventService
-    CustomerService customerService
+    OrganizedEventRepository organizedEventRepository
+    CustomerRepository customerRepository
     CateringService cateringService
     TimestampHelper timestampHelper
 
@@ -41,8 +42,8 @@ class CateringForChosenEventLocationServiceTest extends Specification
 
     def setup() {
         cateringForLocationRepository = Mock()
-        organizedEventService = Mock()
-        customerService = Mock()
+        organizedEventRepository = Mock()
+        customerRepository = Mock()
         cateringService = Mock()
         timestampHelper = Mock()
 
@@ -51,8 +52,8 @@ class CateringForChosenEventLocationServiceTest extends Specification
 
         cateringForChosenEventLocationService = new CateringForChosenEventLocationService(
                 cateringForLocationRepository,
-                organizedEventService,
-                customerService,
+                organizedEventRepository,
+                customerRepository,
                 cateringService,
                 timestampHelper
         )
@@ -76,7 +77,7 @@ class CateringForChosenEventLocationServiceTest extends Specification
         then:
         1 * cateringForLocationRepository.findByCateringIdAndEventId(cateringId, eventId) >> Optional.of(catering)
         1 * cateringForLocationRepository.save(catering)
-        1 * organizedEventService.save(organizedEvent)
+        1 * organizedEventRepository.save(organizedEvent)
 
         result == target
     }
@@ -109,8 +110,8 @@ class CateringForChosenEventLocationServiceTest extends Specification
         def result = cateringForChosenEventLocationService.create(customerId, eventId, cateringId, dto)
 
         then:
-        1 * customerService.customerExists(customerId) >> true
-        1 * organizedEventService.getWithLocation(eventId) >> organizedEvent
+        1 * customerRepository.existsById(customerId) >> true
+        1 * organizedEventRepository.getWithLocation(eventId) >> Optional.of(organizedEvent)
         1 * cateringService.getWithBusinessHours(cateringId) >> cateringWithBusinnessHours
         1 * cateringService.get(cateringId) >> catering
         1 * cateringForLocationRepository.save(target)
@@ -132,8 +133,8 @@ class CateringForChosenEventLocationServiceTest extends Specification
         cateringForChosenEventLocationService.create(customerId, eventId, cateringId, dto)
 
         then:
-        1 * customerService.customerExists(customerId) >> true
-        1 * organizedEventService.getWithLocation(eventId) >> organizedEvent
+        1 * customerRepository.existsById(customerId) >> true
+        1 * organizedEventRepository.getWithLocation(eventId) >> Optional.of(organizedEvent)
 
         thrown(LocationNotBookedException)
     }
@@ -156,8 +157,8 @@ class CateringForChosenEventLocationServiceTest extends Specification
         cateringForChosenEventLocationService.create(customerId, eventId, cateringId, dto)
 
         then:
-        1 * customerService.customerExists(customerId) >> true
-        1 * organizedEventService.getWithLocation(eventId) >> organizedEvent
+        1 * customerRepository.existsById(customerId) >> true
+        1 * organizedEventRepository.getWithLocation(eventId) >> Optional.of(organizedEvent)
         1 * cateringService.getWithBusinessHours(cateringId) >> cateringWithBusinnessHours
 
         thrown(NotFoundException)
@@ -182,8 +183,8 @@ class CateringForChosenEventLocationServiceTest extends Specification
         cateringForChosenEventLocationService.create(customerId, eventId, cateringId, dto)
 
         then:
-        1 * customerService.customerExists(customerId) >> true
-        1 * organizedEventService.getWithLocation(eventId) >> organizedEvent
+        1 * customerRepository.existsById(customerId) >> true
+        1 * organizedEventRepository.getWithLocation(eventId) >> Optional.of(organizedEvent)
         1 * cateringService.getWithBusinessHours(cateringId) >> cateringWithBusinnessHours
         1 * cateringService.get(cateringId) >> catering
 
@@ -207,13 +208,13 @@ class CateringForChosenEventLocationServiceTest extends Specification
 
         then:
         1 * cateringForLocationRepository.getWithCateringAndEvent(cateringForEventId) >> Optional.of(cateringForLocation)
-        1 * organizedEventService.save(event)
+        1 * organizedEventRepository.save(event)
         1 * cateringForLocationRepository.save(cateringForLocation)
 
         result == target
     }
 
-    def "SetAsCancelled"() {
+    def "cancelReservation"() {
         given:
         def locationForEventId = 1L
         def cateringForChosenEventLocation = fakeCateringForChosenEventLocation
@@ -227,11 +228,11 @@ class CateringForChosenEventLocationServiceTest extends Specification
         target.setConfirmationStatus(CANCELLED.name())
 
         when:
-        def result = cateringForChosenEventLocationService.setAsCancelled(locationForEventId)
+        def result = cateringForChosenEventLocationService.cancelReservation(locationForEventId)
 
         then:
         1 * cateringForLocationRepository.getWithCateringAndEvent(locationForEventId) >> Optional.of(cateringForChosenEventLocation)
-        1 * organizedEventService.save(event)
+        1 * organizedEventRepository.save(event)
 
         result == target
     }

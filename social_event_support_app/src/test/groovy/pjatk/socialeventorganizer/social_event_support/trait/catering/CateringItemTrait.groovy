@@ -7,6 +7,12 @@ trait CateringItemTrait {
 
     CateringItem fakeCateringItem = CateringItem.builder()
             .name('Name')
+            .itemType("SAMPLE TYPE")
+            .description('SAMPLE DESCRIPTION')
+            .isVegan(true)
+            .isVegetarian(true)
+            .isGlutenFree(true)
+            .servingPrice(new BigDecimal('123456.00'))
             .build()
 
     CateringItem fakeCateringItemWithId = CateringItem.builder()
@@ -16,6 +22,12 @@ trait CateringItemTrait {
 
     CateringItemDto fakeCateringItemDto = CateringItemDto.builder()
             .name('Name')
+            .type("SAMPLE TYPE")
+            .description('SAMPLE DESCRIPTION')
+            .isVegan(true)
+            .isVegetarian(true)
+            .isGlutenFree(true)
+            .servingPrice('123456.00')
             .build()
 
 }

@@ -52,6 +52,8 @@ class CateringServiceTest extends Specification
     CateringImageRepository cateringImageRepository
     TimestampHelper timestampHelper
 
+    LocalDateTime now = LocalDateTime.parse('2007-12-03T10:15:30')
+
     def setup() {
         cateringRepository = Mock()
         cateringItemRepository = Mock()
@@ -64,6 +66,8 @@ class CateringServiceTest extends Specification
         cuisineService = Mock()
         timestampHelper = Mock()
         cateringImageRepository = Mock()
+
+        timestampHelper.now() >> now
 
         cateringService = new CateringService(cateringRepository,
                 cateringItemRepository,
@@ -154,7 +158,6 @@ class CateringServiceTest extends Specification
         def cuisineDto = cateringDto.getCuisines().get(0)
         def catering = fakeCatering
         fakeCatering.setId(null)
-        def now = LocalDateTime.parse('2007-12-03T10:15:30')
         def cuisine = Cuisine.builder().name(cuisineDto.getName()).build()
 
         def cateringSet = new HashSet<Catering>()
@@ -185,7 +188,6 @@ class CateringServiceTest extends Specification
 
         1 * addressService.create(cateringDto.getAddress()) >> address
         1 * cateringBusinessHoursService.create(businessHoursDto) >> cateringBusinessHours
-        2 * timestampHelper.now() >> now
         1 * cuisineService.getByName(cuisineDto.getName()) >> cuisine
 
         1 * locationService.findByCityWithId(address.getCity()) >> locations
@@ -214,7 +216,6 @@ class CateringServiceTest extends Specification
         given:
         def cateringId = 1L
         def dto = fakeCateringDtoOffersOutsideCatering
-        def now = LocalDateTime.parse('2007-12-03T10:15:30')
 
         def catering = fakeCatering
         catering.setEmail(dto.getEmail())
@@ -231,7 +232,6 @@ class CateringServiceTest extends Specification
 
         then:
         1 * cateringRepository.findById(cateringId) >> Optional.of(catering)
-        1 * timestampHelper.now() >> now
         1 * cateringRepository.save(catering)
 
         result == target
@@ -241,15 +241,14 @@ class CateringServiceTest extends Specification
         given:
         def id = 1L
         def catering = fakeCatering
-        def now = LocalDateTime.parse('2007-12-03T10:15:30')
 
         when:
         cateringService.delete(id)
 
         then:
         1 * cateringRepository.findAllCateringInformation(id) >> Optional.of(catering)
-        1 * addressService.delete(1l)
-        2 * timestampHelper.now() >> now
+        1 * addressService.delete(catering.getCateringAddress())
+        1 * cateringRepository.delete(catering)
 
         noExceptionThrown()
     }
@@ -294,7 +293,7 @@ class CateringServiceTest extends Specification
         def result = cateringService.getByLocationId(id)
 
         then:
-        1 * cateringRepository.findAllByLocationId(id) >> [catering]
+        1 * cateringRepository.findAllByLocationIdAAndDeletedAtIsNull(id) >> [catering]
 
         result == target
     }

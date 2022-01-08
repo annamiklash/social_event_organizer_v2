@@ -9,7 +9,6 @@ import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHe
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil
-import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.service.CustomerAvatarService
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper
@@ -33,6 +32,7 @@ import pjatk.socialeventorganizer.social_event_support.trait.location.LocationTr
 import pjatk.socialeventorganizer.social_event_support.trait.location.locationforevent.LocationForEventTrait
 import pjatk.socialeventorganizer.social_event_support.trait.optional_service.OptionalServiceTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
+import pjatk.socialeventorganizer.social_event_support.trait.user.CustomerUserRegistrationDtoTrait
 import pjatk.socialeventorganizer.social_event_support.trait.user.UserTrait
 import pjatk.socialeventorganizer.social_event_support.user.service.EmailService
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService
@@ -54,7 +54,8 @@ class CustomerServiceTest extends Specification
                 OrganizedEventTrait,
                 GuestTrait,
                 LocationForEventTrait,
-                AddressTrait {
+                AddressTrait,
+                CustomerUserRegistrationDtoTrait {
 
     @Subject
     CustomerService customerService
@@ -127,26 +128,22 @@ class CustomerServiceTest extends Specification
 
     def "Create"() {
         given:
-        def dto = fakeCustomerDTO
-        def customer = CustomerMapper.fromDto(dto)
+        def dto = fakeCustomerUserRegistrationDto
 
-        def avatar = CustomerAvatar.builder().id(1L).build()
-        def user = fakeUser
+        def customer = CustomerMapper.fromCustomerRegistrationDto(dto)
+        def hashedPassword = 'password'
 
-        customer.setAvatar(avatar)
-        customer.setId(user.getId())
-        customer.setUser(user)
-        user.setActive(true)
-        user.setModifiedAt(now)
+        customer.setPassword(hashedPassword)
+        customer.setCreatedAt(now)
+        customer.setModifiedAt(now)
 
         def target = customer
         when:
-        def result = customerService.createCustomerAccount(fakeCustomerDTO)
+        def result = customerService.createCustomerAccount(dto)
 
         then:
-        1 * customerAvatarService.upload(dto.getAvatar()) >> avatar
-        1 * userService.get(dto.getUser().getId()) >> user
-        1 * userService.save(user)
+        1 * userService.userExists(dto.getEmail()) >> false
+        1 * passwordEncoderSecurity.bcryptEncryptor(dto.getPassword()) >> hashedPassword
         1 * customerRepository.save(customer)
 
         result == target
@@ -183,7 +180,7 @@ class CustomerServiceTest extends Specification
 
         then:
         1 * userService.get(customerId) >> user
-        1 * customerRepository.findById(customerId) >> Optional.of(customer)
+        1 * customerRepository.getByIdWithUser(customerId) >> Optional.of(customer)
         1 * emailService.sendEmail(inviteEmail)
 
         locationService.get(receiverId) >> location
@@ -251,7 +248,7 @@ class CustomerServiceTest extends Specification
         def result = customerService.getWithAllEvents(id)
 
         then:
-        1 * customerRepository.getByIdWithEvents(id) >> Optional.of(target)
+        1 * customerRepository.getWithDetail(id) >> Optional.of(target)
 
         result == target
     }
@@ -265,7 +262,7 @@ class CustomerServiceTest extends Specification
         def result = customerService.get(id)
 
         then:
-        1 * customerRepository.findById(id) >> Optional.of(target)
+        1 * customerRepository.getByIdWithUser(id) >> Optional.of(target)
 
         result == target
     }
@@ -295,7 +292,7 @@ class CustomerServiceTest extends Specification
 
         then:
         1 * customerRepository.getAllCustomerInformation(id) >> Optional.of(customer)
-        1 * userService.delete(customer.getUser())
+        1 * customerAvatarService.delete(customer.getAvatar())
         1 * customerRepository.save(customer)
     }
 
@@ -309,13 +306,13 @@ class CustomerServiceTest extends Specification
         target.setLastName(dto.getLastName())
         target.setFirstName(dto.getFirstName())
         target.setPhoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()))
-        target.getUser().setModifiedAt(timestampHelper.now())
+        target.setModifiedAt(now)
 
         when:
         def result = customerService.edit(dto, id)
 
         then:
-        1 * customerRepository.findById(id) >> Optional.of(target)
+        1 * customerRepository.getByIdWithUser(id) >> Optional.of(target)
         1 * customerRepository.save(target)
 
         result == target
@@ -360,7 +357,6 @@ class CustomerServiceTest extends Specification
         locationForEvent.setEvent(fakeOrganizedEvent)
         locationForEvent.setLocation(location)
         def customer = fakeCustomer
-        customer.setUser(fakeUser)
 
         def organizedEvent = fakeOrganizedEvent
         organizedEvent.setGuests(Set.of(fakeGuest))
