@@ -1,8 +1,11 @@
 package pjatk.socialeventorganizer.social_event_support.optional_service.enums;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public enum LanguagesEnum {
 
     SPANISH("SPANISH"),

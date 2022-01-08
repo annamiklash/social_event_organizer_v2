@@ -195,7 +195,7 @@ public class OptionalServiceController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<String>> languages() {
         final List<String> result = List.of(LanguagesEnum.values()).stream()
-                .map(MusicStyleEnum::getValue)
+                .map(LanguagesEnum::getValue)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(ImmutableList.copyOf(result));
     }
