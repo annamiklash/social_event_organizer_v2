@@ -15,7 +15,6 @@ import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHe
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
-import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
@@ -30,7 +29,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CANCELLED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
 
 @Service
 @AllArgsConstructor
@@ -61,7 +61,7 @@ public class CateringForChosenEventLocationService {
 
     @Transactional(rollbackOn = Exception.class)
     public CateringForChosenEventLocation create(long customerId, long eventId, long cateringId, CateringForChosenEventLocationDto dto) {
-        if (customerRepository.findById(customerId).isEmpty()) {
+        if (!customerRepository.existsById(customerId)) {
             throw new NotFoundException("Customer with id " + customerId + " DOES NOT EXIST");
         }
         final OrganizedEvent organizedEvent = organizedEventRepository.getWithLocation(eventId)

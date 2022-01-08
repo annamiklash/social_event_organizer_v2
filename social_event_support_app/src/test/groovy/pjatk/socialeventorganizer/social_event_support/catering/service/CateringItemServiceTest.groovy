@@ -18,15 +18,18 @@ class CateringItemServiceTest extends Specification implements CateringItemTrait
     CateringItemService cateringItemService
 
     CateringItemRepository cateringItemRepository
-
     CateringService cateringService
-
     TimestampHelper timestampHelper
+
+    LocalDateTime now = LocalDateTime.parse('2007-12-03T10:15:30')
 
     def setup() {
         cateringItemRepository = Mock()
         cateringService = Mock()
         timestampHelper = Mock()
+
+        timestampHelper.now() >> now
+
         cateringItemService = new CateringItemService(cateringItemRepository, cateringService, timestampHelper)
     }
 
@@ -76,8 +79,7 @@ class CateringItemServiceTest extends Specification implements CateringItemTrait
         def dto = fakeCateringItemDto
         def cateringId = 1L
         def catering = fakeCateringOffersOutsideCatering
-        catering.setModifiedAt(timestampHelper.now())
-        def now = LocalDateTime.parse('2007-12-03T10:15:30')
+        catering.setModifiedAt(now)
 
         def target = fakeCateringItem
         target.setCatering(catering)
@@ -88,7 +90,6 @@ class CateringItemServiceTest extends Specification implements CateringItemTrait
 
         then:
         1 * cateringService.get(cateringId) >> catering
-        3 * timestampHelper.now() >> now
         1 * cateringItemRepository.save(target)
 
         result == target
@@ -100,15 +101,14 @@ class CateringItemServiceTest extends Specification implements CateringItemTrait
         def cateringItemId = 1L
         def dto = fakeCateringItemDto
         def optionalCateringItem = Optional.of(fakeCateringItem)
-        def now = LocalDateTime.parse('2007-12-03T10:15:30')
 
         def target = fakeCateringItem
         target.setItemType(dto.getType())
         target.setName(dto.getName())
         target.setDescription(dto.getDescription())
-        target.setVegan(dto.isVegan())
-        target.setVegetarian(dto.isVegetarian())
-        target.setGlutenFree(dto.isGlutenFree())
+        target.setVegan(dto.getIsVegan())
+        target.setVegetarian(dto.getIsVegan())
+        target.setGlutenFree(dto.getIsVegan())
         target.setServingPrice(new BigDecimal(123456))
         target.setModifiedAt(now)
 
@@ -118,7 +118,6 @@ class CateringItemServiceTest extends Specification implements CateringItemTrait
         then:
         1 * cateringItemRepository.findById(cateringItemId) >> optionalCateringItem
         1 * cateringItemRepository.save(target)
-        1 * timestampHelper.now() >> now
 
         result == target
     }

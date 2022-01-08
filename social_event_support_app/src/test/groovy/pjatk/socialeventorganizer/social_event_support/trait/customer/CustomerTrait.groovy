@@ -1,9 +1,9 @@
 package pjatk.socialeventorganizer.social_event_support.trait.customer
 
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto
-import pjatk.socialeventorganizer.social_event_support.user.model.User
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 
 import java.time.LocalDate
@@ -16,13 +16,11 @@ trait CustomerTrait {
             .lastName('Rivijski')
             .birthdate(LocalDate.parse('2007-12-03'))
             .phoneNumber(new BigInteger("123123123"))
+            .email('email@email.com')
             .guests(new HashSet<>())
             .events(new HashSet<>())
-            .user(User.builder()
-                    .id(1)
-                    .type('C' as char)
-                    .email('email@email.com')
-                    .build())
+            .appProblems(new HashSet<>())
+            .avatar(CustomerAvatar.builder().id(1L).build())
             .build()
 
     CustomerDto fakeCustomerDTO = CustomerDto.builder()

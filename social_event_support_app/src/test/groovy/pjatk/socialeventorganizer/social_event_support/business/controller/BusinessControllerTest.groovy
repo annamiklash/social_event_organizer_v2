@@ -113,33 +113,6 @@ class BusinessControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['BUSINESS'])
-    def "POST api/business returns 200 positive test scenario"() {
-        given:
-        def dto = fakeVerifiedBusinessDto
-
-        def business = fakeVerifiedBusiness
-        def result = BusinessMapper.toDto(business)
-
-        def jsonRequest = TestSerializer.serialize(dto)
-        def jsonResponse = TestSerializer.serialize(result)
-
-        BDDMockito.given(businessService.createBusinessAccount(eq(dto)))
-                .willReturn(business)
-
-        expect:
-        mockMvc.perform(
-                post("/api/business")
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(jsonRequest)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().json(jsonResponse))
-
-    }
-
-    @WithMockUser(authorities = ['BUSINESS'])
     def "PUT api/business returns 200 positive test scenario"() {
         given:
         def id = 1L

@@ -1,7 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.trait.catering
 
-
-import com.google.common.collect.ImmutableSet
+import com.google.common.collect.Sets
 import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
 import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum
@@ -51,7 +50,7 @@ trait CateringTrait {
                     .streetNumber(1)
                     .zipCode('01-157')
                     .build())
-            .cuisines(ImmutableSet.of(
+            .cuisines(Sets.newHashSet(
                     Cuisine.builder()
                             .id(1)
                             .name('Greek')
@@ -73,26 +72,26 @@ trait CateringTrait {
                     .streetNumber(1)
                     .zipCode('01-157')
                     .build())
-            .cuisines(ImmutableSet.of(
+            .cuisines(Set.of(
                     Cuisine.builder()
                             .id(1)
                             .name('Greek')
                             .build()
             ))
-            .cateringItems(ImmutableSet.of(
+            .cateringItems(Set.of(
                     CateringItem.builder()
                             .id(1)
                             .name('Name')
                             .build()
             ))
-            .cateringBusinessHours(ImmutableSet.of(
+            .cateringBusinessHours(Set.of(
                     CateringBusinessHours.builder()
                             .day(DayEnum.MONDAY.name())
                             .timeFrom(LocalTime.of(10, 0))
                             .timeTo(LocalTime.of(20, 0))
                             .build()
             ))
-            .locations(ImmutableSet.of(
+            .locations(Set.of(
                     Location.builder()
                             .id(1)
                             .name('Name')

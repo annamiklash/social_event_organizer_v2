@@ -42,6 +42,7 @@ public class LocationForEvent implements Serializable {
     @JoinColumn(name = "id_location", nullable = false)
     private Location location;
 
+    @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_organized_event")
     private OrganizedEvent event;

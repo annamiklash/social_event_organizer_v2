@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.business.service
 import com.google.common.collect.ImmutableList
 import org.springframework.data.domain.PageImpl
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService
+import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessMapper
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
@@ -12,6 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.security.password.Passwor
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.business.BusinessTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
+import pjatk.socialeventorganizer.social_event_support.trait.user.BusinessUserRegistrationDtoTrait
 import pjatk.socialeventorganizer.social_event_support.trait.user.UserTrait
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService
 import spock.lang.Specification
@@ -19,10 +21,12 @@ import spock.lang.Subject
 
 import java.time.LocalDateTime
 
-import static pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum.NOT_VERIFIED
-
 class BusinessServiceTest extends Specification
-        implements PageTrait, BusinessTrait, AddressTrait, UserTrait {
+        implements PageTrait,
+                BusinessTrait,
+                AddressTrait,
+                UserTrait,
+                BusinessUserRegistrationDtoTrait {
 
     @Subject
     BusinessService businessService
@@ -36,6 +40,8 @@ class BusinessServiceTest extends Specification
     TimestampHelper timestampHelper
     PasswordEncoderSecurity passwordEncoderSecurity
 
+    LocalDateTime now = LocalDateTime.parse('2007-12-03T10:15:30')
+
     def setup() {
         businessRepository = Mock()
         addressService = Mock()
@@ -45,6 +51,8 @@ class BusinessServiceTest extends Specification
         optionalServiceService = Mock()
         timestampHelper = Mock()
         passwordEncoderSecurity = Mock()
+
+        timestampHelper.now() >> now
 
         businessService = new BusinessService(businessRepository,
                 addressService,
@@ -75,31 +83,28 @@ class BusinessServiceTest extends Specification
 
     def "createBusinessAccount() positive test scenario"() {
         given:
-        def businessDto = fakeVerifiedBusinessDto
+        def businessDto = fakeBusinessUserRegistrationDto
         def address = fakeAddress
+        def hashedPassword = 'hashedPassword'
 
-        def now = LocalDateTime.parse('2007-12-03T10:15:30')
         def user = fakeUser
         user.active = true
         user.modifiedAt = now
         user.type = 'B'
 
-        def target = fakeVerifiedBusiness
-        target.id = user.id
-        target.verificationStatus = NOT_VERIFIED.name()
+        def target = BusinessMapper.fromBusinessUserRegistrationDto(businessDto)
+        target.password = hashedPassword
         target.address = address
-        target.services = null
-        target.caterings = null
-        target.locations = null
+        target.createdAt = now
+        target.modifiedAt = now
 
         when:
         def result = businessService.createBusinessAccount(businessDto)
 
         then:
+        1 * userService.userExists(businessDto.getEmail()) >> false
         1 * addressService.create(businessDto.getAddress()) >> address
-        1 * userService.get(businessDto.getUser().getId()) >> user
-        1 * timestampHelper.now() >> now
-        1 * userService.save(user)
+        1 * passwordEncoderSecurity.bcryptEncryptor(businessDto.getPassword()) >> hashedPassword
         1 * businessRepository.save(target)
 
         result == target
@@ -174,8 +179,7 @@ class BusinessServiceTest extends Specification
         1 * cateringService.delete(business.getCaterings().iterator().next().getId())
         1 * optionalServiceService.delete(business.getServices().iterator().next().getId())
         1 * addressService.delete(business.getAddress())
-        1 * userService.delete(business.getUser())
-        1 * businessRepository.save(business)
+        1 * businessRepository.delete(business)
     }
 
     def "verify() positive test scenario"() {

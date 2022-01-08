@@ -11,7 +11,6 @@ import pjatk.socialeventorganizer.social_event_support.event.model.dto.Organized
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation
-import pjatk.socialeventorganizer.social_event_support.user.model.User
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 import spock.lang.Shared
 
@@ -41,13 +40,9 @@ trait OrganizedEventTrait {
                     .lastName('Rivijski')
                     .birthdate(LocalDate.parse('2007-12-03'))
                     .phoneNumber(new BigInteger("123123123"))
+                    .email('test@email.com')
                     .guests(new HashSet<>())
                     .events(new HashSet<>())
-                    .user(User.builder()
-                            .id(1)
-                            .type('C' as char)
-                            .email('email@email.com')
-                            .build())
                     .build())
             .locationForEvent(LocationForEvent.builder()
                     .id(1L)
@@ -59,6 +54,7 @@ trait OrganizedEventTrait {
                             .build())
                     .services(ImmutableSet.of(
                             OptionalServiceForChosenLocation.builder()
+                                    .id(1L)
                                     .confirmationStatus("CONFIRMED")
                                     .build()
                     ))

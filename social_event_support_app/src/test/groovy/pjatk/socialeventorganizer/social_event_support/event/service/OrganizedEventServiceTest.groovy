@@ -2,14 +2,18 @@ package pjatk.socialeventorganizer.social_event_support.event.service
 
 import com.google.common.collect.ImmutableList
 import org.springframework.data.domain.PageImpl
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository
 import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum
 import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum
 import pjatk.socialeventorganizer.social_event_support.event.helper.StatusChangeHelper
+import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper
 import pjatk.socialeventorganizer.social_event_support.event.model.EventType
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.service.OptionalServiceForLocationService
 import pjatk.socialeventorganizer.social_event_support.trait.customer.CustomerTrait
 import pjatk.socialeventorganizer.social_event_support.trait.event.OrganizedEventTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
@@ -28,6 +32,9 @@ class OrganizedEventServiceTest extends Specification
     OrganizedEventRepository organizedEventRepository
     EventTypeService eventTypeService
     CustomerRepository customerRepository
+    CateringForChosenEventLocationService cateringForChosenEventLocationService
+    LocationForEventService locationForEventService
+    OptionalServiceForLocationService optionalServiceForLocationService
     StatusChangeHelper statusChangeHelper
     TimestampHelper timestampHelper
 
@@ -37,6 +44,9 @@ class OrganizedEventServiceTest extends Specification
         organizedEventRepository = Mock()
         eventTypeService = Mock()
         customerRepository = Mock()
+        cateringForChosenEventLocationService = Mock()
+        locationForEventService = Mock()
+        optionalServiceForLocationService = Mock()
         statusChangeHelper = Mock()
         timestampHelper = Mock()
 
@@ -46,6 +56,9 @@ class OrganizedEventServiceTest extends Specification
         organizedEventService = new OrganizedEventService(organizedEventRepository,
                 eventTypeService,
                 customerRepository,
+                cateringForChosenEventLocationService,
+                locationForEventService,
+                optionalServiceForLocationService,
                 statusChangeHelper,
                 timestampHelper
         )
@@ -58,7 +71,8 @@ class OrganizedEventServiceTest extends Specification
         def keyword = "sample keyword"
         def paging = fakePaging
         def page = new PageImpl<>([fakeOrganizedEvent])
-        def target = ImmutableList.of(fakeOrganizedEventDto)
+        def organizedEvent = OrganizedEventMapper.toDtoWithCustomer(fakeOrganizedEvent)
+        def target = ImmutableList.of(organizedEvent)
 
         when:
         def result = organizedEventService.list(customPage, keyword)
