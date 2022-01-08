@@ -41,8 +41,10 @@ import pjatk.socialeventorganizer.social_event_support.security.model.UserCreden
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -227,6 +229,28 @@ public class LocationService {
 
         }
         save(location);
+
+        for (LocationBusinessHours businessHour : businessHours) {
+            final String day = businessHour.getDay();
+            final DayOfWeek dayOfWeek = DayOfWeek.valueOf(day);
+            LocalDate startDate = LocalDate.now();
+            final LocalDate endDate = startDate.plusDays(30);
+
+            while (startDate.isBefore(endDate) || startDate.equals(endDate)) {
+                final LocalDate nextWeekDay = startDate.with(TemporalAdjusters.next(dayOfWeek));
+                final LocationAvailability availability = LocationAvailability.builder()
+                        .date(nextWeekDay)
+                        .timeFrom(LocalDateTime.of(nextWeekDay, businessHour.getTimeFrom()))
+                        .timeTo(LocalDateTime.of(nextWeekDay, businessHour.getTimeTo()))
+                        .status(AVAILABLE.name())
+                        .build();
+
+                locationAvailabilityRepository.save(availability);
+                availability.setLocation(location);
+                startDate = nextWeekDay;
+            }
+        }
+
         return location;
     }
 

@@ -31,10 +31,12 @@ public class OptionalServiceForChosenLocation {
     @Column(nullable = false)
     private String confirmationStatus;
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location_for_event")
     private LocationForEvent locationForEvent;
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private OptionalService optionalService;
