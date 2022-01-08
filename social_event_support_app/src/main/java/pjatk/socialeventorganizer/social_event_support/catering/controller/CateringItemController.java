@@ -12,8 +12,10 @@ import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringI
 import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringItemDto;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringItemService;
+import pjatk.socialeventorganizer.social_event_support.enums.CateringItemTypeEnum;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,6 +52,20 @@ public class CateringItemController {
 
         return ResponseEntity.ok(CateringItemMapper.toDto(item));
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            path = "allowed/types",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<String>> types() {
+        final List<String> result = List.of(CateringItemTypeEnum.values()).stream()
+                .map(CateringItemTypeEnum::getValue)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(ImmutableList.copyOf(result));
+    }
+
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(

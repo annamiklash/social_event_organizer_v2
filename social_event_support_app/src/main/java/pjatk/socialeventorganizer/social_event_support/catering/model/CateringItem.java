@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Builder
 @Data
-@EqualsAndHashCode(exclude="catering")
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity(name = "catering_item")
@@ -19,27 +18,27 @@ public class CateringItem implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_catering_item")
-    Long id;
+    private Long id;
 
-    @Column(name = "name")
-    String name;
+    @Column(nullable = false)
+    private String name;
 
-    @Column(name = "description")
-    String description;
+    @Column(nullable = false)
+    private String description;
 
-    @Column(name = "serving_price")
-    BigDecimal servingPrice;
+    @Column(nullable = false)
+    private BigDecimal servingPrice;
 
-    @Column(name = "is_vegan")
-    boolean isVegan;
+    @Column(nullable = false)
+    private boolean isVegan;
 
-    @Column(name = "is_vegetarian")
-    boolean isVegetarian;
+    @Column(nullable = false)
+    private boolean isVegetarian;
 
-    @Column(name = "is_gluten_free")
-    boolean isGlutenFree;
+    @Column(nullable = false)
+    private boolean isGlutenFree;
 
-    @Column(name = "type")
+    @Column(name = "type", nullable = false)
     private String itemType;
 
     @Column(name = "created_at", nullable = false)
@@ -48,6 +47,7 @@ public class CateringItem implements Serializable {
     @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
 
+    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering", nullable = false)

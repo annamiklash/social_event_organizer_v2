@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.appproblem.mapper.AppProb
 import pjatk.socialeventorganizer.social_event_support.appproblem.model.enums.AppProblemStatusEnum
 import pjatk.socialeventorganizer.social_event_support.appproblem.service.AppProblemService
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage
+import pjatk.socialeventorganizer.social_event_support.common.tools.CsvTools
 import pjatk.socialeventorganizer.social_event_support.enums.AppProblemTypeEnum
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
 import pjatk.socialeventorganizer.social_event_support.trait.problem.AppProblemTrait
@@ -33,6 +34,9 @@ class AppProblemControllerTest extends Specification
 
     @MockBean
     private AppProblemService appProblemService
+
+    @MockBean
+    private CsvTools csvTools;
 
     @WithMockUser(authorities = ['ADMIN'])
     def "GET api/problems returns 200 positive test scenario"() {

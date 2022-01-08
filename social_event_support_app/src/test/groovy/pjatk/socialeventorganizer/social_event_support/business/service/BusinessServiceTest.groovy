@@ -8,6 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.service.Catering
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService
+import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.business.BusinessTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
@@ -33,6 +34,7 @@ class BusinessServiceTest extends Specification
     CateringService cateringService
     OptionalServiceService optionalServiceService
     TimestampHelper timestampHelper
+    PasswordEncoderSecurity passwordEncoderSecurity
 
     def setup() {
         businessRepository = Mock()
@@ -42,6 +44,7 @@ class BusinessServiceTest extends Specification
         cateringService = Mock()
         optionalServiceService = Mock()
         timestampHelper = Mock()
+        passwordEncoderSecurity = Mock()
 
         businessService = new BusinessService(businessRepository,
                 addressService,
@@ -49,6 +52,7 @@ class BusinessServiceTest extends Specification
                 locationService,
                 cateringService,
                 optionalServiceService,
+                passwordEncoderSecurity,
                 timestampHelper
         )
     }
@@ -83,7 +87,6 @@ class BusinessServiceTest extends Specification
         def target = fakeVerifiedBusiness
         target.id = user.id
         target.verificationStatus = NOT_VERIFIED.name()
-        target.user = user
         target.address = address
         target.services = null
         target.caterings = null
