@@ -149,7 +149,6 @@ public class OptionalServiceController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
-            params = "{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@RequestParam long id) {
         optionalServiceService.delete(id);
