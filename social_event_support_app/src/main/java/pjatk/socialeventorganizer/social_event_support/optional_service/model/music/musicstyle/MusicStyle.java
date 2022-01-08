@@ -1,10 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
 import javax.persistence.*;
@@ -24,6 +21,7 @@ public class MusicStyle {
 
     private String name;
 
+    @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "styles", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<OptionalService> optionalServices;
