@@ -10,6 +10,7 @@ public enum AllowedUrlsEnum {
     CATERINGS("/api/caterings/allowed/**"),
     CATERING_AVAILABILITY("api/availability/catering/allowed**"),
     CATERING_ITEMS("/api/catering/items/allowed**"),
+    CATERING_ITEM_TYPES("/api/catering/items/allowed/types"),
     CATERINGS_REVIEW("/api/reviews/catering/allowed/**"),
     CUISINES("/api/cuisines/allowed/**"),
 

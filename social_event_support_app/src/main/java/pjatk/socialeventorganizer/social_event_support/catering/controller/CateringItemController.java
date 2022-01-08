@@ -53,7 +53,6 @@ public class CateringItemController {
         return ResponseEntity.ok(CateringItemMapper.toDto(item));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             path = "allowed/types",
             method = RequestMethod.GET,

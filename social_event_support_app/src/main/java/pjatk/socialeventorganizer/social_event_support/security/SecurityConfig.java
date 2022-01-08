@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 CUISINES.value,
                 CATERINGS_REVIEW.value,
                 CATERING_ITEMS.value,
+                CATERING_ITEM_TYPES.value,
 
                 SERVICES.value,
                 SERVICES_AVAILABILITY.value,
