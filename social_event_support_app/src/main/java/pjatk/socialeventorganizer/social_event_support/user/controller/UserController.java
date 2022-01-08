@@ -89,7 +89,8 @@ public class UserController {
 
     @PostMapping("/reset_password")
     public ResponseEntity<Void> sendResetPasswordEmail(HttpServletRequest request, @RequestParam String email) {
-        final String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/api";
+//        final String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/api";
+        final String appUrl = "http://localhost:3000/reset_password";
         //TODO: validate if user with email exists and not blocked
         log.warn(appUrl);
         userService.sendResetEmailLink(email, appUrl);
