@@ -8,7 +8,6 @@ public enum AllowedUrlsEnum {
     EVENT_TYPES("/api/events/types/allowed/**"),
 
     CATERINGS("/api/caterings/allowed/**"),
-    CATERING_AVAILABILITY("api/availability/catering/allowed**"),
     CATERING_ITEMS("/api/catering/items/allowed**"),
     CATERING_ITEM_TYPES("/api/catering/items/allowed/types"),
     CATERINGS_REVIEW("/api/reviews/catering/allowed/**"),
@@ -16,8 +15,8 @@ public enum AllowedUrlsEnum {
 
     LOCATIONS("/api/locations/allowed/**"),
     LOCATIONS_REVIEW("/api/reviews/location/allowed/**"),
-    LOCATION_AVAILABILITY("api/availability/location/allowed**"),
-    LOCATION_DESCRIPTIONS("api/location_description/allowed/all"),
+    LOCATION_AVAILABILITY("/api/availability/location/allowed**"),
+    LOCATION_DESCRIPTIONS("/api/location_description/allowed/all"),
 
     LOGIN("/api/login*"),
     LOGOUT("/api/logout*"),
@@ -28,7 +27,7 @@ public enum AllowedUrlsEnum {
 
     SERVICES("/api/services/allowed/**"),
     SERVICE_REVIEW("/api/reviews/service/allowed/**"),
-    SERVICES_AVAILABILITY("api/availability/services/allowed**");
+    SERVICES_AVAILABILITY("/api/availability/services/allowed**");
 
     public final String value;
 
