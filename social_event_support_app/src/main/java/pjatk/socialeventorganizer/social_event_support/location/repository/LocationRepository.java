@@ -69,6 +69,7 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
     Optional<Location> available(@Param("locationId") long locationId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query("SELECT l from location l " +
+            "LEFT JOIN FETCH l.reviews r " +
             "LEFT JOIN location_image li on li.location.id = l.id " +
             "LEFT JOIN FETCH l.locationAddress lad " +
             "LEFT JOIN FETCH l.descriptions d " +

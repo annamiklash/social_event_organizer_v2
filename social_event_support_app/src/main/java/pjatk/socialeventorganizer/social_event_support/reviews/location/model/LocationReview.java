@@ -19,6 +19,7 @@ import javax.persistence.*;
 @Entity(name = "location_review")
 public class LocationReview extends Review {
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location", nullable = false)
     private Location location;

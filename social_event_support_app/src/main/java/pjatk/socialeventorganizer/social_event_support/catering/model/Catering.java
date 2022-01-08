@@ -9,6 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
+import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.CateringReview;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -61,7 +62,7 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;
 
-    @OneToOne( fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering_address", nullable = false)
     private Address cateringAddress;
 
@@ -73,6 +74,10 @@ public class Catering implements Serializable {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
     private Set<CateringBusinessHours> cateringBusinessHours;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_catering")
+    private Set<CateringReview> reviews;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")
@@ -124,7 +129,6 @@ public class Catering implements Serializable {
         }
         cuisines.remove(cuisine);
     }
-
 
 
 }

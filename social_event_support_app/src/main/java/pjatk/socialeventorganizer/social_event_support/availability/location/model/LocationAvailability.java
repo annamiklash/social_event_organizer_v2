@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class LocationAvailability extends Availability {
 
     @EqualsAndHashCode.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Location location;
 }

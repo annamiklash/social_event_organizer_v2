@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService;
+import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
@@ -44,13 +45,17 @@ import pjatk.socialeventorganizer.social_event_support.security.model.UserCreden
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
 import javax.transaction.Transactional;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
 import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
 
 @Service
@@ -175,6 +180,8 @@ public class OptionalServiceService {
         optionalService.setModifiedAt(timestampHelper.now());
 
         optionalServiceRepository.save(optionalService);
+
+        createAvailabilitiesForNewService(businessHours, optionalService);
 
         return optionalService;
     }
@@ -318,6 +325,28 @@ public class OptionalServiceService {
         }
     }
 
+    private void createAvailabilitiesForNewService(List<OptionalServiceBusinessHours> businessHours, OptionalService service) {
+        for (OptionalServiceBusinessHours businessHour : businessHours) {
+            final String day = businessHour.getDay();
+            final DayOfWeek dayOfWeek = DayOfWeek.valueOf(day);
+            LocalDate startDate = LocalDate.now();
+            final LocalDate endDate = startDate.plusDays(30);
+
+            while (startDate.isBefore(endDate) || startDate.equals(endDate)) {
+                final LocalDate nextWeekDay = startDate.with(TemporalAdjusters.next(dayOfWeek));
+                final OptionalServiceAvailability availability = OptionalServiceAvailability.builder()
+                        .date(nextWeekDay)
+                        .timeFrom(LocalDateTime.of(nextWeekDay, businessHour.getTimeFrom()))
+                        .timeTo(LocalDateTime.of(nextWeekDay, businessHour.getTimeTo()))
+                        .status(AVAILABLE.name())
+                        .build();
+
+                optionalServiceAvailabilityRepository.save(availability);
+                availability.setOptionalService(service);
+                startDate = nextWeekDay;
+            }
+        }
+    }
 
     private List<OptionalService> filterByType(List<OptionalService> optionalServices, FilterOptionalServiceDto dto) {
         if (dto.getMusicStyles() != null && dto.getBandPeopleCount() != null) {

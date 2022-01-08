@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.service.mod
 import pjatk.socialeventorganizer.social_event_support.image.model.OptionalServiceImage;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.MusicStyle;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
+import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -81,6 +82,10 @@ public class OptionalService {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceBusinessHours> optionalServiceBusinessHours;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_optional_service")
+    private Set<OptionalServiceReview> reviews;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")

@@ -230,29 +230,11 @@ public class LocationService {
         }
         save(location);
 
-        for (LocationBusinessHours businessHour : businessHours) {
-            final String day = businessHour.getDay();
-            final DayOfWeek dayOfWeek = DayOfWeek.valueOf(day);
-            LocalDate startDate = LocalDate.now();
-            final LocalDate endDate = startDate.plusDays(30);
-
-            while (startDate.isBefore(endDate) || startDate.equals(endDate)) {
-                final LocalDate nextWeekDay = startDate.with(TemporalAdjusters.next(dayOfWeek));
-                final LocationAvailability availability = LocationAvailability.builder()
-                        .date(nextWeekDay)
-                        .timeFrom(LocalDateTime.of(nextWeekDay, businessHour.getTimeFrom()))
-                        .timeTo(LocalDateTime.of(nextWeekDay, businessHour.getTimeTo()))
-                        .status(AVAILABLE.name())
-                        .build();
-
-                locationAvailabilityRepository.save(availability);
-                availability.setLocation(location);
-                startDate = nextWeekDay;
-            }
-        }
+        createAvailabilitiesForNewLocation(businessHours, location);
 
         return location;
     }
+
 
     public void save(Location location) {
         log.info("TRYING TO SAVE LOCATION " + location.toString());
@@ -403,6 +385,30 @@ public class LocationService {
                     .collect(Collectors.toList());
         }
     }
+
+    private void createAvailabilitiesForNewLocation(List<LocationBusinessHours> businessHours, Location location) {
+        for (LocationBusinessHours businessHour : businessHours) {
+            final String day = businessHour.getDay();
+            final DayOfWeek dayOfWeek = DayOfWeek.valueOf(day);
+            LocalDate startDate = LocalDate.now();
+            final LocalDate endDate = startDate.plusDays(30);
+
+            while (startDate.isBefore(endDate) || startDate.equals(endDate)) {
+                final LocalDate nextWeekDay = startDate.with(TemporalAdjusters.next(dayOfWeek));
+                final LocationAvailability availability = LocationAvailability.builder()
+                        .date(nextWeekDay)
+                        .timeFrom(LocalDateTime.of(nextWeekDay, businessHour.getTimeFrom()))
+                        .timeTo(LocalDateTime.of(nextWeekDay, businessHour.getTimeTo()))
+                        .status(AVAILABLE.name())
+                        .build();
+
+                locationAvailabilityRepository.save(availability);
+                availability.setLocation(location);
+                startDate = nextWeekDay;
+            }
+        }
+    }
+
 
     private List<LocationAvailability> modify(LocationAvailability availability, LocalDate bookingDate, LocalDateTime bookingTimeFrom, LocalDateTime bookingTimeTo) {
 

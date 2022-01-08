@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Entity(name = "optional_service_availability")
 public class OptionalServiceAvailability extends Availability {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private OptionalService optionalService;
 }

@@ -50,6 +50,7 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "LEFT JOIN optional_service_image si on si.service.id = os.id " +
             "LEFT JOIN FETCH os.serviceAddress sa " +
             "LEFT JOIN FETCH os.styles ms " +
+            "LEFT JOIN FETCH os.reviews r " +
             "LEFT JOIN FETCH os.availability osa " +
             "LEFT JOIN FETCH os.optionalServiceBusinessHours bh " +
             "LEFT JOIN FETCH os.serviceForLocation sfl " +

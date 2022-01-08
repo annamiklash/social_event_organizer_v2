@@ -10,6 +10,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.LocationReview;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -111,6 +112,10 @@ public class Location implements Serializable {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")
     private Set<LocationBusinessHours> locationBusinessHours;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_location")
+    private Set<LocationReview> reviews;
 
     public void addDescriptionItem(LocationDescriptionItem locationDescriptionItem) {
         if (locationDescriptionItem == null) {

@@ -19,6 +19,7 @@ import javax.persistence.*;
 @Entity(name = "service_review")
 public class OptionalServiceReview extends Review {
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service", nullable = false)
     private OptionalService optionalService;

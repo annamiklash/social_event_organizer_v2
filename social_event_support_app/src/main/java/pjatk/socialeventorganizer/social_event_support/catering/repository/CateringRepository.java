@@ -50,6 +50,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
     List<Catering> findAllByBusiness_Id(long id);
 
     @Query("SELECT c FROM catering c " +
+            "LEFT JOIN FETCH c.reviews r " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "LEFT JOIN FETCH c.cateringAddress cad " +
             "LEFT JOIN FETCH c.cateringBusinessHours bh " +
