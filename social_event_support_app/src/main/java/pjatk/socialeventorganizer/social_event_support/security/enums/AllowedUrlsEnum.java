@@ -17,6 +17,7 @@ public enum AllowedUrlsEnum {
     LOCATIONS("/api/locations/allowed/**"),
     LOCATIONS_REVIEW("/api/reviews/location/allowed/**"),
     LOCATION_AVAILABILITY("api/availability/location/allowed**"),
+    LOCATION_DESCRIPTIONS("api/location_description/allowed/all"),
 
     LOGIN("/api/login*"),
     LOGOUT("/api/logout*"),
