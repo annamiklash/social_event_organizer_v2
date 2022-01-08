@@ -13,11 +13,11 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringForChosenEventLocationService;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
+import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -48,13 +48,13 @@ public class CateringForChosenEventLocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringForChosenEventLocationDto>> listAllByConfirmationStatus(@RequestParam String status,
                                                                                                         @RequestParam long cateringId) {
+        final List<CateringForChosenEventLocation> cateringForChosenEventLocationList =
+                cateringForChosenEventLocationService.listAllByStatus(cateringId, status);
+        final ImmutableList<CateringForChosenEventLocationDto> resultList = cateringForChosenEventLocationList.stream()
+                .map(CateringForChosenLocationMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        List<CateringForChosenEventLocation> caterings = cateringForChosenEventLocationService.listAllByStatus(cateringId, status);
-
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(caterings.stream()
-                        .map(CateringForChosenLocationMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
@@ -66,9 +66,11 @@ public class CateringForChosenEventLocationController {
                                                                 @RequestParam long eventId,
                                                                 @RequestParam long cateringId,
                                                                 @RequestBody @Valid CateringForChosenEventLocationDto dto) {
-        final CateringForChosenEventLocation catering = cateringForChosenEventLocationService.create(customerId, eventId, cateringId, dto);
-
-        return ResponseEntity.ok(OrganizedEventMapper.toDtoWithCatering(catering.getEventLocation().getEvent()));
+        final CateringForChosenEventLocation catering =
+                cateringForChosenEventLocationService.create(customerId, eventId, cateringId, dto);
+        final OrganizedEvent event = catering.getEventLocation().getEvent();
+        final OrganizedEventConfirmationDto result = OrganizedEventMapper.toDtoWithCatering(event);
+        return ResponseEntity.ok(result);
     }
 
 
@@ -77,9 +79,9 @@ public class CateringForChosenEventLocationController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringForChosenEventLocationDto> cancel(@RequestParam long id) {
-        final CateringForChosenEventLocation locationForEvent = cateringForChosenEventLocationService.cancelReservation(id);
+        final CateringForChosenEventLocation cateringForChosenEventLocation = cateringForChosenEventLocationService.cancelReservation(id);
 
-        return ResponseEntity.ok(CateringForChosenLocationMapper.toDto(locationForEvent));
+        return ResponseEntity.ok(CateringForChosenLocationMapper.toDto(cateringForChosenEventLocation));
     }
 }
 

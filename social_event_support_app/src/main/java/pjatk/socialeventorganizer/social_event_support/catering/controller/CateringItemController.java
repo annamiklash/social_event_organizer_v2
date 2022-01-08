@@ -15,8 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.service.Catering
 import pjatk.socialeventorganizer.social_event_support.enums.CateringItemTypeEnum;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @AllArgsConstructor
@@ -34,12 +33,25 @@ public class CateringItemController {
     public ResponseEntity<ImmutableList<CateringItemDto>> listAllByCateringId(@RequestParam long cateringId) {
         log.info("GET ALL CATERING_ITEM_TYPES");
 
-        final ImmutableList<CateringItem> list = cateringItemService.listAllByCateringId(cateringId);
+        final ImmutableList<CateringItem> cateringItemList = cateringItemService.listAllByCateringId(cateringId);
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(CateringItemMapper::toDto)
-                        .collect(Collectors.toList())));
+        final ImmutableList<CateringItemDto> resultList = cateringItemList.stream()
+                .map(CateringItemMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
+    }
+
+    @RequestMapping(
+            path = "allowed/types",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<String>> types() {
+        final ImmutableList<String> resultList = Stream.of(CateringItemTypeEnum.values())
+                .map(CateringItemTypeEnum::getValue)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -51,18 +63,6 @@ public class CateringItemController {
         final CateringItem item = cateringItemService.get(id);
 
         return ResponseEntity.ok(CateringItemMapper.toDto(item));
-    }
-
-    @RequestMapping(
-            path = "allowed/types",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<String>> types() {
-        final List<String> result = List.of(CateringItemTypeEnum.values()).stream()
-                .map(CateringItemTypeEnum::getValue)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(ImmutableList.copyOf(result));
     }
 
 

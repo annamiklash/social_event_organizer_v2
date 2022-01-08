@@ -14,7 +14,6 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringOrderChoiceService;
 
 import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -31,12 +30,12 @@ public class CateringOrderChoiceController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringOrderChoiceDto>> getAll(@RequestParam long cateringId) {
 
-        final ImmutableList<CateringOrderChoice> orders = cateringOrderChoiceService.getAll(cateringId);
+        final ImmutableList<CateringOrderChoice> cateringOrderChoiceList = cateringOrderChoiceService.getAll(cateringId);
+        final ImmutableList<CateringOrderChoiceDto> resultList = cateringOrderChoiceList.stream()
+                .map(CateringOrderChoiceMapper::toDtoWithItem)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(orders.stream()
-                        .map(CateringOrderChoiceMapper::toDtoWithItem)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER', 'BUSINESS')")
@@ -47,12 +46,12 @@ public class CateringOrderChoiceController {
     public ResponseEntity<ImmutableList<CateringOrderChoiceDto>> getAll(@RequestParam long cateringId,
                                                                         @RequestParam long reservationId) {
 
-        final ImmutableList<CateringOrderChoice> orders = cateringOrderChoiceService.getAll(cateringId, reservationId);
+        final ImmutableList<CateringOrderChoice> cateringOrderChoiceList = cateringOrderChoiceService.getAll(cateringId, reservationId);
+        final ImmutableList<CateringOrderChoiceDto> resultList = cateringOrderChoiceList.stream()
+                .map(CateringOrderChoiceMapper::toDtoWithItem)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(orders.stream()
-                        .map(CateringOrderChoiceMapper::toDtoWithItem)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
 

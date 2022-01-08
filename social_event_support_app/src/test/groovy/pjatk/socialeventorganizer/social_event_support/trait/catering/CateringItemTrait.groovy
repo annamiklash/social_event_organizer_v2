@@ -7,7 +7,7 @@ trait CateringItemTrait {
 
     CateringItem fakeCateringItem = CateringItem.builder()
             .name('Name')
-            .itemType("SAMPLE TYPE")
+            .itemType('Appetizer')
             .description('SAMPLE DESCRIPTION')
             .isVegan(true)
             .isVegetarian(true)
@@ -22,7 +22,7 @@ trait CateringItemTrait {
 
     CateringItemDto fakeCateringItemDto = CateringItemDto.builder()
             .name('Name')
-            .type("SAMPLE TYPE")
+            .type('Appetizer')
             .description('SAMPLE DESCRIPTION')
             .isVegan(true)
             .isVegetarian(true)
