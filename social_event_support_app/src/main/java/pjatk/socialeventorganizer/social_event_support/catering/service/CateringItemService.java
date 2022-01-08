@@ -67,9 +67,9 @@ public class CateringItemService {
         cateringItem.setItemType(dto.getType());
         cateringItem.setName(dto.getName());
         cateringItem.setDescription(dto.getDescription());
-        cateringItem.setVegan(dto.isVegan());
-        cateringItem.setVegetarian(dto.isVegetarian());
-        cateringItem.setGlutenFree(dto.isGlutenFree());
+        cateringItem.setVegan(dto.getIsVegan());
+        cateringItem.setVegetarian(dto.getIsVegetarian());
+        cateringItem.setGlutenFree(dto.getIsGlutenFree());
         cateringItem.setServingPrice(Converter.convertPriceString(dto.getServingPrice()));
         cateringItem.setModifiedAt(timestampHelper.now());
 

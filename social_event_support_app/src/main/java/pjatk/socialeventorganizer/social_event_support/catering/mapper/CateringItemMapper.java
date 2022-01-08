@@ -14,9 +14,9 @@ public class CateringItemMapper {
                 .description(Converter.convertDescriptionsString(dto.getDescription()))
                 .servingPrice(Converter.convertPriceString(dto.getServingPrice()))
                 .itemType(dto.getType())
-                .isVegan(Boolean.TRUE.equals(dto.isVegan()))
-                .isVegetarian(Boolean.TRUE.equals(dto.isVegetarian()))
-                .isGlutenFree(Boolean.TRUE.equals(dto.isGlutenFree()))
+                .isVegan(Boolean.TRUE.equals(dto.getIsVegan()))
+                .isVegetarian(Boolean.TRUE.equals(dto.getIsVegetarian()))
+                .isGlutenFree(Boolean.TRUE.equals(dto.getIsGlutenFree()))
                 .createdAt(Converter.fromStringToFormattedDateTime(dto.getCreatedAt()))
                 .modifiedAt(Converter.fromStringToFormattedDateTime(dto.getModifiedAt()))
                 .build();
