@@ -8,7 +8,7 @@ trait CustomerUserRegistrationDtoTrait {
 
     CustomerUserRegistrationDto fakeCustomerUserRegistrationDto = CustomerUserRegistrationDto.builder()
             .email('test@email.com')
-            .password('password')
+            .password('123Password!')
             .firstName('Geralt')
             .lastName('Rivijski')
             .birthdate('2007-12-03')

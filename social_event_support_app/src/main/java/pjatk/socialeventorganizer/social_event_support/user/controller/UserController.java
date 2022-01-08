@@ -27,7 +27,6 @@ import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -77,16 +76,17 @@ public class UserController {
         securityService.buildSecurityContext(loginDto, request);
         final User user = userService.getUserByEmail(loginDto.getEmail());
         if ('B' == user.getType()) {
-            return ResponseEntity.ok(
-                    BusinessMapper.toDtoWithUser(businessService.get(user.getId())));
+            final Business business = businessService.get(user.getId());
+            return ResponseEntity.ok(BusinessMapper.toDtoWithUser(business));
         }
         if ('C' == user.getType()) {
-            return ResponseEntity.ok(
-                    CustomerMapper.toDto(customerService.get(user.getId())));
+            final Customer customer = customerService.get(user.getId());
+            return ResponseEntity.ok(CustomerMapper.toDto(customer));
         }
         return ResponseEntity.ok(UserMapper.toDto(user));
     }
 
+    // TODO: add test
     @PostMapping("/reset_password")
     public ResponseEntity<Void> sendResetPasswordEmail(HttpServletRequest request, @RequestParam String email) {
 //        final String appUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/api";
@@ -143,10 +143,9 @@ public class UserController {
         final ImmutableList<User> users = userService.list(customPage, keyword);
         final Long count = userService.count(keyword);
 
-        final ImmutableList<UserDto> result = ImmutableList.copyOf(
-                users.stream()
-                        .map(UserMapper::toDto)
-                        .collect(Collectors.toList()));
+        final ImmutableList<UserDto> result = users.stream()
+                .map(UserMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
         return ResponseEntity.ok(new TableDto<>(
                 TableDto.MetaDto.builder()
