@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Validated
 @RestController
-@RequestMapping("api/event/services")
+@RequestMapping("api/event/service")
 public class OptionalServiceForLocationController {
 
     private final OptionalServiceForLocationService optionalServiceForLocationService;
