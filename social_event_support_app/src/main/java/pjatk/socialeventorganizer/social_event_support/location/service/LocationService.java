@@ -141,7 +141,7 @@ public class LocationService {
 
         List<LocationDescriptionItem> filters;
 
-        filters = CollectionUtils.isEmpty(dto.getDescriptionItems()) ? null :
+        filters = CollectionUtils.isEmpty(dto.getDescriptionItems()) ? new ArrayList<>() :
                 dto.getDescriptionItems().stream()
                         .map(locationDescriptionItemService::getByName)
                         .collect(Collectors.toList());
