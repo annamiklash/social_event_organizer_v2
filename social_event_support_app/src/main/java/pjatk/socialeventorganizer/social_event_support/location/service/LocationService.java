@@ -119,8 +119,8 @@ public class LocationService {
     }
 
     public boolean isAvailable(long locationId, String date, String timeFrom, String timeTo) {
-       timeFrom = DateTimeUtil.joinDateAndTime(date, timeFrom);
-       timeTo = DateTimeUtil.joinDateAndTime(date, timeTo);
+        timeFrom = DateTimeUtil.joinDateAndTime(date, timeFrom);
+        timeTo = DateTimeUtil.joinDateAndTime(date, timeTo);
         return locationRepository.available(locationId, date, timeFrom, timeTo).isPresent();
 
     }
@@ -139,20 +139,24 @@ public class LocationService {
         String city = dto.getCity();
         city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
 
-        List<String> filters;
+        List<LocationDescriptionItem> filters;
 
         filters = CollectionUtils.isEmpty(dto.getDescriptionItems()) ? null :
                 dto.getDescriptionItems().stream()
                         .map(locationDescriptionItemService::getByName)
-                        .map(LocationDescriptionItem::getId)
                         .collect(Collectors.toList());
 
+
         if (dto.getDate() == null) {
-            locations = locationRepository.searchWithoutDate(city, filters);
+            locations = locationRepository.searchWithoutDate(city);
 
         } else {
-            locations = locationRepository.searchWithDate(city, filters, dto.getDate());
+            locations = locationRepository.searchWithDate(city, dto.getDate());
         }
+
+        locations = locations.stream()
+                .filter(location -> location.getDescriptions().containsAll(filters))
+                .collect(Collectors.toList());
 
         if (dto.getIsSeated() == null && dto.getGuestCount() != null) {
             return ImmutableList.copyOf(

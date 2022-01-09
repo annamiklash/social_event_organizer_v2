@@ -66,7 +66,7 @@ VALUES ('admin@gmail.com', '$2y$12$CYhR7h46nkRx/tfFJn094eOKmWdMd1KEC.cyKcmLJNG76
 
 
 
-INSERT INTO admins (id_admin_user, access)
+INSERT INTO admins (id_user, access)
 VALUES (1, 'FULL');
 
 

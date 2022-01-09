@@ -21,20 +21,17 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "left join description_item di on ld.name = di.name " +
             "LEFT JOIN location_availability la on l.id_location = la.id_location " +
             "WHERE (:city like '' or a.city = :city) " +
-            "AND la.date = CAST(:date as timestamp) " +
-            "AND ((:filters) is null or ld.name IN (:filters))", nativeQuery = true)
+            "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
     List<Location> searchWithDate(@Param("city") String city,
-                                  @Param("filters") List<String> filters, @Param("date") String date);
+                                  @Param("date") String date);
 
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join address a on l.id_location_address = a.id_address " +
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
-            "WHERE (:city like '' or a.city = :city) " +
-            "AND ((:filters) is null or ld.name IN (:filters))", nativeQuery = true)
-    List<Location> searchWithoutDate(@Param("city") String city,
-                                  @Param("filters") List<String> filters);
+            "WHERE (:city like '' or a.city = :city)", nativeQuery = true)
+    List<Location> searchWithoutDate(@Param("city") String city);
 
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +

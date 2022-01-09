@@ -1,19 +1,22 @@
 package pjatk.socialeventorganizer.social_event_support.user.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @SuperBuilder
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "admins")
 @Entity(name = "admins")
-@PrimaryKeyJoinColumn(name = "id_admin_user")
 public class Admin extends User implements Serializable {
 
     private String access;
