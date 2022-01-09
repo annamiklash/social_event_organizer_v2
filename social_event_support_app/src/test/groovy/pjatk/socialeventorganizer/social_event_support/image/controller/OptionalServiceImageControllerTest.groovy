@@ -11,9 +11,9 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper
-import pjatk.socialeventorganizer.social_event_support.image.service.CateringImageService
+import pjatk.socialeventorganizer.social_event_support.image.service.OptionalServiceImageService
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
-import pjatk.socialeventorganizer.social_event_support.trait.image.CateringImageTrait
+import pjatk.socialeventorganizer.social_event_support.trait.image.OptionalServiceImageTrait
 import spock.lang.Specification
 
 import static org.mockito.ArgumentMatchers.any
@@ -24,33 +24,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(controllers = [CateringImageController.class])
-class CateringImageControllerTest extends Specification
-        implements CateringImageTrait {
+@WebMvcTest(controllers = [OptionalServiceImageController.class])
+class OptionalServiceImageControllerTest extends Specification  
+        implements OptionalServiceImageTrait {
 
     @Autowired
     private MockMvc mockMvc
 
     @MockBean
-    private CateringImageService cateringImageService
+    private OptionalServiceImageService optionalServiceImageService
 
 
     @WithMockUser
-    def "GET api/images/catering/allowed/all returns 200 positive test scenario"() {
+    def "GET api/images/service/allowed/all returns 200 positive test scenario"() {
         given:
-        def cateringId = 1L
+        def serviceId = 1L
 
-        def cateringImage = fakeCateringImage
-        def cateringImageList = ImmutableList.of(cateringImage)
-        def resultList = ImmutableList.of(ImageMapper.toDto(cateringImage))
+        def optionalServiceImage = fakeOptionalServiceImage
+        def optionalServiceImageList = ImmutableList.of(optionalServiceImage)
+        def resultList = ImmutableList.of(ImageMapper.toDto(optionalServiceImage))
         def jsonResponse = TestSerializer.serialize(resultList)
 
-        BDDMockito.given(cateringImageService.findByCateringId(eq(cateringId)))
-                .willReturn(cateringImageList)
+        BDDMockito.given(optionalServiceImageService.findByServiceId(eq(serviceId)))
+                .willReturn(optionalServiceImageList)
 
         expect:
-        mockMvc.perform(get('/api/images/catering/allowed/all')
-                .param("cateringId", cateringId.toString())
+        mockMvc.perform(get('/api/images/service/allowed/all')
+                .param("serviceId", serviceId.toString())
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -58,46 +58,46 @@ class CateringImageControllerTest extends Specification
 
     }
 
+
     @WithMockUser(authorities = ['BUSINESS'])
-    def "POST api/images/catering/upload returns 200 positive test scenario"() {
+    def "POST api/images/service/upload returns 200 positive test scenario"() {
         given:
-        def cateringId = 1L
+        def serviceId = 1L
         def file = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes())
 
         expect:
         mockMvc.perform(
-                MockMvcRequestBuilders.multipart('/api/images/catering/upload')
+                MockMvcRequestBuilders.multipart('/api/images/service/upload')
                         .file("file", file.getBytes())
-                        .param("cateringId", cateringId.toString())
+                        .param("serviceId", serviceId.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
         )
                 .andExpect(status().isOk())
 
-        BDDMockito.verify(cateringImageService, times(1))
-                .upload(eq(cateringId), any())
+        BDDMockito.verify(optionalServiceImageService, times(1))
+                .upload(eq(serviceId), any())
 
     }
 
     @WithMockUser(authorities = ['BUSINESS'])
-    def "DELETE api/images/catering returns 200 positive test scenario"() {
+    def "DELETE api/images/service returns 200 positive test scenario"() {
         given:
-        def cateringId = 1L
-        def imageId = 2L
+        def serviceId = 1L
+        def newId = 2L
 
         expect:
         mockMvc.perform(
-                delete('/api/images/catering')
+                delete('/api/images/service')
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param("cateringId", cateringId.toString())
-                        .param("imageId", imageId.toString())
+                        .param("serviceId", serviceId.toString())
+                        .param("newId", newId.toString())
         )
                 .andExpect(status().isOk())
 
-        BDDMockito.verify(cateringImageService, times(1))
-                .deleteById(eq(cateringId), eq(imageId))
+        BDDMockito.verify(optionalServiceImageService, times(1))
+                .deleteById(eq(serviceId), eq(newId))
 
     }
-
 }
