@@ -398,8 +398,8 @@ public class LocationService {
                         .status(AVAILABLE.name())
                         .build();
 
-                locationAvailabilityRepository.save(availability);
                 availability.setLocation(location);
+                locationAvailabilityRepository.save(availability);
                 startDate = nextWeekDay;
             }
         }

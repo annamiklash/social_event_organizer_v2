@@ -341,8 +341,8 @@ public class OptionalServiceService {
                         .status(AVAILABLE.name())
                         .build();
 
-                optionalServiceAvailabilityRepository.save(availability);
                 availability.setOptionalService(service);
+                optionalServiceAvailabilityRepository.save(availability);
                 startDate = nextWeekDay;
             }
         }

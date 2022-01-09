@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.reviews.catering.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.reviews.Review;
@@ -19,6 +16,7 @@ import javax.persistence.*;
 @Entity(name = "catering_review")
 public class CateringReview extends Review {
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering", nullable = false)
