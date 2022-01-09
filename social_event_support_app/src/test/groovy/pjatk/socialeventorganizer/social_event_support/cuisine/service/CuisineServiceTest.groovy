@@ -35,7 +35,7 @@ class CuisineServiceTest extends Specification
 
     def "Create"() {
         given:
-        def dto = faceCuisineDto
+        def dto = fakeCuisineDto
         def name = dto.getName()
 
         def target = CuisineMapper.fromDto(dto)

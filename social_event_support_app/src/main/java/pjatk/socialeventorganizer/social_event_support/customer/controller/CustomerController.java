@@ -21,7 +21,6 @@ import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 
 import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -40,7 +39,7 @@ public class CustomerController {
                                                               @RequestParam(defaultValue = "0") Integer pageNo,
                                                               @RequestParam(defaultValue = "50") Integer pageSize,
                                                               @RequestParam(defaultValue = "id") String sortBy,
-                                                              @RequestParam(defaultValue = "asc") String order)  {
+                                                              @RequestParam(defaultValue = "asc") String order) {
         log.info("GET ALL CUSTOMERS");
         final CustomPage customPage = CustomPage.builder()
                 .pageNo(pageNo)
@@ -48,14 +47,13 @@ public class CustomerController {
                 .sortBy(sortBy)
                 .order(order)
                 .build();
-        final ImmutableList<Customer> list = customerService.list(customPage, keyword);
-
         // TODO: add count like in pjatk.socialeventorganizer.social_event_support.location.controller.LocationController.list
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(CustomerMapper::toDto)
-                        .collect(Collectors.toList()))
-        );
+        final ImmutableList<Customer> customerList = customerService.list(customPage, keyword);
+        final ImmutableList<CustomerDto> resultList = customerList.stream()
+                .map(CustomerMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 
 
@@ -126,7 +124,10 @@ public class CustomerController {
     public ResponseEntity<CustomerDto> getWithAllEvents(@PathVariable long id) {
         log.info("GET CUSTOMER ALL EVENTS");
         try {
-            return ResponseEntity.ok(CustomerMapper.toDtoWithDetail(customerService.getWithAllEvents(id)));
+            final Customer customerWithAllEvents = customerService.getWithAllEvents(id);
+            final CustomerDto result = CustomerMapper.toDtoWithDetail(customerWithAllEvents);
+
+            return ResponseEntity.ok(result);
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -176,7 +177,8 @@ public class CustomerController {
             path = "message/location/send",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendMessageLocation(@RequestParam long customerId,
-                                                    @RequestParam long locationId, @Valid @RequestBody MessageDto dto) {
+                                                    @RequestParam long locationId,
+                                                    @Valid @RequestBody MessageDto dto) {
         log.info("SEND MESSAGE");
         customerService.sendMessage(customerId, locationId, dto, Location.class);
         return ResponseEntity.ok().build();
@@ -188,7 +190,8 @@ public class CustomerController {
             path = "message/catering/send",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendMessageCatering(@RequestParam long customerId,
-                                                    @RequestParam long cateringId, @Valid @RequestBody MessageDto dto) {
+                                                    @RequestParam long cateringId,
+                                                    @Valid @RequestBody MessageDto dto) {
         log.info("SEND MESSAGE");
         customerService.sendMessage(customerId, cateringId, dto, Catering.class);
         return ResponseEntity.ok().build();
@@ -201,7 +204,8 @@ public class CustomerController {
             path = "message/service/send",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendMessageService(@RequestParam long customerId,
-                                                   @RequestParam long serviceId, @Valid @RequestBody MessageDto dto) {
+                                                   @RequestParam long serviceId,
+                                                   @Valid @RequestBody MessageDto dto) {
         log.info("SEND MESSAGE");
         customerService.sendMessage(customerId, serviceId, dto, OptionalService.class);
         return ResponseEntity.ok().build();
@@ -211,7 +215,8 @@ public class CustomerController {
     @RequestMapping(
             method = RequestMethod.PUT,
             path = "guests/invite")
-    public ResponseEntity<Void> addGuestsToLocationEvent(@RequestParam long id, @RequestParam long eventId,
+    public ResponseEntity<Void> addGuestsToLocationEvent(@RequestParam long id,
+                                                         @RequestParam long eventId,
                                                          @RequestParam long locId,
                                                          @RequestParam long[] guestIds) {
 

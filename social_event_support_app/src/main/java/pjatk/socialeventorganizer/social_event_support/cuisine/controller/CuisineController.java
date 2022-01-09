@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineSe
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -35,12 +34,12 @@ public class CuisineController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CuisineDto>> list() {
 
-        final List<Cuisine> list = cuisineService.list();
+        final List<Cuisine> cuisineList = cuisineService.list();
+        final ImmutableList<CuisineDto> resultList = cuisineList.stream()
+                .map(CuisineMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(CuisineMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

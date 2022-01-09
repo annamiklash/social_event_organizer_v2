@@ -36,7 +36,7 @@ class AppProblemControllerTest extends Specification
     private AppProblemService appProblemService
 
     @MockBean
-    private CsvTools csvTools;
+    private CsvTools csvTools
 
     @WithMockUser(authorities = ['ADMIN'])
     def "GET api/problems returns 200 positive test scenario"() {

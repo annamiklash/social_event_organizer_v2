@@ -6,11 +6,12 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.Cuisine
 trait CuisineTrait {
 
     Cuisine fakeCuisine = Cuisine.builder()
-            .id(1)
+            .id(1L)
             .name('Greek')
             .build()
 
-    CuisineDto faceCuisineDto = CuisineDto.builder()
+    CuisineDto fakeCuisineDto = CuisineDto.builder()
+            .id(1L)
             .name('Greek')
             .build()
 }
