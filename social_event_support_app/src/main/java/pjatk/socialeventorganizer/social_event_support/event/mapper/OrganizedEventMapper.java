@@ -25,7 +25,7 @@ public class OrganizedEventMapper {
                 .guestCount(organizedEvent.getGuestCount())
                 .date(DateTimeUtil.fromLocalDateToDateString(organizedEvent.getDate()))
                 .startTime(DateTimeUtil.fromLocalTimeToTimeString(organizedEvent.getStartTime()))
-                .endTime(DateTimeUtil.fromLocalTimeToTimeString(organizedEvent.getStartTime()))
+                .endTime(DateTimeUtil.fromLocalTimeToTimeString(organizedEvent.getEndTime()))
                 .eventStatus(organizedEvent.getEventStatus())
                 .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()).getType())
                 .createdAt(DateTimeUtil.fromLocalDateTimetoString(organizedEvent.getCreatedAt()))
