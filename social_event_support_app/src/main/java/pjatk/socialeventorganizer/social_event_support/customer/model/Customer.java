@@ -1,7 +1,10 @@
 package pjatk.socialeventorganizer.social_event_support.customer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
@@ -49,5 +52,6 @@ public class Customer extends User implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_avatar")
     private CustomerAvatar avatar;
+
 
 }

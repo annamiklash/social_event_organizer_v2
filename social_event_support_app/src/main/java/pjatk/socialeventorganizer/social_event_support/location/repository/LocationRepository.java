@@ -17,11 +17,33 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join address a on l.id_location_address = a.id_address " +
-            "left join location_availability la on la.id_location = l.id_location " +
             "left join location_description ld on l.id_location = ld.id_location " +
             "left join description_item di on ld.name = di.name " +
-            "AND la.date = CAST(:date as timestamp)", nativeQuery = true)
-    List<Location> searchWithDate(@Param("date") String date);
+            "LEFT JOIN location_availability la on l.id_location = la.id_location " +
+            "WHERE (:city is null or a.city = :city) " +
+            "AND la.date = CAST(:date as timestamp) " +
+            "AND (:filters is null or ld.name IN :filters)", nativeQuery = true)
+    List<Location> searchWithDate(@Param("city") String city,
+                                  @Param("filters") List<String> filters, @Param("date") String date);
+
+    @Query(value = "SELECT distinct l.* from location l " +
+            "LEFT JOIN location_image li on li.id_location = l.id_location " +
+            "left join address a on l.id_location_address = a.id_address " +
+            "left join location_description ld on l.id_location = ld.id_location " +
+            "left join description_item di on ld.name = di.name " +
+            "WHERE (:city is null or a.city = :city) " +
+            "AND (:filters is null or ld.name IN :filters)", nativeQuery = true)
+    List<Location> searchWithoutDate(@Param("city") String city,
+                                  @Param("filters") List<String> filters);
+
+    @Query(value = "SELECT distinct l.* from location l " +
+            "LEFT JOIN location_image li on li.id_location = l.id_location " +
+            "left join location_availability la on la.id_location = l.id_location " +
+            "WHERE l.id_location = :locationId " +
+            "AND la.date = CAST(:date as timestamp) " +
+            "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
+            "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
+    Optional<Location> available(@Param("locationId") long locationId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query("SELECT l FROM location l " +
             "LEFT JOIN location_image li on li.location.id = l.id " +
@@ -59,14 +81,6 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "left join fetch l.descriptions ")
     List<Location> getAll();
 
-    @Query(value = "SELECT distinct l.* from location l " +
-            "LEFT JOIN location_image li on li.id_location = l.id_location " +
-            "left join location_availability la on la.id_location = l.id_location " +
-            "WHERE l.id_location = :locationId " +
-            "AND la.date = CAST(:date as timestamp) " +
-            "AND (:timeFrom is null or la.time_from <= CAST(:timeFrom as timestamp)) " +
-            "AND (:timeTo is null or la.time_to >= CAST(:timeTo as timestamp))", nativeQuery = true)
-    Optional<Location> available(@Param("locationId") long locationId, @Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
 
     @Query("SELECT l from location l " +
             "LEFT JOIN FETCH l.reviews r " +
@@ -85,7 +99,8 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
 
     @Query("SELECT distinct concat(a.city, ', ', a.country)  " +
             "FROM address a " +
-            "left join location l on l.locationAddress.id = a.id")
+            "left join location l on l.locationAddress.id = a.id " +
+            "order by 1 asc")
     List<String> findDistinctCities();
 
 

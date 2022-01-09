@@ -13,29 +13,14 @@ import java.io.Serializable;
 @Component
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class CustomPage implements Serializable {
-
-
-    private Integer maxResult;
-
-
-    private Integer firstResult;
-
 
     private String sortBy;
 
-
     private String order;
-
 
     private Integer pageNo;
 
     private Integer pageSize;
-
-
-
-
-
 }
 

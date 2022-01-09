@@ -3,9 +3,9 @@ package pjatk.socialeventorganizer.social_event_support.reviews.mapper;
 import lombok.experimental.UtilityClass;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.Review;
+import pjatk.socialeventorganizer.social_event_support.reviews.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.CateringReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.location.model.LocationReview;
-import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview;
 
 @UtilityClass

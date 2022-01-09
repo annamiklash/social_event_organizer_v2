@@ -79,6 +79,7 @@ public class LocationService {
 
     private final LocationImageRepository locationImageRepository;
 
+
     public ImmutableList<Location> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -133,28 +134,21 @@ public class LocationService {
     public ImmutableList<Location> search(FilterLocationsDto dto) {
         List<Location> locations;
 
-        if (dto.getDate() != null) {
-            locations = locationRepository.searchWithDate(dto.getDate());
-        } else {
-            locations = getAll();
-        }
+        String city = dto.getCity();
+        city = Strings.isNullOrEmpty(dto.getCity()) ? null : city.substring(0, city.indexOf(','));
 
-        if (dto.getDescriptionItems() != null) {
-            final List<LocationDescriptionItem> filters = dto.getDescriptionItems().stream()
-                    .map(locationDescriptionItemService::getByName)
-                    .collect(Collectors.toList());
-
-            if (!CollectionUtils.isEmpty(filters)) {
-                locations = locations.stream()
-                        .filter(location -> location.getDescriptions().containsAll(filters))
+        List<String> filters;
+        filters = CollectionUtils.isEmpty(dto.getDescriptionItems()) ? null :
+                dto.getDescriptionItems().stream()
+                        .map(locationDescriptionItemService::getByName)
+                        .map(LocationDescriptionItem::getId)
                         .collect(Collectors.toList());
-            }
-        }
-        if (dto.getCity() != null) {
-            final String city = dto.getCity().substring(0, dto.getCity().indexOf(','));
-            locations = locations.stream()
-                    .filter(location -> location.getLocationAddress().getCity().equals(city))
-                    .collect(Collectors.toList());
+
+        if (dto.getDate() == null) {
+            locations = locationRepository.searchWithoutDate(city, filters);
+
+        } else {
+            locations = locationRepository.searchWithDate(city, filters, dto.getDate());
         }
 
         if (dto.getIsSeated() == null && dto.getGuestCount() != null) {
@@ -304,7 +298,6 @@ public class LocationService {
         return ImmutableList.copyOf(locationRepository.findAllByCateringId(cateringId));
     }
 
-    //TODO: delete reviews, change email to ---@----DELETED_TIMESTAMP
     @Transactional(rollbackOn = Exception.class)
     public void delete(long id) {
         final Location locationToDelete = locationRepository.getAllLocationInformation(id)
@@ -322,6 +315,9 @@ public class LocationService {
 
         CollectionUtil.emptyListIfNull(locationToDelete.getImages())
                 .forEach(locationImageRepository::delete);
+
+        CollectionUtil.emptyListIfNull(locationToDelete.getReviews())
+                .forEach(locationReviewService::delete);
 
         final ImmutableList<LocationDescriptionItem> descriptions = CollectionUtil.emptyListIfNull(locationToDelete.getDescriptions());
         for (LocationDescriptionItem description : descriptions) {
@@ -411,7 +407,6 @@ public class LocationService {
 
 
     private List<LocationAvailability> modify(LocationAvailability availability, LocalDate bookingDate, LocalDateTime bookingTimeFrom, LocalDateTime bookingTimeTo) {
-
         final List<LocationAvailability> modified = new ArrayList<>();
 
         modified.add(LocationAvailability.builder()

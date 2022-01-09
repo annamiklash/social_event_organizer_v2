@@ -14,9 +14,9 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
+import pjatk.socialeventorganizer.social_event_support.reviews.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.model.CateringReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.catering.repository.CateringReviewRepository;
-import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 
 import java.math.BigDecimal;

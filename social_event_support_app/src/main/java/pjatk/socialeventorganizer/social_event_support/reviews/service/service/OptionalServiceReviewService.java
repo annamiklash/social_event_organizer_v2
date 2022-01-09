@@ -14,7 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.repository.Custo
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository;
-import pjatk.socialeventorganizer.social_event_support.reviews.location.model.dto.ReviewDto;
+import pjatk.socialeventorganizer.social_event_support.reviews.ReviewDto;
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview;
 import pjatk.socialeventorganizer.social_event_support.reviews.service.repository.OptionalServiceReviewRepository;

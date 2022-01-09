@@ -57,6 +57,23 @@ public class LocationController {
     }
 
     @RequestMapping(
+            method = RequestMethod.POST,
+            path = "allowed/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TableDto<LocationDto>> searchByAppliedFilters(
+            @Valid @RequestBody FilterLocationsDto dto) {
+
+        final ImmutableList<Location> list = locationService.search(dto);
+        final int count = list.size();
+        final ImmutableList<LocationDto> result = list.stream()
+                .map(LocationMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(Long.valueOf(count), null, null, null), result));
+    }
+
+
+    @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -116,20 +133,6 @@ public class LocationController {
         return ResponseEntity.ok(locationDto);
     }
 
-    @RequestMapping(
-            method = RequestMethod.POST,
-            path = "allowed/search",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<LocationDto>> searchByAppliedFilters(
-            @Valid @RequestBody FilterLocationsDto dto) {
-
-        final ImmutableList<Location> list = locationService.search(dto);
-
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(LocationMapper::toDto)
-                        .collect(Collectors.toList())));
-    }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS', 'ADMIN')")
     @RequestMapping(
