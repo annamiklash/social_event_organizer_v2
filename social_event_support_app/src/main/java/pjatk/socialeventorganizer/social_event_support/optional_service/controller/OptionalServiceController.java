@@ -52,13 +52,13 @@ public class OptionalServiceController {
                 .sortBy(sortBy)
                 .order(order)
                 .build();
-        final ImmutableList<OptionalService> list = optionalServiceService.list( customPage, keyword);
+        final ImmutableList<OptionalService> list = optionalServiceService.list(customPage, keyword);
         final Long count = optionalServiceService.count(keyword);
 
         final ImmutableList<OptionalServiceDto> result = ImmutableList.copyOf(list.stream()
-                        .map(OptionalServiceMapper::toDto)
-                        .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
-                        .collect(Collectors.toList()));
+                .map(OptionalServiceMapper::toDto)
+                .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
+                .collect(Collectors.toList()));
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
     }
@@ -145,6 +145,19 @@ public class OptionalServiceController {
 
         return ResponseEntity.ok(serviceDto);
     }
+
+    @RequestMapping(
+            path = "allowed/available",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> isAvailable(@RequestParam long serviceId,
+                                               @RequestParam String date,
+                                               @RequestParam String timeFrom,
+                                               @RequestParam String timeTo) {
+        final boolean isAvailable = optionalServiceService.isAvailable(serviceId, date, timeFrom, timeTo);
+        return ResponseEntity.ok(isAvailable);
+    }
+
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(

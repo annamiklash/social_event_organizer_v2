@@ -87,6 +87,19 @@ public class LocationController {
     }
 
     @RequestMapping(
+            path = "allowed/available",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> isAvailable(@RequestParam long locationId,
+                                               @RequestParam String date,
+                                               @RequestParam String timeFrom,
+                                               @RequestParam String timeTo) {
+        final boolean isAvailable = locationService.isAvailable(locationId, date, timeFrom, timeTo);
+        return ResponseEntity.ok(isAvailable);
+    }
+
+
+    @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed/cities",
             produces = MediaType.APPLICATION_JSON_VALUE)

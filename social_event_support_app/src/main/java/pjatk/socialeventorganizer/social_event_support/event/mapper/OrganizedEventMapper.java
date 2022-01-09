@@ -22,6 +22,7 @@ public class OrganizedEventMapper {
         return OrganizedEventDto.builder()
                 .id(organizedEvent.getId())
                 .name(organizedEvent.getName())
+                .guestCount(organizedEvent.getGuestCount())
                 .date(DateTimeUtil.fromLocalDateToDateString(organizedEvent.getDate()))
                 .startTime(DateTimeUtil.fromLocalTimeToTimeString(organizedEvent.getStartTime()))
                 .endTime(DateTimeUtil.fromLocalTimeToTimeString(organizedEvent.getStartTime()))

@@ -22,6 +22,7 @@ import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHe
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
+import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException;
@@ -227,6 +228,8 @@ public class OptionalServiceService {
     }
 
     public boolean isAvailable(long serviceId, String date, String timeFrom, String timeTo) {
+        timeFrom = DateTimeUtil.joinDateAndTime(date, timeFrom);
+        timeTo = DateTimeUtil.joinDateAndTime(date, timeTo);
         return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
     }
 

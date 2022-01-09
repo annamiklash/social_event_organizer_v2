@@ -119,6 +119,8 @@ public class LocationService {
     }
 
     public boolean isAvailable(long locationId, String date, String timeFrom, String timeTo) {
+       timeFrom = DateTimeUtil.joinDateAndTime(date, timeFrom);
+       timeTo = DateTimeUtil.joinDateAndTime(date, timeTo);
         return locationRepository.available(locationId, date, timeFrom, timeTo).isPresent();
 
     }
@@ -138,6 +140,7 @@ public class LocationService {
         city = Strings.isNullOrEmpty(dto.getCity()) ? null : city.substring(0, city.indexOf(','));
 
         List<String> filters;
+
         filters = CollectionUtils.isEmpty(dto.getDescriptionItems()) ? null :
                 dto.getDescriptionItems().stream()
                         .map(locationDescriptionItemService::getByName)

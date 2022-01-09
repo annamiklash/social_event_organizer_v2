@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.availability.Availability;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
@@ -19,6 +16,8 @@ import javax.persistence.*;
 @Entity(name = "optional_service_availability")
 public class OptionalServiceAvailability extends Availability {
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private OptionalService optionalService;

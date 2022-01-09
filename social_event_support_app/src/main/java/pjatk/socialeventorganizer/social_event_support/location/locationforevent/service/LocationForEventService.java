@@ -10,11 +10,9 @@ import pjatk.socialeventorganizer.social_event_support.availability.location.ser
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
-import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
-import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotAvailableException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
@@ -30,9 +28,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CANCELLED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
 
 @Service
 @AllArgsConstructor
@@ -60,16 +58,16 @@ public class LocationForEventService {
                 .orElseThrow(() -> new NotFoundException("Event does not exist"));
 
         final String date = DateTimeUtil.fromLocalDateToDateString(organizedEvent.getDate());
-        final String timeFrom = DateTimeUtil.joinDateAndTime(date, dto.getTimeFrom());
-        final String timeTo = DateTimeUtil.joinDateAndTime(date, dto.getTimeTo());
 
-        final boolean isAvailable = locationService.isAvailable(locationId, date, timeFrom, timeTo);
+        final boolean isAvailable = locationService.isAvailable(locationId, date, dto.getTimeFrom(), dto.getTimeTo());
 
         if (!isAvailable) {
             throw new NotAvailableException("Location not available for selected date and time");
         }
         final Location location = locationService.getWithAvailability(locationId, date);
 
+        final String timeFrom = DateTimeUtil.joinDateAndTime(date, dto.getTimeFrom());
+        final String timeTo = DateTimeUtil.joinDateAndTime(date, dto.getTimeTo());
         locationService.modifyAvailabilityAfterBooking(location, date, timeFrom, timeTo);
 
         final LocationForEvent locationForEvent = LocationForEventMapper.fromDto(dto);
