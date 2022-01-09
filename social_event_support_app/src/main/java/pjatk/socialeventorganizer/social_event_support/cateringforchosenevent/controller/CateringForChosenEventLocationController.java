@@ -18,6 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.event.model.dto.Organized
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -56,6 +57,23 @@ public class CateringForChosenEventLocationController {
 
         return ResponseEntity.ok(resultList);
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "business/status",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<CateringForChosenEventLocationDto>> listAllByConfirmationStatusAndBusinessId(@RequestParam String status,
+                                                                                                       @RequestParam long businessId) {
+
+        List<CateringForChosenEventLocation> optionalServices = cateringForChosenEventLocationService.listAllByStatusAndBusinessId(businessId, status);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(optionalServices.stream()
+                        .map(CateringForChosenLocationMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(

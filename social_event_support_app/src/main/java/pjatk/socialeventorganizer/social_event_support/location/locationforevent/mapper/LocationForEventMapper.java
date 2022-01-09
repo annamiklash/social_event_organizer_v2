@@ -26,6 +26,15 @@ public class LocationForEventMapper {
                 .confirmationStatus(location.getConfirmationStatus())
                 .location(LocationMapper.toDto(location.getLocation()))
                 .build();
+
+
+    }
+
+    public LocationForEventDto toDtoWithEvent(LocationForEvent location) {
+        final LocationForEventDto dto = toDto(location);
+        dto.setEvent(OrganizedEventMapper.toDto(location.getEvent()));
+
+        return dto;
     }
 
     public static LocationForEventDto toDtoWithLocationAndEvent(LocationForEvent location) {

@@ -220,6 +220,6 @@ public class OptionalServiceForLocationService {
 
 
     public List<OptionalServiceForChosenLocation> listAllByStatusAndBusinessId(long businessId, String status) {
-        return null;
+        return optionalServiceForChosenLocationRepository.findAllByBusinessIdAndStatus(businessId, status);
     }
 }

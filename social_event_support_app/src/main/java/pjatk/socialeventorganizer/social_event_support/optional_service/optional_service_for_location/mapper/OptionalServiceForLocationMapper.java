@@ -52,4 +52,15 @@ public class OptionalServiceForLocationMapper {
                 .locationForEvent(LocationForEventMapper.toDto(optionalService.getLocationForEvent()))
                 .build();
     }
+
+    public OptionalServiceForChosenLocationDto toDtoWithLocationAndEvent(OptionalServiceForChosenLocation optionalService) {
+        return OptionalServiceForChosenLocationDto.builder()
+                .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeFrom()))
+                .timeTo(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeTo()))
+                .comment(optionalService.getComment())
+                .confirmationStatus(optionalService.getConfirmationStatus())
+                .optionalService(OptionalServiceMapper.toDto(optionalService.getOptionalService()))
+                .locationForEvent(LocationForEventMapper.toDtoWithEvent(optionalService.getLocationForEvent()))
+                .build();
+    }
 }

@@ -69,7 +69,7 @@ public class OptionalServiceForLocationController {
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(optionalServices.stream()
-                        .map(OptionalServiceForLocationMapper::toDto)
+                        .map(OptionalServiceForLocationMapper::toDtoWithLocationAndEvent)
                         .collect(Collectors.toList())));
     }
 

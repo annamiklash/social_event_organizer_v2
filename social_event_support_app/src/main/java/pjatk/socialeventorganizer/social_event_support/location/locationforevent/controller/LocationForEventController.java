@@ -68,7 +68,7 @@ public class LocationForEventController {
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(optionalServices.stream()
-                        .map(LocationForEventMapper::toDto)
+                        .map(LocationForEventMapper::toDtoWithEvent)
                         .collect(Collectors.toList())));
     }
 

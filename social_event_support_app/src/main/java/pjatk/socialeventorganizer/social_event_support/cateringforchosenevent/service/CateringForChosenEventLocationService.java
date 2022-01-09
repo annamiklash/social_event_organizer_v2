@@ -123,6 +123,11 @@ public class CateringForChosenEventLocationService {
         return cateringForLocationRepository.findAllByCateringIdAndStatus(cateringId, status);
     }
 
+    public List<CateringForChosenEventLocation> listAllByStatusAndBusinessId(long businessId, String status) {
+        return cateringForLocationRepository.fidAllByBusinessIdAndStatus(businessId, status);
+
+    }
+
     public CateringForChosenEventLocation get(long cateringId) {
         return cateringForLocationRepository.findById(cateringId)
                 .orElseThrow(() -> new NotFoundException("No booked catering with id " + cateringId + " was found"));
@@ -148,4 +153,6 @@ public class CateringForChosenEventLocationService {
         return DateTimeUtil.fromTimeStringToLocalTime(bookingTime).isBefore(endTime)
                 && DateTimeUtil.fromTimeStringToLocalTime(bookingTime).isAfter(startTime);
     }
+
+
 }
