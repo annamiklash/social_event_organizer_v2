@@ -77,7 +77,7 @@ public class CateringService {
 
     public ImmutableList<Catering> search(FilterCateringsDto dto) {
         String city = dto.getCity();
-        city = Strings.isNullOrEmpty(city) ? null : city.substring(0, dto.getCity().indexOf(','));
+        city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
 
         List<Catering> caterings;
         if (dto.getCuisines() != null) {

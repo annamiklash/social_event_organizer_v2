@@ -137,7 +137,7 @@ public class LocationService {
         List<Location> locations;
 
         String city = dto.getCity();
-        city = Strings.isNullOrEmpty(dto.getCity()) ? null : city.substring(0, city.indexOf(','));
+        city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
 
         List<String> filters;
 
