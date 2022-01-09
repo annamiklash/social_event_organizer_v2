@@ -95,11 +95,14 @@ class CateringControllerTest extends Specification
         def cateringList = ImmutableList.of(catering)
         def cateringDto = CateringMapper.toDto(catering)
         def rating = 1.0D
+        def count = 1L
         cateringDto.setRating(rating)
         def resultList = ImmutableList.of(cateringDto)
+        def result =
+                new TableDto<>(new TableDto.MetaDto(count, null, null, null), resultList)
 
         def jsonRequest = TestSerializer.serialize(dto)
-        def jsonResponse = TestSerializer.serialize(resultList)
+        def jsonResponse = TestSerializer.serialize(result)
 
         BDDMockito.given(cateringService.search(eq(dto)))
                 .willReturn(cateringList)
