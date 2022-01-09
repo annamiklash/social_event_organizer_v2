@@ -207,12 +207,11 @@ public class LocationService {
 
         final Set<LocationDescriptionItemEnum> locationDescriptionEnumSet = dto.getDescriptions();
 
+        final Location location = LocationMapper.fromDto(dto);
         final Set<LocationDescriptionItem> descriptions = locationDescriptionEnumSet.stream()
-                .map(Enum::name)
-                .map(locationDescriptionItemService::getById)
+                .map(locationDescriptionItemService::getByName)
                 .collect(Collectors.toSet());
 
-        final Location location = LocationMapper.fromDto(dto);
 
         location.setLocationAddress(address);
         location.setBusiness(business);
