@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.service.LocationImageService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -34,12 +33,12 @@ public class LocationImageController {
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<ImageDto>> list(@RequestParam long locationId) {
-        final List<LocationImage> list = locationImageService.findByLocationId(locationId);
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(ImageMapper::toDto)
-                        .collect(Collectors.toList()))
-        );
+        final List<LocationImage> locationImageList = locationImageService.findByLocationId(locationId);
+        final ImmutableList<ImageDto> resultList = locationImageList.stream()
+                .map(ImageMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")

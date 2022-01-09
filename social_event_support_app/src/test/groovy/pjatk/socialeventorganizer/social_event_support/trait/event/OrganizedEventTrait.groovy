@@ -1,8 +1,15 @@
 package pjatk.socialeventorganizer.social_event_support.trait.event
 
+
 import com.google.common.collect.ImmutableSet
+import com.google.common.collect.Sets
+import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
+import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringOrderChoice
+import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto
@@ -16,8 +23,10 @@ import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 import spock.lang.Shared
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.NOT_CONFIRMED
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS
 
 trait OrganizedEventTrait {
@@ -49,6 +58,7 @@ trait OrganizedEventTrait {
                     .id(1L)
                     .confirmationStatus("CONFIRMED")
                     .event(OrganizedEvent.builder()
+                            .date(LocalDate.parse('2007-12-03'))
                             .build())
                     .location(Location.builder().id(2L)
                             .caterings(new HashSet<Catering>())
@@ -69,10 +79,115 @@ trait OrganizedEventTrait {
             .guests(ImmutableSet.of(
                     Guest.builder()
                             .id(1l)
-                    .firstName('Test')
-                    .lastName('Test')
-                    .email('test@test.com')
+                            .firstName('Test')
+                            .lastName('Test')
+                            .email('test@test.com')
+                            .build()))
+            .build()
+
+    OrganizedEvent fakeFullOrganizedEvent = OrganizedEvent.builder()
+            .id(1L)
+            .name("SAMPLE NAME")
+            .date(LocalDate.parse('2007-12-03'))
+            .startTime(LocalTime.parse("10:00:00"))
+            .endTime(LocalTime.parse("12:00:00"))
+            .guestCount(10)
+            .eventStatus(IN_PROGRESS.name())
+            .guests(ImmutableSet.of(Guest.builder()
+                    .id(1l)
+                    .firstName("Geralt")
+                    .lastName("Rivijski")
+                    .email('email@email.com')
+                    .createdAt(LocalDateTime.parse('2007-12-03T10:15:30'))
+                    .modifiedAt(LocalDateTime.parse('2007-12-03T10:15:30'))
+                    .organizedEvents(ImmutableSet.of())
+                    .customer(Customer.builder()
+                            .id(1L)
+                            .birthdate(LocalDate.parse('2007-12-03'))
+                            .firstName("Geralt")
+                            .lastName("Rivijski")
+                            .build())
                     .build()))
+            .customer(Customer.builder()
+                    .id(1L)
+                    .firstName('Geralt')
+                    .lastName('Rivijski')
+                    .birthdate(LocalDate.parse('2007-12-03'))
+                    .phoneNumber(new BigInteger("123123123"))
+                    .email('email@email.com')
+                    .guests(new HashSet<>())
+                    .events(new HashSet<>())
+                    .appProblems(new HashSet<>())
+                    .avatar(CustomerAvatar.builder().id(1L).build())
+                    .build())
+            .eventType(EventType.builder()
+                    .id(1L)
+                    .type("Party")
+                    .build())
+            .locationForEvent(LocationForEvent.builder()
+                    .id(1L)
+                    .confirmationStatus("CONFIRMED")
+                    .timeFrom(LocalTime.parse("10:00:00"))
+                    .timeTo(LocalTime.parse("12:00:00"))
+                    .event(OrganizedEvent.builder()
+                            .date(LocalDate.parse('2007-12-03'))
+                            .startTime(LocalTime.parse("10:00:00"))
+                            .endTime(LocalTime.parse("12:00:00"))
+                            .guestCount(10)
+                            .build())
+                    .location(Location.builder().id(2L)
+                            .caterings(new HashSet<Catering>())
+                            .locationAddress(Address.builder()
+                                    .id(1)
+                                    .country('Poland')
+                                    .city('Warsaw')
+                                    .streetName('Piękna')
+                                    .streetNumber(1)
+                                    .zipCode('01-157')
+                                    .build())
+                            .build())
+                    .services(ImmutableSet.of())
+                    .cateringsForEventLocation(ImmutableSet.of(CateringForChosenEventLocation.builder()
+                            .id(1L)
+                            .time(LocalTime.parse('10:15'))
+                            .comment("SAMPLE COMMENT")
+                            .confirmationStatus(NOT_CONFIRMED.name())
+                            .cateringOrder(ImmutableSet.of(
+                                    CateringOrderChoice.builder()
+                                            .id(1L)
+                                            .amount(10)
+                                            .item(CateringItem.builder()
+                                                    .name('Name')
+                                                    .itemType('Appetizer')
+                                                    .description('SAMPLE DESCRIPTION')
+                                                    .isVegan(true)
+                                                    .isVegetarian(true)
+                                                    .isGlutenFree(true)
+                                                    .servingPrice(new BigDecimal('123456.00'))
+                                                    .build())
+                                            .build()
+                            ))
+                            .catering(Catering.builder()
+                                    .id(1L)
+                                    .name('Name')
+                                    .email('email@email.com')
+                                    .phoneNumber(new BigInteger('123456789'))
+                                    .description('description')
+                                    .cateringAddress(Address.builder()
+                                            .id(1L)
+                                            .country('Poland')
+                                            .city('Warsaw')
+                                            .streetName('Piękna')
+                                            .streetNumber(1)
+                                            .zipCode('01-157')
+                                            .build())
+                                    .cuisines(Sets.newHashSet(Cuisine.builder()
+                                            .id(1)
+                                            .name('Greek')
+                                            .build()))
+                                    .build())
+                            .build()))
+                    .build())
             .build()
 
     OrganizedEventDto fakeOrganizedEventDto = OrganizedEventDto.builder()

@@ -16,7 +16,6 @@ import pjatk.socialeventorganizer.social_event_support.customer.guest.service.Gu
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class GuestController {
                                                               @RequestParam(defaultValue = "0") Integer pageNo,
                                                               @RequestParam(defaultValue = "50") Integer pageSize,
                                                               @RequestParam(defaultValue = "id") String sortBy,
-                                                              @RequestParam(defaultValue = "asc") String order)  {
+                                                              @RequestParam(defaultValue = "asc") String order) {
         log.info("GET GUESTS");
         final CustomPage customPage = CustomPage.builder()
                 .pageNo(pageNo)
@@ -45,10 +44,12 @@ public class GuestController {
                 .order(order)
                 .build();
 
-        final ImmutableList<Guest> list = guestService.list(customPage, keyword);
+        final ImmutableList<Guest> guestList = guestService.list(customPage, keyword);
+        final ImmutableList<GuestDto> resultList = guestList.stream()
+                .map(GuestMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream().map(GuestMapper::toDto).collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')")
@@ -59,16 +60,17 @@ public class GuestController {
     public ResponseEntity<ImmutableList<GuestDto>> listGuestsByCustomerId(@RequestParam long customerId) {
 
         final List<Guest> guests = guestService.listAllByCustomerId(customerId);
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(guests.stream()
-                        .map(GuestMapper::toDto)
-                        .collect(Collectors.toList()))
-        );
+        final ImmutableList<GuestDto> resultList = guests.stream()
+                .map(GuestMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
+            params = {"id"},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GuestDto> get(@RequestParam long id) {
 

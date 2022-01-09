@@ -3,9 +3,11 @@ package pjatk.socialeventorganizer.social_event_support.trait.customer.guest
 import com.google.common.collect.ImmutableSet
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto
+import pjatk.socialeventorganizer.social_event_support.customer.model.Customer
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 trait GuestTrait {
@@ -18,6 +20,12 @@ trait GuestTrait {
             .createdAt(LocalDateTime.parse('2007-12-03T10:15:30'))
             .modifiedAt(LocalDateTime.parse('2007-12-03T10:15:30'))
             .organizedEvents(ImmutableSet.of())
+            .customer(Customer.builder()
+                    .id(1L)
+                    .birthdate(LocalDate.parse('2007-12-03'))
+                    .firstName("Geralt")
+                    .lastName("Rivijski")
+                    .build())
             .build()
 
     GuestDto fakeGuestDTO = GuestDto.builder()
