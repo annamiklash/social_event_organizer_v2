@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -46,14 +45,14 @@ public class LocationController {
                 .order(order)
                 .build();
 
-        final List<Location> list = locationService.list(customPage, keyword);
+        final List<Location> locationList = locationService.list(customPage, keyword);
         final Long count = locationService.count(keyword);
 
-        final ImmutableList<LocationDto> result = ImmutableList.copyOf(list.stream()
+        final ImmutableList<LocationDto> resultList = locationList.stream()
                 .map(LocationMapper::toDto)
-                .collect(Collectors.toList()));
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(count, pageNo, pageSize, sortBy), result));
+        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(count, pageNo, pageSize, sortBy), resultList));
     }
 
     @RequestMapping(
@@ -166,11 +165,10 @@ public class LocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationDto>> getByBusinessId(@RequestParam long id) {
         final ImmutableList<Location> locations = locationService.getByBusinessId(id);
-
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(locations.stream()
-                        .map(LocationMapper::toDto)
-                        .collect(Collectors.toList())));
+        final ImmutableList<LocationDto> resultList = locations.stream()
+                .map(LocationMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
@@ -180,11 +178,10 @@ public class LocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationDto>> getByCateringId(@RequestParam long cateringId) {
         final ImmutableList<Location> locations = locationService.getByCateringId(cateringId);
-
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(locations.stream()
-                        .map(LocationMapper::toDto)
-                        .collect(Collectors.toList())));
+        final ImmutableList<LocationDto> resultList = locations.stream()
+                .map(LocationMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
