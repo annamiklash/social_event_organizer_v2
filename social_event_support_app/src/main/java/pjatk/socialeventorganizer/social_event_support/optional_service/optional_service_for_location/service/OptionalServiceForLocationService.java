@@ -9,9 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.service.OptionalServiceAvailabilityService;
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
-import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
-import pjatk.socialeventorganizer.social_event_support.customer.service.CustomerService;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
@@ -37,7 +35,8 @@ import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.NOT_AVAILABLE;
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CANCELLED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
 
 @Service
 @AllArgsConstructor
@@ -220,4 +219,7 @@ public class OptionalServiceForLocationService {
     }
 
 
+    public List<OptionalServiceForChosenLocation> listAllByStatusAndBusinessId(long businessId, String status) {
+        return null;
+    }
 }

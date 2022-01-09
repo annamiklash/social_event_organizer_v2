@@ -56,6 +56,23 @@ public class LocationForEventController {
                         .collect(Collectors.toList())));
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "business/status",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<LocationForEventDto>> listAllByConfirmationStatusAndBusinessId(@RequestParam String status,
+                                                                                                                       @RequestParam long businessId) {
+
+        List<LocationForEvent> optionalServices = locationForEventService.listAllByStatusAndBusinessId(businessId, status);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(optionalServices.stream()
+                        .map(LocationForEventMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,

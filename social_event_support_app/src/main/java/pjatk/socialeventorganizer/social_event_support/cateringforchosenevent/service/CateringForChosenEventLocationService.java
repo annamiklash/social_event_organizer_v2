@@ -29,8 +29,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CANCELLED;
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
 
 @Service
 @AllArgsConstructor
@@ -67,7 +66,8 @@ public class CateringForChosenEventLocationService {
         final OrganizedEvent organizedEvent = organizedEventRepository.getWithLocation(eventId)
                 .orElseThrow(() -> new NotFoundException("Organized event does not exist"));
 
-        if (organizedEvent.getLocationForEvent() == null) {
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
+        if (locationForEvent == null || NOT_CONFIRMED.name().equals(locationForEvent.getConfirmationStatus())) {
             throw new LocationNotBookedException("You cannot book catering prior to booking location");
         }
         final boolean isOpen = isOpen(cateringId, organizedEvent.getDate().getDayOfWeek().name());
@@ -76,7 +76,7 @@ public class CateringForChosenEventLocationService {
         }
 
         final Catering catering = cateringService.get(cateringId);
-        if (!organizedEvent.getLocationForEvent().getLocation().getCaterings().contains(catering)) {
+        if (!locationForEvent.getLocation().getCaterings().contains(catering)) {
             throw new NotFoundException("Catering cannot deliver to chosen location");
         }
 
@@ -87,10 +87,9 @@ public class CateringForChosenEventLocationService {
         final CateringForChosenEventLocation cateringForLocation = CateringForChosenLocationMapper.fromDto(dto);
 
         cateringForLocation.setDate(organizedEvent.getDate());
-        cateringForLocation.setEventLocation(organizedEvent.getLocationForEvent());
+        cateringForLocation.setEventLocation(locationForEvent);
         cateringForLocation.setCatering(catering);
 
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
         locationForEvent.setEvent(organizedEvent);
 
         cateringForLocationRepository.save(cateringForLocation);

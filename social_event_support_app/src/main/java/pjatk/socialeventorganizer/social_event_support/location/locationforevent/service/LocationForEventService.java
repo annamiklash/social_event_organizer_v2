@@ -161,4 +161,7 @@ public class LocationForEventService {
     }
 
 
+    public List<LocationForEvent> listAllByStatusAndBusinessId(long businessId, String status) {
+        return locationForEventRepository.findAllBusinessIdAndStatus(businessId, status);
+    }
 }

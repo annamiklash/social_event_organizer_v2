@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Validated
 @RestController
-@RequestMapping("api/event/location/services")
+@RequestMapping("api/event/services")
 public class OptionalServiceForLocationController {
 
     private final OptionalServiceForLocationService optionalServiceForLocationService;
@@ -50,6 +50,22 @@ public class OptionalServiceForLocationController {
                                                                                                           @RequestParam long locationId) {
 
         List<OptionalServiceForChosenLocation> optionalServices = optionalServiceForLocationService.listAllByStatus(locationId, status);
+
+        return ResponseEntity.ok(
+                ImmutableList.copyOf(optionalServices.stream()
+                        .map(OptionalServiceForLocationMapper::toDto)
+                        .collect(Collectors.toList())));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "business/status",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<OptionalServiceForChosenLocationDto>> listAllByConfirmationStatusAndBusinessId(@RequestParam String status,
+                                                                                                          @RequestParam long businessId) {
+
+        List<OptionalServiceForChosenLocation> optionalServices = optionalServiceForLocationService.listAllByStatusAndBusinessId(businessId, status);
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(optionalServices.stream()
