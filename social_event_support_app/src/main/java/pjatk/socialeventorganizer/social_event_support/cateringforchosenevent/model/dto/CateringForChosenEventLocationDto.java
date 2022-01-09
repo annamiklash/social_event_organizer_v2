@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
+import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringItemDto;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -28,4 +30,6 @@ public class CateringForChosenEventLocationDto {
     private CateringDto catering;
 
     private LocationForEventDto eventLocation;
+
+    private List<CateringItemDto> order;
 }

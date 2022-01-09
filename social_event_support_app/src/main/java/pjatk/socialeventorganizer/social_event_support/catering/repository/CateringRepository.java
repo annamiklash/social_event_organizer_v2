@@ -17,7 +17,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     List<Catering> findByCateringAddress_City(String city);
 
-    @Query("SELECT c FROM catering AS c " +
+    @Query("SELECT distinct c FROM catering AS c " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "JOIN c.business cb " +
             "left join users u on u.id = cb.id " +

@@ -113,14 +113,15 @@ class OrganizedEventServiceTest extends Specification
     def "GetWithDetail"() {
         given:
         def orgEventId = 1L
+        def customerId = 1L
         def organizedEvent = fakeOrganizedEvent
 
         def target = organizedEvent
         when:
-        def result = organizedEventService.getWithDetail(orgEventId)
+        def result = organizedEventService.getWithDetail(orgEventId, customerId)
 
         then:
-        1 * organizedEventRepository.getWithDetail(orgEventId) >> Optional.of(organizedEvent)
+        1 * organizedEventRepository.getWithDetail(orgEventId, customerId) >> Optional.of(organizedEvent)
 
         result == target
     }
@@ -128,11 +129,13 @@ class OrganizedEventServiceTest extends Specification
     def "GetWithDetail NotFoundException"() {
         given:
         def orgEventId = 1L
+        def customerId = 1L
+
         when:
-        organizedEventService.getWithDetail(orgEventId)
+        organizedEventService.getWithDetail(orgEventId, customerId)
 
         then:
-        1 * organizedEventRepository.getWithDetail(orgEventId) >> Optional.empty()
+        1 * organizedEventRepository.getWithDetail(orgEventId, customerId) >> Optional.empty()
 
         thrown(NotFoundException)
     }
@@ -190,7 +193,7 @@ class OrganizedEventServiceTest extends Specification
 
         then:
         1 * organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId) >> true
-        1 * organizedEventRepository.getWithDetail(eventId) >> Optional.of(organizedEvent)
+        1 * organizedEventRepository.getWithDetail(eventId, customerId) >> Optional.of(organizedEvent)
         1 * organizedEventRepository.save(organizedEvent)
         statusChangeHelper.possibleToChangeStatusFromInProgressToConfirmed(organizedEvent) >> true
 

@@ -69,7 +69,6 @@ public class GuestController {
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.GET,
-            params = "{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GuestDto> get(@RequestParam long id) {
 

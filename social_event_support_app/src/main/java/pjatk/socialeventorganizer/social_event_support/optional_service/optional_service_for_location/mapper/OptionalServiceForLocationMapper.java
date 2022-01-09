@@ -31,6 +31,7 @@ public class OptionalServiceForLocationMapper {
                 .build();
     }
 
+
     public OptionalServiceForChosenLocationDto toDtoWithOptionalService(OptionalServiceForChosenLocation optionalService) {
         return OptionalServiceForChosenLocationDto.builder()
                 .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeFrom()))

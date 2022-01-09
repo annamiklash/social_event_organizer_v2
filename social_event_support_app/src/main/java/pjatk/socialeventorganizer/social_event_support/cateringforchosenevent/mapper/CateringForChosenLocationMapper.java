@@ -1,11 +1,14 @@
 package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper;
 
 import lombok.experimental.UtilityClass;
+import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringItemMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+
+import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 
@@ -19,6 +22,19 @@ public class CateringForChosenLocationMapper {
                 .comment(catering.getComment())
                 .confirmationStatus(catering.getConfirmationStatus())
                 .catering(CateringMapper.toDto(catering.getCatering()))
+                .build();
+    }
+
+    public CateringForChosenEventLocationDto toDtoWithOrder(CateringForChosenEventLocation catering) {
+        return CateringForChosenEventLocationDto.builder()
+                .id(catering.getId())
+                .time(DateTimeUtil.fromLocalTimeToTimeString(catering.getTime()))
+                .comment(catering.getComment())
+                .confirmationStatus(catering.getConfirmationStatus())
+                .catering(CateringMapper.toDto(catering.getCatering()))
+                .order(catering.getCateringOrder().stream()
+                        .map(cateringOrderChoice -> CateringItemMapper.toDto(cateringOrderChoice.getItem()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 

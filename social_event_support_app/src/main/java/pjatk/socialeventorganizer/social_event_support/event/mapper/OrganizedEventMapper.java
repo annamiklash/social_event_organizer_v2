@@ -37,6 +37,7 @@ public class OrganizedEventMapper {
         final OrganizedEventDto dto = toDto(organizedEvent);
         dto.setCustomer(CustomerMapper.toDto(organizedEvent.getCustomer()));
         dto.setEventType(organizedEvent.getEventType().getType());
+        dto.setLocation(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent()));
 
         return dto;
     }
@@ -93,11 +94,15 @@ public class OrganizedEventMapper {
                 .build();
     }
 
+
     public static OrganizedEventDto toDtoWithDetail(OrganizedEvent organizedEvent) {
         final OrganizedEventDto dto = toDto(organizedEvent);
         dto.setCustomer(CustomerMapper.toDto(organizedEvent.getCustomer()));
         dto.setEventType(organizedEvent.getEventType().getType());
         dto.setLocation(LocationForEventMapper.toDtoWithDetail(organizedEvent.getLocationForEvent()));
+        dto.setGuests(organizedEvent.getGuests().stream()
+                .map(GuestMapper::toDto)
+                .collect(Collectors.toList()));
 
         return dto;
     }

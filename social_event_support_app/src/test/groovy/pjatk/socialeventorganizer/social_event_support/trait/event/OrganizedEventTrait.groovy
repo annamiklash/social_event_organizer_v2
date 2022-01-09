@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.trait.event
 import com.google.common.collect.ImmutableSet
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation
+import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto
 import pjatk.socialeventorganizer.social_event_support.event.model.EventType
@@ -65,6 +66,13 @@ trait OrganizedEventTrait {
                                     .build()
                     ))
                     .build())
+            .guests(ImmutableSet.of(
+                    Guest.builder()
+                            .id(1l)
+                    .firstName('Test')
+                    .lastName('Test')
+                    .email('test@test.com')
+                    .build()))
             .build()
 
     OrganizedEventDto fakeOrganizedEventDto = OrganizedEventDto.builder()

@@ -64,9 +64,8 @@ public class OrganizedEventService {
                 .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
     }
 
-    //TODO: controller method + mapper
-    public OrganizedEvent getWithDetail(long orgEventId) {
-        return organizedEventRepository.getWithDetail(orgEventId)
+    public OrganizedEvent getWithDetail(long orgEventId, long customerId) {
+        return organizedEventRepository.getWithDetail(orgEventId, customerId)
                 .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
     }
 
@@ -83,7 +82,7 @@ public class OrganizedEventService {
         if (!eventWithIdAndCustomerIdExists(customerId, eventId)) {
             throw new NotFoundException("Event with id " + eventId + " and customer id " + customerId + " does not exist");
         }
-        final OrganizedEvent organizedEvent = getWithDetail(eventId);
+        final OrganizedEvent organizedEvent = getWithDetail(eventId, customerId);
 
         switch (status) {
             case IN_PROGRESS: //possible only when current status CONFIRMED

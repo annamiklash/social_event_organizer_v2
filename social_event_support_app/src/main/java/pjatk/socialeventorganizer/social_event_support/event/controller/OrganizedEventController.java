@@ -54,8 +54,8 @@ public class OrganizedEventController {
             path = "detail",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrganizedEventDto> get(@RequestParam long eventId) {
-        final OrganizedEvent organizedEvent = organizedEventService.getWithDetail(eventId);
+    public ResponseEntity<OrganizedEventDto> get(@RequestParam long eventId, @RequestParam long customerId) {
+        final OrganizedEvent organizedEvent = organizedEventService.getWithDetail(eventId, customerId);
 
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithDetail(organizedEvent));
     }

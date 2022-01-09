@@ -49,7 +49,7 @@ public class LocationForEventMapper {
         final LocationForEventDto dto = toDto(location);
 
         dto.setCaterings(location.getCateringsForEventLocation().stream()
-                .map(CateringForChosenLocationMapper::toDto)
+                .map(CateringForChosenLocationMapper::toDtoWithOrder)
                 .collect(Collectors.toList()));
 
         dto.setOptionalServices(location.getServices().stream()
