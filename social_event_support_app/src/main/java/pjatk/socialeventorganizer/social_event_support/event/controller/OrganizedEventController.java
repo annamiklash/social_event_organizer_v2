@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEv
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -67,19 +66,20 @@ public class OrganizedEventController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<OrganizedEventDto>> findAllByCustomerIdAndTab(@RequestParam long customerId,
                                                                                       @RequestParam CustomerReservationTabEnum tab) {
-        final List<OrganizedEvent> list = organizedEventService.getAllByCustomerIdAndTab(customerId, tab);
+        final List<OrganizedEvent> organizedEventList = organizedEventService.getAllByCustomerIdAndTab(customerId, tab);
+        final ImmutableList<OrganizedEventDto> resultList = organizedEventList.stream()
+                .map(OrganizedEventMapper::toDtoWithCustomerAndEventType)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(OrganizedEventMapper::toDtoWithCustomerAndEventType)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrganizedEventDto> changeEventStatus(@RequestParam long customerId, @RequestParam long eventId,
+    public ResponseEntity<OrganizedEventDto> changeEventStatus(@RequestParam long customerId,
+                                                               @RequestParam long eventId,
                                                                @RequestParam EventStatusEnum status) {
         final OrganizedEvent organizedEvent = organizedEventService.changeStatus(customerId, eventId, status);
 

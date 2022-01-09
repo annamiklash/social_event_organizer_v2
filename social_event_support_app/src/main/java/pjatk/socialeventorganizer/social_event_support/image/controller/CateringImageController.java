@@ -18,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.image.service.CateringImageService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -34,12 +33,12 @@ public class CateringImageController {
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<ImageDto>> list(@RequestParam long cateringId) {
-        final List<CateringImage> list = cateringImageService.findByCateringId(cateringId);
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(ImageMapper::toDto)
-                        .collect(Collectors.toList()))
-        );
+        final List<CateringImage> cateringImageList = cateringImageService.findByCateringId(cateringId);
+        final ImmutableList<ImageDto> resultList = cateringImageList.stream()
+                .map(ImageMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 
 

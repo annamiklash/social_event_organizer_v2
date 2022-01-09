@@ -14,8 +14,6 @@ import pjatk.socialeventorganizer.social_event_support.event.model.EventType;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.EventTypeDto;
 import pjatk.socialeventorganizer.social_event_support.event.service.EventTypeService;
 
-import java.util.stream.Collectors;
-
 @Slf4j
 @AllArgsConstructor
 @Validated
@@ -30,11 +28,11 @@ public class EventTypeController {
             path = "allowed/all",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<EventTypeDto>> findAll() {
-        final ImmutableList<EventType> list = eventTypeService.findAll();
-        return ResponseEntity.ok(ImmutableList.copyOf(
-                list.stream()
-                        .map(EventTypeMapper::toDto)
-                        .collect(Collectors.toList())
-        ));
+        final ImmutableList<EventType> eventTypeList = eventTypeService.findAll();
+        final ImmutableList<EventTypeDto> resultList = eventTypeList.stream()
+                .map(EventTypeMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
     }
 }
