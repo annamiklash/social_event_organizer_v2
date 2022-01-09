@@ -39,7 +39,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "left join c.cateringBusinessHours bh " +
             "left join c.cateringAddress ca " +
             "WHERE (:city is null or ca.city = :city) " +
-            "AND (:cuisines is null or cu.id IN :cuisines)")
+            "AND ((:cuisines) is null or cu.id IN (:cuisines))")
     List<Catering> search(@Param("cuisines") Set<Long> cuisines, @Param("city") String city);
 
     @Query("SELECT cat FROM catering cat " +

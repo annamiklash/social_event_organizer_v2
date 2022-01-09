@@ -69,7 +69,7 @@ public class LocationController {
                 .map(LocationMapper::toDto)
                 .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto(Long.valueOf(count), null, null, null), result));
+        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto((long) count, null, null, null), result));
     }
 
 

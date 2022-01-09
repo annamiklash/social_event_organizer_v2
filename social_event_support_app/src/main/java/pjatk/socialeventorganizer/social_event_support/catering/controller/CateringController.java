@@ -67,14 +67,15 @@ public class CateringController {
             method = RequestMethod.POST,
             path = "allowed/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<CateringDto>> searchByAppliedFilters(@RequestBody FilterCateringsDto dto) {
+    public ResponseEntity<TableDto<CateringDto>> searchByAppliedFilters(@RequestBody FilterCateringsDto dto) {
         final ImmutableList<Catering> list = cateringService.search(dto);
+        final int count = list.size();
         final ImmutableList<CateringDto> resultList = list.stream()
                 .map(CateringMapper::toDto)
                 .peek(this::setRating)
                 .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(resultList);
+        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto((long) count, null, null, null), resultList));
     }
 
     @RequestMapping(

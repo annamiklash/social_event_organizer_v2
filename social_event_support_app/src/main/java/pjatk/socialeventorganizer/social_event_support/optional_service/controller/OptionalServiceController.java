@@ -205,15 +205,15 @@ public class OptionalServiceController {
             method = RequestMethod.POST,
             path = "allowed/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<OptionalServiceDto>> searchByAppliedFilters(@RequestBody FilterOptionalServiceDto dto) {
+    public ResponseEntity<TableDto<OptionalServiceDto>> searchByAppliedFilters(@RequestBody FilterOptionalServiceDto dto) {
 
         final ImmutableList<OptionalService> list = optionalServiceService.search(dto);
-
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(list.stream()
-                        .map(OptionalServiceMapper::toDto)
-                        .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
-                        .collect(Collectors.toList())));
+        final int count = list.size();
+        final ImmutableList<OptionalServiceDto> result = list.stream()
+                .map(OptionalServiceMapper::toDto)
+                .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto((long) count, null, null, null), result));
     }
 
 }
