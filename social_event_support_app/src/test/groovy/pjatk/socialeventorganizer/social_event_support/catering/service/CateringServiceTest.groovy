@@ -190,7 +190,7 @@ class CateringServiceTest extends Specification
         1 * cateringBusinessHoursService.create(businessHoursDto) >> cateringBusinessHours
         1 * cuisineService.getByName(cuisineDto.getName()) >> cuisine
 
-        1 * locationService.findByCityWithId(address.getCity()) >> locations
+        1 * locationService.findByCity(address.getCity()) >> locations
 
         1 * cateringRepository.saveAndFlush(_)
 
@@ -293,7 +293,7 @@ class CateringServiceTest extends Specification
         def result = cateringService.getByLocationId(id)
 
         then:
-        1 * cateringRepository.findAllByLocationIdAAndDeletedAtIsNull(id) >> [catering]
+        1 * cateringRepository.findAllByLocationId(id) >> [catering]
 
         result == target
     }

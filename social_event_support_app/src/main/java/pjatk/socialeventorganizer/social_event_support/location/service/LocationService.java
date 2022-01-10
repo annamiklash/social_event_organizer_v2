@@ -186,8 +186,8 @@ public class LocationService {
                 .collect(Collectors.toList()));
     }
 
-    public ImmutableList<Location> findByCityWithId(String city) {
-        return ImmutableList.copyOf(locationRepository.findAllByCity(city));
+    public ImmutableList<Location> findByCity(String city) {
+        return ImmutableList.copyOf(locationRepository.findByLocationAddress_City(city));
     }
 
     @Transactional(rollbackOn = Exception.class)

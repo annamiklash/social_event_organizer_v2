@@ -42,6 +42,6 @@ public interface CateringForLocationRepository extends JpaRepository<CateringFor
             "LEFT JOIN FETCH cl.event e " +
             "LEFT JOIN FETCH c.catering cat " +
             "WHERE b.id = :businessId AND c.confirmationStatus = :status")
-    List<CateringForChosenEventLocation> fidAllByBusinessIdAndStatus(@Param("businessId") long businessId,  @Param("status") String status);
+    List<CateringForChosenEventLocation> findAllByBusinessIdAndStatus(@Param("businessId") long businessId, @Param("status") String status);
 
 }

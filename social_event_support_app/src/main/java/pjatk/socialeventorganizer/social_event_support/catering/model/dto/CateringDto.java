@@ -55,7 +55,7 @@ public class CateringDto implements Serializable {
     private String description;
 
     @NotNull(message = "Flag is mandatory")
-    private boolean offersOutsideCatering;
+    private Boolean offersOutsideCatering;
 
     @NotNull(message = "Business hours is mandatory")
     private List<BusinessHoursDto> businessHours;

@@ -124,7 +124,7 @@ public class CateringForChosenEventLocationService {
     }
 
     public List<CateringForChosenEventLocation> listAllByStatusAndBusinessId(long businessId, String status) {
-        return cateringForLocationRepository.fidAllByBusinessIdAndStatus(businessId, status);
+        return cateringForLocationRepository.findAllByBusinessIdAndStatus(businessId, status);
 
     }
 

@@ -14,6 +14,9 @@ import java.util.Optional;
 @Repository
 public interface LocationRepository extends PagingAndSortingRepository<Location, Long> {
 
+    List<Location> findByLocationAddress_City(String city);
+
+
     @Query(value = "SELECT distinct l.* from location l " +
             "LEFT JOIN location_image li on li.id_location = l.id_location " +
             "left join address a on l.id_location_address = a.id_address " +
@@ -71,6 +74,12 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "WHERE a.city = :city")
     List<Location> findAllByCity(@Param("city") String city);
 
+    @Query("SELECT l from location l " +
+            "LEFT JOIN location_image li on li.location.id = l.id " +
+            "left join fetch l.caterings c " +
+            "WHERE c.id = :cateringId")
+    List<Location> findAllByCateringId(@Param("cateringId") long cateringId);
+
     @Query("SELECT distinct l from location l " +
             "LEFT JOIN location_image li on li.location.id = l.id " +
             "left join fetch l.locationAddress " +
@@ -110,10 +119,5 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "LEFT JOIN location_image li on li.location.id = l.id " +
             "WHERE l.id = :locationId")
     Optional<Location> getByIdWithImages(@Param("locationId") long locationId);
-
-    @Query("SELECT l FROM location l " +
-            "LEFT JOIN FETCH l.caterings c " +
-            "WHERE c.id = :cateringId")
-    List<Location> findAllByCateringId(@Param("cateringId") long cateringId);
 
 }

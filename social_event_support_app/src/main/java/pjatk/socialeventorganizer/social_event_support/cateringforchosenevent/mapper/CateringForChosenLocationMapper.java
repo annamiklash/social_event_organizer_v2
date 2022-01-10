@@ -7,6 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
 
 import java.util.stream.Collectors;
 
@@ -23,6 +24,12 @@ public class CateringForChosenLocationMapper {
                 .confirmationStatus(catering.getConfirmationStatus())
                 .catering(CateringMapper.toDto(catering.getCatering()))
                 .build();
+    }
+
+    public CateringForChosenEventLocationDto toDtoWithEvent(CateringForChosenEventLocation catering) {
+        final CateringForChosenEventLocationDto dto = toDto(catering);
+        dto.setEventLocation(LocationForEventMapper.toDtoWithEvent(catering.getEventLocation()));
+        return dto;
     }
 
     public CateringForChosenEventLocationDto toDtoWithOrder(CateringForChosenEventLocation catering) {

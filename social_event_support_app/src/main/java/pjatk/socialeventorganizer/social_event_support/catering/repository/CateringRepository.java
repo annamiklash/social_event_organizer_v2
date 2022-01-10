@@ -67,7 +67,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "LEFT JOIN FETCH c.locations l " +
             "WHERE l.id = :locationId")
-    List<Catering> findAllByLocationIdAAndDeletedAtIsNull(@Param("locationId") long locationId);
+    List<Catering> findAllByLocationId(@Param("locationId") long locationId);
 
     @Query("SELECT count(c) FROM catering AS c " +
             "JOIN c.business cb " +

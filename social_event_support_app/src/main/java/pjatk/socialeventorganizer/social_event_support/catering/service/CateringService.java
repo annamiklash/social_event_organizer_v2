@@ -209,7 +209,7 @@ public class CateringService {
 
 
     public ImmutableList<Catering> getByLocationId(long id) {
-        return ImmutableList.copyOf(cateringRepository.findAllByLocationIdAAndDeletedAtIsNull(id));
+        return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
     }
 
     public Long count(String keyword) {
@@ -247,7 +247,7 @@ public class CateringService {
                 .collect(Collectors.toSet());
 
         catering.setCuisines(ImmutableSet.copyOf(cuisines));
-        if (dto.isOffersOutsideCatering()) {
+        if (dto.getOffersOutsideCatering()) {
             catering.setLocations(new HashSet<>(getLocationsInSameCity(catering)));
         } else {
             catering.setLocations(ImmutableSet.of(location));
@@ -261,7 +261,7 @@ public class CateringService {
     }
 
     private Catering createStandaloneCatering(CateringDto dto, Business business) {
-        if (!dto.isOffersOutsideCatering()) {
+        if (!dto.getOffersOutsideCatering()) {
             throw new IllegalArgumentException("Standalone catering must offer outside catering");
         }
         final Address address = addressService.create(dto.getAddress());
@@ -284,12 +284,11 @@ public class CateringService {
                 .map(CuisineDto::getName)
                 .map(cuisineService::getByName)
                 .collect(Collectors.toSet());
-
         catering.setCuisines(cuisines);
 
-        catering.setLocations(new HashSet<>(getLocationsInSameCity(catering)));
+        final ImmutableList<Location> locationsWithingSameCity = locationService.findByCity(address.getCity());
+        catering.setLocations(new HashSet<>(locationsWithingSameCity));
         saveCatering(catering);
-
         return catering;
     }
 
@@ -322,7 +321,7 @@ public class CateringService {
 
     private ImmutableList<Location> getLocationsInSameCity(Catering savedCatering) {
         final String city = savedCatering.getCateringAddress().getCity();
-        return locationService.findByCityWithId(city);
+        return locationService.findByCity(city);
     }
 
 }

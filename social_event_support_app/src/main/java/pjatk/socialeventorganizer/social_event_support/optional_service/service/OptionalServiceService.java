@@ -228,9 +228,9 @@ public class OptionalServiceService {
     }
 
     public boolean isAvailable(long serviceId, String date, String timeFrom, String timeTo) {
-        timeFrom = DateTimeUtil.joinDateAndTime(date, timeFrom);
-        timeTo = DateTimeUtil.joinDateAndTime(date, timeTo);
-        return optionalServiceRepository.available(serviceId, date, timeFrom, timeTo).isPresent();
+        String from = DateTimeUtil.joinDateAndTime(date, timeFrom);
+        String to = DateTimeUtil.joinDateAndTime(date, timeTo);
+        return optionalServiceRepository.available(serviceId, date, from, to).isPresent();
     }
 
     public OptionalService getWithImages(long id) {

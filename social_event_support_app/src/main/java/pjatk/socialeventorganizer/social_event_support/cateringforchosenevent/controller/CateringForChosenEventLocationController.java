@@ -70,7 +70,7 @@ public class CateringForChosenEventLocationController {
 
         return ResponseEntity.ok(
                 ImmutableList.copyOf(optionalServices.stream()
-                        .map(CateringForChosenLocationMapper::toDto)
+                        .map(CateringForChosenLocationMapper::toDtoWithEvent)
                         .collect(Collectors.toList())));
     }
 
