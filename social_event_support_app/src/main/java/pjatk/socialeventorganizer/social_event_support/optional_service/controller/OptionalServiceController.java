@@ -23,7 +23,7 @@ import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @AllArgsConstructor
@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 public class OptionalServiceController {
 
     private final OptionalServiceService optionalServiceService;
-
     private final OptionalServiceReviewService optionalServiceReviewService;
 
     @RequestMapping(
@@ -52,13 +51,13 @@ public class OptionalServiceController {
                 .sortBy(sortBy)
                 .order(order)
                 .build();
-        final ImmutableList<OptionalService> list = optionalServiceService.list(customPage, keyword);
+        final ImmutableList<OptionalService> optionalServiceList = optionalServiceService.list(customPage, keyword);
         final Long count = optionalServiceService.count(keyword);
 
-        final ImmutableList<OptionalServiceDto> result = ImmutableList.copyOf(list.stream()
+        final ImmutableList<OptionalServiceDto> result = optionalServiceList.stream()
                 .map(OptionalServiceMapper::toDto)
-                .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
-                .collect(Collectors.toList()));
+                .map(this::setRating)
+                .collect(ImmutableList.toImmutableList());
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
     }
@@ -72,10 +71,9 @@ public class OptionalServiceController {
 
         final OptionalService optionalService = optionalServiceService.get(id);
         final OptionalServiceDto serviceDto = OptionalServiceMapper.toDto(optionalService);
+        final OptionalServiceDto serviceDtoWithRating = setRating(serviceDto);
 
-        serviceDto.setRating(optionalServiceReviewService.getRating(id));
-
-        return ResponseEntity.ok(serviceDto);
+        return ResponseEntity.ok(serviceDtoWithRating);
     }
 
     @RequestMapping(
@@ -97,10 +95,81 @@ public class OptionalServiceController {
 
         final OptionalService optionalService = optionalServiceService.getWithDetail(id);
         final OptionalServiceDto serviceDto = OptionalServiceMapper.toDtoWithDetails(optionalService);
+        final OptionalServiceDto serviceDtoWithRating = setRating(serviceDto);
 
-        serviceDto.setRating(optionalServiceReviewService.getRating(id));
+        return ResponseEntity.ok(serviceDtoWithRating);
+    }
 
-        return ResponseEntity.ok(serviceDto);
+    @RequestMapping(
+            path = "allowed/available",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> isAvailable(@RequestParam long serviceId,
+                                               @RequestParam String date,
+                                               @RequestParam String timeFrom,
+                                               @RequestParam String timeTo) {
+        final boolean isAvailable = optionalServiceService.isAvailable(serviceId, date, timeFrom, timeTo);
+        return ResponseEntity.ok(isAvailable);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "allowed/types",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<String>> types() {
+        final ImmutableList<String> result = Stream.of(OptionalServiceTypeEnum.values())
+                .map(OptionalServiceTypeEnum::getValue)
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(result);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "allowed/kid/performer/types",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<String>> kidPerformerTypes() {
+        final ImmutableList<String> resultList = Stream.of(KidPerformerTypeEnum.values())
+                .map(KidPerformerTypeEnum::getValue)
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(resultList);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "allowed/music/styles",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<String>> musicStyles() {
+        final ImmutableList<String> resultList = Stream.of(MusicStyleEnum.values())
+                .map(MusicStyleEnum::getValue)
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(resultList);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "allowed/languages",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<String>> languages() {
+        final ImmutableList<String> resultList = Stream.of(LanguagesEnum.values())
+                .map(LanguagesEnum::getValue)
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(resultList);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "allowed/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TableDto<OptionalServiceDto>> searchByAppliedFilters(@RequestBody FilterOptionalServiceDto dto) {
+
+        final ImmutableList<OptionalService> optionalServiceList = optionalServiceService.search(dto);
+        final int count = optionalServiceList.size();
+        final ImmutableList<OptionalServiceDto> resultList = optionalServiceList.stream()
+                .map(OptionalServiceMapper::toDto)
+                .map(this::setRating)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto((long) count, null, null, null), resultList));
     }
 
     @PreAuthorize("hasAnyAuthority('BUSINESS')")
@@ -109,12 +178,12 @@ public class OptionalServiceController {
             path = "business",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<OptionalServiceDto>> getByBusinessId(@RequestParam long id) {
-        ImmutableList<OptionalService> locations = optionalServiceService.getByBusinessId(id);
+        final ImmutableList<OptionalService> locationList = optionalServiceService.getByBusinessId(id);
+        final ImmutableList<OptionalServiceDto> resultList = locationList.stream()
+                .map(OptionalServiceMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(locations.stream()
-                        .map(OptionalServiceMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAuthority('BUSINESS')")
@@ -140,24 +209,10 @@ public class OptionalServiceController {
         final OptionalService optionalService = optionalServiceService.edit(dto, id);
 
         final OptionalServiceDto serviceDto = OptionalServiceMapper.toDto(optionalService);
+        final OptionalServiceDto serviceDtoWithRating = setRating(serviceDto);
 
-        serviceDto.setRating(optionalServiceReviewService.getRating(id));
-
-        return ResponseEntity.ok(serviceDto);
+        return ResponseEntity.ok(serviceDtoWithRating);
     }
-
-    @RequestMapping(
-            path = "allowed/available",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> isAvailable(@RequestParam long serviceId,
-                                               @RequestParam String date,
-                                               @RequestParam String timeFrom,
-                                               @RequestParam String timeTo) {
-        final boolean isAvailable = optionalServiceService.isAvailable(serviceId, date, timeFrom, timeTo);
-        return ResponseEntity.ok(isAvailable);
-    }
-
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
@@ -169,64 +224,11 @@ public class OptionalServiceController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "allowed/types",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<String>> types() {
-        final List<String> result = List.of(OptionalServiceTypeEnum.values()).stream()
-                .map(OptionalServiceTypeEnum::getValue)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(ImmutableList.copyOf(result));
-    }
-
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "allowed/kid/performer/types",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<String>> kidPerformerTypes() {
-        final List<String> result = List.of(KidPerformerTypeEnum.values()).stream()
-                .map(KidPerformerTypeEnum::getValue)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(ImmutableList.copyOf(result));
-    }
-
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "allowed/music/styles",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<String>> musicStyles() {
-        final List<String> result = List.of(MusicStyleEnum.values()).stream()
-                .map(MusicStyleEnum::getValue)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(ImmutableList.copyOf(result));
-    }
-
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "allowed/languages",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<String>> languages() {
-        final List<String> result = List.of(LanguagesEnum.values()).stream()
-                .map(LanguagesEnum::getValue)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(ImmutableList.copyOf(result));
-    }
-
-
-    @RequestMapping(
-            method = RequestMethod.POST,
-            path = "allowed/search",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TableDto<OptionalServiceDto>> searchByAppliedFilters(@RequestBody FilterOptionalServiceDto dto) {
-
-        final ImmutableList<OptionalService> list = optionalServiceService.search(dto);
-        final int count = list.size();
-        final ImmutableList<OptionalServiceDto> result = list.stream()
-                .map(OptionalServiceMapper::toDto)
-                .peek(optionalServiceDto -> optionalServiceDto.setRating(optionalServiceReviewService.getRating(optionalServiceDto.getId())))
-                .collect(ImmutableList.toImmutableList());
-        return ResponseEntity.ok(new TableDto<>(new TableDto.MetaDto((long) count, null, null, null), result));
+    private OptionalServiceDto setRating(OptionalServiceDto optionalServiceDto) {
+        final long optionalServiceId = optionalServiceDto.getId();
+        final double rating = optionalServiceReviewService.getRating(optionalServiceId);
+        optionalServiceDto.setRating(rating);
+        return optionalServiceDto;
     }
 
 }

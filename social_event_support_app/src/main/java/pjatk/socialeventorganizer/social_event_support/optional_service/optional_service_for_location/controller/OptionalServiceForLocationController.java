@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
+import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.mapper.OptionalServiceForLocationMapper;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
@@ -17,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.optional
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -36,9 +36,10 @@ public class OptionalServiceForLocationController {
     public ResponseEntity<OptionalServiceForChosenLocationDto> confirmReservation(@RequestParam long id,
                                                                                   @RequestParam long eventId) {
 
-        final OptionalServiceForChosenLocation optionalService = optionalServiceForLocationService.confirmReservation(id, eventId);
+        final OptionalServiceForChosenLocation optionalServiceForChosenLocation =
+                optionalServiceForLocationService.confirmReservation(id, eventId);
 
-        return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(optionalService));
+        return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(optionalServiceForChosenLocation));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -49,12 +50,13 @@ public class OptionalServiceForLocationController {
     public ResponseEntity<ImmutableList<OptionalServiceForChosenLocationDto>> listAllByConfirmationStatus(@RequestParam String status,
                                                                                                           @RequestParam long locationId) {
 
-        List<OptionalServiceForChosenLocation> optionalServices = optionalServiceForLocationService.listAllByStatus(locationId, status);
+        final List<OptionalServiceForChosenLocation> optionalServiceForChosenLocationList =
+                optionalServiceForLocationService.listAllByStatus(locationId, status);
+        final ImmutableList<OptionalServiceForChosenLocationDto> resultList = optionalServiceForChosenLocationList.stream()
+                .map(OptionalServiceForLocationMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(optionalServices.stream()
-                        .map(OptionalServiceForLocationMapper::toDto)
-                        .collect(Collectors.toList())));
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
@@ -65,12 +67,12 @@ public class OptionalServiceForLocationController {
     public ResponseEntity<ImmutableList<OptionalServiceForChosenLocationDto>> listAllByConfirmationStatusAndBusinessId(@RequestParam String status,
                                                                                                           @RequestParam long businessId) {
 
-        List<OptionalServiceForChosenLocation> optionalServices = optionalServiceForLocationService.listAllByStatusAndBusinessId(businessId, status);
-
-        return ResponseEntity.ok(
-                ImmutableList.copyOf(optionalServices.stream()
-                        .map(OptionalServiceForLocationMapper::toDtoWithLocationAndEvent)
-                        .collect(Collectors.toList())));
+        final List<OptionalServiceForChosenLocation> optionalServiceForChosenLocationList =
+                optionalServiceForLocationService.listAllByStatusAndBusinessId(businessId, status);
+        final ImmutableList<OptionalServiceForChosenLocationDto> resultList = optionalServiceForChosenLocationList.stream()
+                .map(OptionalServiceForLocationMapper::toDtoWithLocationAndEvent)
+                .collect(ImmutableList.toImmutableList());
+        return ResponseEntity.ok(resultList);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
@@ -82,9 +84,11 @@ public class OptionalServiceForLocationController {
                                                                 @RequestParam long eventId,
                                                                 @RequestParam long serviceId,
                                                                 @RequestBody @Valid OptionalServiceForChosenLocationDto dto) {
-        final OptionalServiceForChosenLocation optionalService = optionalServiceForLocationService.create(customerId, eventId, serviceId, dto);
+        final OptionalServiceForChosenLocation optionalServiceForChosenLocation =
+                optionalServiceForLocationService.create(customerId, eventId, serviceId, dto);
+        final OrganizedEvent event = optionalServiceForChosenLocation.getLocationForEvent().getEvent();
 
-        return ResponseEntity.ok(OrganizedEventMapper.toDtoWithServices(optionalService.getLocationForEvent().getEvent()));
+        return ResponseEntity.ok(OrganizedEventMapper.toDtoWithServices(event));
     }
 
 
@@ -95,9 +99,10 @@ public class OptionalServiceForLocationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OptionalServiceForChosenLocationDto> confirmCancelled(@RequestParam long id) {
 
-        final OptionalServiceForChosenLocation serviceForChosenLocation = optionalServiceForLocationService.cancelReservation(id);
+        final OptionalServiceForChosenLocation optionalServiceForChosenLocation =
+                optionalServiceForLocationService.cancelReservation(id);
 
-        return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(serviceForChosenLocation));
+        return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(optionalServiceForChosenLocation));
     }
 
 
