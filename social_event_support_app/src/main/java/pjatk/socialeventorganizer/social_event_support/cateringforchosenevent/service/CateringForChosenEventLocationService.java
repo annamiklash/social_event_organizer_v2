@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.s
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
@@ -44,8 +45,8 @@ public class CateringForChosenEventLocationService {
 
     public CateringForChosenEventLocation confirmReservation(long cateringId, long eventId) {
         final CateringForChosenEventLocation catering =
-        cateringForLocationRepository.findByCateringIdAndEventId(cateringId, eventId)
-                .orElseThrow(() -> new NotFoundException("No catering for event " + eventId));
+                cateringForLocationRepository.findByCateringIdAndEventId(cateringId, eventId)
+                        .orElseThrow(() -> new NotFoundException("No catering for event " + eventId));
 
         catering.setConfirmationStatus(CONFIRMED.name());
         cateringForLocationRepository.save(catering);
@@ -116,6 +117,17 @@ public class CateringForChosenEventLocationService {
         cateringForLocationRepository.save(cateringForLocation);
 
         return cateringForLocation;
+    }
+
+    public void confirmOrder(long reservationId) {
+        final CateringForChosenEventLocation catering = cateringForLocationRepository.getWithCateringOrder(reservationId)
+                .orElseThrow(() -> new NotFoundException("No catering reservation"));
+
+        if (!CollectionUtils.isEmpty(catering.getCateringOrder())) {
+            catering.setIsCateringOrderConfirmed(true);
+            cateringForLocationRepository.save(catering);
+        }
+
     }
 
 

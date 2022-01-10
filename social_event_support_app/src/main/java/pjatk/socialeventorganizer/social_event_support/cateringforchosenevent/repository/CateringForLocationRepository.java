@@ -44,4 +44,8 @@ public interface CateringForLocationRepository extends JpaRepository<CateringFor
             "WHERE b.id = :businessId AND c.confirmationStatus = :status")
     List<CateringForChosenEventLocation> findAllByBusinessIdAndStatus(@Param("businessId") long businessId, @Param("status") String status);
 
+    @Query("SELECT c FROM catering_for_chosen_location c " +
+            "LEFT JOIN c.cateringOrder co " +
+            "WHERE c.id = :resrvationId")
+    Optional<CateringForChosenEventLocation> getWithCateringOrder(@Param("reservationId") long reservationId);
 }

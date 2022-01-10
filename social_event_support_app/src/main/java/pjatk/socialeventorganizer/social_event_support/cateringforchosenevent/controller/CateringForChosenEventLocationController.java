@@ -44,6 +44,18 @@ public class CateringForChosenEventLocationController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
+            method = RequestMethod.PUT,
+            path = "order/confirm",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CateringForChosenEventLocationDto> confirmOrderReservation(@RequestParam long reservationId) {
+
+        cateringForChosenEventLocationService.confirmOrder(reservationId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @RequestMapping(
             method = RequestMethod.GET,
             path = "status",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,7 +76,7 @@ public class CateringForChosenEventLocationController {
             path = "business/status",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringForChosenEventLocationDto>> listAllByConfirmationStatusAndBusinessId(@RequestParam String status,
-                                                                                                       @RequestParam long businessId) {
+                                                                                                                     @RequestParam long businessId) {
 
         List<CateringForChosenEventLocation> optionalServices = cateringForChosenEventLocationService.listAllByStatusAndBusinessId(businessId, status);
 

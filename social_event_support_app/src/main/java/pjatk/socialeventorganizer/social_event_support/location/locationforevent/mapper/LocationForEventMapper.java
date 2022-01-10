@@ -62,7 +62,7 @@ public class LocationForEventMapper {
                 .collect(Collectors.toList()));
 
         dto.setOptionalServices(location.getServices().stream()
-                .map(OptionalServiceForLocationMapper::toDto)
+                .map(OptionalServiceForLocationMapper::toDtoWithOptionalService)
                 .collect(Collectors.toList()));
 
         return dto;
