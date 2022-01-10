@@ -93,8 +93,8 @@ public class OptionalServiceForLocationService {
         final Set<OptionalServiceAvailability> serviceAvailability = optionalService.getAvailability();
 
         final LocalDate date = DateTimeUtil.fromStringToFormattedDate(eventDate);
-        final LocalDateTime timeFrom = DateTimeUtil.fromStringToFormattedDateTime(dateTimeFrom);
-        final LocalDateTime timeTo = DateTimeUtil.fromStringToFormattedDateTime(dateTimeTo);
+        final LocalDateTime timeFrom = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(eventDate, dateTimeFrom));
+        final LocalDateTime timeTo = DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(eventDate, dateTimeTo));
 
         final List<OptionalServiceAvailability> availabilityForDate = serviceAvailability.stream()
                 .filter(availability -> availability.getDate().equals(date))
