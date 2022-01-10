@@ -2,7 +2,6 @@ package pjatk.socialeventorganizer.social_event_support.businesshours.catering.m
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import net.logstash.logback.encoder.org.apache.commons.lang3.builder.HashCodeExclude;
 import pjatk.socialeventorganizer.social_event_support.businesshours.BusinessHours;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 
@@ -18,6 +17,7 @@ import javax.persistence.*;
 @Table(name = "catering_business_hours")
 public class CateringBusinessHours extends BusinessHours {
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering")

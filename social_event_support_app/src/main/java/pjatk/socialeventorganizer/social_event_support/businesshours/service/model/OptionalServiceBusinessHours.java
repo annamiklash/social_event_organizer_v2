@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.businesshours.service.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.businesshours.BusinessHours;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
@@ -19,6 +16,7 @@ import javax.persistence.*;
 @Table(name = "optional_service_business_hours")
 public class OptionalServiceBusinessHours extends BusinessHours {
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")

@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Entity(name = "location_availability")
 public class LocationAvailability extends Availability {
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")

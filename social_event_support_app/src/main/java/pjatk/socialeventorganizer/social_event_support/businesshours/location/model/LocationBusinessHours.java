@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Table(name = "location_business_hours")
 public class LocationBusinessHours extends BusinessHours {
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location")

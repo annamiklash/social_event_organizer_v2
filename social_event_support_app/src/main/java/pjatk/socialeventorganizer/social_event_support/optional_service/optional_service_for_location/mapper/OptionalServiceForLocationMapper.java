@@ -24,6 +24,7 @@ public class OptionalServiceForLocationMapper {
 
     public OptionalServiceForChosenLocationDto toDto(OptionalServiceForChosenLocation optionalService) {
         return OptionalServiceForChosenLocationDto.builder()
+                .id(optionalService.getId())
                 .timeFrom(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeFrom()))
                 .timeTo(DateTimeUtil.fromLocalTimeToTimeString(optionalService.getTimeTo()))
                 .comment(optionalService.getComment())
