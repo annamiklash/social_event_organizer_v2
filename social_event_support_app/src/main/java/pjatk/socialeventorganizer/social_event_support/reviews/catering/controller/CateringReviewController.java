@@ -17,7 +17,6 @@ import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -33,25 +32,24 @@ public class CateringReviewController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TableDto<ReviewDto>> listAllByCateringId(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                                           @RequestParam(defaultValue = "50") Integer pageSize,
-                                                                           @RequestParam(defaultValue = "id") String sortBy,
-                                                                           @RequestParam(defaultValue = "asc") String order,
-                                                                           @RequestParam long cateringId) {
+                                                                   @RequestParam(defaultValue = "50") Integer pageSize,
+                                                                   @RequestParam(defaultValue = "id") String sortBy,
+                                                                   @RequestParam(defaultValue = "asc") String order,
+                                                                   @RequestParam long cateringId) {
         final CustomPage customPage = CustomPage.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
                 .sortBy(sortBy)
                 .order(order)
                 .build();
-        final List<CateringReview> review = cateringReviewService.getByCateringId(customPage, cateringId);
+        final List<CateringReview> reviewList = cateringReviewService.getByCateringId(customPage, cateringId);
 
         final Long count = cateringReviewService.count(cateringId);
 
-        final ImmutableList<ReviewDto> result = ImmutableList.copyOf(
-                review.stream()
-                        .map(ReviewMapper::toDto)
-                        .collect(Collectors.toList())
-        );
+        final ImmutableList<ReviewDto> result = reviewList.stream()
+                .map(ReviewMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
     }
 
@@ -62,8 +60,8 @@ public class CateringReviewController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReviewDto> reviewCatering(@RequestParam long id,
-                                                            @RequestParam long cateringId,
-                                                            @Valid @RequestBody ReviewDto dto) {
+                                                    @RequestParam long cateringId,
+                                                    @Valid @RequestBody ReviewDto dto) {
 
         final CateringReview review = cateringReviewService.leaveCateringReview(id, cateringId, dto);
         return ResponseEntity.ok(ReviewMapper.toDto(review));

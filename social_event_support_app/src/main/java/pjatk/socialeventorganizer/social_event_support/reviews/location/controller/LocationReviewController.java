@@ -17,7 +17,6 @@ import pjatk.socialeventorganizer.social_event_support.table.TableDto;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -43,14 +42,13 @@ public class LocationReviewController {
                 .sortBy(sortBy)
                 .order(order)
                 .build();
-        final List<LocationReview> review = locationReviewService.getByLocationId(customPage, locationId);
+        final List<LocationReview> locationReviewList = locationReviewService.getByLocationId(customPage, locationId);
 
         final Long count = locationReviewService.count(locationId);
 
-        final ImmutableList<ReviewDto> result = ImmutableList.copyOf(
-                review.stream()
-                        .map(ReviewMapper::toDto)
-                        .collect(Collectors.toList()));
+        final ImmutableList<ReviewDto> result = locationReviewList.stream()
+                .map(ReviewMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
     }
