@@ -9,6 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringOrderChoiceMapper
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringOrderChoiceDto
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringOrderChoiceService
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
 import pjatk.socialeventorganizer.social_event_support.trait.cateringforchosenevent.CateringOrderChoiceTrait
@@ -86,18 +87,19 @@ class CateringOrderChoiceControllerTest extends Specification
     @WithMockUser(authorities = ['ADMIN'])
     def "POST api/catering/order returns 200 positive test scenario"() {
         given:
-        def itemId = 1L
-        def cateringId = 2L
-        def dto = fakeCateringOrderChoiceDto
+        def reservationId = 1L
+        def dtos = [fakeCateringOrderChoiceDto].toArray() as CateringOrderChoiceDto[]
 
         def cateringOrderChoice = fakeCateringOrderChoice
-        def result = CateringOrderChoiceMapper.toDtoWithItem(cateringOrderChoice)
+        def orderChoiceList = [fakeCateringOrderChoice]
+        def cateringOrderChoiceDto = CateringOrderChoiceMapper.toDto(cateringOrderChoice)
+        def resultList = ImmutableList.of(cateringOrderChoiceDto)
 
-        def jsonRequest = TestSerializer.serialize(dto)
-        def jsonResponse = TestSerializer.serialize(result)
+        def jsonRequest = TestSerializer.serialize(dtos)
+        def jsonResponse = TestSerializer.serialize(resultList)
 
-        BDDMockito.given(cateringOrderChoiceService.create(eq(dto), eq(itemId), eq(cateringId)))
-                .willReturn(cateringOrderChoice)
+        BDDMockito.given(cateringOrderChoiceService.create(eq(dtos), eq(reservationId)))
+                .willReturn(orderChoiceList)
 
         expect:
         mockMvc.perform(
@@ -105,8 +107,7 @@ class CateringOrderChoiceControllerTest extends Specification
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(jsonRequest)
-                        .param('itemId', itemId.toString())
-                        .param('cateringId', cateringId.toString())
+                        .param('reservationId', reservationId.toString())
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

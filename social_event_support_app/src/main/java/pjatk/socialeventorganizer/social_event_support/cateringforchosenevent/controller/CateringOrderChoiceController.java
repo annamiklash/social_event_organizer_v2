@@ -64,8 +64,8 @@ public class CateringOrderChoiceController {
     public ResponseEntity<ImmutableList<CateringOrderChoiceDto>> create(@Valid @RequestBody CateringOrderChoiceDto[] dtos,
                                                                         @RequestParam long reservationId) {
 
-        final List<CateringOrderChoice> result = cateringOrderChoiceService.create(dtos, reservationId);
-        return ResponseEntity.ok(result.stream()
+        final List<CateringOrderChoice> orderChoiceList = cateringOrderChoiceService.create(dtos, reservationId);
+        return ResponseEntity.ok(orderChoiceList.stream()
                 .map(CateringOrderChoiceMapper::toDto)
                 .collect(ImmutableList.toImmutableList()));
 
