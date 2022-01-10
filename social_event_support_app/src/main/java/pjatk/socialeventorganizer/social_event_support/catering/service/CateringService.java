@@ -286,9 +286,12 @@ public class CateringService {
                 .collect(Collectors.toSet());
         catering.setCuisines(cuisines);
 
+        cateringRepository.saveAndFlush(catering);
+
         final ImmutableList<Location> locationsWithingSameCity = locationService.findByCity(address.getCity());
-        catering.setLocations(new HashSet<>(locationsWithingSameCity));
-        saveCatering(catering);
+        locationsWithingSameCity.stream().peek(location -> location.addCatering(catering))
+                .forEach(locationService::save);
+
         return catering;
     }
 
