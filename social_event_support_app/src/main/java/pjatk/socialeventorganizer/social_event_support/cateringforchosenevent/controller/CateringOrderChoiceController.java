@@ -62,9 +62,9 @@ public class CateringOrderChoiceController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringOrderChoiceDto> create(@Valid @RequestBody CateringOrderChoiceDto dto,
                                                          @RequestParam long itemId,
-                                                         @RequestParam long cateringId) {
+                                                         @RequestParam long reservationId) {
 
-        final CateringOrderChoice orderChoice = cateringOrderChoiceService.create(dto, itemId, cateringId);
+        final CateringOrderChoice orderChoice = cateringOrderChoiceService.create(dto, itemId, reservationId);
         return ResponseEntity.ok(CateringOrderChoiceMapper.toDtoWithItem(orderChoice));
     }
 

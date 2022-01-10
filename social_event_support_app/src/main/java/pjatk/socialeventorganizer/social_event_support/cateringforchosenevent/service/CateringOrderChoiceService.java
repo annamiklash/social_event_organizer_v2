@@ -31,8 +31,8 @@ public class CateringOrderChoiceService {
         return ImmutableList.copyOf(cateringOrderChoiceRepository.getAll(cateringId));
     }
 
-    public CateringOrderChoice create(CateringOrderChoiceDto dto, long itemId, long cateringId) {
-        final CateringForChosenEventLocation catering = cateringForChosenEventLocationService.get(cateringId);
+    public CateringOrderChoice create(CateringOrderChoiceDto dto, long itemId, long reservationId) {
+        final CateringForChosenEventLocation catering = cateringForChosenEventLocationService.get(reservationId);
         final CateringItem cateringItem = cateringItemService.get(itemId);
 
         final CateringOrderChoice orderChoice = CateringOrderChoiceMapper.fromDto(dto);
