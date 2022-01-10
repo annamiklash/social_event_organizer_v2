@@ -1,7 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper;
 
 import lombok.experimental.UtilityClass;
-import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringItemMapper;
 import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringMapper;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
@@ -40,7 +39,7 @@ public class CateringForChosenLocationMapper {
                 .confirmationStatus(catering.getConfirmationStatus())
                 .catering(CateringMapper.toDto(catering.getCatering()))
                 .order(catering.getCateringOrder().stream()
-                        .map(cateringOrderChoice -> CateringItemMapper.toDto(cateringOrderChoice.getItem()))
+                        .map(CateringOrderChoiceMapper::toDtoWithItem)
                         .collect(Collectors.toList()))
                 .build();
     }

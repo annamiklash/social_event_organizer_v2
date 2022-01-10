@@ -1,9 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem;
 
 import javax.persistence.*;
@@ -26,10 +23,14 @@ public class CateringOrderChoice implements Serializable {
     @Column(name = "count", nullable = false)
     private int amount;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering_item")
     private CateringItem item;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering_for_chosen_location", nullable = false)
     private CateringForChosenEventLocation eventLocationCatering;
