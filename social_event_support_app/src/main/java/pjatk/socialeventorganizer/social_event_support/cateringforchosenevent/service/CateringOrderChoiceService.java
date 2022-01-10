@@ -13,6 +13,9 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringOrderChoiceRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -29,6 +32,24 @@ public class CateringOrderChoiceService {
 
     public ImmutableList<CateringOrderChoice> getAll(long cateringId) {
         return ImmutableList.copyOf(cateringOrderChoiceRepository.getAll(cateringId));
+    }
+
+    public List<CateringOrderChoice> create(CateringOrderChoiceDto[] dtos, long reservationId) {
+
+        final CateringForChosenEventLocation catering = cateringForChosenEventLocationService.get(reservationId);
+        final List<CateringOrderChoice> result = new ArrayList<>();
+
+        for (CateringOrderChoiceDto dto : dtos) {
+            final CateringItem cateringItem = cateringItemService.get(dto.getItemId());
+            final CateringOrderChoice orderChoice = CateringOrderChoiceMapper.fromDto(dto);
+            orderChoice.setItem(cateringItem);
+            orderChoice.setEventLocationCatering(catering);
+
+            result.add(orderChoice);
+
+        }
+        cateringOrderChoiceRepository.saveAll(result);
+        return result;
     }
 
     public CateringOrderChoice create(CateringOrderChoiceDto dto, long itemId, long reservationId) {
@@ -59,4 +80,8 @@ public class CateringOrderChoiceService {
 
         cateringOrderChoiceRepository.delete(orderChoice);
     }
+
+
 }
+
+

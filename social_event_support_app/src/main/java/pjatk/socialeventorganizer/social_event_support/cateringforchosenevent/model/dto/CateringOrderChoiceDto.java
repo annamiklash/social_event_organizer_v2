@@ -22,6 +22,9 @@ public class CateringOrderChoiceDto implements Serializable {
     @NotNull(message = "Amount is mandatory")
     private Integer amount;
 
+    @NotNull(message = "Amount is mandatory")
+    private long itemId;
+
     private CateringItemDto item;
 
     private CateringForChosenEventLocationDto catering;

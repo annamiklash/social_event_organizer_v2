@@ -14,6 +14,7 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service.CateringOrderChoiceService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
@@ -60,12 +61,14 @@ public class CateringOrderChoiceController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CateringOrderChoiceDto> create(@Valid @RequestBody CateringOrderChoiceDto dto,
-                                                         @RequestParam long itemId,
-                                                         @RequestParam long reservationId) {
+    public ResponseEntity<ImmutableList<CateringOrderChoiceDto>> create(@Valid @RequestBody CateringOrderChoiceDto[] dtos,
+                                                                        @RequestParam long reservationId) {
 
-        final CateringOrderChoice orderChoice = cateringOrderChoiceService.create(dto, itemId, reservationId);
-        return ResponseEntity.ok(CateringOrderChoiceMapper.toDtoWithItem(orderChoice));
+        final List<CateringOrderChoice> result = cateringOrderChoiceService.create(dtos, reservationId);
+        return ResponseEntity.ok(result.stream()
+                .map(CateringOrderChoiceMapper::toDto)
+                .collect(ImmutableList.toImmutableList()));
+
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
