@@ -343,7 +343,7 @@ class OptionalServiceControllerTest extends Specification
     @WithMockUser(authorities = ['BUSINESS'])
     def "POST api/services returns 200 positive test scenario"() {
         given:
-        def dto = fakeOptionalServiceDto
+        def dto = fakeOptionalServiceHostDto
 
         def optionalService = fakeOptionalService
         def result = OptionalServiceMapper.toDto(optionalService)
@@ -370,7 +370,7 @@ class OptionalServiceControllerTest extends Specification
     def "PUT api/services returns 200 positive test scenario"() {
         given:
         def id = 1L
-        def dto = fakeOptionalServiceDto
+        def dto = fakeOptionalServiceHostDto
 
         def optionalServiceId = fakeOptionalService.getId()
         def rating = 10.0D

@@ -27,7 +27,7 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
 
     boolean existsOrganizedEventByIdAndCustomer_Id(long eventId, long customerId);
 
-    @Query("SELECT oe FROM organized_event oe " +
+    @Query("SELECT distinct oe FROM organized_event oe " +
             "LEFT JOIN FETCH oe.customer c " +
             "LEFT JOIN FETCH oe.eventType et " +
             "LEFT JOIN FETCH oe.locationForEvent lfe " +
@@ -36,7 +36,7 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
             "WHERE c.id = :customerId")
     List<OrganizedEvent> findAllByCustomer_Id(@Param("customerId") long customerId);
 
-    @Query("SELECT oe FROM organized_event oe " +
+    @Query("SELECT distinct oe FROM organized_event oe " +
             "LEFT JOIN FETCH oe.customer c " +
             "LEFT JOIN FETCH oe.eventType et " +
             "LEFT JOIN FETCH oe.locationForEvent lfe " +
@@ -46,7 +46,7 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
             "AND oe.eventStatus LIKE 'FINISHED'")
     List<OrganizedEvent> findAllFinished(@Param("customerId") long customerId);
 
-    @Query("SELECT oe FROM organized_event oe " +
+    @Query("SELECT distinct oe FROM organized_event oe " +
             "LEFT JOIN FETCH oe.customer c " +
             "LEFT JOIN FETCH oe.eventType et " +
             "LEFT JOIN FETCH oe.locationForEvent lfe " +

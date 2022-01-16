@@ -6,6 +6,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.dto.Busines
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.TranslationLanguageDto
 
 trait OptionalServiceTrait {
 
@@ -22,7 +23,7 @@ trait OptionalServiceTrait {
             .availability(new HashSet<OptionalServiceAvailability>())
             .build()
 
-    OptionalServiceDto fakeOptionalServiceDto = OptionalServiceDto.builder()
+    OptionalServiceDto fakeOptionalServiceHostDto = OptionalServiceDto.builder()
             .id(1)
             .type("HOST")
             .alias("ALIAS")
@@ -33,5 +34,22 @@ trait OptionalServiceTrait {
             .email('email@email.com')
             .businessHours(new ArrayList<BusinessHoursDto>())
             .address(AddressDto.builder().build())
+            .build()
+
+    OptionalServiceDto fakeOptionalServiceInterpreterDto = OptionalServiceDto.builder()
+            .id(1)
+            .type("INTERPRETER")
+            .alias("ALIAS")
+            .firstName("GERALT")
+            .lastName("RIVIJSKI")
+            .description("WIEDZMIN")
+            .serviceCost("123")
+            .email('email@email.com')
+            .businessHours(new ArrayList<BusinessHoursDto>())
+            .address(AddressDto.builder().build())
+            .translationLanguages(
+                    Set.of(TranslationLanguageDto.builder()
+                            .name('English')
+                            .build()))
             .build()
 }
