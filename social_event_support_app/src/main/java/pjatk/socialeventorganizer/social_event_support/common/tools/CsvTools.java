@@ -22,9 +22,10 @@ public class CsvTools {
     private final static List<String> APP_PROBLEM_HEADERS =
             Arrays.asList("id", "title", "description", "createdAt", "resolvedAt");
 
-    public void writeToFile(List<AppProblemDto> appProblems) {
+    public void writeToFile(List<AppProblemDto> appProblems, String path) {
         final String fileName = "app_problem_report_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")) + ".csv";
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName))) {
+        path = path + fileName;
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(path))) {
             final CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
             csvPrinter.printRecord(APP_PROBLEM_HEADERS);
             appProblems.forEach(appProblem -> {

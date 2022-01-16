@@ -64,7 +64,8 @@ public class AppProblemController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> list(@RequestParam String dateFrom,
-                                     @RequestParam String dateTo) {
+                                     @RequestParam String dateTo,
+                                     @RequestParam String path) {
 
         final List<AppProblem> appProblemList = appProblemService.list(dateFrom, dateTo);
 
@@ -72,7 +73,7 @@ public class AppProblemController {
                 .map(AppProblemMapper::toDtoWithUser)
                 .collect(ImmutableList.toImmutableList());
 
-        csvTools.writeToFile(resultList);
+        csvTools.writeToFile(resultList, path);
         return ResponseEntity.ok().build();
     }
 

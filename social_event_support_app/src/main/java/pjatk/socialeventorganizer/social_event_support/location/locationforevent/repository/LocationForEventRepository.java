@@ -55,6 +55,7 @@ public interface LocationForEventRepository extends JpaRepository<LocationForEve
             "LEFT JOIN FETCH lfe.location l " +
             "LEFT JOIN FETCH lfe.cateringsForEventLocation c " +
             "LEFT JOIN FETCH lfe.event e " +
+            "LEFT JOIN FETCH e.cancelled canc " +
             "LEFT JOIN FETCH lfe.services s " +
             "LEFT JOIN FETCH l.availability " +
             "WHERE lfe.id = :locationForEventId")

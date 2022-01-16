@@ -336,6 +336,8 @@ public class LocationService {
         }
         addressService.delete(locationToDelete.getLocationAddress());
 
+        final ImmutableList<LocationForEvent> reservations = CollectionUtil.emptyListIfNull(locationToDelete.getLocationForEvent());
+
         locationRepository.delete(locationToDelete);
     }
 
