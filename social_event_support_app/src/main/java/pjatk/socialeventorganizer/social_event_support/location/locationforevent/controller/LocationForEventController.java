@@ -88,6 +88,7 @@ public class LocationForEventController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
+            path = "cancel",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LocationForEventDto> cancel(@RequestParam long id) {

@@ -114,11 +114,12 @@ public class OrganizedEventService {
         return organizedEvent;
     }
 
-    public void cancel(OrganizedEvent organizedEvent) {
+    public OrganizedEvent cancel(OrganizedEvent organizedEvent) {
         final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
                 .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("No current reservation"));
+
         final Set<OptionalServiceForChosenLocation> services = locationForEvent.getServices();
         final Set<CateringForChosenEventLocation> caterings = locationForEvent.getCateringsForEventLocation();
 
@@ -132,6 +133,11 @@ public class OrganizedEventService {
                 .forEach(catering -> cateringForChosenEventLocationService.cancelReservation(catering.getId()));
 
         locationForEventService.cancelReservation(locationForEvent.getId());
+
+        organizedEvent.setEventStatus(CANCELLED.name());
+        organizedEventRepository.save(organizedEvent);
+
+        return organizedEvent;
 
     }
 

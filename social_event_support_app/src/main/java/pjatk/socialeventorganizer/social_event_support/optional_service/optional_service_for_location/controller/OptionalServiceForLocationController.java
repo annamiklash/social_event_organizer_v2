@@ -65,7 +65,7 @@ public class OptionalServiceForLocationController {
             path = "business/status",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<OptionalServiceForChosenLocationDto>> listAllByConfirmationStatusAndBusinessId(@RequestParam String status,
-                                                                                                          @RequestParam long businessId) {
+                                                                                                                       @RequestParam long businessId) {
 
         final List<OptionalServiceForChosenLocation> optionalServiceForChosenLocationList =
                 optionalServiceForLocationService.listAllByStatusAndBusinessId(businessId, status);
@@ -92,22 +92,9 @@ public class OptionalServiceForLocationController {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-    @RequestMapping(
-            method = RequestMethod.PUT,
-            path = "cancel",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OptionalServiceForChosenLocationDto> confirmCancelled(@RequestParam long id) {
-
-        final OptionalServiceForChosenLocation optionalServiceForChosenLocation =
-                optionalServiceForLocationService.cancelReservation(id);
-
-        return ResponseEntity.ok(OptionalServiceForLocationMapper.toDto(optionalServiceForChosenLocation));
-    }
-
-
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
+            path = "cancel",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OptionalServiceForChosenLocationDto> cancel(@RequestParam long id) {

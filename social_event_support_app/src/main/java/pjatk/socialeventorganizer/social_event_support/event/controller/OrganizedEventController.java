@@ -86,6 +86,18 @@ public class OrganizedEventController {
         return ResponseEntity.ok(OrganizedEventMapper.toDto(organizedEvent));
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
+    @RequestMapping(
+            path = "cancel",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OrganizedEventDto> cancel(@RequestParam long id) {
+        final OrganizedEvent organizedEvent = organizedEventService.get(id);
+        final OrganizedEvent cancelled = organizedEventService.cancel(organizedEvent);
+
+        return ResponseEntity.ok(OrganizedEventMapper.toDto(cancelled));
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,
@@ -96,5 +108,7 @@ public class OrganizedEventController {
         final OrganizedEvent organizedEvent = organizedEventService.create(customerId, dto);
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithCustomer(organizedEvent));
     }
+
+
 
 }

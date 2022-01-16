@@ -106,6 +106,7 @@ public class CateringForChosenEventLocationController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
+            path = "cancel",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CateringForChosenEventLocationDto> cancel(@RequestParam long id) {
