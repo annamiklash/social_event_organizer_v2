@@ -164,7 +164,7 @@ public class LocationAvailabilityService {
                 final LocationAvailability lower = lowerBordering.get();
                 final LocationAvailability upper = upperBordering.get();
 
-                LocationAvailability newAvailability = LocationAvailability.builder()
+                final LocationAvailability newAvailability = LocationAvailability.builder()
                         .date(upper.getDate())
                         .timeFrom(upper.getTimeFrom())
                         .timeTo(lower.getTimeTo())

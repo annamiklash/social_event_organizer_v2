@@ -58,12 +58,13 @@ public class OptionalServiceAvailabilityService {
                 .forEach(optionalServiceAvailabilityRepository::delete);
     }
 
-    public void updateToAvailable(OptionalServiceAvailability locationAvailability, OptionalService service) {
-        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(locationAvailability);
+    public void updateToAvailable(OptionalServiceAvailability serviceAvailability, OptionalService service) {
+        final AvailabilityDto availabilityDto = AvailabilityMapper.toDto(serviceAvailability);
 
         final OptionalServiceAvailability availability = resolveAvailabilitiesForDay(availabilityDto, service, false);
         availability.setStatus(AVAILABLE.name());
         optionalServiceAvailabilityRepository.save(availability);
+        optionalServiceAvailabilityRepository.deleteById(serviceAvailability.getId());
 
     }
 
@@ -107,12 +108,20 @@ public class OptionalServiceAvailabilityService {
                 availability.setTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())));
                 return availability;
             } else {                        // -> change one of them, delete the other,
-                final OptionalServiceAvailability lower = upperBordering.get();
+                final OptionalServiceAvailability lower = lowerBordering.get();
                 final OptionalServiceAvailability upper = upperBordering.get();
 
-                upper.setTimeTo(lower.getTimeTo());
+                final OptionalServiceAvailability newAvailability = OptionalServiceAvailability.builder()
+                        .date(upper.getDate())
+                        .timeFrom(upper.getTimeFrom())
+                        .timeTo(lower.getTimeTo())
+                        .status(AVAILABLE.name())
+                        .optionalService(lower.getOptionalService())
+                        .build();
+
                 optionalServiceAvailabilityRepository.deleteById(lower.getId());
-                return upper;
+                optionalServiceAvailabilityRepository.deleteById(upper.getId());
+                return newAvailability;
             }
         } else {
             if (isNewWithinNotAvailable(dto, notAvailable)) {
