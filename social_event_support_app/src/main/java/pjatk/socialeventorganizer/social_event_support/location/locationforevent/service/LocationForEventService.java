@@ -97,9 +97,6 @@ public class LocationForEventService {
         if (!CollectionUtils.isEmpty(locationForEvent.getCateringsForEventLocation())) {
             throw new ActionNotAllowedException("Cannot cancel reservation for venue while there are catering reservation for given event");
         }
-
-        locationForEvent.setConfirmationStatus(CANCELLED.name());
-
         final OrganizedEvent event = locationForEvent.getEvent();
 
         final LocalTime timeFrom = locationForEvent.getTimeFrom();
@@ -107,9 +104,12 @@ public class LocationForEventService {
         final LocalDate date = event.getDate();
 
         final LocalDateTime dateTime = LocalDateTime.of(date, timeFrom);
+
         if (!isAllowedToCancel(dateTime)) {
             throw new ActionNotAllowedException("Cannot cancel reservation");
         }
+
+        locationForEvent.setConfirmationStatus(CANCELLED.name());
 
         final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
         final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeTo));

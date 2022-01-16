@@ -109,6 +109,7 @@ public class LocationAvailabilityService {
         final LocationAvailability availability = resolveAvailabilitiesForDay(availabilityDto, location, false);
         availability.setStatus(AVAILABLE.name());
         save(availability);
+        deleteById(locationAvailability.getId());
 
     }
 
@@ -150,9 +151,9 @@ public class LocationAvailabilityService {
             }
 
             if (upperBordering.isPresent() && lowerBordering.isEmpty()) { // -> extend upper (upper.setTimeTo(availabilityDto.getTimeTo))
-                final LocationAvailability availability = upperBordering.get();
-                availability.setTimeTo(DateTimeUtil.fromStringToFormattedDateTime(timeTo));
-                return availability;
+                final LocationAvailability upper = upperBordering.get();
+                upper.setTimeTo(DateTimeUtil.fromStringToFormattedDateTime(timeTo));
+                return upper;
             }
 
             if (upperBordering.isEmpty()) { // -> extend lower (lower.setTimeFrom(availabilityDto.getTimeFrom))
@@ -160,12 +161,20 @@ public class LocationAvailabilityService {
                 availability.setTimeFrom(DateTimeUtil.fromStringToFormattedDateTime(timeFrom));
                 return availability;
             } else {                        // -> change one of them, delete the other,
-                final LocationAvailability lower = upperBordering.get();
+                final LocationAvailability lower = lowerBordering.get();
                 final LocationAvailability upper = upperBordering.get();
 
-                upper.setTimeTo(lower.getTimeTo());
+                LocationAvailability newAvailability = LocationAvailability.builder()
+                        .date(upper.getDate())
+                        .timeFrom(upper.getTimeFrom())
+                        .timeTo(lower.getTimeTo())
+                        .status(AVAILABLE.name())
+                        .location(lower.getLocation())
+                        .build();
+
                 deleteById(lower.getId());
-                return upper;
+                deleteById(upper.getId());
+                return newAvailability;
             }
         } else {
             if (isNewWithinNotAvailable(availabilityDto, notAvailable)) {

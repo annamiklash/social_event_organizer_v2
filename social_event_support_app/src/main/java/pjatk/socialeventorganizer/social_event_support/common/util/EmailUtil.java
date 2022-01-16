@@ -8,6 +8,7 @@ import static pjatk.socialeventorganizer.social_event_support.common.constants.C
 @UtilityClass
 public class EmailUtil {
 
+    //TODO: add replyTo
     public SimpleMailMessage buildEmail(String content, String sendTo, String subject) {
 
         final SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
