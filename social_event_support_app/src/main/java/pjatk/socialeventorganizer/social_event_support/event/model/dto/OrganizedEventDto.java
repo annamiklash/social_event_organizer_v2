@@ -61,6 +61,6 @@ public class OrganizedEventDto implements Serializable {
 
     private List<GuestDto> guests;
 
-    private LocationForEventDto location;
+    private List<LocationForEventDto> location;
 
 }

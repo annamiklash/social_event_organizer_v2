@@ -6,6 +6,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringForChosenEventLocationDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 
 import java.io.Serializable;
@@ -32,7 +33,10 @@ public class ComposeInviteEmailUtil implements Serializable {
                 .append("\n")
                 .toString();
 
-        final LocationForEventDto locationForEventDto = dto.getLocation();
+        final LocationForEventDto locationForEventDto = dto.getLocation().stream()
+                .filter(location -> !"CANCELLED".equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
 
         content = content
                 .concat("When and where: ")

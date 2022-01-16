@@ -11,8 +11,12 @@ import pjatk.socialeventorganizer.social_event_support.event.model.dto.Organized
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.dto.LocationForEventDto;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.mapper.OptionalServiceForLocationMapper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.CANCELLED;
@@ -38,14 +42,20 @@ public class OrganizedEventMapper {
 
     public OrganizedEventDto toDtoWithCustomerAndEventType(OrganizedEvent organizedEvent) {
         final OrganizedEventDto dto = toDto(organizedEvent);
+
         dto.setCustomer(CustomerMapper.toDto(organizedEvent.getCustomer()));
         dto.setEventType(organizedEvent.getEventType().getType());
-        dto.setLocation(LocationForEventMapper.toDto(
-                organizedEvent.getLocationForEvent()
-                        .stream()
-                        .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
-                        .findFirst()
-                        .orElseThrow(() -> new NotFoundException("No current reservation"))));
+
+        final List<LocationForEventDto> locationForEventDtos = new ArrayList<>();
+        final Set<LocationForEvent> locationReservations = organizedEvent.getLocationForEvent();
+        for (LocationForEvent locationReservation : locationReservations) {
+            if (locationReservation.getConfirmationStatus().equals(CANCELLED.name())) {
+                locationForEventDtos.add(LocationForEventMapper.toDto(locationReservation));
+            } else {
+                locationForEventDtos.add(LocationForEventMapper.toDtoWithDetail(locationReservation));
+            }
+        }
+        dto.setLocation(locationForEventDtos);
 
         return dto;
     }
@@ -131,11 +141,17 @@ public class OrganizedEventMapper {
                 .map(GuestMapper::toDto)
                 .collect(Collectors.toList()));
 
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
-                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("No current reservation"));
-        dto.setLocation(LocationForEventMapper.toDtoWithDetail(locationForEvent));
+        final List<LocationForEventDto> locationForEventDtos = new ArrayList<>();
+        final Set<LocationForEvent> locationReservations = organizedEvent.getLocationForEvent();
+        for (LocationForEvent locationReservation : locationReservations) {
+            if (locationReservation.getConfirmationStatus().equals(CANCELLED.name())) {
+                locationForEventDtos.add(LocationForEventMapper.toDto(locationReservation));
+            } else {
+                locationForEventDtos.add(LocationForEventMapper.toDtoWithDetail(locationReservation));
+            }
+        }
+
+        dto.setLocation(locationForEventDtos);
 
         return dto;
     }
@@ -152,11 +168,17 @@ public class OrganizedEventMapper {
                 .guests(organizedEvent.getGuests().stream().map(GuestMapper::toDto).collect(Collectors.toList()))
                 .build();
 
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
-                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("No current reservation"));
-        dto.setLocation(LocationForEventMapper.toDtoWithCatering(locationForEvent));
+        final List<LocationForEventDto> locationForEventDtos = new ArrayList<>();
+        final Set<LocationForEvent> locationReservations = organizedEvent.getLocationForEvent();
+        for (LocationForEvent locationReservation : locationReservations) {
+            if (locationReservation.getConfirmationStatus().equals(CANCELLED.name())) {
+                locationForEventDtos.add(LocationForEventMapper.toDto(locationReservation));
+            } else {
+                locationForEventDtos.add(LocationForEventMapper.toDtoWithDetail(locationReservation));
+            }
+        }
+
+        dto.setLocation(locationForEventDtos);
 
         return dto;
 

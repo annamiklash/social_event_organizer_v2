@@ -114,7 +114,7 @@ public class OrganizedEventService {
         return organizedEvent;
     }
 
-    private void cancel(OrganizedEvent organizedEvent) {
+    public void cancel(OrganizedEvent organizedEvent) {
         final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
                 .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
                 .findFirst()
