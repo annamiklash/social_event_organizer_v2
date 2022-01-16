@@ -18,6 +18,9 @@ import pjatk.socialeventorganizer.social_event_support.common.tools.CsvTools;
 import pjatk.socialeventorganizer.social_event_support.enums.AppProblemTypeEnum;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -59,12 +62,13 @@ public class AppProblemController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @ResponseBody
     @RequestMapping(
             path = "export",
             method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> list(@RequestParam String dateFrom,
-                                     @RequestParam String dateTo) {
+            produces = "text/csv")
+    public ResponseEntity<byte[]> list(@RequestParam String dateFrom,
+                                     @RequestParam String dateTo) throws IOException {
 
         final List<AppProblem> appProblemList = appProblemService.list(dateFrom, dateTo);
 
@@ -72,8 +76,12 @@ public class AppProblemController {
                 .map(AppProblemMapper::toDtoWithUser)
                 .collect(ImmutableList.toImmutableList());
 
-        csvTools.writeToFile(resultList);
-        return ResponseEntity.ok().build();
+        final String path = csvTools.writeToFile(resultList);
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(Files.readAllBytes(new File(path).toPath()));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

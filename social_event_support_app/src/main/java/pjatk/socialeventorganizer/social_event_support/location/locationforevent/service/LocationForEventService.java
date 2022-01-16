@@ -73,7 +73,6 @@ public class LocationForEventService {
         final LocationForEvent locationForEvent = LocationForEventMapper.fromDto(dto);
         locationForEvent.setLocation(location);
         locationForEvent.setEvent(organizedEvent);
-        organizedEvent.setLocationForEvent(locationForEvent);
 
         save(locationForEvent);
 

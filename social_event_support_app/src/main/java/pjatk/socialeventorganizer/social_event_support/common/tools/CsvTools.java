@@ -22,10 +22,10 @@ public class CsvTools {
     private final static List<String> APP_PROBLEM_HEADERS =
             Arrays.asList("id", "title", "description", "createdAt", "resolvedAt");
 
-    public void writeToFile(List<AppProblemDto> appProblems) {
-        String home = System.getProperty("user.home");
+    public String writeToFile(List<AppProblemDto> appProblems) {
+        final String home = System.getProperty("user.home");
         final String fileName = "app_problem_report_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")) + ".csv";
-        String downloadPath = home+ "/Downloads/" + fileName;
+        final String downloadPath = home + "/Downloads/" + fileName;
 
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(downloadPath))) {
             final CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
@@ -38,6 +38,7 @@ public class CsvTools {
                 }
             });
             csvPrinter.close(true);
+            return downloadPath;
         } catch (IOException e) {
             throw new ActionNotAllowedException("Error during CSV export");
         }
