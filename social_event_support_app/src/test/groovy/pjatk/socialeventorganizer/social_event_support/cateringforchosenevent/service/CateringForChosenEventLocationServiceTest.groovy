@@ -1,6 +1,5 @@
 package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service
 
-
 import org.codehaus.groovy.runtime.InvokerHelper
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper
@@ -9,7 +8,6 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.re
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository
-import pjatk.socialeventorganizer.social_event_support.exceptions.LocationNotBookedException
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringTrait
@@ -96,14 +94,14 @@ class CateringForChosenEventLocationServiceTest extends Specification
         fakeCatering.setCateringBusinessHours(Set.of(businessHours))
 
         def catering = fakeCatering
-        organizedEvent.getLocationForEvent().getLocation().getCaterings().add(catering)
+        organizedEvent.getLocationForEvent().iterator().next().getLocation().getCaterings().add(catering)
 
-        def locationForEvent = organizedEvent.getLocationForEvent()
+        def locationForEvent = organizedEvent.getLocationForEvent().iterator().next()
         locationForEvent.setEvent(organizedEvent)
 
         def target = CateringForChosenLocationMapper.fromDto(dto)
         target.setDate(organizedEvent.getDate())
-        target.setEventLocation(organizedEvent.getLocationForEvent())
+        target.setEventLocation(organizedEvent.getLocationForEvent().iterator().next())
         target.setCatering(catering)
 
         when:
@@ -136,7 +134,7 @@ class CateringForChosenEventLocationServiceTest extends Specification
         1 * customerRepository.existsById(customerId) >> true
         1 * organizedEventRepository.getWithLocation(eventId) >> Optional.of(organizedEvent)
 
-        thrown(LocationNotBookedException)
+        thrown(NotFoundException)
     }
 
     def "Create NotFoundException No catering on date"() {

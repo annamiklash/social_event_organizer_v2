@@ -112,8 +112,8 @@ class LocationAvailabilityServiceTest extends Specification
         upperBordering           | lowerBordering           | locationAvailabilityId
         null                     | null                     | 0
         fakeLocationAvailability | null                     | 1
-        null                     | fakeLocationAvailability | 1
-        fakeLocationAvailability | fakeLocationAvailability | 1
+        null                     | fakeLocationAvailability | 0
+        fakeLocationAvailability | fakeLocationAvailability | 0
     }
 
     def "delete positive test scenario"() {

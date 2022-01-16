@@ -21,11 +21,11 @@ class StatusChangeHelperTest extends Specification implements OrganizedEventTrai
         result == target
 
         where:
-        organizedEvent                                                                                                                           | target
-        fakeOrganizedEvent.withEventStatus("CONFIRMED")                                                                                          | false
-        fakeOrganizedEvent.withLocationForEvent(null)                                                                                            | false
-        fakeOrganizedEvent.withLocationForEvent(fakeOrganizedEvent.getLocationForEvent().withConfirmationStatus('NOT_CONFIRMED'))                | false
-        fakeOrganizedEvent.withLocationForEvent(fakeOrganizedEvent.getLocationForEvent().withCateringsForEventLocation(null).withServices(null)) | true
-        fakeOrganizedEvent                                                                                                                       | true
+        organizedEvent                                                                                                                                                     | target
+        fakeOrganizedEvent.withEventStatus("CONFIRMED")                                                                                                                    | false
+        fakeOrganizedEvent.withLocationForEvent(null)                                                                                                                      | false
+        fakeOrganizedEvent.withLocationForEvent(Set.of(fakeOrganizedEvent.getLocationForEvent().iterator().next().withConfirmationStatus('NOT_CONFIRMED')))                | false
+        fakeOrganizedEvent.withLocationForEvent(Set.of(fakeOrganizedEvent.getLocationForEvent().iterator().next().withCateringsForEventLocation(null).withServices(null))) | true
+        fakeOrganizedEvent                                                                                                                                                 | true
     }
 }

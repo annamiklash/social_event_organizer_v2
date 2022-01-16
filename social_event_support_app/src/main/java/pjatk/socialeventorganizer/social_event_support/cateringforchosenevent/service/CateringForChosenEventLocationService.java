@@ -30,7 +30,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.*;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.CANCELLED;
 
 @Service
 @AllArgsConstructor
@@ -67,10 +69,16 @@ public class CateringForChosenEventLocationService {
         final OrganizedEvent organizedEvent = organizedEventRepository.getWithLocation(eventId)
                 .orElseThrow(() -> new NotFoundException("Organized event does not exist"));
 
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
-        if (locationForEvent == null || NOT_CONFIRMED.name().equals(locationForEvent.getConfirmationStatus())) {
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent()
+                .stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
+
+        if (NOT_CONFIRMED.name().equals(locationForEvent.getConfirmationStatus())) {
             throw new LocationNotBookedException("You cannot book catering prior to booking location");
         }
+
         final boolean isOpen = isOpen(cateringId, organizedEvent.getDate().getDayOfWeek().name());
         if (!isOpen) {
             throw new NotFoundException("No catering with id " + cateringId + " is not open on a given date");

@@ -8,11 +8,14 @@ import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerM
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventConfirmationDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.mapper.LocationForEventMapper;
+import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.mapper.OptionalServiceForLocationMapper;
 
 import java.util.stream.Collectors;
 
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.CANCELLED;
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS;
 
 @UtilityClass
@@ -37,7 +40,12 @@ public class OrganizedEventMapper {
         final OrganizedEventDto dto = toDto(organizedEvent);
         dto.setCustomer(CustomerMapper.toDto(organizedEvent.getCustomer()));
         dto.setEventType(organizedEvent.getEventType().getType());
-        dto.setLocation(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent()));
+        dto.setLocation(LocationForEventMapper.toDto(
+                organizedEvent.getLocationForEvent()
+                        .stream()
+                        .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                        .findFirst()
+                        .orElseThrow(() -> new NotFoundException("No current reservation"))));
 
         return dto;
     }
@@ -64,34 +72,54 @@ public class OrganizedEventMapper {
                 .name(organizedEvent.getName())
                 .eventType(organizedEvent.getEventType().getType())
                 .eventStatus(organizedEvent.getEventStatus())
-                .locationForEvent(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent()))
+                .locationForEvent(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent().stream()
+                        .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                        .findFirst()
+                        .orElseThrow(() -> new NotFoundException("No current reservation"))))
                 .build();
     }
 
     public OrganizedEventConfirmationDto toDtoWithServices(OrganizedEvent organizedEvent) {
-        return OrganizedEventConfirmationDto.builder()
+        final OrganizedEventConfirmationDto dto = OrganizedEventConfirmationDto.builder()
                 .id(organizedEvent.getId())
                 .name(organizedEvent.getName())
                 .eventType(organizedEvent.getEventType().getType())
                 .eventStatus(organizedEvent.getEventStatus())
-                .locationForEvent(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent()))
-                .optionalServices(organizedEvent.getLocationForEvent().getServices().stream()
-                        .map(OptionalServiceForLocationMapper::toDto)
-                        .collect(Collectors.toList()))
                 .build();
+
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
+
+        dto.setLocationForEvent(LocationForEventMapper.toDto(locationForEvent));
+        dto.setOptionalServices(locationForEvent.getServices().stream()
+                .map(OptionalServiceForLocationMapper::toDto)
+                .collect(Collectors.toList()));
+
+        return dto;
+
     }
 
     public OrganizedEventConfirmationDto toDtoWithCatering(OrganizedEvent organizedEvent) {
-        return OrganizedEventConfirmationDto.builder()
+        final OrganizedEventConfirmationDto dto = OrganizedEventConfirmationDto.builder()
                 .id(organizedEvent.getId())
                 .name(organizedEvent.getName())
                 .eventType(organizedEvent.getEventType().getType())
                 .eventStatus(organizedEvent.getEventStatus())
-                .locationForEvent(LocationForEventMapper.toDto(organizedEvent.getLocationForEvent()))
-                .catering(organizedEvent.getLocationForEvent().getCateringsForEventLocation().stream()
-                        .map(CateringForChosenLocationMapper::toDto)
-                        .collect(Collectors.toList()))
                 .build();
+
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
+
+        dto.setLocationForEvent(LocationForEventMapper.toDto(locationForEvent));
+        dto.setCatering(locationForEvent.getCateringsForEventLocation().stream()
+                .map(CateringForChosenLocationMapper::toDto)
+                .collect(Collectors.toList()));
+
+        return dto;
     }
 
 
@@ -99,16 +127,21 @@ public class OrganizedEventMapper {
         final OrganizedEventDto dto = toDto(organizedEvent);
         dto.setCustomer(CustomerMapper.toDto(organizedEvent.getCustomer()));
         dto.setEventType(organizedEvent.getEventType().getType());
-        dto.setLocation(LocationForEventMapper.toDtoWithDetail(organizedEvent.getLocationForEvent()));
         dto.setGuests(organizedEvent.getGuests().stream()
                 .map(GuestMapper::toDto)
                 .collect(Collectors.toList()));
+
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
+        dto.setLocation(LocationForEventMapper.toDtoWithDetail(locationForEvent));
 
         return dto;
     }
 
     public OrganizedEventDto toDtoForInvite(OrganizedEvent organizedEvent) {
-        return OrganizedEventDto.builder()
+        final OrganizedEventDto dto = OrganizedEventDto.builder()
                 .id(organizedEvent.getId())
                 .name(organizedEvent.getName())
                 .date(DateTimeUtil.fromLocalDateToDateString(organizedEvent.getDate()))
@@ -117,8 +150,15 @@ public class OrganizedEventMapper {
                 .eventType(EventTypeMapper.toDto(organizedEvent.getEventType()).getType())
                 .customer(CustomerMapper.toDto(organizedEvent.getCustomer()))
                 .guests(organizedEvent.getGuests().stream().map(GuestMapper::toDto).collect(Collectors.toList()))
-                .location(LocationForEventMapper.toDtoWithCatering(organizedEvent.getLocationForEvent()))
                 .build();
+
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
+        dto.setLocation(LocationForEventMapper.toDtoWithCatering(locationForEvent));
+
+        return dto;
 
     }
 

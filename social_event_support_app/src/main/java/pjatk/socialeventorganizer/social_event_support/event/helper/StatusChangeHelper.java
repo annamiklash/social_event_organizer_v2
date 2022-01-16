@@ -5,11 +5,13 @@ import org.springframework.stereotype.Component;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
+import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 
 import java.util.Set;
 
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.CANCELLED;
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.IN_PROGRESS;
 
 @Component
@@ -17,7 +19,11 @@ public class StatusChangeHelper {
 
     public boolean possibleToChangeStatusFromInProgressToConfirmed(OrganizedEvent organizedEvent) {
         final String eventStatus = organizedEvent.getEventStatus();
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent()
+                .stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
 
         if (!IN_PROGRESS.name().equals(eventStatus)
                 || locationForEvent == null

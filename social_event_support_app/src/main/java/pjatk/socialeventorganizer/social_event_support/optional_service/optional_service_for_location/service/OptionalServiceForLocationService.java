@@ -10,6 +10,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
+import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
@@ -79,7 +80,12 @@ public class OptionalServiceForLocationService {
 
         final OptionalServiceForChosenLocation optionalServiceForChosenLocation = OptionalServiceForLocationMapper.fromDto(dto);
         optionalServiceForChosenLocation.setOptionalService(optionalService);
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent()
+                .stream()
+                .filter(location -> !EventStatusEnum.CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
+
         locationForEvent.setEvent(organizedEvent);
         optionalServiceForChosenLocation.setLocationForEvent(locationForEvent);
 

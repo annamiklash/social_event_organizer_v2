@@ -365,7 +365,7 @@ class CustomerServiceTest extends Specification
                 .type("SAMPLE TYPE")
                 .build())
         organizedEvent.setCustomer(customer)
-        organizedEvent.setLocationForEvent(locationForEvent)
+        organizedEvent.setLocationForEvent(Set.of(locationForEvent))
 
         def guest = fakeGuestDTO
 

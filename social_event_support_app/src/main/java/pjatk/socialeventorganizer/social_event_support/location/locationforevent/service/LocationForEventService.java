@@ -117,10 +117,8 @@ public class LocationForEventService {
         locationAvailabilityService.updateToAvailable(locationAvailability, locationForEvent.getLocation());
 
         event.setModifiedAt(timestampHelper.now());
-        final List<LocationForEvent> cancelled = event.getCancelled();
 
-        cancelled.add(locationForEvent);
-        event.setLocationForEvent(null);
+        locationForEventRepository.save(locationForEvent);
         organizedEventRepository.save(event);
 
         return locationForEvent;

@@ -11,8 +11,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -65,15 +63,11 @@ public class OrganizedEvent implements Serializable {
     @JoinColumn(name = "id_customer", nullable = false)
     private Customer customer;
 
-    @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private LocationForEvent locationForEvent;
-
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_organized_event")
-    private List<LocationForEvent> cancelled = new ArrayList<>();
+    private Set<LocationForEvent> locationForEvent;
 
     @EqualsAndHashCode.Exclude
     @ManyToMany(fetch = FetchType.LAZY)

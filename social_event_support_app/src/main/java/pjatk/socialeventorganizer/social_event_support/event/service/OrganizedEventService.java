@@ -115,7 +115,10 @@ public class OrganizedEventService {
     }
 
     private void cancel(OrganizedEvent organizedEvent) {
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent();
+        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No current reservation"));
         final Set<OptionalServiceForChosenLocation> services = locationForEvent.getServices();
         final Set<CateringForChosenEventLocation> caterings = locationForEvent.getCateringsForEventLocation();
 
