@@ -15,7 +15,6 @@ import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPa
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum;
-import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.helper.StatusChangeHelper;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
+import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.CANCELLED;
 
 @Service
 @AllArgsConstructor
@@ -60,7 +59,7 @@ public class OrganizedEventService {
     }
 
     public OrganizedEvent get(long orgEventId) {
-        return organizedEventRepository.findById(orgEventId)
+        return organizedEventRepository.getWithDetail(orgEventId)
                 .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
     }
 
@@ -78,41 +77,41 @@ public class OrganizedEventService {
                 .orElseThrow(() -> new NotFoundException("No organized event with eventId " + eventId));
     }
 
-    public OrganizedEvent changeStatus(long customerId, long eventId, EventStatusEnum status) {
-        if (!eventWithIdAndCustomerIdExists(customerId, eventId)) {
-            throw new NotFoundException("Event with id " + eventId + " and customer id " + customerId + " does not exist");
-        }
-        final OrganizedEvent organizedEvent = getWithDetail(eventId, customerId);
-
-        switch (status) {
-            case IN_PROGRESS: //possible only when current status CONFIRMED
-                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
-                    organizedEvent.setEventStatus(IN_PROGRESS.name());
-                }
-                break;
-            case CONFIRMED: //if current IN_PROGRESS
-                if (statusChangeHelper.possibleToChangeStatusFromInProgressToConfirmed(organizedEvent)) {
-                    organizedEvent.setEventStatus(CONFIRMED.name());
-                }
-                break;
-            case READY: //if current CONFIRMED
-                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
-                    organizedEvent.setEventStatus(READY.name());
-                }
-                break;
-            case CANCELLED:  //any stage except for FINISHED
-                cancel(organizedEvent);
-                organizedEvent.setEventStatus(CANCELLED.name());
-                break;
-            case FINISHED:
-                organizedEvent.setEventStatus(FINISHED.name());
-                break;
-        }
-
-        save(organizedEvent);
-
-        return organizedEvent;
-    }
+//    public OrganizedEvent changeStatus(long customerId, long eventId, EventStatusEnum status) {
+//        if (!eventWithIdAndCustomerIdExists(customerId, eventId)) {
+//            throw new NotFoundException("Event with id " + eventId + " and customer id " + customerId + " does not exist");
+//        }
+//        final OrganizedEvent organizedEvent = getWithDetail(eventId, customerId);
+//
+//        switch (status) {
+//            case IN_PROGRESS: //possible only when current status CONFIRMED
+//                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
+//                    organizedEvent.setEventStatus(IN_PROGRESS.name());
+//                }
+//                break;
+//            case CONFIRMED: //if current IN_PROGRESS
+//                if (statusChangeHelper.possibleToChangeStatusFromInProgressToConfirmed(organizedEvent)) {
+//                    organizedEvent.setEventStatus(CONFIRMED.name());
+//                }
+//                break;
+//            case READY: //if current CONFIRMED
+//                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
+//                    organizedEvent.setEventStatus(READY.name());
+//                }
+//                break;
+//            case CANCELLED:  //any stage except for FINISHED
+//                cancel(organizedEvent);
+//                organizedEvent.setEventStatus(CANCELLED.name());
+//                break;
+//            case FINISHED:
+//                organizedEvent.setEventStatus(FINISHED.name());
+//                break;
+//        }
+//
+//        save(organizedEvent);
+//
+//        return organizedEvent;
+//    }
 
     public OrganizedEvent cancel(OrganizedEvent organizedEvent) {
         final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()

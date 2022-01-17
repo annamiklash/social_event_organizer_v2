@@ -12,6 +12,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
@@ -42,6 +43,7 @@ import pjatk.socialeventorganizer.social_event_support.location.locationforevent
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
 import pjatk.socialeventorganizer.social_event_support.user.model.User;
@@ -53,9 +55,11 @@ import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
+import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.NOT_CONFIRMED;
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.*;
 import static pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException.ENUM.USER_EXISTS;
 
@@ -233,13 +237,34 @@ public class CustomerService {
 
     @Transactional(rollbackOn = Exception.class)
     public void sendInvitationToGuest(long eventId, long customerId) {
-        final OrganizedEvent event = organizedEventService.get(eventId);
+        final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(eventId, customerId);
 
-        if (!READY.name().equals(event.getEventStatus())) {
-            throw new IllegalArgumentException("Cannot send invitations while event status is not READY");
+        final Set<LocationForEvent> locationForEventSet = organizedEvent.getLocationForEvent();
+
+        if (CollectionUtils.isEmpty(locationForEventSet)) {
+            throw new ActionNotAllowedException("Cannot send invitations if no location booked");
         }
 
-        final OrganizedEvent organizedEvent = organizedEventService.getWithAllInformationForSendingInvitations(eventId, customerId);
+        final LocationForEvent locationForEvent = locationForEventSet.stream()
+                .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
+                .findFirst()
+                .orElseThrow(() -> new ActionNotAllowedException("No actual location reservation"));
+
+        if (NOT_CONFIRMED.name().equals(locationForEvent.getConfirmationStatus())) {
+            throw new ActionNotAllowedException("Cannot send invitations while location reservation not confirmed");
+        }
+
+        final Set<CateringForChosenEventLocation> cateringsForEventLocation = locationForEvent.getCateringsForEventLocation();
+
+        if (!CollectionUtils.isEmpty(cateringsForEventLocation) && !cateringReservationsConfirmed(cateringsForEventLocation)) {
+            throw new ActionNotAllowedException("Cannot send invitations while catering reservation not confirmed");
+        }
+
+        final Set<OptionalServiceForChosenLocation> services = locationForEvent.getServices();
+
+        if (!CollectionUtils.isEmpty(services) && !servicesReservationsConfirmed(services)) {
+            throw new ActionNotAllowedException("Cannot send invitations while services reservation not confirmed");
+        }
 
         final OrganizedEventDto invitationContent = OrganizedEventMapper.toDtoForInvite(organizedEvent);
 
@@ -257,6 +282,19 @@ public class CustomerService {
 
             emailService.sendEmail(inviteEmail);
         }
+
+        organizedEvent.setEventStatus(READY.name());
+        organizedEventService.save(organizedEvent);
+    }
+
+    private boolean servicesReservationsConfirmed(Set<OptionalServiceForChosenLocation> services) {
+        return services.stream()
+                .allMatch(catering -> CONFIRMED.name().equals(catering.getConfirmationStatus()));
+    }
+
+    private boolean cateringReservationsConfirmed(Set<CateringForChosenEventLocation> cateringsForEventLocation) {
+        return cateringsForEventLocation.stream()
+                .allMatch(catering -> catering.getIsCateringOrderConfirmed() && CONFIRMED.name().equals(catering.getConfirmationStatus()));
     }
 
     private boolean hasPendingReservations(Customer customerToDelete) {

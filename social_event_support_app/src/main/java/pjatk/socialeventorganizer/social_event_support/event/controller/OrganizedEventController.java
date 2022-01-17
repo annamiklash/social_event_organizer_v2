@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum;
-import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
 import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEvent;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
@@ -74,17 +73,17 @@ public class OrganizedEventController {
         return ResponseEntity.ok(resultList);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
-    @RequestMapping(
-            method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrganizedEventDto> changeEventStatus(@RequestParam long customerId,
-                                                               @RequestParam long eventId,
-                                                               @RequestParam EventStatusEnum status) {
-        final OrganizedEvent organizedEvent = organizedEventService.changeStatus(customerId, eventId, status);
-
-        return ResponseEntity.ok(OrganizedEventMapper.toDto(organizedEvent));
-    }
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+//    @RequestMapping(
+//            method = RequestMethod.PUT,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<OrganizedEventDto> changeEventStatus(@RequestParam long customerId,
+//                                                               @RequestParam long eventId,
+//                                                               @RequestParam EventStatusEnum status) {
+//        final OrganizedEvent organizedEvent = organizedEventService.changeStatus(customerId, eventId, status);
+//
+//        return ResponseEntity.ok(OrganizedEventMapper.toDto(organizedEvent));
+//    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS', 'CUSTOMER')")
     @RequestMapping(
