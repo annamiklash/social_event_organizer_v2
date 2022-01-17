@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.location.service.LocationAvailabilityService;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
@@ -22,12 +23,14 @@ import pjatk.socialeventorganizer.social_event_support.location.locationforevent
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.repository.LocationForEventRepository;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CANCELLED;
 import static pjatk.socialeventorganizer.social_event_support.enums.ConfirmationStatusEnum.CONFIRMED;
@@ -46,7 +49,7 @@ public class LocationForEventService {
     private final LocationService locationService;
 
     private final LocationAvailabilityService locationAvailabilityService;
-    
+
     private final TimestampHelper timestampHelper;
 
     @Transactional(rollbackOn = Exception.class)
@@ -89,13 +92,14 @@ public class LocationForEventService {
     public LocationForEvent cancelReservation(long locationForEventId) {
         final LocationForEvent locationForEvent = getWithLocationAndEvent(locationForEventId);
 
-        if (!CollectionUtils.isEmpty(locationForEvent.getServices())) {
+        if (!CollectionUtils.isEmpty(locationForEvent.getServices()) && !isServiceCancelled(locationForEvent.getServices())) {
             throw new ActionNotAllowedException("Cannot cancel reservation for venue while there are service reservation for given event");
         }
 
-        if (!CollectionUtils.isEmpty(locationForEvent.getCateringsForEventLocation())) {
+        if (!CollectionUtils.isEmpty(locationForEvent.getCateringsForEventLocation()) && !isCateringCancelled(locationForEvent.getCateringsForEventLocation())) {
             throw new ActionNotAllowedException("Cannot cancel reservation for venue while there are catering reservation for given event");
         }
+
         final OrganizedEvent event = locationForEvent.getEvent();
 
         final LocalTime timeFrom = locationForEvent.getTimeFrom();
@@ -122,6 +126,22 @@ public class LocationForEventService {
         organizedEventRepository.save(event);
 
         return locationForEvent;
+    }
+
+    private boolean isCateringCancelled(Set<CateringForChosenEventLocation> cateringsForEventLocation) {
+        if (CollectionUtils.isEmpty(cateringsForEventLocation)) {
+            return false;
+        }
+        return cateringsForEventLocation.stream()
+                .allMatch(catering -> CANCELLED.name().equals(catering.getConfirmationStatus()));
+    }
+
+    private boolean isServiceCancelled(Set<OptionalServiceForChosenLocation> serviceForEvent) {
+        if (CollectionUtils.isEmpty(serviceForEvent)) {
+            return false;
+        }
+        return serviceForEvent.stream()
+                .allMatch(service -> CANCELLED.name().equals(service.getConfirmationStatus()));
     }
 
     public LocationForEvent getWithLocationAndEvent(long locationForEventId) {
