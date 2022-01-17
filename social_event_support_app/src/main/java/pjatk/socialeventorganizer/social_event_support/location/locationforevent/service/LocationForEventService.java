@@ -165,4 +165,9 @@ public class LocationForEventService {
     public List<LocationForEvent> listAllByStatusAndBusinessId(long businessId, String status) {
         return locationForEventRepository.findAllBusinessIdAndStatus(businessId, status);
     }
+
+    public LocationForEvent findByEventId(long eventId) {
+        return locationForEventRepository.findByEventId(eventId)
+                .orElseThrow(() -> new NotFoundException("Location for event does not exist"));
+    }
 }

@@ -211,11 +211,11 @@ public class CustomerService {
         return customer;
     }
 
-    public void addGuestsToEvent(long id, long eventId, long locationId, long[] guestIds) {
+    public void addGuestsToEvent(long id, long eventId, long[] guestIds) {
         if (!customerExists(id)) {
             throw new NotFoundException("No customer with id " + id);
         }
-        final LocationForEvent locationForEvent = locationForEventService.findByLocationIdAndEventId(locationId, eventId);
+        final LocationForEvent locationForEvent = locationForEventService.findByEventId(eventId);
 
         if (!CONFIRMED.name().equals(locationForEvent.getConfirmationStatus())) {
             throw new IllegalArgumentException("Cannot invite guests while reservation for location is not confirmed");

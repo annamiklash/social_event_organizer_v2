@@ -215,12 +215,11 @@ public class CustomerController {
     @RequestMapping(
             method = RequestMethod.PUT,
             path = "guests/invite")
-    public ResponseEntity<Void> addGuestsToLocationEvent(@RequestParam long id,
+    public ResponseEntity<Void> addGuestsToLocationEvent(@RequestParam long customerId,
                                                          @RequestParam long eventId,
-                                                         @RequestParam long locId,
                                                          @RequestParam long[] guestIds) {
 
-        customerService.addGuestsToEvent(id, eventId, locId, guestIds);
+        customerService.addGuestsToEvent(customerId, eventId, guestIds);
         return ResponseEntity.status(HttpStatus.CREATED).build();
 
     }

@@ -23,7 +23,8 @@ public interface LocationForEventRepository extends JpaRepository<LocationForEve
             "from location_for_event lfe " +
             "left join fetch lfe.event lfee " +
             "left join fetch location l on l.id = lfe.location.id " +
-            "where l.id = :locationId AND lfee.id = :eventId")
+            "where lfee.id = :eventId AND l.id = :locationId " +
+            "AND lfe.confirmationStatus not like 'CANCELLED'")
     Optional<LocationForEvent> findByEventIdAndLocationId(@Param("eventId") long eventId, @Param("locationId") long locationId);
 
 
@@ -61,4 +62,11 @@ public interface LocationForEventRepository extends JpaRepository<LocationForEve
             "WHERE lfe.id = :locationForEventId")
     Optional<LocationForEvent> getWithLocationAndEvent(@Param("locationForEventId")long locationForEventId);
 
+    @Query("select lfe " +
+            "from location_for_event lfe " +
+            "left join fetch lfe.event lfee " +
+            "left join fetch location l on l.id = lfe.location.id " +
+            "where lfee.id = :eventId " +
+            "AND lfe.confirmationStatus not like 'CANCELLED'")
+    Optional<LocationForEvent> findByEventId(long eventId);
 }
