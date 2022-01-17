@@ -25,7 +25,8 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "AND u.isActive = true")
     Page<Catering> findAllWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
-    @Query("SELECT c from catering c " +
+    @Query("SELECT distinct c from catering c " +
+            "LEFT JOIN FETCH c.business b " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "left join fetch c.cateringItems it " +
             "left join fetch c.cateringBusinessHours cbh " +

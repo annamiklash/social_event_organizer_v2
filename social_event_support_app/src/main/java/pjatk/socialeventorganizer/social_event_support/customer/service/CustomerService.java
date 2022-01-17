@@ -119,18 +119,23 @@ public class CustomerService {
 
         switch (className) {
             case "Location":
-                final Location location = locationService.get(receiverId);
-                messageDto.setReceiverEmail(location.getEmail());
+                final Location location = locationService.getWithDetail(receiverId);
+                messageDto.setReceiverEmail(location.getBusiness().getEmail());
+                messageDto.setReplyToEmail(customer.getEmail());
+
                 break;
 
             case "Catering":
-                final Catering catering = cateringService.get(receiverId);
-                messageDto.setReceiverEmail(catering.getEmail());
+                final Catering catering = cateringService.getWithDetail(receiverId);
+                messageDto.setReceiverEmail(catering.getBusiness().getEmail());
+                messageDto.setReplyToEmail(customer.getEmail());
+
                 break;
 
             case "OptionalService":
-                final OptionalService optionalService = optionalServiceService.get(receiverId);
-                messageDto.setReceiverEmail(optionalService.getEmail());
+                final OptionalService optionalService = optionalServiceService.getWithDetail(receiverId);
+                messageDto.setReceiverEmail(optionalService.getBusiness().getEmail());
+                messageDto.setReplyToEmail(customer.getEmail());
                 break;
 
             default:
@@ -141,10 +146,10 @@ public class CustomerService {
                 customer.getFirstName() + " " +
                 customer.getLastName() + " " +
                 "with email" + " " + user.getEmail() +
-                "\n\n" + messageDto.getContent();
+                "\n\n" + messageDto.getContent() + "\n\nSent via SocialEventOrganizer app";
 
         final SimpleMailMessage inviteEmail = EmailUtil.buildEmail(content,
-                messageDto.getReceiverEmail(), messageDto.getSubject());
+                messageDto.getReceiverEmail(), messageDto.getSubject(), messageDto.getReplyToEmail());
 
         emailService.sendEmail(inviteEmail);
 
@@ -278,7 +283,7 @@ public class CustomerService {
             final String emailContent = ComposeInviteEmailUtil.composeEmail(guest, invitationContent);
             final String emailSubject = "Invitation From " + invitationContent.getCustomer().getFirstName() +
                     " " + invitationContent.getCustomer().getLastName();
-            final SimpleMailMessage inviteEmail = EmailUtil.buildEmail(emailContent, guest.getEmail(), emailSubject);
+            final SimpleMailMessage inviteEmail = EmailUtil.buildEmail(emailContent, guest.getEmail(), emailSubject, null);
 
             emailService.sendEmail(inviteEmail);
         }

@@ -19,6 +19,8 @@ public class MessageDto {
     @NotNull
     private String content;
 
+    private String replyToEmail;
+
     private String receiverEmail;
 
 }

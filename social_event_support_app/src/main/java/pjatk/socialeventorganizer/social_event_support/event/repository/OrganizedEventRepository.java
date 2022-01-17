@@ -27,7 +27,6 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
             "AND lfe.confirmationStatus not like 'CANCELLED'")
     Optional<OrganizedEvent> getWithAllInformationForSendingInvitations(@Param("id") long id, @Param("customerId") long customerId);
 
-
     boolean existsOrganizedEventByIdAndCustomer_Id(long eventId, long customerId);
 
     @Query("SELECT distinct oe FROM organized_event oe " +

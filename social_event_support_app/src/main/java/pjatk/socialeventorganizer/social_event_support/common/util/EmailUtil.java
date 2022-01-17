@@ -8,8 +8,8 @@ import static pjatk.socialeventorganizer.social_event_support.common.constants.C
 @UtilityClass
 public class EmailUtil {
 
-    //TODO: add replyTo
-    public SimpleMailMessage buildEmail(String content, String sendTo, String subject) {
+
+    public SimpleMailMessage buildEmail(String content, String sendTo, String subject, String replyToEmail) {
 
         final SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setFrom(APP_EMAIL);
@@ -17,8 +17,10 @@ public class EmailUtil {
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(content);
 
+        if (replyToEmail != null) {
+            simpleMailMessage.setReplyTo(replyToEmail);
+        }
+
         return simpleMailMessage;
-
     }
-
 }
