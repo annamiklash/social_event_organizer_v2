@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
+import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.NOT_AVAILABLE;
 
 @Service
 @AllArgsConstructor
@@ -89,7 +90,7 @@ public class OptionalServiceAvailabilityService {
         if (available.size() == 0 && notAvailable.size() == 0) {
             return AvailabilityMapper.fromDtoToOptionalServiceAvailability(dto);
         }
-        if (available.size() > 0 && notAvailable.size() == 0) {
+        if (available.size() > 0 || isToCancel(notAvailable, dto)) {
             final Optional<OptionalServiceAvailability> upperBordering = optionalServiceAvailabilityRepository.findByServiceIdAndTimeTo(service.getId(), DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())); //upper
             final Optional<OptionalServiceAvailability> lowerBordering = optionalServiceAvailabilityRepository.findByServiceIdAndTimeFrom(service.getId(), DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeTo()));//lower
 
@@ -130,6 +131,15 @@ public class OptionalServiceAvailabilityService {
                 return AvailabilityMapper.fromDtoToOptionalServiceAvailability(dto);
             }
         }
+    }
+
+    private boolean isToCancel(List<OptionalServiceAvailability> notAvailable, AvailabilityDto dto) {
+        final Optional<OptionalServiceAvailability> or = notAvailable.stream().filter(locationAvailability -> locationAvailability.getStatus().equals(NOT_AVAILABLE.name())
+                && locationAvailability.getDate().equals(DateTimeUtil.fromStringToFormattedDate(dto.getDate()))
+                && locationAvailability.getTimeFrom().equals(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom())))
+                && locationAvailability.getTimeTo().equals(DateTimeUtil.fromStringToFormattedDateTime(DateTimeUtil.joinDateAndTime(dto.getDate(), dto.getTimeFrom()))))
+                .findAny();
+        return or.isPresent();
     }
 
     private boolean isNewWithinNotAvailable(AvailabilityDto dto, List<OptionalServiceAvailability> notAvailable) {

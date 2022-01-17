@@ -189,18 +189,19 @@ public class OptionalServiceForLocationService {
     @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation cancelReservation(long locationForEventId) {
         final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(locationForEventId);
-        serviceForEvent.setConfirmationStatus(CANCELLED.name());
 
         final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
 
         final LocalTime timeFrom = serviceForEvent.getTimeFrom();
         final LocalTime timeTo = serviceForEvent.getTimeTo();
         final LocalDate date = event.getDate();
-
         final LocalDateTime dateTime = LocalDateTime.of(date, timeFrom);
+
         if (!isAllowedToCancel(dateTime)) {
             throw new ActionNotAllowedException("Cannot cancel reservation");
         }
+
+        serviceForEvent.setConfirmationStatus(CANCELLED.name());
 
         final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
         final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeTo));
@@ -210,6 +211,8 @@ public class OptionalServiceForLocationService {
         optionalServiceAvailabilityService.updateToAvailable(locationAvailability, serviceForEvent.getOptionalService());
 
         event.setModifiedAt(LocalDateTime.now());
+
+        optionalServiceForChosenLocationRepository.save(serviceForEvent);
         organizedEventRepository.save(event);
 
         return serviceForEvent;
