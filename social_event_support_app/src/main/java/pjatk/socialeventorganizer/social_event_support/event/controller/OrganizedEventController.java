@@ -91,7 +91,7 @@ public class OrganizedEventController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrganizedEventDto> cancel(@RequestParam long id) {
-        final OrganizedEvent organizedEvent = organizedEventService.get(id);
+        final OrganizedEvent organizedEvent = organizedEventService.getWithDetail(id);
         final OrganizedEvent cancelled = organizedEventService.cancel(organizedEvent);
 
         return ResponseEntity.ok(OrganizedEventMapper.toDto(cancelled));

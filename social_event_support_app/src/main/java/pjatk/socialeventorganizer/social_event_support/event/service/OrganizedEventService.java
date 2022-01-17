@@ -59,6 +59,11 @@ public class OrganizedEventService {
     }
 
     public OrganizedEvent get(long orgEventId) {
+        return organizedEventRepository.findById(orgEventId)
+                .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
+    }
+
+    public OrganizedEvent getWithDetail(long orgEventId) {
         return organizedEventRepository.getWithDetail(orgEventId)
                 .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
     }
