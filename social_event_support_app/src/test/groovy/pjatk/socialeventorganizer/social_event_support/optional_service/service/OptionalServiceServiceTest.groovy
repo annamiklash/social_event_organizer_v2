@@ -12,7 +12,6 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerifi
 import pjatk.socialeventorganizer.social_event_support.image.repository.OptionalServiceImageRepository
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.service.MusicStyleService
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.other.Host
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.repostory.OptionalServiceForChosenLocationRepository
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository
 import pjatk.socialeventorganizer.social_event_support.reviews.service.service.OptionalServiceReviewService
@@ -175,21 +174,22 @@ class OptionalServiceServiceTest extends Specification
         def serviceBusinessHours = List.of(fakeServiceBusinessHours)
         def business = fakeVerifiedBusiness
         def serviceDto = fakeOptionalServiceHostDto
-        def service = fakeOptionalService
+        def host = fakeOptionalHost
         def businessHoursDto = [fakeBusinessHoursDto]
         def availability = fakeServiceAvailability
-        availability.setOptionalService(service)
+        availability.setOptionalService(host)
         serviceDto.setBusinessHours(businessHoursDto)
 
-        service.setServiceAddress(address)
-        service.setBusiness(business)
-        service.setOptionalServiceBusinessHours(ImmutableSet.copyOf(serviceBusinessHours))
-        service.setCreatedAt(now)
-        service.setModifiedAt(now)
-        service.setServiceCost(new BigDecimal('100.20'))
-        service.setRating(0.0)
+        host.setId(null)
+        host.setServiceAddress(address)
+        host.setBusiness(business)
+        host.setOptionalServiceBusinessHours(ImmutableSet.copyOf(serviceBusinessHours))
+        host.setCreatedAt(now)
+        host.setModifiedAt(now)
+        host.setServiceCost(new BigDecimal('123.00'))
+        host.setRating(0.0)
 
-        def target = Host.builder().build()
+        def target = host
 
         when:
         def result = optionalServiceService.create(serviceDto)
@@ -244,7 +244,7 @@ class OptionalServiceServiceTest extends Specification
         def result = optionalServiceService.getWithImages(id)
 
         then:
-        1 * optionalServiceRepository.findWithImages(id) >> service
+        1 * optionalServiceRepository.findWithImages(id) >> Optional.of(service)
 
         result == target
 
@@ -260,7 +260,7 @@ class OptionalServiceServiceTest extends Specification
         def result = optionalServiceService.count(keyword)
 
         then:
-        1 * optionalServiceRepository.countAll(keyword)
+        1 * optionalServiceRepository.countAll(keyword) >> target
 
         result == target
     }

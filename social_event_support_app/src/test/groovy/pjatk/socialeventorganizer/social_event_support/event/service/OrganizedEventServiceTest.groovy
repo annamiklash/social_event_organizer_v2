@@ -194,7 +194,6 @@ class OrganizedEventServiceTest extends Specification
         then:
         1 * organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId) >> true
         1 * organizedEventRepository.getWithDetail(eventId, customerId) >> Optional.of(organizedEvent)
-        1 * organizedEventRepository.save(organizedEvent)
         statusChangeHelper.possibleToChangeStatusFromInProgressToConfirmed(organizedEvent) >> true
 
         result == target
