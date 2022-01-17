@@ -7,6 +7,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.service.mod
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.TranslationLanguageDto
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.other.Host
 
 trait OptionalServiceTrait {
 
@@ -21,6 +22,18 @@ trait OptionalServiceTrait {
             .email('email@email.com')
             .optionalServiceBusinessHours(new HashSet<OptionalServiceBusinessHours>())
             .availability(new HashSet<OptionalServiceAvailability>())
+            .build()
+
+    Host fakeOptionalHost = Host.builder()
+            .id(1)
+            .type("HOST")
+            .alias("ALIAS")
+            .firstName("GERALT")
+            .lastName("RIVIJSKI")
+            .description("WIEDZMIN")
+            .serviceCost(new BigDecimal("123"))
+            .email('email@email.com')
+            .optionalServiceBusinessHours(new HashSet<OptionalServiceBusinessHours>())
             .build()
 
     OptionalServiceDto fakeOptionalServiceHostDto = OptionalServiceDto.builder()

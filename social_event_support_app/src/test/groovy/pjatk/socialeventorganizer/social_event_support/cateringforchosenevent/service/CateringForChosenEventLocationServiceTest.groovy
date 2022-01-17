@@ -1,5 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.service
 
+
+import com.google.common.collect.ImmutableSet
 import org.codehaus.groovy.runtime.InvokerHelper
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper
@@ -117,7 +119,7 @@ class CateringForChosenEventLocationServiceTest extends Specification
         result == target
     }
 
-    def "Create LocationNotBookedException"() {
+    def "Create NotFoundException"() {
         given:
         def customerId = 1L
         def eventId = 2L
@@ -125,7 +127,7 @@ class CateringForChosenEventLocationServiceTest extends Specification
         def dto = fakeCateringForChosenEventLocationDto
 
         def organizedEvent = fakeOrganizedEvent
-        organizedEvent.setLocationForEvent(null)
+        organizedEvent.setLocationForEvent(ImmutableSet.of())
 
         when:
         cateringForChosenEventLocationService.create(customerId, eventId, cateringId, dto)

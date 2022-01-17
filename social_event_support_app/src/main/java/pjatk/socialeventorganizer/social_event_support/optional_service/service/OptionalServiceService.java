@@ -149,7 +149,7 @@ public class OptionalServiceService {
         final Business business = businessRepository.findById(userCredentials.getUserId())
                 .orElseThrow(() -> new NotFoundException("Business with id " + userCredentials.getUserId() + " DOES NOT EXIST"));
 
-        if (!business.getVerificationStatus().equals(String.valueOf(BusinessVerificationStatusEnum.VERIFIED))) {
+        if (!BusinessVerificationStatusEnum.VERIFIED.name().equals(business.getVerificationStatus())) {
             throw new BusinessVerificationException(BusinessVerificationException.Enum.BUSINESS_NOT_VERIFIED);
         }
 

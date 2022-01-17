@@ -118,7 +118,7 @@ class CateringForChosenEventLocationControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['BUSINESS'])
-    def "DELETE api/event/catering returns 204 positive test scenario"() {
+    def "DELETE api/event/catering/cancel returns 204 positive test scenario"() {
         given:
         def id = 1L
 
@@ -131,7 +131,7 @@ class CateringForChosenEventLocationControllerTest extends Specification
                 .willReturn(cateringForChosenEventLocation)
         expect:
         mockMvc.perform(
-                delete("/api/event/catering")
+                delete("/api/event/catering/cancel")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .param('id', id.toString())

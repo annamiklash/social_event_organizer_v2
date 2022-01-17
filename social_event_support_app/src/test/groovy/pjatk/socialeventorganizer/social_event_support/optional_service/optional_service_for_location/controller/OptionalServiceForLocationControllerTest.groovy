@@ -150,7 +150,7 @@ class OptionalServiceForLocationControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['ADMIN'])
-    def "PUT api/event/service/cancel returns 200 positive test scenario"() {
+    def "DELETE api/event/service/cancel returns 200 positive test scenario"() {
         given:
         def id = 1L
 
@@ -164,7 +164,7 @@ class OptionalServiceForLocationControllerTest extends Specification
 
         expect:
         mockMvc.perform(
-                put("/api/event/service/cancel")
+                delete("/api/event/service/cancel")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .param('id', id.toString())
@@ -174,28 +174,5 @@ class OptionalServiceForLocationControllerTest extends Specification
                 .andExpect(content().json(jsonResponse))
     }
 
-    @WithMockUser(authorities = ['ADMIN'])
-    def "DELETE api/event/service returns 200 positive test scenario"() {
-        given:
-        def id = 1L
 
-        def optionalServiceForChosenLocation = fakeOptionalServiceForChosenLocation
-        def result = OptionalServiceForLocationMapper.toDto(optionalServiceForChosenLocation)
-
-        def jsonResponse = TestSerializer.serialize(result)
-
-        BDDMockito.given(optionalServiceForLocationService.cancelReservation(eq(id)))
-                .willReturn(optionalServiceForChosenLocation)
-
-        expect:
-        mockMvc.perform(
-                delete("/api/event/service")
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param('id', id.toString())
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().json(jsonResponse))
-    }
 }
