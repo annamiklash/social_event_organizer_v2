@@ -109,6 +109,4 @@ public class OrganizedEventController {
         return ResponseEntity.ok(OrganizedEventMapper.toDtoWithCustomer(organizedEvent));
     }
 
-
-
 }

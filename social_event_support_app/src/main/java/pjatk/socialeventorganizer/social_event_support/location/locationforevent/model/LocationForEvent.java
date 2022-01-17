@@ -38,6 +38,7 @@ public class LocationForEvent implements Serializable {
     @Column(nullable = false)
     private String confirmationStatus;
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location", nullable = false)
     private Location location;
