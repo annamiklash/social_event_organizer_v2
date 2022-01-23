@@ -47,13 +47,11 @@ public class Business extends User implements Serializable {
     private Set<Catering> caterings;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_business")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business")
     private Set<Location> locations;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_business")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business")
     private Set<OptionalService> services;
 
 }

@@ -19,7 +19,7 @@ public class LocationReview extends Review {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_location", nullable = false)
+    @JoinColumn(name = "id_location")
     private Location location;
 
 }

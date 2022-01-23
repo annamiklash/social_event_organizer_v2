@@ -281,7 +281,7 @@ public class LocationService {
         });
 
         inputDescriptions.forEach(locationDescriptionItem -> {
-            if (!locationDescriptions.contains(locationDescriptionItem)){
+            if (!locationDescriptions.contains(locationDescriptionItem)) {
                 location.addDescriptionItem(locationDescriptionItem);
             }
         });
@@ -312,6 +312,14 @@ public class LocationService {
         final Location locationToDelete = locationRepository.getAllLocationInformation(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
 
+        final ImmutableList<LocationForEvent> reservations = CollectionUtil.emptyListIfNull(locationToDelete.getLocationForEvent());
+        final boolean canDelete = reservations.stream()
+                .allMatch(location -> "FINISHED".equals(location.getEvent().getEventStatus()));
+
+        if (!canDelete) {
+            throw new ActionNotAllowedException("Cannot delete location. There are reservations pending");
+        }
+
         boolean hasPendingReservations = hasPendingReservations(locationToDelete);
         if (hasPendingReservations) {
             throw new ActionNotAllowedException("Cannot delete location with reservations pending");
@@ -338,8 +346,6 @@ public class LocationService {
             locationToDelete.removeCatering(catering);
         }
         addressService.delete(locationToDelete.getLocationAddress());
-
-        final ImmutableList<LocationForEvent> reservations = CollectionUtil.emptyListIfNull(locationToDelete.getLocationForEvent());
 
         locationRepository.delete(locationToDelete);
     }

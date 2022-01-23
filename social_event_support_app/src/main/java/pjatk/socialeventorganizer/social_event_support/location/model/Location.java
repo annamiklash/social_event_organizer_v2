@@ -70,8 +70,8 @@ public class Location implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_business", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "id_business")
     private Business business;
 
     @JsonIgnore
