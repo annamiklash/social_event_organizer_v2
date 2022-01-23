@@ -197,6 +197,7 @@ public class CustomerService {
 
         CollectionUtil.emptyListIfNull(customerToDelete.getGuests())
                 .forEach(guestService::delete);
+
         CollectionUtil.emptyListIfNull(customerToDelete.getEvents())
                 .forEach(organizedEventService::delete);
 

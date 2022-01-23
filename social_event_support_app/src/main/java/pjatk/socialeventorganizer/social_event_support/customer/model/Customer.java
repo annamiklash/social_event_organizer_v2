@@ -44,7 +44,7 @@ public class Customer extends User implements Serializable {
     @JsonIgnore
     private Set<Guest> guests;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "id_customer")
     @JsonIgnore
     private Set<OrganizedEvent> events;
@@ -52,6 +52,8 @@ public class Customer extends User implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_avatar")
     private CustomerAvatar avatar;
+    
+    //TODO: add reviews
 
 
 }

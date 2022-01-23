@@ -11,6 +11,7 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mo
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringOrderChoice;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringOrderChoiceDto;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringOrderChoiceRepository;
+import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllowedException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class CateringOrderChoiceService {
                 .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));
 
         if (orderChoice.getEventLocationCatering().getIsCateringOrderConfirmed()) {
-
+            throw new ActionNotAllowedException("Cannot edit order adter it was confirmed");
         }
         orderChoice.setAmount(dto.getAmount());
 
@@ -79,9 +80,12 @@ public class CateringOrderChoiceService {
     }
 
     public void delete(long id) {
-        final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findById(id)
+        final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("No caatering order with id " + id));
 
+        if (orderChoice.getEventLocationCatering().getIsCateringOrderConfirmed()) {
+            throw new ActionNotAllowedException("Cannot edit order adter it was confirmed");
+        }
         cateringOrderChoiceRepository.delete(orderChoice);
     }
 
