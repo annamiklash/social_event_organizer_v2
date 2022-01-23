@@ -244,7 +244,7 @@ public class CateringService {
         return CollectionUtil.emptyListIfNull(cateringToDelete.getCateringForChosenEventLocations())
                 .stream()
                 .map(catering -> catering.getEventLocation().getEvent())
-                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
+                .allMatch(organizedEvent -> "FINISHED".equals(organizedEvent.getEventStatus()));
     }
 
     private void saveCatering(Catering catering) {
