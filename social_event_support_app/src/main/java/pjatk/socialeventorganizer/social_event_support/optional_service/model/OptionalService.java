@@ -75,7 +75,7 @@ public class OptionalService {
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "id_service_address")
     private Address serviceAddress;
 

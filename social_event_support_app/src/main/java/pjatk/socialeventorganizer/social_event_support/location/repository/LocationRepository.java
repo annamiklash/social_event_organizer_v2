@@ -98,8 +98,7 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "LEFT JOIN FETCH l.locationBusinessHours bh " +
             "LEFT JOIN FETCH l.locationForEvent lfe " +
             "LEFT JOIN FETCH lfe.event " +
-            "WHERE l.id = :locationId " +
-            "AND lfe.confirmationStatus NOT LIKE 'CANCELLED'")
+            "WHERE l.id = :locationId ")
     Optional<Location> getAllLocationInformation(@Param("locationId") long locationId);
 
     List<Location> findAllByBusiness_Id(long id);

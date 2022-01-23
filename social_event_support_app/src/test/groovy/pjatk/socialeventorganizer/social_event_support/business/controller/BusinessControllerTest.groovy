@@ -156,7 +156,7 @@ class BusinessControllerTest extends Specification
                 .andExpect(status().isOk())
 
         BDDMockito.verify(businessService, times(1))
-                .deleteLogical(eq(id))
+                .delete(eq(id))
     }
 
     @WithMockUser(authorities = ['ADMIN'])

@@ -65,8 +65,8 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_business", nullable = false)
     private Business business;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_catering_address", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "id_catering_address")
     private Address cateringAddress;
 
     @OneToMany(fetch = FetchType.LAZY,

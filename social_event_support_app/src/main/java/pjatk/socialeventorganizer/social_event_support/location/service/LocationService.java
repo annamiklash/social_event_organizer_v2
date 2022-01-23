@@ -307,6 +307,11 @@ public class LocationService {
         return ImmutableList.copyOf(locationRepository.findAllByCateringId(cateringId));
     }
 
+    public Location getAllLocationInformation(long locationId) {
+        return locationRepository.getAllLocationInformation(locationId)
+                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void delete(long id) {
         final Location locationToDelete = locationRepository.getAllLocationInformation(id)

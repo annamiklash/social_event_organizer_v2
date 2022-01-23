@@ -98,11 +98,7 @@ public class AddressService {
     }
 
     public void delete(Address address) {
-
-        address.setModifiedAt(timestampHelper.now());
-        address.setDeletedAt(timestampHelper.now());
-
-        addressRepository.save(address);
+        addressRepository.delete(address);
     }
 
     public Long count() {

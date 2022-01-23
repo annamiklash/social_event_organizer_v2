@@ -1,6 +1,5 @@
 package pjatk.socialeventorganizer.social_event_support.location.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import pjatk.socialeventorganizer.social_event_support.address.model.Address;
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
@@ -68,14 +67,11 @@ public class Location implements Serializable {
     @Column(nullable = false)
     private Double rating;
 
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "id_business")
     private Business business;
 
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "id_location_address")
     private Address locationAddress;
 

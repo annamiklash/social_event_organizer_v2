@@ -37,21 +37,23 @@ public class Business extends User implements Serializable {
     @Column(name = "verification_status", nullable = false)
     private String verificationStatus;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_business_address")
     private Address address;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_business")
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business", cascade = CascadeType.MERGE)
     private Set<Catering> caterings;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business")
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business", cascade = CascadeType.MERGE)
     private Set<Location> locations;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business")
+    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "business", cascade = CascadeType.MERGE)
     private Set<OptionalService> services;
 
 }

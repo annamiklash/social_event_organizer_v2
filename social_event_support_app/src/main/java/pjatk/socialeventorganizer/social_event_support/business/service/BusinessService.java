@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.business.service;
 
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,16 +14,18 @@ import pjatk.socialeventorganizer.social_event_support.business.mapper.BusinessM
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.model.dto.BusinessDto;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
-import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
 import pjatk.socialeventorganizer.social_event_support.enums.BusinessVerificationStatusEnum;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.UserExistsException;
+import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService;
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.BusinessUserRegistrationDto;
@@ -110,17 +113,23 @@ public class BusinessService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void deleteLogical(long businessId) {
+    public void delete(long businessId) {
         final Business businessToDelete = businessRepository.findAllBusinessInformation(businessId)
                 .orElseThrow(() -> new NotFoundException("Business with businessId " + businessId + " DOES NOT EXIST"));
 
-        CollectionUtil.emptyListIfNull(businessToDelete.getServices())
+        final ImmutableSet<Location> locations = ImmutableSet.copyOf(locationService.getByBusinessId(businessId));
+
+        final ImmutableSet<Catering> caterings =  ImmutableSet.copyOf(cateringService.getByBusinessId(businessId));
+
+        final ImmutableSet<OptionalService> services =  ImmutableSet.copyOf(optionalServiceService.getByBusinessId(businessId));
+
+        services
                 .forEach(service -> optionalServiceService.delete(service.getId()));
 
-        CollectionUtil.emptyListIfNull(businessToDelete.getCaterings())
+        caterings
                 .forEach(catering -> cateringService.delete(catering.getId()));
 
-        CollectionUtil.emptyListIfNull(businessToDelete.getLocations())
+        locations
                 .forEach(location -> locationService.delete(location.getId()));
 
         addressService.delete(businessToDelete.getAddress());

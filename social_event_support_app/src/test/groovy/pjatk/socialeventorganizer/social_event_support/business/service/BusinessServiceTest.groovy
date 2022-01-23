@@ -171,7 +171,7 @@ class BusinessServiceTest extends Specification
         def business = fakeVerifiedBusiness
 
         when:
-        businessService.deleteLogical(businessId)
+        businessService.delete(businessId)
 
         then:
         1 * businessRepository.findAllBusinessInformation(businessId) >> Optional.of(business)

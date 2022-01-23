@@ -53,7 +53,6 @@ public class LocationReviewController {
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
     }
 
-    //TODO: add verification if location/catering/service was booked
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @RequestMapping(
             method = RequestMethod.POST,

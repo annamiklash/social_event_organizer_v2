@@ -240,12 +240,16 @@ public class CateringService {
         return cateringRepository.countAll(keyword);
     }
 
+    public Catering getAllCateringInformation(long cateringId) {
+        return cateringRepository.findAllCateringInformation(cateringId)
+                .orElseThrow(() -> new NotFoundException("Catering with id " + cateringId + " DOES NOT EXIST"));
+    }
+
     private boolean hasPendingReservations(Catering cateringToDelete) {
         return CollectionUtil.emptyListIfNull(cateringToDelete.getCateringForChosenEventLocations())
                 .stream()
                 .map(catering -> catering.getEventLocation().getEvent())
-                .allMatch(organizedEvent -> "FINISHED".equals(organizedEvent.getEventStatus()));
-    }
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));    }
 
     private void saveCatering(Catering catering) {
         log.info("TRYING TO SAVE" + catering.toString());
@@ -352,5 +356,6 @@ public class CateringService {
         final String city = savedCatering.getCateringAddress().getCity();
         return locationService.findByCity(city);
     }
+
 
 }
