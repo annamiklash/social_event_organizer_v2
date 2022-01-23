@@ -140,7 +140,7 @@ public class LocationController {
     public ResponseEntity<LocationDto> edit(@Valid @RequestBody LocationDto dto, @RequestParam long id) {
 
         final Location location = locationService.edit(dto, id);
-        final LocationDto locationDto = LocationMapper.toDto(location);
+        final LocationDto locationDto = LocationMapper.toDtoWithDetail(location);
 
         return ResponseEntity.ok(locationDto);
     }

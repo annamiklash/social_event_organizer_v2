@@ -78,8 +78,6 @@ public class AddressService {
         }
         final Address address = get(id);
 
-        address.setCity(dto.getCity());
-        address.setCountry(dto.getCountry());
         address.setStreetName(dto.getStreetName());
         address.setStreetNumber(dto.getStreetNumber());
         address.setZipCode(dto.getZipCode());

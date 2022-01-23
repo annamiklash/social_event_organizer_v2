@@ -157,6 +157,24 @@ public class CateringService {
         catering.setDescription(dto.getDescription());
         catering.setModifiedAt(timestampHelper.now());
 
+        final Set<Cuisine> cuisines = catering.getCuisines();
+        final Set<Cuisine> inputCuisines = cuisines.stream()
+                .map(cuisine -> cuisineService.getByName(cuisine.getName()))
+                .collect(Collectors.toSet());
+
+        cuisines.forEach(cuisine -> {
+            if (!inputCuisines.contains(cuisine)) {
+                catering.removeCuisine(cuisine);
+            }
+        });
+
+        inputCuisines.forEach(cuisine -> {
+            if (!cuisines.contains(cuisine)) {
+                catering.addCuisine(cuisine);
+            }
+        });
+
+
         cateringRepository.save(catering);
         log.info("UPDATED");
 

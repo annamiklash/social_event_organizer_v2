@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.location.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -256,7 +257,7 @@ public class LocationService {
 
     @Transactional(rollbackOn = Exception.class)
     public Location edit(LocationDto dto, long id) {
-        final Location location = get(id);
+        final Location location = getWithDetail(id);
 
         location.setEmail(dto.getEmail());
         location.setName(dto.getName());
@@ -266,23 +267,25 @@ public class LocationService {
         location.setStandingCapacity(dto.getStandingCapacity());
         location.setDailyRentCost(Converter.convertPriceString(dto.getDailyRentCost()));
 
-        final Set<LocationDescriptionItemEnum> descriptionsEnum = dto.getDescriptions();
+        final Set<LocationDescriptionItemEnum> inputDescriptionEnums = dto.getDescriptions();
+        final Set<LocationDescriptionItem> inputDescriptions = inputDescriptionEnums.stream()
+                .map(locationDescriptionItemService::getByName)
+                .collect(Collectors.toSet());
 
-        final Set<LocationDescriptionItem> locationDescription = location.getDescriptions();
+        final Set<LocationDescriptionItem> locationDescriptions = ImmutableSet.copyOf(location.getDescriptions());
 
-        for (LocationDescriptionItemEnum descriptionEnum : descriptionsEnum) {
-            if (!locationDescription.contains(descriptionEnum.getValue())) {
-                location.addDescriptionItem(locationDescriptionItemService.getByName(descriptionEnum));
-            }
-        }
-
-        for (LocationDescriptionItem locationDescriptionItem : locationDescription) {
-            final Set<String> enumsAsString = descriptionsEnum.stream().map(LocationDescriptionItemEnum::getValue).collect(Collectors.toSet());
-
-            if (!enumsAsString.contains(locationDescriptionItem.getId())) {
+        locationDescriptions.forEach(locationDescriptionItem -> {
+            if (!inputDescriptions.contains(locationDescriptionItem)) {
                 location.removeDescriptionItem(locationDescriptionItem);
             }
-        }
+        });
+
+        inputDescriptions.forEach(locationDescriptionItem -> {
+            if (!locationDescriptions.contains(locationDescriptionItem)){
+                location.addDescriptionItem(locationDescriptionItem);
+            }
+        });
+
         location.setModifiedAt(LocalDateTime.now());
 
         save(location);

@@ -108,7 +108,7 @@ public class OptionalServiceService {
     }
 
     public OptionalService get(long id) {
-        return optionalServiceRepository.findWithImages(id)
+        return optionalServiceRepository.findWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Service with id " + id + " DOES NOT EXIST"));
     }
 
@@ -191,8 +191,11 @@ public class OptionalServiceService {
         final OptionalService optionalService = get(id);
 
         optionalService.setAlias(dto.getAlias());
+        optionalService.setFirstName(dto.getFirstName());
+        optionalService.setLastName(dto.getFirstName());
+        optionalService.setEmail(dto.getEmail());
+        optionalService.setServiceCost(Converter.convertPriceString(dto.getServiceCost()));
         optionalService.setDescription(dto.getDescription());
-        optionalService.setType(optionalService.getType());
         optionalService.setModifiedAt(timestampHelper.now());
 
         optionalServiceRepository.save(optionalService);

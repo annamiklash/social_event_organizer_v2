@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface OptionalServiceRepository extends JpaRepository<OptionalService, Long> {
 
-    @Query("SELECT os from optional_service os " +
+    @Query("SELECT distinct os from optional_service os " +
             "LEFT JOIN optional_service_image si on si.service.id = os.id " +
             "JOIN os.business ob " +
             "LEFT JOIN users u on ob.id = u.id " +
@@ -22,21 +22,27 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
             "AND u.isActive = true")
     Page<OptionalService> findAllWithKeyword(Pageable paging, @Param("keyword") String keyword);
 
-    @Query(value = "SELECT os.* from optional_service os " +
+    @Query(value = "SELECT distinct os.* from optional_service os " +
             "LEFT JOIN optional_service_image osi on os.id_optional_service = osi.id_optional_service " +
             "left join optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
             "LEFT JOIN address a on os.id_service_address = a.id_address " +
+            "LEFT JOIN business b on b.id_user = os.id_business " +
+            "LEFT JOIN users u on u.id_user = b.id_user " +
             "WHERE sa.date = CAST(:date as timestamp) " +
             "AND (:type like '' or os.type = :type) " +
-            "AND (:city like '' or a.city = :city)", nativeQuery = true)
+            "AND (:city like '' or a.city = :city) " +
+            "AND u.is_active = true", nativeQuery = true)
     List<OptionalService> search(@Param("date") String date, @Param("type") String type, @Param("city") String city);
 
     @Query(value = "SELECT distinct os.* from optional_service os " +
             "LEFT JOIN optional_service_image osi on os.id_optional_service = osi.id_optional_service " +
             "left join optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
             "LEFT JOIN address a on os.id_service_address = a.id_address " +
+            "LEFT JOIN business b on b.id_user = os.id_business " +
+            "LEFT JOIN users u on u.id_user = b.id_user " +
             "WHERE (:type like '' or os.type = :type) " +
-            "AND (:city like '' or a.city = :city)", nativeQuery = true)
+            "AND (:city like '' or a.city = :city) " +
+            "AND u.is_active = true", nativeQuery = true)
     List<OptionalService> searchByType(@Param("type") String type, @Param("city") String city);
 
     @Query(value = "SELECT distinct os.* from optional_service os " +

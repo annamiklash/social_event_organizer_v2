@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.optional_service.mapper;
 
 import lombok.experimental.UtilityClass;
 import org.apache.commons.collections4.CollectionUtils;
+import pjatk.socialeventorganizer.social_event_support.address.mapper.AddressMapper;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
@@ -229,6 +230,7 @@ public class OptionalServiceMapper {
 
     public OptionalServiceDto toDtoWithDetails(OptionalService optionalService) {
         final OptionalServiceDto dto = toDto(optionalService);
+        dto.setAddress(AddressMapper.toDto(optionalService.getServiceAddress()));
 //        dto.setBusiness(BusinessMapper.toDto(optionalService.getBusiness()));
         if (!CollectionUtils.isEmpty(optionalService.getImages())) {
             dto.setImages(optionalService.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()));
