@@ -32,7 +32,7 @@ public class OptionalServiceForChosenLocation {
     private String confirmationStatus;
 
     @EqualsAndHashCode.Exclude
-    @ManyToOne( fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_location_for_event")
     private LocationForEvent locationForEvent;
 

@@ -102,7 +102,7 @@ public class OptionalService {
             inverseJoinColumns = @JoinColumn(name = "id_music_style"))
     private Set<MusicStyle> styles;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "id_optional_service")
     private Set<OptionalServiceForChosenLocation> serviceForLocation;
 

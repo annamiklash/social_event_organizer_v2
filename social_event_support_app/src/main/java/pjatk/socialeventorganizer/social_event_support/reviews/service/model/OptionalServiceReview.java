@@ -19,6 +19,6 @@ public class OptionalServiceReview extends Review {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_optional_service", nullable = false)
+    @JoinColumn(name = "id_optional_service")
     private OptionalService optionalService;
 }

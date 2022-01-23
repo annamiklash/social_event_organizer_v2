@@ -81,6 +81,10 @@ public class OptionalServiceReviewService {
         return bd.doubleValue();
     }
 
+    public void delete(OptionalServiceReview optionalServiceReview) {
+        serviceReviewRepository.delete(optionalServiceReview);
+    }
+
     public boolean exists(long id) {
         return serviceReviewRepository.existsByOptionalService_Id(id);
     }

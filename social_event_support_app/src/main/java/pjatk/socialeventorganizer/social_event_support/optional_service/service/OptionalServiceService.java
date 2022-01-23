@@ -275,6 +275,9 @@ public class OptionalServiceService {
         CollectionUtil.emptyListIfNull(serviceToDelete.getImages())
                 .forEach(optionalServiceImageRepository::delete);
 
+        CollectionUtil.emptyListIfNull(serviceToDelete.getReviews())
+                .forEach(optionalServiceReviewService::delete);
+
         addressService.delete(serviceToDelete.getServiceAddress());
 
         final String type = serviceToDelete.getType();
