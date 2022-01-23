@@ -36,12 +36,25 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     @Query("SELECT distinct c from catering c " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
+            "LEFT JOIN c.locations l " +
             "left join c.cuisines cu " +
             "left join c.cateringBusinessHours bh " +
             "left join c.cateringAddress ca " +
             "WHERE (:city like '' or ca.city = :city) " +
-            "AND ((:cuisines) is null or cu.id IN (:cuisines))")
-    List<Catering> search(@Param("cuisines") Set<Long> cuisines, @Param("city") String city);
+            "AND ((:cuisines) is null or cu.id IN (:cuisines)) " +
+            "AND (:locationId is null or l.id = :locationId)")
+    List<Catering> search(@Param("cuisines") Set<Long> cuisines, @Param("city") String city, @Param("locationId") Long locationId);
+
+//    @Query("SELECT distinct c from catering c " +
+//            "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
+//            "LEFT JOIN c.locations l " +
+//            "left join c.cuisines cu " +
+//            "left join c.cateringBusinessHours bh " +
+//            "left join c.cateringAddress ca " +
+//            "WHERE (:city like '' or ca.city = :city) " +
+//            "AND ((:cuisines) is null or cu.id IN (:cuisines)) " +
+//            "AND (:locationId is null or l.id = :locationId) ")
+//    List<Catering> findAllByLocationId(@Param("cuisines") Set<Long> cuisines, @Param("city") String city), @Param("locationId") Long locationId);
 
     @Query("SELECT cat FROM catering cat " +
             "LEFT JOIN FETCH cat.cateringBusinessHours bh " +

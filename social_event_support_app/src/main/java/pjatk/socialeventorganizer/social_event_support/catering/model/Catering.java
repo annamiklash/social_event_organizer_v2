@@ -56,6 +56,8 @@ public class Catering implements Serializable {
 
     private LocalDateTime deletedAt;
 
+    private Boolean offersOutsideCatering;
+
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

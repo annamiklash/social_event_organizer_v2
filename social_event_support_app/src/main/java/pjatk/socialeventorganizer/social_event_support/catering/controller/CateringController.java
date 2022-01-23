@@ -67,8 +67,8 @@ public class CateringController {
             method = RequestMethod.POST,
             path = "allowed/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TableDto<CateringDto>> searchByAppliedFilters(@RequestBody FilterCateringsDto dto) {
-        final ImmutableList<Catering> list = cateringService.search(dto);
+    public ResponseEntity<TableDto<CateringDto>> searchByAppliedFilters(@RequestBody FilterCateringsDto dto, @RequestParam(required = false) Long locationId) {
+        final ImmutableList<Catering> list = cateringService.search(dto, locationId);
         final int count = list.size();
         final ImmutableList<CateringDto> resultList = list.stream()
                 .map(CateringMapper::toDto)

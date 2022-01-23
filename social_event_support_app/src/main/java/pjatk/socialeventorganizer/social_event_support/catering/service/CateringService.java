@@ -75,7 +75,7 @@ public class CateringService {
         return ImmutableList.copyOf(page.get().collect(Collectors.toList()));
     }
 
-    public ImmutableList<Catering> search(FilterCateringsDto dto) {
+    public ImmutableList<Catering> search(FilterCateringsDto dto, Long locationId) {
         String city = dto.getCity();
         city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
 
@@ -86,9 +86,9 @@ public class CateringService {
                     .map(cuisineService::getByName)
                     .map(Cuisine::getId)
                     .collect(Collectors.toSet());
-            caterings = cateringRepository.search(cuisines, city);
+            caterings = cateringRepository.search(cuisines, city, locationId);
         } else {
-            caterings = cateringRepository.search(null, city);
+            caterings = cateringRepository.search(null, city, locationId);
         }
 
         if (dto.getDate() != null) {

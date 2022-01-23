@@ -46,6 +46,7 @@ public class CateringMapper {
                 .modifiedAt(Converter.fromStringToFormattedDateTime(dto.getModifiedAt()))
                 .deletedAt(Converter.fromStringToFormattedDateTime(dto.getDeletedAt()))
                 .cateringAddress(AddressMapper.fromDto(dto.getAddress()))
+                .offersOutsideCatering(dto.getOffersOutsideCatering())
                 .build();
     }
 
@@ -61,6 +62,7 @@ public class CateringMapper {
                 .modifiedAt(String.valueOf(catering.getModifiedAt()))
                 .deletedAt(String.valueOf(catering.getDeletedAt()))
                 .address(AddressMapper.toDto(catering.getCateringAddress()))
+                .offersOutsideCatering(catering.getOffersOutsideCatering())
                 .cuisines(catering.getCuisines().stream()
                         .map(CuisineMapper::toDto)
                         .collect(Collectors.toList()))
