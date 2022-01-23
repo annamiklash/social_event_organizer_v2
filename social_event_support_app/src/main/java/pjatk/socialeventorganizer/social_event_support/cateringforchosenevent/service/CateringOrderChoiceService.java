@@ -68,6 +68,10 @@ public class CateringOrderChoiceService {
     public CateringOrderChoice edit(CateringOrderChoiceDto dto, long orderChoiceId) {
         final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findWithDetail(orderChoiceId)
                 .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));
+
+        if (orderChoice.getEventLocationCatering().getIsCateringOrderConfirmed()) {
+
+        }
         orderChoice.setAmount(dto.getAmount());
 
         cateringOrderChoiceRepository.save(orderChoice);

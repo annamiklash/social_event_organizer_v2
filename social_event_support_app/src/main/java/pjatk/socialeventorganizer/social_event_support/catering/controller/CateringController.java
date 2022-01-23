@@ -121,10 +121,9 @@ public class CateringController {
         return ResponseEntity.ok(resultList);
     }
 
-    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.GET,
-            path = "location",
+            path = "allowed/location",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<CateringDto>> getByLocationId(@RequestParam long id) {
         final ImmutableList<Catering> caterings = cateringService.getByLocationId(id);

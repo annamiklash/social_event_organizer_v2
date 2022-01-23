@@ -174,7 +174,6 @@ public class CateringService {
             }
         });
 
-
         cateringRepository.save(catering);
         log.info("UPDATED");
 
