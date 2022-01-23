@@ -25,14 +25,14 @@ public class CateringOrderChoice implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "id_catering_item")
     private CateringItem item;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_catering_for_chosen_location", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_catering_for_chosen_location")
     private CateringForChosenEventLocation eventLocationCatering;
 
 }

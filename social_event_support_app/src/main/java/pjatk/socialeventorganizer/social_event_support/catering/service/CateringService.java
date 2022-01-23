@@ -38,6 +38,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundExcept
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService;
+import pjatk.socialeventorganizer.social_event_support.reviews.catering.repository.CateringReviewRepository;
 import pjatk.socialeventorganizer.social_event_support.security.model.UserCredentials;
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService;
 
@@ -65,6 +66,7 @@ public class CateringService {
     private final CuisineService cuisineService;
     private final TimestampHelper timestampHelper;
     private final CateringImageRepository cateringImageRepository;
+    private final CateringReviewRepository cateringReviewRepository;
 
     public ImmutableList<Catering> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -192,7 +194,8 @@ public class CateringService {
 
         final ImmutableList<Location> locations = CollectionUtil.emptyListIfNull(cateringToDelete.getLocations());
         for (Location location : locations) {
-            cateringToDelete.removeLocation(location);
+            location.removeCatering(cateringToDelete);
+            locationService.save(location);
         }
 
         final ImmutableList<Cuisine> cuisines = CollectionUtil.emptyListIfNull(cateringToDelete.getCuisines());
@@ -208,6 +211,9 @@ public class CateringService {
 
         CollectionUtil.emptyListIfNull(cateringToDelete.getCateringItems())
                 .forEach(cateringItemRepository::delete);
+
+        CollectionUtil.emptyListIfNull(cateringToDelete.getReviews())
+                .forEach(cateringReviewRepository::delete);
 
         addressService.delete(cateringToDelete.getCateringAddress());
 
@@ -306,7 +312,10 @@ public class CateringService {
         cateringRepository.saveAndFlush(catering);
 
         final ImmutableList<Location> locationsWithingSameCity = locationService.findByCity(address.getCity());
-        locationsWithingSameCity.stream().peek(location -> location.addCatering(catering))
+
+        locationsWithingSameCity
+                .stream()
+                .peek(location -> location.addCatering(catering))
                 .forEach(locationService::save);
 
         return catering;

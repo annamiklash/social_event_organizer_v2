@@ -19,7 +19,7 @@ public class CateringReview extends Review {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_catering", nullable = false)
+    @JoinColumn(name = "id_catering")
     private Catering catering;
 
 }

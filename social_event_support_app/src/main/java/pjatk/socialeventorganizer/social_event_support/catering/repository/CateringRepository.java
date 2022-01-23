@@ -63,7 +63,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
 
     List<Catering> findAllByBusiness_Id(long id);
 
-    @Query("SELECT c FROM catering c " +
+    @Query("SELECT distinct c FROM catering c " +
             "LEFT JOIN FETCH c.reviews r " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "LEFT JOIN FETCH c.cateringAddress cad " +
@@ -73,7 +73,8 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "LEFT JOIN FETCH c.cateringForChosenEventLocations cfel " +
             "LEFT JOIN FETCH cfel.eventLocation el " +
             "LEFT JOIN FETCH el.event " +
-            "LEFT JOIN FETCH c.cateringItems " +
+            "LEFT JOIN FETCH c.cateringItems ci " +
+            "LEFT JOIN FETCH cfel.cateringOrder co " +
             "WHERE c.id = :cateringId")
     Optional<Catering> findAllCateringInformation(@Param("cateringId") long cateringId);
 

@@ -38,12 +38,12 @@ public class CateringForChosenEventLocation implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_catering", nullable = false)
+    @JoinColumn(name = "id_catering")
     private Catering catering;
 
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_location_for_event", nullable = false)
+    @JoinColumn(name = "id_location_for_event")
     private LocationForEvent eventLocation;
 
     @EqualsAndHashCode.Exclude

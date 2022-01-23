@@ -1,11 +1,13 @@
 package pjatk.socialeventorganizer.social_event_support.catering.model;
 
 import lombok.*;
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringOrderChoice;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Builder
 @Data
@@ -52,6 +54,9 @@ public class CateringItem implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_catering", nullable = false)
     private Catering catering;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "item")
+    private Set<CateringOrderChoice> cateringOrderChoices;
 
 }
 

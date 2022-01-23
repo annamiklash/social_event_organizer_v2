@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -68,35 +69,37 @@ public class Catering implements Serializable {
     @JoinColumn(name = "id_catering_address", nullable = false)
     private Address cateringAddress;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_catering")
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            mappedBy = "catering",
+            orphanRemoval = true)
     private Set<CateringItem> cateringItems;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "id_catering")
     private Set<CateringBusinessHours> cateringBusinessHours;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "id_catering")
     private Set<CateringReview> reviews;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "id_catering")
     private Set<CateringImage> images;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany(mappedBy = "caterings", fetch = FetchType.LAZY)
-    private Set<Location> locations;
+    private Set<Location> locations = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "id_catering")
     private Set<CateringForChosenEventLocation> cateringForChosenEventLocations;
 
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "catering_cuisine",
             joinColumns = @JoinColumn(name = "id_catering"),
