@@ -201,6 +201,7 @@ public class OptionalServiceController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT,
+            path = "edit",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OptionalServiceDto> edit(@Valid @RequestBody OptionalServiceDto dto,
