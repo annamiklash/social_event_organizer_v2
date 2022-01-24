@@ -119,7 +119,19 @@ public class OrganizedEventService {
 //    }
 
     public OrganizedEvent cancel(OrganizedEvent organizedEvent) {
-        final LocationForEvent locationForEvent = organizedEvent.getLocationForEvent().stream()
+        final Set<LocationForEvent> locationForEventSet = organizedEvent.getLocationForEvent();
+
+        final boolean areOnlyCancelled = locationForEventSet.stream()
+                .allMatch(location -> "CANCELLED".equals(location.getConfirmationStatus()));
+
+        if (areOnlyCancelled) {
+            organizedEvent.setEventStatus(CANCELLED.name());
+            organizedEventRepository.save(organizedEvent);
+
+            return organizedEvent;
+        }
+
+        final LocationForEvent locationForEvent = locationForEventSet.stream()
                 .filter(location -> !CANCELLED.name().equals(location.getConfirmationStatus()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("No current reservation"));

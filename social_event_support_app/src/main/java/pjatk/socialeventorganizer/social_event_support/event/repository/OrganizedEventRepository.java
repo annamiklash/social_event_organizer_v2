@@ -97,10 +97,7 @@ public interface OrganizedEventRepository extends JpaRepository<OrganizedEvent, 
             "LEFT JOIN FETCH co.item i " +
             "LEFT JOIN FETCH oel.services serv " +
             "LEFT JOIN optional_service_image osi on osi.service.id = serv.id " +
-            "WHERE oe.id = :orgEventId " +
-            "AND oel.confirmationStatus not like 'CANCELLED' " +
-            "AND cat.confirmationStatus not like 'CANCELLED' " +
-            "AND serv.confirmationStatus not like 'CANCELLED'")
+            "WHERE oe.id = :orgEventId ")
     Optional<OrganizedEvent> getWithDetail(@Param("orgEventId") long orgEventId);
 
     @Query("SELECT distinct oe FROM organized_event oe " +
