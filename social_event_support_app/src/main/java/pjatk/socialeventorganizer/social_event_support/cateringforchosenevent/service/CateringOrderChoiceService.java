@@ -70,7 +70,7 @@ public class CateringOrderChoiceService {
         final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findWithDetail(orderChoiceId)
                 .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));
 
-        if (orderChoice.getEventLocationCatering().getIsCateringOrderConfirmed()) {
+        if (orderChoice.getEventLocationCatering().isCateringOrderConfirmed()) {
             throw new ActionNotAllowedException("Cannot edit order adter it was confirmed");
         }
         orderChoice.setAmount(dto.getAmount());
@@ -83,7 +83,7 @@ public class CateringOrderChoiceService {
         final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("No caatering order with id " + id));
 
-        if (orderChoice.getEventLocationCatering().getIsCateringOrderConfirmed()) {
+        if (orderChoice.getEventLocationCatering().isCateringOrderConfirmed()) {
             throw new ActionNotAllowedException("Cannot edit order adter it was confirmed");
         }
         cateringOrderChoiceRepository.delete(orderChoice);
