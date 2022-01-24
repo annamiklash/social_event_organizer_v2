@@ -26,6 +26,8 @@ public class CateringForChosenEventLocationDto {
 
     private String confirmationStatus;
 
+    private Boolean isOrderConfirmed;
+
     private CateringDto catering;
 
     private LocationForEventDto eventLocation;

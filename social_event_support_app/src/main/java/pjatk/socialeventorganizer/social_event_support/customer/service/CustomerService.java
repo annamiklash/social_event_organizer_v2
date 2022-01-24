@@ -300,7 +300,7 @@ public class CustomerService {
 
     private boolean cateringReservationsConfirmed(Set<CateringForChosenEventLocation> cateringsForEventLocation) {
         return cateringsForEventLocation.stream()
-                .allMatch(catering -> catering.getIsCateringOrderConfirmed() && CONFIRMED.name().equals(catering.getConfirmationStatus()));
+                .allMatch(catering -> catering.isCateringOrderConfirmed() && CONFIRMED.name().equals(catering.getConfirmationStatus()));
     }
 
     private boolean hasPendingReservations(Customer customerToDelete) {

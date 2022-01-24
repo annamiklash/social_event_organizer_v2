@@ -19,6 +19,7 @@ public class CateringForChosenLocationMapper {
         return CateringForChosenEventLocationDto.builder()
                 .id(catering.getId())
                 .time(DateTimeUtil.fromLocalTimeToTimeString(catering.getTime()))
+                .isOrderConfirmed(catering.isCateringOrderConfirmed())
                 .comment(catering.getComment())
                 .confirmationStatus(catering.getConfirmationStatus())
                 .catering(CateringMapper.toDto(catering.getCatering()))
@@ -36,6 +37,7 @@ public class CateringForChosenLocationMapper {
                 .id(catering.getId())
                 .time(DateTimeUtil.fromLocalTimeToTimeString(catering.getTime()))
                 .comment(catering.getComment())
+                .isOrderConfirmed(catering.isCateringOrderConfirmed())
                 .confirmationStatus(catering.getConfirmationStatus())
                 .catering(CateringMapper.toDto(catering.getCatering()))
                 .order(catering.getCateringOrder().stream()
@@ -49,6 +51,7 @@ public class CateringForChosenLocationMapper {
                 .time(DateTimeUtil.fromTimeStringToLocalTime(dto.getTime()))
                 .comment(Converter.convertDescriptionsString(dto.getComment()))
                 .confirmationStatus(NOT_CONFIRMED.name())
+                .isCateringOrderConfirmed(false)
                 .build();
     }
 }

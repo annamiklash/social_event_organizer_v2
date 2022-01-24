@@ -34,7 +34,7 @@ public class CateringForChosenEventLocation implements Serializable {
     @Column(nullable = false)
     private String confirmationStatus;
 
-    private Boolean isCateringOrderConfirmed;
+    private boolean isCateringOrderConfirmed;
 
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
