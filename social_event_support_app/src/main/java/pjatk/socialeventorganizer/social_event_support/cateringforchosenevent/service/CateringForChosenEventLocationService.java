@@ -132,7 +132,7 @@ public class CateringForChosenEventLocationService {
                 .orElseThrow(() -> new NotFoundException("No catering reservation"));
 
         if (!CollectionUtils.isEmpty(catering.getCateringOrder())) {
-            catering.setIsCateringOrderConfirmed(true);
+            catering.setCateringOrderConfirmed(true);
             cateringForLocationRepository.save(catering);
         }
 
