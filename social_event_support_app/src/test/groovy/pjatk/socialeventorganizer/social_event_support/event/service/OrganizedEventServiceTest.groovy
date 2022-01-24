@@ -6,7 +6,6 @@ import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.se
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository
 import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum
-import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum
 import pjatk.socialeventorganizer.social_event_support.event.helper.StatusChangeHelper
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper
 import pjatk.socialeventorganizer.social_event_support.event.model.EventType
@@ -180,31 +179,6 @@ class OrganizedEventServiceTest extends Specification
         1 * organizedEventRepository.getWithAllInformationForSendingInvitations(eventId, customerId) >> Optional.empty()
 
         thrown(NotFoundException)
-    }
-
-    @Unroll
-    def "ChangeStatus for status = #status"() {
-        given:
-        def customerId = 1L
-        def eventId = 2L
-
-        when:
-        def result = organizedEventService.changeStatus(customerId, eventId, status)
-
-        then:
-        1 * organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId) >> true
-        1 * organizedEventRepository.getWithDetail(eventId, customerId) >> Optional.of(organizedEvent)
-        statusChangeHelper.possibleToChangeStatusFromInProgressToConfirmed(organizedEvent) >> true
-
-        result == target
-
-        where:
-        status                      | organizedEvent                                    | target
-        EventStatusEnum.IN_PROGRESS | fakeOrganizedEvent.withEventStatus('CONFIRMED')   | fakeOrganizedEvent.withEventStatus('IN_PROGRESS')
-        EventStatusEnum.CONFIRMED   | fakeOrganizedEvent.withEventStatus('IN_PROGRESS') | fakeOrganizedEvent.withEventStatus('CONFIRMED')
-        EventStatusEnum.READY       | fakeOrganizedEvent.withEventStatus('CONFIRMED')   | fakeOrganizedEvent.withEventStatus('READY')
-        EventStatusEnum.CANCELLED   | fakeOrganizedEvent.withEventStatus('CONFIRMED')   | fakeOrganizedEvent.withEventStatus('CANCELLED')
-        EventStatusEnum.FINISHED    | fakeOrganizedEvent.withEventStatus('CONFIRMED')   | fakeOrganizedEvent.withEventStatus('FINISHED')
     }
 
     @Unroll

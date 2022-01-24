@@ -92,7 +92,7 @@ public interface OptionalServiceRepository extends JpaRepository<OptionalService
 
     List<OptionalService> findAllByBusiness_Id(long id);
 
-    @Query(value = "SELECT os.* from optional_service os " +
+    @Query(value = "SELECT distinct os.* from optional_service os " +
             "LEFT JOIN optional_service_availability sa on sa.id_optional_service = os.id_optional_service " +
             "LEFT JOIN address a on os.id_service_address = a.id_address " +
             "LEFT JOIN optional_service_image osi on os.id_optional_service = osi.id_optional_service " +

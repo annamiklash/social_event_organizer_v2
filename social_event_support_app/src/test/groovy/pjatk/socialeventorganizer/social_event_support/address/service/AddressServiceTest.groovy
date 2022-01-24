@@ -250,16 +250,12 @@ class AddressServiceTest extends Specification implements PageTrait, AddressTrai
     def "delete positive scenario"() {
         given:
         def address = fakeAddressWithId
-        def now = LocalDateTime.parse('2007-12-03T10:15:30')
-        address.setModifiedAt(now)
-        address.setDeletedAt(now)
 
         when:
         addressService.delete(address)
 
         then:
-        2 * timestampUtil.now() >> now
-        1 * addressRepository.save(address)
+        1 * addressRepository.delete(address)
     }
 
     def "count positive scenario"() {
