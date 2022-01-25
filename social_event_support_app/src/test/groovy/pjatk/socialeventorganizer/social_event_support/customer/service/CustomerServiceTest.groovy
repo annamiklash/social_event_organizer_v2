@@ -166,6 +166,8 @@ class CustomerServiceTest extends Specification
         def catering = fakeCatering
         def optionalService = fakeOptionalService
 
+        def replyTo = 'c@c.com'
+
         def content = "Message send from user " +
                 customer.getFirstName() + " " +
                 customer.getLastName() + " " +
@@ -173,7 +175,7 @@ class CustomerServiceTest extends Specification
                 "\n\n" + messageDto.getContent()
 
         def inviteEmail = EmailUtil.buildEmail(content,
-                messageDto.getReceiverEmail(), messageDto.getSubject())
+                messageDto.getReceiverEmail(), messageDto.getSubject(), replyTo)
 
         when:
         customerService.sendMessage(customerId, receiverId, messageDto, clazz)
@@ -183,9 +185,9 @@ class CustomerServiceTest extends Specification
         1 * customerRepository.getByIdWithUser(customerId) >> Optional.of(customer)
         1 * emailService.sendEmail(inviteEmail)
 
-        locationService.get(receiverId) >> location
-        cateringService.get(receiverId) >> catering
-        optionalServiceService.get(receiverId) >> optionalService
+        locationService.getWithDetail(receiverId) >> location
+        cateringService.getWithDetail(receiverId) >> catering
+        optionalServiceService.getWithDetail(receiverId) >> optionalService
 
         where:
         clazz                 | _

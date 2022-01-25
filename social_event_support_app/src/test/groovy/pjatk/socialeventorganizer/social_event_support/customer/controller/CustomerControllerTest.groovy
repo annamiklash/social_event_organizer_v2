@@ -413,9 +413,8 @@ class CustomerControllerTest extends Specification
     @WithMockUser(authorities = ['CUSTOMER'])
     def "PUT api/customers/guests/invite returns 201 positive test scenario"() {
         given:
-        def id = 1L
+        def customerId = 1L
         def eventId = 2L
-        def locId = 3L
         def guestIds = [4L].toArray() as long[]
 
         expect:
@@ -423,15 +422,14 @@ class CustomerControllerTest extends Specification
                 put('/api/customers/guests/invite')
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param('id', id.toString())
+                        .param('customerId', customerId.toString())
                         .param('eventId', eventId.toString())
-                        .param('locId', locId.toString())
                         .param('guestIds', '4')
         )
                 .andExpect(status().isCreated())
 
         BDDMockito.verify(customerService, times(1))
-                .addGuestsToEvent(eq(id), eq(eventId), eq(locId), eq(guestIds))
+                .addGuestsToEvent(eq(customerId), eq(eventId), eq(guestIds))
 
     }
 }

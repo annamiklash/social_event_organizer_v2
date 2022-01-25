@@ -12,6 +12,9 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.service.
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.business.BusinessTrait
+import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringTrait
+import pjatk.socialeventorganizer.social_event_support.trait.location.LocationTrait
+import pjatk.socialeventorganizer.social_event_support.trait.optional_service.OptionalServiceTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
 import pjatk.socialeventorganizer.social_event_support.trait.user.BusinessUserRegistrationDtoTrait
 import pjatk.socialeventorganizer.social_event_support.trait.user.UserTrait
@@ -26,7 +29,10 @@ class BusinessServiceTest extends Specification
                 BusinessTrait,
                 AddressTrait,
                 UserTrait,
-                BusinessUserRegistrationDtoTrait {
+                BusinessUserRegistrationDtoTrait,
+                LocationTrait,
+                CateringTrait,
+                OptionalServiceTrait {
 
     @Subject
     BusinessService businessService
@@ -164,9 +170,12 @@ class BusinessServiceTest extends Specification
         result == target
     }
 
-    def "deleteLogical() positive test scenario"() {
+    def "delete() positive test scenario"() {
         given:
         def businessId = 1L
+        def locationsSet = Set.of(fakeLocation)
+        def cateringsSet = Set.of(fakeCatering)
+        def serviceSet = Set.of(fakeOptionalService)
 
         def business = fakeVerifiedBusiness
 
@@ -175,9 +184,14 @@ class BusinessServiceTest extends Specification
 
         then:
         1 * businessRepository.findAllBusinessInformation(businessId) >> Optional.of(business)
-        1 * locationService.delete(business.getLocations().iterator().next().getId())
-        1 * cateringService.delete(business.getCaterings().iterator().next().getId())
-        1 * optionalServiceService.delete(business.getServices().iterator().next().getId())
+
+        1 * locationService.getByBusinessId(businessId) >> ImmutableList.copyOf(locationsSet)
+        1 * cateringService.getByBusinessId(businessId) >> ImmutableList.copyOf(cateringsSet)
+        1 * optionalServiceService.getByBusinessId(businessId) >> ImmutableList.copyOf(serviceSet)
+
+        1 * locationService.delete(locationsSet.iterator().next().getId())
+        1 * cateringService.delete(cateringsSet.iterator().next().getId())
+        1 * optionalServiceService.delete(serviceSet.iterator().next().getId())
         1 * addressService.delete(business.getAddress())
         1 * businessRepository.delete(business)
     }

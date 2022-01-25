@@ -27,7 +27,7 @@ public class CateringForChosenLocationMapper {
     }
 
     public CateringForChosenEventLocationDto toDtoWithEvent(CateringForChosenEventLocation catering) {
-        final CateringForChosenEventLocationDto dto = toDto(catering);
+        final CateringForChosenEventLocationDto dto = toDtoWithOrder(catering);
         dto.setEventLocation(LocationForEventMapper.toDtoWithEvent(catering.getEventLocation()));
         return dto;
     }

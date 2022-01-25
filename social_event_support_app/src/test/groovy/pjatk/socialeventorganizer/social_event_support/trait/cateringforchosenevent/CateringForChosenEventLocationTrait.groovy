@@ -26,6 +26,7 @@ trait CateringForChosenEventLocationTrait {
             .time(LocalTime.parse('10:15'))
             .comment("SAMPLE COMMENT")
             .confirmationStatus(NOT_CONFIRMED.name())
+            .isCateringOrderConfirmed(true)
             .eventLocation(LocationForEvent.builder()
                     .id(1L)
                     .event(OrganizedEvent.builder()
@@ -40,6 +41,7 @@ trait CateringForChosenEventLocationTrait {
             .time(LocalTime.parse('10:15'))
             .comment("SAMPLE COMMENT")
             .confirmationStatus(NOT_CONFIRMED.name())
+            .isCateringOrderConfirmed(true)
             .eventLocation(LocationForEvent.builder()
                     .id(1L)
                     .event(OrganizedEvent.builder()
@@ -134,6 +136,7 @@ trait CateringForChosenEventLocationTrait {
             .id(1L)
             .time('10:15')
             .comment("SAMPLE COMMENT")
+            .isOrderConfirmed(false)
             .confirmationStatus(CONFIRMED.name())
             .build()
 }
