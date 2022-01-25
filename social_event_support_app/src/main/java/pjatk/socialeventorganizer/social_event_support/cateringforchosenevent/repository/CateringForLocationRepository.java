@@ -35,7 +35,7 @@ public interface CateringForLocationRepository extends JpaRepository<CateringFor
             "WHERE cfle.id = :cateringForEventId")
     Optional<CateringForChosenEventLocation> getWithCateringAndEvent(@Param("cateringForEventId")long cateringForEventId);
 
-    @Query("SELECT c FROM catering_for_chosen_location c " +
+    @Query("SELECT distinct c FROM catering_for_chosen_location c " +
             "LEFT JOIN FETCH c.cateringOrder co " +
             "LEFT JOIN FETCH co.item i " +
             "LEFT JOIN FETCH c.eventLocation cl " +

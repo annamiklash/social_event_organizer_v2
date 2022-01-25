@@ -207,7 +207,7 @@ class CateringControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['BUSINESS'])
-    def "GET api/caterings/location returns 200 positive test scenario"() {
+    def "GET api/caterings/allowed/location returns 200 positive test scenario"() {
         given:
         def id = 1L
 
@@ -228,7 +228,7 @@ class CateringControllerTest extends Specification
 
         expect:
         mockMvc.perform(
-                get("/api/caterings/location")
+                get("/api/caterings/allowed/location")
                         .param("id", id.toString())
         )
                 .andExpect(status().isOk())
