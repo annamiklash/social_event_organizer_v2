@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -89,7 +88,7 @@ public class OptionalServiceService {
 
     private final TimestampHelper timestampHelper;
 
-    @Cacheable("services")
+//    @Cacheable("services")
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -119,7 +118,7 @@ public class OptionalServiceService {
     }
 
 
-    @Cacheable("service")
+//    @Cacheable("service")
     public OptionalService getWithDetail(long serviceId) {
         final OptionalService optionalService = optionalServiceRepository.findWithDetail(serviceId)
                 .orElseThrow(() -> new NotFoundException("Service with serviceId " + serviceId + " DOES NOT EXIST"));
