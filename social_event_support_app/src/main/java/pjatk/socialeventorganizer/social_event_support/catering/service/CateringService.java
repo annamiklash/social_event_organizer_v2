@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,7 @@ public class CateringService {
     private final CateringImageRepository cateringImageRepository;
     private final CateringReviewRepository cateringReviewRepository;
 
+    @Cacheable("caterings")
     public ImmutableList<Catering> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -118,6 +120,7 @@ public class CateringService {
                 .orElseThrow(() -> new NotFoundException("Catering with ID " + id + " does not exist"));
     }
 
+    @Cacheable("catering")
     public Catering getWithDetail(long id) {
         return cateringRepository.findByIdWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Catering with ID " + id + " does not exist"));
@@ -231,6 +234,7 @@ public class CateringService {
     }
 
 
+    @Cacheable("catering_locations")
     public ImmutableList<Catering> getByLocationId(long id) {
         return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
     }

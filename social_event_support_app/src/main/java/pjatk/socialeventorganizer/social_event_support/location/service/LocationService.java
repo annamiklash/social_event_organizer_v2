@@ -81,7 +81,7 @@ public class LocationService {
 
     private final LocationImageRepository locationImageRepository;
 
-    @Cacheable
+    @Cacheable("locations")
     public ImmutableList<Location> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -112,6 +112,7 @@ public class LocationService {
     }
 
 
+    @Cacheable("location")
     public Location getWithDetail(long id) {
         final Location location = locationRepository.getByIdWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
@@ -304,6 +305,7 @@ public class LocationService {
                 .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
     }
 
+    @Cacheable("location_caterings")
     public ImmutableList<Location> getByCateringId(long cateringId) {
         return ImmutableList.copyOf(locationRepository.findAllByCateringId(cateringId));
     }
