@@ -3,7 +3,6 @@ package pjatk.socialeventorganizer.social_event_support.location.controller;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +28,6 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @Cacheable(value = "locations")
     @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed/all",
