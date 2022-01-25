@@ -122,9 +122,6 @@ public class Catering implements Serializable {
     }
 
     public void addCuisine(Cuisine cuisine) {
-        if (cuisine == null) {
-            throw new IllegalArgumentException("Cuisine cannot be null");
-        }
         cuisines.add(cuisine);
     }
 

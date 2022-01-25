@@ -121,27 +121,22 @@ public class CustomerService {
             case "Location":
                 final Location location = locationService.getWithDetail(receiverId);
                 messageDto.setReceiverEmail(location.getBusiness().getEmail());
-                messageDto.setReplyToEmail(customer.getEmail());
-
                 break;
 
             case "Catering":
                 final Catering catering = cateringService.getWithDetail(receiverId);
                 messageDto.setReceiverEmail(catering.getBusiness().getEmail());
-                messageDto.setReplyToEmail(customer.getEmail());
-
                 break;
 
             case "OptionalService":
                 final OptionalService optionalService = optionalServiceService.getWithDetail(receiverId);
                 messageDto.setReceiverEmail(optionalService.getBusiness().getEmail());
-                messageDto.setReplyToEmail(customer.getEmail());
                 break;
 
             default:
                 throw new IllegalArgumentException("Incorrect receiver type");
         }
-
+        messageDto.setReplyToEmail(customer.getEmail());
         final String content = "Message send from user " +
                 customer.getFirstName() + " " +
                 customer.getLastName() + " " +

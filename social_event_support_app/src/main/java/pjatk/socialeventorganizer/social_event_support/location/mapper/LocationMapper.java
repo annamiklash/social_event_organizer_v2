@@ -69,12 +69,31 @@ public class LocationMapper {
         return dto;
     }
 
-    public static LocationDto toDtoWithDetail(Location location) {
+    public static LocationDto toDtoWithDetailWithCaterings(Location location) {
         final LocationDto dto = toDto(location);
 
         dto.setCaterings(location.getCaterings().stream()
                 .map(CateringMapper::toDto)
                 .collect(Collectors.toSet()));
+
+        dto.setDescriptions(location.getDescriptions().stream()
+                .map(LocationDescriptionItemMapper::toDto)
+                .map(LocationDescriptionItemMapper::toEnum)
+                .collect(Collectors.toSet()));
+
+        dto.setLocationAvailability(location.getAvailability().stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setBusinessHours(location.getLocationBusinessHours().stream()
+                .map(BusinessHoursMapper::toDto)
+                .collect(Collectors.toList()));
+
+        return dto;
+    }
+
+    public static LocationDto toDtoWithDetail(Location location) {
+        final LocationDto dto = toDto(location);
 
         dto.setDescriptions(location.getDescriptions().stream()
                 .map(LocationDescriptionItemMapper::toDto)

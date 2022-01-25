@@ -143,7 +143,7 @@ public class LocationController {
     public ResponseEntity<LocationDto> edit(@Valid @RequestBody LocationDto dto, @RequestParam long id) {
 
         final Location location = locationService.edit(dto, id);
-        final LocationDto locationDto = LocationMapper.toDtoWithDetail(location);
+        final LocationDto locationDto = LocationMapper.toDtoWithDetailWithCaterings(location);
 
         return ResponseEntity.ok(locationDto);
     }
@@ -177,7 +177,7 @@ public class LocationController {
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.GET,
-            path = "catering",
+            path = "allowed/catering",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationDto>> getByCateringId(@RequestParam long cateringId) {
         final ImmutableList<Location> locations = locationService.getByCateringId(cateringId);

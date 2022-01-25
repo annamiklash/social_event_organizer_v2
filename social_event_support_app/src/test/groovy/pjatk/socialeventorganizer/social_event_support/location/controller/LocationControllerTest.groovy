@@ -188,7 +188,7 @@ class LocationControllerTest extends Specification
         def id = 1L
 
         def location = fakeFullLocation
-        def result = LocationMapper.toDtoWithDetail(location)
+        def result = LocationMapper.toDtoWithDetailWithCaterings(location)
 
         def jsonResponse = TestSerializer.serialize(result)
 
@@ -232,13 +232,13 @@ class LocationControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['ADMIN'])
-    def "PUT api/locations returns 200 positive test scenario"() {
+    def "PUT api/locations/edit returns 200 positive test scenario"() {
         given:
         def dto = fakeLocationDto
         def id = 1L
 
         def location = fakeFullLocation
-        def locationDto = LocationMapper.toDto(location)
+        def locationDto = LocationMapper.toDtoWithDetailWithCaterings(location)
 
         def jsonRequest = TestSerializer.serialize(dto)
         def jsonResponse = TestSerializer.serialize(locationDto)
@@ -248,11 +248,12 @@ class LocationControllerTest extends Specification
 
         expect:
         mockMvc.perform(
-                put("/api/locations")
+                put("/api/locations/edit")
+                        .param('id', id.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(jsonRequest)
-                        .param('id', id.toString())
+
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

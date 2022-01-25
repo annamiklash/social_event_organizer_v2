@@ -183,7 +183,7 @@ public class CateringController {
         try {
             final Catering catering = cateringService.edit(id, dto);
 
-            final CateringDto cateringDto = CateringMapper.toDtoWithDetail(catering);
+            final CateringDto cateringDto = CateringMapper.toDtoWithDetailAndLocations(catering);
             setRating(cateringDto);
 
             return ResponseEntity.ok(cateringDto);

@@ -210,8 +210,9 @@ public class OptionalServiceController {
         final OptionalService optionalService = optionalServiceService.edit(dto, id);
 
         final OptionalServiceDto serviceDto = OptionalServiceMapper.toDto(optionalService);
+        final OptionalServiceDto serviceDtoWithRating = setRating(serviceDto);
 
-        return ResponseEntity.ok(serviceDto);
+        return ResponseEntity.ok(serviceDtoWithRating);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")

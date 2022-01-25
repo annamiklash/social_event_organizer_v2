@@ -116,7 +116,7 @@ class OptionalServiceServiceTest extends Specification
         def result = optionalServiceService.get(id)
 
         then:
-        1 * optionalServiceRepository.findWithImages(id) >> Optional.of(optionalService)
+        1 * optionalServiceRepository.findWithDetail(id) >> Optional.of(optionalService)
 
         result == target
     }

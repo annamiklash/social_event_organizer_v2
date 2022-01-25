@@ -90,12 +90,12 @@ class CateringControllerTest extends Specification
     def "POST api/caterings/allowed/search returns 200 positive test scenario"() {
         given:
         def dto = fakeFilterCateringsDto
-
+        def locationId = 1l
         def catering = fakeCatering
         def cateringList = ImmutableList.of(catering)
         def cateringDto = CateringMapper.toDto(catering)
         def rating = 1.0D
-        def count = 1L
+        def count = 1
         cateringDto.setRating(rating)
         def resultList = ImmutableList.of(cateringDto)
         def result =
@@ -104,7 +104,7 @@ class CateringControllerTest extends Specification
         def jsonRequest = TestSerializer.serialize(dto)
         def jsonResponse = TestSerializer.serialize(result)
 
-        BDDMockito.given(cateringService.search(eq(dto)))
+        BDDMockito.given(cateringService.search(eq(dto), eq(locationId)))
                 .willReturn(cateringList)
         BDDMockito.given(cateringReviewService.getRating(eq(cateringDto.getId())))
                 .willReturn(rating)
@@ -112,6 +112,7 @@ class CateringControllerTest extends Specification
         expect:
         mockMvc.perform(
                 post("/api/caterings/allowed/search")
+                        .param("locationId", locationId.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(jsonRequest)
@@ -155,7 +156,7 @@ class CateringControllerTest extends Specification
         def id = 1L
 
         def catering = fakeCateringWithDetails
-        def cateringDto = CateringMapper.toDtoWithDetail(catering)
+        def cateringDto = CateringMapper.toDtoWithDetailAndLocations(catering)
         def rating = 1.0D
         cateringDto.setRating(rating)
 
@@ -334,7 +335,7 @@ class CateringControllerTest extends Specification
         def id = 1L
 
         def catering = fakeCateringWithDetails
-        def cateringDto = CateringMapper.toDtoWithDetail(catering)
+        def cateringDto = CateringMapper.toDtoWithDetailAndLocations(catering)
         def rating = 1.0D
         cateringDto.setRating(rating)
 
@@ -366,7 +367,7 @@ class CateringControllerTest extends Specification
         def id = 1L
 
         def catering = fakeCateringWithDetails
-        def cateringDto = CateringMapper.toDtoWithDetail(catering)
+        def cateringDto = CateringMapper.toDtoWithDetailAndLocations(catering)
 
         def jsonRequest = TestSerializer.serialize(dto)
 

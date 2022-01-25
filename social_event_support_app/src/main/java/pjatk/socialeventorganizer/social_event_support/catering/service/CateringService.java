@@ -160,7 +160,7 @@ public class CateringService {
         catering.setModifiedAt(timestampHelper.now());
 
         final Set<Cuisine> cuisines = catering.getCuisines();
-        final Set<Cuisine> inputCuisines = cuisines.stream()
+        final Set<Cuisine> inputCuisines = dto.getCuisines().stream()
                 .map(cuisine -> cuisineService.getByName(cuisine.getName()))
                 .collect(Collectors.toSet());
 

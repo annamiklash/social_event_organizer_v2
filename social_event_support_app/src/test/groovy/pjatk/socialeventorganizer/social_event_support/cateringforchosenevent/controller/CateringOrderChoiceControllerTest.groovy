@@ -36,7 +36,7 @@ class CateringOrderChoiceControllerTest extends Specification
         given:
         def cateringId = 1L
 
-        def cateringOrderChoice = fakeCateringOrderChoice
+        def cateringOrderChoice = fakeCateringOrderChoiceConfirmed
         def cateringOrderChoiceList = ImmutableList.of(cateringOrderChoice)
         def cateringOrderChoiceDto = CateringOrderChoiceMapper.toDtoWithItem(cateringOrderChoice)
         def resultList = ImmutableList.of(cateringOrderChoiceDto)
@@ -63,7 +63,7 @@ class CateringOrderChoiceControllerTest extends Specification
         def cateringId = 1L
         def reservationId = 2L
 
-        def cateringOrderChoice = fakeCateringOrderChoice
+        def cateringOrderChoice = fakeCateringOrderChoiceConfirmed
         def cateringOrderChoiceList = ImmutableList.of(cateringOrderChoice)
         def cateringOrderChoiceDto = CateringOrderChoiceMapper.toDtoWithItem(cateringOrderChoice)
         def resultList = ImmutableList.of(cateringOrderChoiceDto)
@@ -90,8 +90,8 @@ class CateringOrderChoiceControllerTest extends Specification
         def reservationId = 1L
         def dtos = [fakeCateringOrderChoiceDto].toArray() as CateringOrderChoiceDto[]
 
-        def cateringOrderChoice = fakeCateringOrderChoice
-        def orderChoiceList = [fakeCateringOrderChoice]
+        def cateringOrderChoice = fakeCateringOrderChoiceConfirmed
+        def orderChoiceList = [fakeCateringOrderChoiceConfirmed]
         def cateringOrderChoiceDto = CateringOrderChoiceMapper.toDto(cateringOrderChoice)
         def resultList = ImmutableList.of(cateringOrderChoiceDto)
 
@@ -120,7 +120,7 @@ class CateringOrderChoiceControllerTest extends Specification
         def orderChoiceId = 1L
         def dto = fakeCateringOrderChoiceDto
 
-        def cateringOrderChoice = fakeCateringOrderChoice
+        def cateringOrderChoice = fakeCateringOrderChoiceNotConfirmed
         def result = CateringOrderChoiceMapper.toDtoWithItem(cateringOrderChoice)
 
         def jsonRequest = TestSerializer.serialize(dto)

@@ -78,7 +78,7 @@ public class CateringMapper {
 
     }
 
-    public static CateringDto toDtoWithDetail(Catering catering) {
+    public static CateringDto toDtoWithDetailAndLocations(Catering catering) {
         final CateringDto dto = toDto(catering);
 
         dto.setCateringItems(catering.getCateringItems().stream()
@@ -95,5 +95,20 @@ public class CateringMapper {
 
         return dto;
     }
+
+    public static CateringDto toDtoWithDetail(Catering catering) {
+        final CateringDto dto = toDto(catering);
+
+        dto.setCateringItems(catering.getCateringItems().stream()
+                .map(CateringItemMapper::toDto)
+                .collect(Collectors.toList()));
+
+        dto.setBusinessHours(catering.getCateringBusinessHours().stream()
+                .map(BusinessHoursMapper::toDto)
+                .collect(Collectors.toList()));
+
+        return dto;
+    }
+
 
 }

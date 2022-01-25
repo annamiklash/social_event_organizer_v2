@@ -154,19 +154,31 @@ class CustomerServiceTest extends Specification
         given:
         def customerId = 1L
         def receiverId = 2L
-        def messageDto = MessageDto.builder()
-                .subject("SAMPLE SUBJECT")
-                .receiverEmail('email@email.com')
-                .build()
 
         def user = fakeUser
         def customer = fakeCustomer
 
-        def location = fakeLocation
-        def catering = fakeCatering
+        def location = fakeFullLocation
+        def catering = fakeCateringWithDetails
         def optionalService = fakeOptionalService
 
-        def replyTo = 'c@c.com'
+        def locationMessageDto = MessageDto.builder()
+                .subject("SAMPLE SUBJECT")
+                .receiverEmail(location.getBusiness().getEmail())
+                .replyToEmail(user.getEmail())
+                .build()
+
+        def cateringMessageDto = MessageDto.builder()
+                .subject("SAMPLE SUBJECT")
+                .receiverEmail(catering.getBusiness().getEmail())
+                .replyToEmail(user.getEmail())
+                .build()
+
+        def serviceMessageDto = MessageDto.builder()
+                .subject("SAMPLE SUBJECT")
+                .receiverEmail(optionalService.getBusiness().getEmail())
+                .replyToEmail(user.getEmail())
+                .build()
 
         def content = "Message send from user " +
                 customer.getFirstName() + " " +
@@ -175,7 +187,7 @@ class CustomerServiceTest extends Specification
                 "\n\n" + messageDto.getContent()
 
         def inviteEmail = EmailUtil.buildEmail(content,
-                messageDto.getReceiverEmail(), messageDto.getSubject(), replyTo)
+                messageDto.getReceiverEmail(), messageDto.getSubject(), messageDto.getReplyToEmail())
 
         when:
         customerService.sendMessage(customerId, receiverId, messageDto, clazz)
@@ -190,10 +202,10 @@ class CustomerServiceTest extends Specification
         optionalServiceService.getWithDetail(receiverId) >> optionalService
 
         where:
-        clazz                 | _
-        Location.class        | _
-        Catering.class        | _
-        OptionalService.class | _
+        clazz                 | _ |     messageDto
+        Location.class        | _ |     locationMessageDto
+        Catering.class        | _ |     cateringMessageDto
+        OptionalService.class | _ |     serviceMessageDto
 
     }
 
@@ -324,8 +336,7 @@ class CustomerServiceTest extends Specification
         given:
         def id = 1L
         def eventId = 2l
-        def locationId = 3l
-        def guestIds = [1L] as Long[]
+        def guestIds = [1L] as long[]
 
         def customer = fakeCustomer
         def locationForEvent = fakeLocationForEvent
@@ -335,11 +346,11 @@ class CustomerServiceTest extends Specification
         organizedEvent.setModifiedAt(now)
 
         when:
-        customerService.addGuestsToEvent(id, eventId, locationId, guestIds)
+        customerService.addGuestsToEvent(id, eventId, guestIds)
 
         then:
         1 * customerRepository.findById(id) >> Optional.of(customer)
-        1 * locationForEventService.findByLocationIdAndEventId(locationId, eventId) >> locationForEvent
+        1 * locationForEventService.findByEventId(eventId) >> locationForEvent
         1 * guestService.getGuestsByIds([1L]) >> guests
         1 * organizedEventService.get(eventId) >> organizedEvent
         1 * organizedEventService.save(organizedEvent)
@@ -375,13 +386,12 @@ class CustomerServiceTest extends Specification
         def emailContent = ComposeInviteEmailUtil.composeEmail(guest, invitationContent)
         def emailSubject = "Invitation From " + invitationContent.getCustomer().getFirstName() +
                 " " + invitationContent.getCustomer().getLastName()
-        def inviteEmail = EmailUtil.buildEmail(emailContent, guest.getEmail(), emailSubject)
+        def inviteEmail = EmailUtil.buildEmail(emailContent, guest.getEmail(), emailSubject, null)
 
         when:
         customerService.sendInvitationToGuest(eventId, customerId)
 
         then:
-        1 * organizedEventService.get(eventId) >> event
         1 * organizedEventService.getWithAllInformationForSendingInvitations(eventId, customerId) >> organizedEvent
         1 * emailService.sendEmail(inviteEmail)
     }

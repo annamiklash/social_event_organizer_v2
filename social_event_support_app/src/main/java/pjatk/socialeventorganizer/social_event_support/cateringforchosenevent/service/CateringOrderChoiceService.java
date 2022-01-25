@@ -71,7 +71,7 @@ public class CateringOrderChoiceService {
                 .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));
 
         if (orderChoice.getEventLocationCatering().isCateringOrderConfirmed()) {
-            throw new ActionNotAllowedException("Cannot edit order adter it was confirmed");
+            throw new ActionNotAllowedException("Cannot edit order after it was confirmed");
         }
         orderChoice.setAmount(dto.getAmount());
 

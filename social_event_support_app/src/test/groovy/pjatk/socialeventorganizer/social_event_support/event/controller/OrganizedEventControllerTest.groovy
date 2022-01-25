@@ -10,7 +10,6 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage
 import pjatk.socialeventorganizer.social_event_support.enums.CustomerReservationTabEnum
-import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper
 import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEventService
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
@@ -18,7 +17,8 @@ import pjatk.socialeventorganizer.social_event_support.trait.event.OrganizedEven
 import spock.lang.Specification
 
 import static org.mockito.ArgumentMatchers.eq
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -115,35 +115,6 @@ class OrganizedEventControllerTest extends Specification
                 get('/api/events/customer')
                         .param('customerId', customerId.toString())
                         .param('tab', tab.name())
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().json(jsonResponse))
-
-    }
-
-    @WithMockUser(authorities = ['ADMIN'])
-    def "PUT api/events returns 200 positive test scenario"() {
-        given:
-        def customerId = 1L
-        def eventId = 2L
-        def statusEnum = EventStatusEnum.CONFIRMED
-
-        def organizedEvent = fakeFullOrganizedEvent
-        def result = OrganizedEventMapper.toDto(organizedEvent)
-        def jsonResponse = TestSerializer.serialize(result)
-
-        BDDMockito.given(organizedEventService.changeStatus(eq(customerId), eq(eventId), eq(statusEnum)))
-                .willReturn(organizedEvent)
-
-        expect:
-        mockMvc.perform(
-                put('/api/events')
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param('customerId', customerId.toString())
-                        .param('eventId', eventId.toString())
-                        .param('status', statusEnum.name())
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

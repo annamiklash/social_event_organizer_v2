@@ -367,7 +367,7 @@ class OptionalServiceControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['BUSINESS'])
-    def "PUT api/services returns 200 positive test scenario"() {
+    def "PUT api/services/edit returns 200 positive test scenario"() {
         given:
         def id = 1L
         def dto = fakeOptionalServiceHostDto
@@ -388,11 +388,12 @@ class OptionalServiceControllerTest extends Specification
 
         expect:
         mockMvc.perform(
-                put("/api/services")
+                put("/api/services/edit")
+                        .param('id', id.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(jsonRequest)
-                        .param('id', id.toString())
+
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

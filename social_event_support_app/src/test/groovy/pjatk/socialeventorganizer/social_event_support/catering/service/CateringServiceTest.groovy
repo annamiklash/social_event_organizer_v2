@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.cuisine.service.CuisineService
 import pjatk.socialeventorganizer.social_event_support.image.repository.CateringImageRepository
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
+import pjatk.socialeventorganizer.social_event_support.reviews.catering.repository.CateringReviewRepository
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
@@ -50,6 +51,7 @@ class CateringServiceTest extends Specification
     CateringBusinessHoursService cateringBusinessHoursService
     CuisineService cuisineService
     CateringImageRepository cateringImageRepository
+    CateringReviewRepository cateringReviewRepository
     TimestampHelper timestampHelper
 
     LocalDateTime now = LocalDateTime.parse('2007-12-03T10:15:30')
@@ -66,6 +68,7 @@ class CateringServiceTest extends Specification
         cuisineService = Mock()
         timestampHelper = Mock()
         cateringImageRepository = Mock()
+        cateringReviewRepository = Mock()
 
         timestampHelper.now() >> now
 
@@ -78,7 +81,8 @@ class CateringServiceTest extends Specification
                 cateringBusinessHoursService,
                 cuisineService,
                 timestampHelper,
-                cateringImageRepository)
+                cateringImageRepository,
+                cateringReviewRepository)
     }
 
     def "list() positive test scenario"() {
@@ -225,6 +229,8 @@ class CateringServiceTest extends Specification
         catering.setDescription(dto.getDescription())
         catering.setModifiedAt(now)
 
+        def inputDtoCuisines = dto.getCuisines()
+
         def target = catering
 
         when:
@@ -232,6 +238,7 @@ class CateringServiceTest extends Specification
 
         then:
         1 * cateringRepository.findById(cateringId) >> Optional.of(catering)
+        1 * cuisineService.getByName(inputDtoCuisines.iterator().next().getName())
         1 * cateringRepository.save(catering)
 
         result == target

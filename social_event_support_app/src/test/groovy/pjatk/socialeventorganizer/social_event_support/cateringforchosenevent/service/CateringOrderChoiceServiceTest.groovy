@@ -37,7 +37,7 @@ class CateringOrderChoiceServiceTest extends Specification
         given:
         def cateringId = 1L
 
-        def target = ImmutableList.of(fakeCateringOrderChoice)
+        def target = ImmutableList.of(fakeCateringOrderChoiceConfirmed)
 
         when:
         def result = cateringOrderChoiceService.getAll(cateringId)
@@ -77,7 +77,7 @@ class CateringOrderChoiceServiceTest extends Specification
         def dto = fakeCateringOrderChoiceDto
         def orderChoiceId = 1L
 
-        def target = fakeCateringOrderChoice
+        def target = fakeCateringOrderChoiceNotConfirmed
         target.setAmount(dto.getAmount())
 
         when:
@@ -93,13 +93,13 @@ class CateringOrderChoiceServiceTest extends Specification
     def "Delete"() {
         given:
         def id = 1L
-        def orderChoice = fakeCateringOrderChoice
+        def orderChoice = fakeCateringOrderChoiceNotConfirmed
 
         when:
         cateringOrderChoiceService.delete(id)
 
         then:
-        1 * cateringOrderChoiceRepository.findById(id) >> Optional.of(orderChoice)
+        1 * cateringOrderChoiceRepository.findWithDetail(id) >> Optional.of(orderChoice)
         1 * cateringOrderChoiceRepository.delete(orderChoice)
     }
 }

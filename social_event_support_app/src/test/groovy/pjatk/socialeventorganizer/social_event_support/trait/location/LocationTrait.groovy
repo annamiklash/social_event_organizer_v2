@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet
 import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability
+import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
@@ -32,6 +33,14 @@ trait LocationTrait {
                     .streetName('Piękna')
                     .streetNumber(1)
                     .zipCode('01-157')
+                    .build())
+            .business(Business.builder()
+                    .id(1)
+                    .firstName('Name')
+                    .lastName('Name')
+                    .businessName('Name')
+                    .verificationStatus('VERIFIED')
+                    .phoneNumber(new BigInteger("123123123"))
                     .build())
             .build()
 

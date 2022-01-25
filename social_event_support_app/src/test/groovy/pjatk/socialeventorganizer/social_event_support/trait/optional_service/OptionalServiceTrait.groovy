@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.trait.optional_service
 import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability
+import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
@@ -23,6 +24,14 @@ trait OptionalServiceTrait {
             .email('email@email.com')
             .optionalServiceBusinessHours(new HashSet<OptionalServiceBusinessHours>())
             .availability(new HashSet<OptionalServiceAvailability>())
+            .business(Business.builder()
+                    .id(1)
+                    .firstName('Name')
+                    .lastName('Name')
+                    .businessName('Name')
+                    .verificationStatus('VERIFIED')
+                    .phoneNumber(new BigInteger("123123123"))
+                    .build())
             .serviceAddress(Address.builder()
                     .id(1)
                     .country("Coutry")

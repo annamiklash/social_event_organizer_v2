@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.trait.catering
 import com.google.common.collect.Sets
 import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
+import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto
@@ -24,7 +25,11 @@ trait CateringTrait {
             .serviceCost('100.20')
             .description('description')
             .offersOutsideCatering(true)
-            .cuisines(List.of(buildCuisine()))
+            .cuisines(List.of(
+                    CuisineDto.builder()
+                            .name('Greek')
+                            .build()
+            ))
             .businessHours(List.of(buildBusinessHoursDto()))
             .address(buildAddressDto())
             .build()
@@ -42,6 +47,7 @@ trait CateringTrait {
             .email('email@email.com')
             .phoneNumber(new BigInteger('123456789'))
             .description('description')
+            .offersOutsideCatering(true)
             .cateringAddress(Address.builder()
                     .id(1L)
                     .country('Poland')
@@ -64,6 +70,14 @@ trait CateringTrait {
             .email('email@email.com')
             .phoneNumber(new BigInteger('123456789'))
             .description('description')
+            .business(Business.builder()
+                    .id(1)
+                    .firstName('Name')
+                    .lastName('Name')
+                    .businessName('Name')
+                    .verificationStatus('VERIFIED')
+                    .phoneNumber(new BigInteger("123123123"))
+                    .build())
             .cateringAddress(Address.builder()
                     .id(1L)
                     .country('Poland')
