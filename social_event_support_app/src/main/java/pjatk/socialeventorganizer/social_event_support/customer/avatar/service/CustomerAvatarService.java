@@ -15,6 +15,7 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.ActionNotAllow
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -30,21 +31,30 @@ public class CustomerAvatarService {
         if (file.getOriginalFilename() == null) {
             throw new ActionNotAllowedException("Cannot upload from empty path");
         }
-        final Customer customer = customerRepository.getByIdWithAvatar(customerId)
-                .orElseThrow(() -> new NotFoundException("Customer does not exist"));
-        if (customer.getAvatar() != null) {
-            delete(customer.getAvatar());
-        }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         ImageValidator.validateFileExtension(fileName);
 
-        final CustomerAvatar avatar = CustomerAvatar.builder()
-                .customer(customer)
-                .fileName(fileName)
-                .image(file.getBytes())
-                .build();
+        final Customer customer = customerRepository.getByIdWithAvatar(customerId)
+                .orElseThrow(() -> new NotFoundException("Customer does not exist"));
 
-        customerAvatarRepository.save(avatar);
+        final Optional<CustomerAvatar> optionalAvatar = customerAvatarRepository.findCustomerAvatarByCustomer_Id(customerId);
+
+        if (optionalAvatar.isPresent()) {
+
+            final CustomerAvatar customerAvatar = optionalAvatar.get();
+            customerAvatar.setImage(file.getBytes());
+            customerAvatarRepository.save(customerAvatar);
+            return;
+
+        } else {
+            final CustomerAvatar avatar = CustomerAvatar.builder()
+                    .customer(customer)
+                    .fileName(fileName)
+                    .image(file.getBytes())
+                    .build();
+
+            customerAvatarRepository.save(avatar);
+        }
     }
 
     public void deleteById(long id) {

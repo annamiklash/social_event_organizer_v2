@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    @Query("SELECT c FROM customer c " +
+    @Query("SELECT distinct c FROM customer c " +
             "LEFT JOIN customer_avatar a on c.avatar.id = a.id " +
             "WHERE c.id = :customerId")
     Optional<Customer> getByIdWithAvatar(@Param("customerId") long customerId);
