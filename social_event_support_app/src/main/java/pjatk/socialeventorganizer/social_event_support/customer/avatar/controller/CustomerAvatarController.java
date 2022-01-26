@@ -29,8 +29,8 @@ public class CustomerAvatarController {
             method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> upload(@RequestParam long locationId, @RequestParam("file") MultipartFile file) {
-        customerAvatarService.upload(locationId, file);
+    public ResponseEntity<Void> upload(@RequestParam long customerId, @RequestParam("file") MultipartFile file) {
+        customerAvatarService.upload(customerId, file);
         return ResponseEntity.ok().build();
     }
 
