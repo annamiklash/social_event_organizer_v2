@@ -48,7 +48,10 @@ public class CustomerAvatarService {
     }
 
     public void deleteById(long id) {
-        customerAvatarRepository.deleteById(id);
+        final Customer customer = customerRepository.getByIdWithAvatar(id)
+                .orElseThrow(() -> new NotFoundException("Customer does not exist"));
+
+        customerAvatarRepository.deleteById(customer.getAvatar().getId());
     }
 
     private void delete(CustomerAvatar customerAvatar) {
