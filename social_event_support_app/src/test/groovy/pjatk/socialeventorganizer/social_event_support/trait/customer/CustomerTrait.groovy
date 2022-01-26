@@ -1,9 +1,9 @@
 package pjatk.socialeventorganizer.social_event_support.trait.customer
 
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar
-import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 
 import java.time.LocalDate
@@ -35,7 +35,7 @@ trait CustomerTrait {
                     .type('C' as char)
                     .email('email@email.com')
                     .build())
-            .avatar(CustomerAvatarDto.builder().id(1L).build())
+            .avatar(ImageDto.builder().id(1L).build())
             .build()
 
 

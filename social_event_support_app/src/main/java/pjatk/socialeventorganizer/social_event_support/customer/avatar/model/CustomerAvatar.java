@@ -22,7 +22,7 @@ public class CustomerAvatar extends Image implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_optional_service")
+    @JoinColumn(name = "id_customer")
     private Customer customer;
 
 }
