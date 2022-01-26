@@ -149,7 +149,7 @@ public class LocationService {
 
         filters = CollectionUtils.isEmpty(dto.getDescriptionItems()) ? new ArrayList<>() :
                 dto.getDescriptionItems().stream()
-                        .map(locationDescriptionItemService::getByName)
+                        .map(locationDescriptionItemService::getById)
                         .collect(Collectors.toList());
 
 
@@ -211,11 +211,11 @@ public class LocationService {
 
         final List<LocationBusinessHours> businessHours = locationBusinessHoursService.create(dto.getBusinessHours());
 
-        final Set<LocationDescriptionItemEnum> locationDescriptionEnumSet = dto.getDescriptions();
+        final Set<String> locationDescriptionEnumSet = dto.getDescriptions();
 
         final Location location = LocationMapper.fromDto(dto);
         final Set<LocationDescriptionItem> descriptions = locationDescriptionEnumSet.stream()
-                .map(locationDescriptionItemService::getByName)
+                .map(locationDescriptionItemService::getById)
                 .collect(Collectors.toSet());
 
 
@@ -229,7 +229,7 @@ public class LocationService {
         location.setModifiedAt(LocalDateTime.now());
 
         //!SERVES_FOOD && OUTSIDE_CATERING_AVAILABLE
-        if (locationDescriptionEnumSet.contains(LocationDescriptionItemEnum.OUTSIDE_CATERING_AVAILABLE)) {
+        if (locationDescriptionEnumSet.contains(LocationDescriptionItemEnum.OUTSIDE_CATERING_AVAILABLE.getValue())) {
             final List<Catering> caterings = cateringRepository.findByCateringAddress_City(address.getCity());
             location.setCaterings(new HashSet<>(caterings));
 
@@ -272,9 +272,9 @@ public class LocationService {
         location.setStandingCapacity(dto.getStandingCapacity());
         location.setDailyRentCost(Converter.convertPriceString(dto.getDailyRentCost()));
 
-        final Set<LocationDescriptionItemEnum> inputDescriptionEnums = dto.getDescriptions();
+        final Set<String> inputDescriptionEnums = dto.getDescriptions();
         final Set<LocationDescriptionItem> inputDescriptions = inputDescriptionEnums.stream()
-                .map(locationDescriptionItemService::getByName)
+                .map(locationDescriptionItemService::getById)
                 .collect(Collectors.toSet());
 
         final Set<LocationDescriptionItem> locationDescriptions = ImmutableSet.copyOf(location.getDescriptions());

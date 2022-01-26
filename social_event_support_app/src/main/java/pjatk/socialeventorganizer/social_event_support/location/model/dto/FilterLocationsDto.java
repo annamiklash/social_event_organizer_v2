@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
 
 import java.io.Serializable;
 import java.util.List;
@@ -27,5 +26,5 @@ public class FilterLocationsDto implements Serializable {
 
     private String maxPrice;
 
-    private List<LocationDescriptionItemEnum> descriptionItems;
+    private List<String> descriptionItems;
 }

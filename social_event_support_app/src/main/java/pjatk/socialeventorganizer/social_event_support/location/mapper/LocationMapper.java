@@ -9,6 +9,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.mapper.CateringM
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
 import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.location.model.Location;
+import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDescriptionItemDto;
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto;
 
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class LocationMapper {
 
         dto.setDescriptions(location.getDescriptions().stream()
                 .map(LocationDescriptionItemMapper::toDto)
-                .map(LocationDescriptionItemMapper::toEnum)
+                .map(LocationDescriptionItemDto::getId)
                 .collect(Collectors.toSet()));
 
         dto.setLocationAvailability(location.getAvailability().stream()
@@ -97,7 +98,7 @@ public class LocationMapper {
 
         dto.setDescriptions(location.getDescriptions().stream()
                 .map(LocationDescriptionItemMapper::toDto)
-                .map(LocationDescriptionItemMapper::toEnum)
+                .map(LocationDescriptionItemDto::getId)
                 .collect(Collectors.toSet()));
 
         dto.setLocationAvailability(location.getAvailability().stream()

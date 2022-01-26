@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.cuisine.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.cuisine.mapper.CuisineMapper;
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine;
@@ -19,7 +20,7 @@ public class CuisineService {
     private final CuisineRepository cuisineRepository;
 
     public List<Cuisine> list() {
-        return cuisineRepository.findAll();
+        return cuisineRepository.findAll(Sort.by("name"));
     }
 
     public Cuisine create(CuisineDto dto) {

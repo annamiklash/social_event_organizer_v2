@@ -47,7 +47,11 @@ public class CustomerAvatarService {
         customerAvatarRepository.save(avatar);
     }
 
-    public void delete(CustomerAvatar customerAvatar) {
+    public void deleteById(long id) {
+        customerAvatarRepository.deleteById(id);
+    }
+
+    private void delete(CustomerAvatar customerAvatar) {
         customerAvatarRepository.delete(customerAvatar);
     }
 }

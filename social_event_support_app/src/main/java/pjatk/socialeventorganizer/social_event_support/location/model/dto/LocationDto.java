@@ -11,7 +11,6 @@ import pjatk.socialeventorganizer.social_event_support.business.model.dto.Busine
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
-import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum;
 import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 
 import javax.validation.constraints.*;
@@ -66,7 +65,7 @@ public class LocationDto implements Serializable {
     private Integer sizeInSqMeters;
 
     @NotNull(message = "Location descriptions is mandatory")
-    private Set<LocationDescriptionItemEnum> descriptions;
+    private Set<String> descriptions;
 
     @NotNull(message = "Address is mandatory")
     private AddressDto address;
