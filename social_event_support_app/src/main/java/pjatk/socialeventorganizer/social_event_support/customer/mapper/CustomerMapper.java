@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CustomerMapper {
 
     public CustomerDto toDto(Customer customer) {
-        return CustomerDto.builder()
+        final CustomerDto dto = CustomerDto.builder()
                 .id(customer.getId())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
@@ -32,6 +32,13 @@ public class CustomerMapper {
                         .modifiedAt(DateTimeUtil.fromLocalDateTimetoString(customer.getModifiedAt()))
                         .build())
                 .build();
+
+
+        if (customer.getAvatar() != null) {
+            dto.setAvatar(ImageMapper.toDto(customer.getAvatar()));
+        }
+
+        return dto;
     }
 
     public CustomerDto toDtoWithGuests(Customer customer) {
@@ -74,6 +81,10 @@ public class CustomerMapper {
         dto.setEvents(customer.getEvents().stream()
                 .map(OrganizedEventMapper::toDto)
                 .collect(Collectors.toSet()));
+
+        if (customer.getAvatar() != null) {
+            dto.setAvatar(ImageMapper.toDto(customer.getAvatar()));
+        }
 
         return dto;
     }

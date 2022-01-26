@@ -47,7 +47,7 @@ public class CateringReviewController {
         final Long count = cateringReviewService.count(cateringId);
 
         final ImmutableList<ReviewDto> result = reviewList.stream()
-                .map(ReviewMapper::toDto)
+                .map(ReviewMapper::toDtoWithCustomerAvatar)
                 .collect(ImmutableList.toImmutableList());
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));

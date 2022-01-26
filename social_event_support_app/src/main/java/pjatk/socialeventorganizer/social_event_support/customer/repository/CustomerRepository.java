@@ -63,6 +63,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> getAllCustomerInformation(@Param("id") long id);
 
     @Query("SELECT c FROM customer c " +
+            "LEFT JOIN customer_avatar a on c.avatar.id = a.id " +
             "LEFT JOIN users u on c.id=u.id " +
             "WHERE c.id = :id")
     Optional<Customer> getByIdWithUser(@Param("id") long id);

@@ -60,7 +60,7 @@ public class OptionalServiceReviewController {
 
         final ImmutableList<ReviewDto> result = ImmutableList.copyOf(
                 review.stream()
-                        .map(ReviewMapper::toDto)
+                        .map(ReviewMapper::toDtoWithCustomerAvatar)
                         .collect(Collectors.toList()));
 
         return ResponseEntity.ok(new TableDto<>(TableDto.MetaDto.builder().pageNo(pageNo).pageSize(pageSize).sortBy(sortBy).total(count).build(), result));
