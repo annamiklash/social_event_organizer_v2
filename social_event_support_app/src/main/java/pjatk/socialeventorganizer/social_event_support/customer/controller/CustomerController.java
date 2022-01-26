@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.mapper.CustomerMapper;
@@ -195,6 +196,28 @@ public class CustomerController {
         log.info("SEND MESSAGE");
         customerService.sendMessage(customerId, cateringId, dto, Catering.class);
         return ResponseEntity.ok().build();
+    }
+
+
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @RequestMapping(
+            path = "avatar/upload",
+            method = RequestMethod.POST,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> uploadAvatar(@RequestParam long customerId, @RequestParam("file") MultipartFile file) {
+        customerService.uploadAvatar(customerId, file);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @RequestMapping(
+            path = "avatar/delete",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteAvatar(@RequestParam long id) {
+        customerService.deleteAvatarById(id);
+        return ResponseEntity.ok().build();
+
     }
 
 

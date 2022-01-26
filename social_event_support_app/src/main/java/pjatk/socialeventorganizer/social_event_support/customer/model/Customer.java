@@ -50,7 +50,7 @@ public class Customer extends User implements Serializable {
     private Set<OrganizedEvent> events;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_avatar")
+    @JoinColumn(name = "id_image")
     private CustomerAvatar avatar;
     
     //TODO: add reviews

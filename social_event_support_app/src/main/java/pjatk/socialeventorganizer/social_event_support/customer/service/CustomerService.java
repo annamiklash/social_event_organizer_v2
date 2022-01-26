@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.customer.service;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation;
@@ -21,7 +24,9 @@ import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUti
 import pjatk.socialeventorganizer.social_event_support.common.util.ComposeInviteEmailUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar;
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.service.CustomerAvatarService;
+import pjatk.socialeventorganizer.social_event_support.customer.avatar.validator.ImageValidator;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.Guest;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.service.GuestService;
@@ -52,6 +57,7 @@ import pjatk.socialeventorganizer.social_event_support.user.service.EmailService
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -234,6 +240,42 @@ public class CustomerService {
         organizedEvent.setModifiedAt(timestampHelper.now());
 
         organizedEventService.save(organizedEvent);
+    }
+
+    public void deleteAvatarById(long id) {
+        customerAvatarService.deleteById(id);
+
+    }
+
+    @SneakyThrows(IOException.class)
+    public void uploadAvatar(long customerId, MultipartFile file) {
+        if (file.getOriginalFilename() == null) {
+            throw new ActionNotAllowedException("Cannot upload from empty path");
+        }
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        ImageValidator.validateFileExtension(fileName);
+
+        final Customer customer = get(customerId);
+
+        final CustomerAvatar customerAvatar = customer.getAvatar();
+        if (customerAvatar != null) {
+
+            customerAvatar.setImage(file.getBytes());
+            customerAvatarService.save(customerAvatar);
+
+            customer.setAvatar(customerAvatar);
+            customerRepository.save(customer);
+
+        } else {
+            final CustomerAvatar avatar = CustomerAvatar.builder()
+                    .fileName(fileName)
+                    .image(file.getBytes())
+                    .build();
+            customerAvatarService.save(avatar);
+
+            customer.setAvatar(avatar);
+            customerRepository.save(customer);
+        }
     }
 
     @Transactional(rollbackOn = Exception.class)
