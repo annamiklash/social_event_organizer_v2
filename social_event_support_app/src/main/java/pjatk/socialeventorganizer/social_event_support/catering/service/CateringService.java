@@ -47,7 +47,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,7 +84,6 @@ public class CateringService {
         List<Catering> caterings;
         if (dto.getCuisines() != null) {
             final Set<Long> cuisines = dto.getCuisines().stream()
-                    .filter(Objects::nonNull)
                     .map(cuisineService::getByName)
                     .map(Cuisine::getId)
                     .collect(Collectors.toSet());

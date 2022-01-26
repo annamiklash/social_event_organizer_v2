@@ -172,7 +172,6 @@ public class LocationController {
         return ResponseEntity.ok(resultList);
     }
 
-    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')")
     @RequestMapping(
             method = RequestMethod.GET,
             path = "allowed/catering",

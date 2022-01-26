@@ -126,6 +126,7 @@ class CustomerServiceTest extends Specification
         result == target
     }
 
+
     def "Create"() {
         given:
         def dto = fakeCustomerUserRegistrationDto
@@ -202,10 +203,10 @@ class CustomerServiceTest extends Specification
         optionalServiceService.getWithDetail(receiverId) >> optionalService
 
         where:
-        clazz                 | _ |     messageDto
-        Location.class        | _ |     locationMessageDto
-        Catering.class        | _ |     cateringMessageDto
-        OptionalService.class | _ |     serviceMessageDto
+        clazz                 | _ | messageDto
+        Location.class        | _ | locationMessageDto
+        Catering.class        | _ | cateringMessageDto
+        OptionalService.class | _ | serviceMessageDto
 
     }
 

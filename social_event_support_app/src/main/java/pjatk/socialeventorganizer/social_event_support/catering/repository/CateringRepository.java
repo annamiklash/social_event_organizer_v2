@@ -78,7 +78,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "WHERE c.id = :cateringId")
     Optional<Catering> findAllCateringInformation(@Param("cateringId") long cateringId);
 
-    @Query("SELECT c FROM catering c " +
+    @Query("SELECT distinct c FROM catering c " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "LEFT JOIN FETCH c.locations l " +
             "WHERE l.id = :locationId")
@@ -92,7 +92,7 @@ public interface CateringRepository extends JpaRepository<Catering, Long> {
             "AND u.isActive = true")
     Long countAll(@Param("keyword") String keyword);
 
-    @Query("SELECT c FROM catering c " +
+    @Query("SELECT distinct c FROM catering c " +
             "LEFT JOIN catering_image ci on ci.catering.id = c.id " +
             "WHERE c.id = :cateringId")
     Optional<Catering> findWithImages(@Param("cateringId") long cateringId);

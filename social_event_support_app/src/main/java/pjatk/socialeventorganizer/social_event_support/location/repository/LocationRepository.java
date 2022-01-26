@@ -74,7 +74,7 @@ public interface LocationRepository extends PagingAndSortingRepository<Location,
             "WHERE a.city = :city")
     List<Location> findAllByCity(@Param("city") String city);
 
-    @Query("SELECT l from location l " +
+    @Query("SELECT distinct l from location l " +
             "LEFT JOIN location_image li on li.location.id = l.id " +
             "left join fetch l.caterings c " +
             "WHERE c.id = :cateringId")

@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -80,7 +81,7 @@ public class LocationService {
 
     private final LocationImageRepository locationImageRepository;
 
-//    @Cacheable("locations")
+    @Cacheable("locations")
     public ImmutableList<Location> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -97,11 +98,13 @@ public class LocationService {
         return locationRepository.countAll(keyword);
     }
 
+    @Cacheable("locations")
     public Location get(long id) {
         return locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
     }
 
+    @Cacheable("locations")
     public Location getWithMainImage(long id) {
         final Location location = locationRepository.findWithImages(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
@@ -111,7 +114,7 @@ public class LocationService {
     }
 
 
-//    @Cacheable("location")
+    @Cacheable("locations")
     public Location getWithDetail(long id) {
         final Location location = locationRepository.getByIdWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
@@ -135,6 +138,7 @@ public class LocationService {
         return locationRepository.existsById(id);
     }
 
+    @Cacheable("locations")
     public ImmutableList<Location> search(FilterLocationsDto dto) {
         List<Location> locations;
 
@@ -304,7 +308,7 @@ public class LocationService {
                 .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
     }
 
-//    @Cacheable("location_caterings")
+    @Cacheable("location_caterings")
     public ImmutableList<Location> getByCateringId(long cateringId) {
         return ImmutableList.copyOf(locationRepository.findAllByCateringId(cateringId));
     }

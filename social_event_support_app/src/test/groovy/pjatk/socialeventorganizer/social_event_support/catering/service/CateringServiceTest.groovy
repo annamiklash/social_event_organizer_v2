@@ -8,6 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.address.service.AddressSe
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.service.CateringBusinessHoursService
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
+import pjatk.socialeventorganizer.social_event_support.catering.model.dto.FilterCateringsDto
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringItemRepository
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
@@ -22,6 +23,7 @@ import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.business.BusinessTrait
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringTrait
+import pjatk.socialeventorganizer.social_event_support.trait.catering.CuisineTrait
 import pjatk.socialeventorganizer.social_event_support.trait.location.LocationTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
 import pjatk.socialeventorganizer.social_event_support.trait.user.UserCredentialsTrait
@@ -37,7 +39,8 @@ class CateringServiceTest extends Specification
                 LocationTrait,
                 BusinessTrait,
                 BusinessHoursTrait,
-                PageTrait {
+                PageTrait,
+                CuisineTrait {
 
     @Subject
     CateringService cateringService
@@ -212,6 +215,46 @@ class CateringServiceTest extends Specification
 
         then:
         1 * cateringRepository.getWithBusinessHours(cateringId) >> Optional.of(catering)
+
+        result == target
+    }
+
+
+    def "search no params"() {
+        given:
+        def dto = FilterCateringsDto.builder().build();
+        def locationId = null
+
+        def caterings = [fakeCateringWithDetails]
+        def target = ImmutableList.of(fakeCateringWithDetails)
+
+        when:
+        def result = cateringService.search(dto, locationId)
+
+        then:
+        1 * cateringRepository.search(null, "", locationId) >> caterings
+
+        result == target
+    }
+
+    def "search with cuisines"() {
+        given:
+        def dto = FilterCateringsDto.builder()
+                .cuisines(List.of('Greek'))
+                .build()
+        def locationId = null
+
+        def cuisinesIds = Set.of(1l)
+
+        def caterings = [fakeCateringWithDetails]
+        def target = ImmutableList.of(fakeCateringWithDetails)
+
+        when:
+        def result = cateringService.search(dto, locationId)
+
+        then:
+        1 * cuisineService.getByName(dto.getCuisines().get(0))
+        1 * cateringRepository.search(cuisinesIds, "", locationId) >> caterings
 
         result == target
     }
