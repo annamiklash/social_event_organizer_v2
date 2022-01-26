@@ -214,8 +214,8 @@ public class CustomerController {
     @RequestMapping(
             path = "avatar/delete",
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteAvatar(@RequestParam long id) {
-        customerService.deleteAvatarById(id);
+    public ResponseEntity<Void> deleteAvatar(@RequestParam long customerId) {
+        customerService.deleteAvatarById(customerId);
         return ResponseEntity.ok().build();
 
     }
