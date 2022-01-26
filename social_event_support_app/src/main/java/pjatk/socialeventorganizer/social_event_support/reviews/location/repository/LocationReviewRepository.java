@@ -17,11 +17,13 @@ public interface LocationReviewRepository extends JpaRepository<LocationReview, 
 
     @Query("SELECT lr from location_review lr " +
             "left join customer c on c.id = lr.customer.id " +
+            "left join customer_avatar ca on ca.id = c.avatar.id " +
             "left join location l on l.id = lr.location.id WHERE l.id = :id")
     Page<LocationReview> getByLocationId(@Param("id") long id, Pageable paging);
 
     @Query("SELECT lr from location_review lr " +
             "left join customer c on c.id = lr.customer.id " +
+            "left join customer_avatar ca on ca.id = c.avatar.id " +
             "left join location l on l.id = lr.location.id WHERE l.id = :id")
     List<LocationReview> getByLocationId(@Param("id") long id);
 

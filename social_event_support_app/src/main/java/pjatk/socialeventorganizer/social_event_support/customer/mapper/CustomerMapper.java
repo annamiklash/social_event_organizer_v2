@@ -8,6 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.Gue
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto;
 import pjatk.socialeventorganizer.social_event_support.event.mapper.OrganizedEventMapper;
+import pjatk.socialeventorganizer.social_event_support.image.mapper.ImageMapper;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.CustomerUserRegistrationDto;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 
@@ -97,5 +98,12 @@ public class CustomerMapper {
                 .birthdate(DateTimeUtil.fromStringToFormattedDate(customer.getBirthdate()))
                 .phoneNumber(Converter.convertPhoneNumberString(customer.getPhoneNumber()))
                 .build();
+    }
+
+    public static CustomerDto toDtoWIthAvatar(Customer customer) {
+        final CustomerDto dto = toDto(customer);
+        dto.setAvatar(ImageMapper.toDto(customer.getAvatar()));
+
+        return dto;
     }
 }

@@ -54,7 +54,7 @@ public class CustomerAvatarService {
         customerAvatarRepository.deleteById(customer.getAvatar().getId());
     }
 
-    private void delete(CustomerAvatar customerAvatar) {
+    public void delete(CustomerAvatar customerAvatar) {
         customerAvatarRepository.delete(customerAvatar);
     }
 }

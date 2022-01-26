@@ -45,4 +45,14 @@ public class ReviewMapper {
                 .build();
     }
 
+    public ReviewDto toDtoWithCustomerAvatar(Review locationReview) {
+        return ReviewDto.builder()
+                .id(locationReview.getId())
+                .title(locationReview.getTitle())
+                .comment(locationReview.getComment())
+                .starRating(locationReview.getStarRating())
+                .customer(CustomerMapper.toDtoWIthAvatar(locationReview.getCustomer()))
+                .build();
+    }
+
 }

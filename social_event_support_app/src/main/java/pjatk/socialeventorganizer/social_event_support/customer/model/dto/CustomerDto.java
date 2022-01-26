@@ -8,9 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pjatk.socialeventorganizer.social_event_support.common.constants.RegexConstants;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
-import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.dto.CustomerAvatarDto;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.model.dto.GuestDto;
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto;
+import pjatk.socialeventorganizer.social_event_support.image.model.dto.ImageDto;
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
@@ -51,7 +51,9 @@ public class CustomerDto {
     @Pattern(regexp = RegexConstants.PHONE_NUMBER_REGEX, message = "should contain only digits")
     private String phoneNumber;
 
-    private CustomerAvatarDto avatar;
+    private ImageDto avatar;
+
+//    private CustomerAvatarDto avatar;
 
     private Set<GuestDto> guests;
 

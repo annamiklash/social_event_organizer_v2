@@ -24,6 +24,7 @@ public interface CateringReviewRepository extends JpaRepository<CateringReview, 
 
     @Query("SELECT cr from catering_review cr " +
             "left join customer c on c.id = cr.customer.id " +
+            "left join customer_avatar ca on ca.id = c.avatar.id " +
             "left join catering cat on cat.id = cr.catering.id WHERE cat.id = :id")
     Page<CateringReview> getByCateringId(@Param("id")long id, Pageable pageable);
 }
