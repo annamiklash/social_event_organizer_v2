@@ -12,6 +12,8 @@ import pjatk.socialeventorganizer.social_event_support.location.service.Location
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
 import spock.lang.Specification
 
+import java.util.stream.Collectors
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -29,7 +31,11 @@ class LocationDescriptionItemControllerTest extends Specification {
     def "GET api/location_description/allowed/all returns 200 positive test scenario"() {
         given:
 
-        def resultList = ImmutableList.copyOf(LocationDescriptionItemEnum.values())
+        def resultList = ImmutableList.copyOf(ImmutableList.copyOf(
+                Arrays.stream(LocationDescriptionItemEnum.values())
+                        .map(LocationDescriptionItemEnum.&getValue)
+                        .sorted()
+                        .collect(Collectors.toList())))
         def jsonResponse = TestSerializer.serialize(resultList)
 
         expect:

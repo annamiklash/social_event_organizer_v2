@@ -188,7 +188,7 @@ class LocationControllerTest extends Specification
         def id = 1L
 
         def location = fakeFullLocation
-        def result = LocationMapper.toDtoWithDetailWithCaterings(location)
+        def result = LocationMapper.toDtoWithDetail(location)
 
         def jsonResponse = TestSerializer.serialize(result)
 

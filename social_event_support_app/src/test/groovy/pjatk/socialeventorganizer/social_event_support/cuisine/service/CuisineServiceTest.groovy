@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.cuisine.service
 
+import org.springframework.data.domain.Sort
 import pjatk.socialeventorganizer.social_event_support.cuisine.mapper.CuisineMapper
 import pjatk.socialeventorganizer.social_event_support.cuisine.repository.CuisineRepository
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CuisineTrait
@@ -28,7 +29,7 @@ class CuisineServiceTest extends Specification
         def result = cuisineService.list()
 
         then:
-        1 * cuisineRepository.findAll() >> target
+        1 * cuisineRepository.findAll(Sort.by("name")) >> target
 
         result == target
     }

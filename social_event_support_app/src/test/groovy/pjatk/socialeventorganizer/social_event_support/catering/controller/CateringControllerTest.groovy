@@ -156,7 +156,7 @@ class CateringControllerTest extends Specification
         def id = 1L
 
         def catering = fakeCateringWithDetails
-        def cateringDto = CateringMapper.toDtoWithDetailAndLocations(catering)
+        def cateringDto = CateringMapper.toDtoWithDetail(catering)
         def rating = 1.0D
         cateringDto.setRating(rating)
 

@@ -57,8 +57,8 @@ public class CateringImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long cateringId, @RequestParam long imageId) {
-        cateringImageService.deleteById(cateringId, imageId);
+    public ResponseEntity<Void> delete(@RequestParam long id) {
+        cateringImageService.deleteById(id);
         return ResponseEntity.ok().build();
 
     }

@@ -152,7 +152,7 @@ public class CustomerController {
             method = RequestMethod.DELETE,
             params = {"id"})
     public ResponseEntity<Void> delete(@RequestParam long id) {
-        log.info("CREATE CUSTOMER ACCOUNT");
+        log.info("DELETE CUSTOMER");
         customerService.delete(id);
 
         return ResponseEntity.ok().build();

@@ -56,8 +56,8 @@ public class OptionalServiceImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long serviceId, @RequestParam long newId) {
-        optionalServiceImageService.deleteById(serviceId, newId);
+    public ResponseEntity<Void> delete(@RequestParam long id) {
+        optionalServiceImageService.deleteById( id);
         return ResponseEntity.ok().build();
 
     }
