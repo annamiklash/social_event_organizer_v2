@@ -86,8 +86,7 @@ public class BusinessController {
     @PreAuthorize("hasAnyAuthority('ADMIN','BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@RequestParam long id) {
         businessService.delete(id);
 
