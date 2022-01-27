@@ -71,9 +71,9 @@ public class LocationImageService {
         return locationImageRepository.countAll(locationId);
     }
 
-    public void deleteById(long locationId, Long imageId) {
-        final LocationImage imageToDelete = locationImageRepository.findByIdAndLocation_Id(imageId, locationId)
-                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " does not have image with id " + imageId));
+    public void deleteById(long imageId) {
+        final LocationImage imageToDelete = locationImageRepository.findById(imageId)
+                .orElseThrow(() -> new NotFoundException("Location image with id " + imageId + " does not exits"));
 
         locationImageRepository.delete(imageToDelete);
     }

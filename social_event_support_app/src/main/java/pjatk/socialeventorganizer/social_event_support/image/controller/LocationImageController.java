@@ -56,8 +56,8 @@ public class LocationImageController {
     @PreAuthorize("hasAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam long locationId, @RequestParam long id) {
-        locationImageService.deleteById(locationId, id);
+    public ResponseEntity<Void> delete( @RequestParam long id) {
+        locationImageService.deleteById( id);
         return ResponseEntity.ok().build();
 
     }
