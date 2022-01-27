@@ -46,13 +46,20 @@ public class ReviewMapper {
     }
 
     public ReviewDto toDtoWithCustomerAvatar(Review locationReview) {
-        return ReviewDto.builder()
+        final ReviewDto dto = ReviewDto.builder()
                 .id(locationReview.getId())
                 .title(locationReview.getTitle())
                 .comment(locationReview.getComment())
                 .starRating(locationReview.getStarRating())
-                .customer(CustomerMapper.toDtoWIthAvatar(locationReview.getCustomer()))
                 .build();
+
+        if (locationReview.getCustomer().getAvatar() == null) {
+            dto.setCustomer(CustomerMapper.toDto(locationReview.getCustomer()));
+        } else {
+            dto.setCustomer(CustomerMapper.toDtoWIthAvatar(locationReview.getCustomer()));
+        }
+
+        return  dto;
     }
 
 }
