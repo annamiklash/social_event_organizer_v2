@@ -49,7 +49,7 @@ public class Customer extends User implements Serializable {
     @JsonIgnore
     private Set<OrganizedEvent> events;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "id_image")
     private CustomerAvatar avatar;
     

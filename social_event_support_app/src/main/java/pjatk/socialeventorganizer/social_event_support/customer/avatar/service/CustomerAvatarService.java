@@ -56,7 +56,11 @@ public class CustomerAvatarService {
         final Customer customer = customerRepository.getByIdWithAvatar(id)
                 .orElseThrow(() -> new NotFoundException("Customer does not exist"));
 
-        customerAvatarRepository.deleteById(customer.getAvatar().getId());
+        final long avatarId = customer.getAvatar().getId();
+        customer.setAvatar(null);
+        customerRepository.save(customer);
+
+        customerAvatarRepository.deleteById(avatarId);
     }
 
     public void save(CustomerAvatar customerAvatar) {
