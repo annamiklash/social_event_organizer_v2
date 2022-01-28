@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,14 +25,19 @@ import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumen
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent;
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.Interpreter;
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation;
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.service.OptionalServiceForLocationService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum.CANCELLED;
+import static pjatk.socialeventorganizer.social_event_support.optional_service.enums.OptionalServiceTypeEnum.INTERPRETER;
 
 @Service
 @AllArgsConstructor
@@ -46,6 +52,7 @@ public class OrganizedEventService {
     private final OptionalServiceForLocationService optionalServiceForLocationService;
     private final StatusChangeHelper statusChangeHelper;
     private final TimestampHelper timestampHelper;
+    private final TranslationLanguageService translationLanguageService;
 
     public ImmutableList<OrganizedEventDto> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -66,11 +73,33 @@ public class OrganizedEventService {
     public OrganizedEvent getWithDetail(long orgEventId) {
         return organizedEventRepository.getWithDetail(orgEventId)
                 .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
+
     }
 
     public OrganizedEvent getWithDetail(long orgEventId, long customerId) {
-        return organizedEventRepository.getWithDetail(orgEventId, customerId)
+        final OrganizedEvent organizedEvent = organizedEventRepository.getWithDetail(orgEventId, customerId)
                 .orElseThrow(() -> new NotFoundException("No organized event with id " + orgEventId));
+
+        final Set<LocationForEvent> locationForEventSet = organizedEvent.getLocationForEvent();
+        if (CollectionUtils.isEmpty(locationForEventSet)) {
+            return organizedEvent;
+        }
+
+        locationForEventSet.stream()
+                .filter(location -> !"CANCELLED".equals(location.getConfirmationStatus()))
+                .findFirst()
+                .map(location -> location.getServices().stream()
+                        .map(OptionalServiceForChosenLocation::getOptionalService)
+                        .peek(optionalService -> {
+                            if (optionalService.getType().equals(INTERPRETER.getValue())) {
+                                ((Interpreter) optionalService).setLanguages(
+                                        new HashSet<>(translationLanguageService.getAllByInterpreterId(optionalService.getId())));
+                            }
+                        })
+                        .collect(Collectors.toSet()));
+
+        return organizedEvent;
+
     }
 
     public void save(OrganizedEvent organizedEvent) {
