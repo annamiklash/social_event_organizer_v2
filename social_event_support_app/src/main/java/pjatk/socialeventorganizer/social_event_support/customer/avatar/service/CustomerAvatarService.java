@@ -9,9 +9,9 @@ import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.Cus
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.repository.CustomerAvatarRepository;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
-import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -53,9 +53,12 @@ public class CustomerAvatarService {
     }
 
     public void deleteById(long id) {
-        final Customer customer = customerRepository.getByIdWithAvatar(id)
-                .orElseThrow(() -> new NotFoundException("Customer does not exist"));
+        final Optional<Customer> optionalCustomer = customerRepository.getByIdWithAvatar(id);
 
+        if(optionalCustomer.isEmpty()){
+            return;
+        }
+        final Customer customer = optionalCustomer.get();
         final long avatarId = customer.getAvatar().getId();
         customer.setAvatar(null);
         customerRepository.save(customer);

@@ -106,6 +106,10 @@ public class OrganizedEventService {
         organizedEventRepository.save(organizedEvent);
     }
 
+    public void delete(OrganizedEvent organizedEvent) {
+        organizedEventRepository.delete(organizedEvent);
+    }
+
     public OrganizedEvent getWithAllInformationForSendingInvitations(long eventId, long customerId) {
         return organizedEventRepository.getWithAllInformationForSendingInvitations(eventId, customerId)
                 .orElseThrow(() -> new NotFoundException("No organized event with eventId " + eventId));
@@ -222,13 +226,6 @@ public class OrganizedEventService {
         save(organizedEvent);
 
         return organizedEvent;
-    }
-
-    public void delete(OrganizedEvent organizedEvent) {
-        organizedEvent.setModifiedAt(timestampHelper.now());
-        organizedEvent.setDeletedAt(timestampHelper.now());
-
-        save(organizedEvent);
     }
 
     private boolean eventWithIdAndCustomerIdExists(long customerId, long eventId) {

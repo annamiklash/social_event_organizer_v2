@@ -60,7 +60,7 @@ public class OrganizedEvent implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_customer", nullable = false)
+    @JoinColumn(name = "id_customer")
     private Customer customer;
 
     @ToString.Exclude

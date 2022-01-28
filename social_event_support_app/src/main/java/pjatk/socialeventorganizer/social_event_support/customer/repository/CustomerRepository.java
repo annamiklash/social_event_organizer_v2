@@ -58,7 +58,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM customer c " +
             "LEFT JOIN users u on c.id=u.id " +
             "LEFT JOIN FETCH c.guests g " +
-            "LEFT JOIN FETCH c.events " +
+            "LEFT JOIN FETCH c.events e " +
             "WHERE c.id = :id")
     Optional<Customer> getAllCustomerInformation(@Param("id") long id);
 

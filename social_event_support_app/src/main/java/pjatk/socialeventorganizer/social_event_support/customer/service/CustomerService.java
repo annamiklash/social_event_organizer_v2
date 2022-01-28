@@ -187,6 +187,7 @@ public class CustomerService {
         return customerRepository.findById(id).isPresent();
     }
 
+    @Transactional(rollbackOn = Exception.class)
     public void delete(long id) {
         final Customer customerToDelete = customerRepository.getAllCustomerInformation(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
@@ -199,12 +200,12 @@ public class CustomerService {
         CollectionUtil.emptyListIfNull(customerToDelete.getGuests())
                 .forEach(guestService::delete);
 
-        CollectionUtil.emptyListIfNull(customerToDelete.getEvents())
-                .forEach(organizedEventService::delete);
+//        CollectionUtil.emptyListIfNull(customerToDelete.getEvents())
+//                .forEach(organizedEventService::delete);
 
-        customerAvatarService.delete(customerToDelete.getAvatar());
+        deleteAvatarById(customerToDelete.getAvatar().getId());
 
-        customerRepository.save(customerToDelete);
+        customerRepository.delete(customerToDelete);
     }
 
 
@@ -236,6 +237,7 @@ public class CustomerService {
         final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
 
         organizedEvent.setGuests(new HashSet<>(guests));
+
 
         organizedEvent.setModifiedAt(timestampHelper.now());
 
@@ -343,8 +345,8 @@ public class CustomerService {
     private boolean hasPendingReservations(Customer customerToDelete) {
         return customerToDelete.getEvents().stream()
                 .anyMatch(organizedEvent ->
-                        !FINISHED.name().equals(organizedEvent.getEventStatus())
-                                || !CANCELLED.name().equals(organizedEvent.getEventStatus()));
+                        IN_PROGRESS.name().equals(organizedEvent.getEventStatus())
+                                || READY.name().equals(organizedEvent.getEventStatus()));
 
     }
 }
