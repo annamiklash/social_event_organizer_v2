@@ -76,6 +76,24 @@ public class OrganizedEventMapper {
                 .build();
     }
 
+    public OrganizedEventDto toDtoWithLocationCustomer(OrganizedEvent organizedEvent) {
+        final OrganizedEventDto dto = toDto(organizedEvent);
+
+        dto.setCustomer(CustomerMapper.toDto(organizedEvent.getCustomer()));
+        dto.setEventType(organizedEvent.getEventType().getType());
+
+        final List<LocationForEventDto> locationForEventDtos = new ArrayList<>();
+        final Set<LocationForEvent> locationReservations = organizedEvent.getLocationForEvent();
+        for (LocationForEvent locationReservation : locationReservations) {
+
+            locationForEventDtos.add(LocationForEventMapper.toDto(locationReservation));
+
+        }
+        dto.setLocation(locationForEventDtos);
+
+        return dto;
+    }
+
     public OrganizedEventConfirmationDto toDtoWithLocation(OrganizedEvent organizedEvent) {
         return OrganizedEventConfirmationDto.builder()
                 .id(organizedEvent.getId())

@@ -82,6 +82,7 @@ public class OptionalServiceMapper {
                         .stream()
                         .map(MusicStyleMapper::toDto)
                         .collect(Collectors.toSet()));
+
                 dto.setInstrument(((Musician) optionalService).getInstrument());
                 return dto;
 

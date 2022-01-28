@@ -67,7 +67,7 @@ public class OrganizedEventController {
                                                                                       @RequestParam CustomerReservationTabEnum tab) {
         final List<OrganizedEvent> organizedEventList = organizedEventService.getAllByCustomerIdAndTab(customerId, tab);
         final ImmutableList<OrganizedEventDto> resultList = organizedEventList.stream()
-                .map(OrganizedEventMapper::toDtoWithCustomerAndEventType)
+                .map(OrganizedEventMapper::toDtoWithLocationCustomer)
                 .collect(ImmutableList.toImmutableList());
 
         return ResponseEntity.ok(resultList);
