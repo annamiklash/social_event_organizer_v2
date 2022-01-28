@@ -52,6 +52,10 @@ public class LocationMapper {
                 .address(AddressMapper.toDto(location.getLocationAddress()))
                 .build();
 
+        if (location.getRating() != null) {
+            dto.setRating(new Double(location.getRating()));
+        }
+
         if (!CollectionUtils.isEmpty(location.getImages())) {
             dto.setImages(location.getImages().stream().map(ImageMapper::toDto).collect(Collectors.toList()));
         } else {
