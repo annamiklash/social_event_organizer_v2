@@ -18,7 +18,7 @@ public class OptionalServiceAvailability extends Availability {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_optional_service")
     private OptionalService optionalService;
 }
