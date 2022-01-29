@@ -43,6 +43,7 @@ public interface OptionalServiceAvailabilityRepository extends JpaRepository<Opt
     @Query(value = "select os.* " +
             "from optional_service_availability os " +
             "where os.id_optional_service=:serviceId " +
-            "AND os.date >= CAST(:dateFrom as timestamp) AND os.date <= CAST(:dateTo as timestamp)", nativeQuery = true)
+            "AND os.date >= CAST(:dateFrom as timestamp) AND os.date <= CAST(:dateTo as timestamp) " +
+            "order by os.date, os.time_from", nativeQuery = true)
     List<OptionalServiceAvailability> findByIdAndPeriodDate(@Param("serviceId") long serviceId, @Param("dateFrom") String dateFrom, @Param("dateTo") String dateTo);
 }
