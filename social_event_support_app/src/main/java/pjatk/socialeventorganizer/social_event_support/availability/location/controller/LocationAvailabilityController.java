@@ -45,7 +45,7 @@ public class LocationAvailabilityController {
             path = "allowed/period",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<AvailabilityDto>> listForPer(@RequestParam long id,
+    public ResponseEntity<ImmutableList<AvailabilityDto>> listForPeriod(@RequestParam long id,
                                                                      @RequestParam String dateFrom, @RequestParam String dateTo) {
 
         final List<LocationAvailability> availabilities = locationAvailabilityService.findAllByLocationIdAndDatePeriod(id, dateFrom, dateTo);

@@ -53,6 +53,13 @@ public class OptionalServiceAvailabilityService {
         return optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(id, date);
     }
 
+    public List<OptionalServiceAvailability> findAllByLocationIdAndDatePeriod(long id, String dateFrom, String dateTo) {
+        if (DateTimeUtil.fromStringToFormattedDate(dateFrom).isAfter(DateTimeUtil.fromStringToFormattedDate(dateTo))) {
+            throw new IllegalArgumentException("Date from after date to");
+        }
+        return optionalServiceAvailabilityRepository.findByIdAndPeriodDate(id, dateFrom, dateTo);
+    }
+
     public void delete(long locationId, String date) {
         optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(locationId, date).stream()
                 .filter(cateringAvailability -> AVAILABLE.name().equals(cateringAvailability.getStatus()))
@@ -157,5 +164,4 @@ public class OptionalServiceAvailabilityService {
         return false;
 
     }
-
 }

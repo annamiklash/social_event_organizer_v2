@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability;
 
 import java.util.List;
@@ -40,4 +39,10 @@ public interface OptionalServiceAvailabilityRepository extends JpaRepository<Opt
             "AND la.time_from = CAST(:timeFrom as timestamp) " +
             "AND la.time_to= CAST(:timeTo as timestamp)", nativeQuery = true)
     Optional<OptionalServiceAvailability> getByDateAndTime(@Param("date") String date, @Param("timeFrom") String timeFrom, @Param("timeTo") String timeTo);
+
+    @Query(value = "select os.* " +
+            "from optional_service_availability os " +
+            "where os.id_optional_service=:serviceId " +
+            "AND os.date >= CAST(:dateFrom as timestamp) AND os.date <= CAST(:dateTo as timestamp)", nativeQuery = true)
+    List<OptionalServiceAvailability> findByIdAndPeriodDate(@Param("serviceId") long serviceId, @Param("dateFrom") String dateFrom, @Param("dateTo") String dateTo);
 }
