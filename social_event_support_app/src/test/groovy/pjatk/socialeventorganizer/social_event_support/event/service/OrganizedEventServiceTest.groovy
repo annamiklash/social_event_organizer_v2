@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.event.model.EventType
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.service.OptionalServiceForLocationService
 import pjatk.socialeventorganizer.social_event_support.trait.customer.CustomerTrait
 import pjatk.socialeventorganizer.social_event_support.trait.event.OrganizedEventTrait
@@ -36,6 +37,7 @@ class OrganizedEventServiceTest extends Specification
     OptionalServiceForLocationService optionalServiceForLocationService
     StatusChangeHelper statusChangeHelper
     TimestampHelper timestampHelper
+    TranslationLanguageService translationLanguageService
 
     LocalDateTime now
 
@@ -48,6 +50,7 @@ class OrganizedEventServiceTest extends Specification
         optionalServiceForLocationService = Mock()
         statusChangeHelper = Mock()
         timestampHelper = Mock()
+        translationLanguageService = Mock()
 
         now = LocalDateTime.parse('2007-12-03T10:15:30')
         timestampHelper.now() >> now
@@ -59,7 +62,8 @@ class OrganizedEventServiceTest extends Specification
                 locationForEventService,
                 optionalServiceForLocationService,
                 statusChangeHelper,
-                timestampHelper
+                timestampHelper,
+                translationLanguageService
         )
     }
 

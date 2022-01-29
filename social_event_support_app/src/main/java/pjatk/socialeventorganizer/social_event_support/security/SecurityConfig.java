@@ -24,7 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 LOGOUT.value,
                 LOCATIONS.value,
                 LOCATIONS_REVIEW.value,
-                LOCATION_AVAILABILITY.value,
+                LOCATION_AVAILABILITY_1.value,
+                LOCATION_AVAILABILITY_2.value,
                 LOCATION_DESCRIPTIONS.value,
 
                 CATERINGS.value,

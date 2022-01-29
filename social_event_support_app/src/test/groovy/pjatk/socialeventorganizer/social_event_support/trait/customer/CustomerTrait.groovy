@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.trait.customer
 
+
 import pjatk.socialeventorganizer.social_event_support.customer.avatar.model.CustomerAvatar
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer
 import pjatk.socialeventorganizer.social_event_support.customer.model.dto.CustomerDto
@@ -20,7 +21,7 @@ trait CustomerTrait {
             .guests(new HashSet<>())
             .events(new HashSet<>())
             .appProblems(new HashSet<>())
-            .avatar(CustomerAvatar.builder().id(1L).build())
+            .avatar(CustomerAvatar.builder().id(1L).image("image".getBytes()).fileName("name").build())
             .build()
 
     CustomerDto fakeCustomerDTO = CustomerDto.builder()

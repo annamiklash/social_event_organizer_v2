@@ -282,19 +282,6 @@ class CustomerServiceTest extends Specification
         result == target
     }
 
-    def "CustomerExists"() {
-        given:
-        def id = 1L
-        def target = true
-
-        when:
-        def result = customerService.customerExists(1L)
-
-        then:
-        1 * customerRepository.findById(id) >> Optional.of(fakeCustomer)
-
-        result == target
-    }
 
     def "Delete"() {
         given:
@@ -307,8 +294,8 @@ class CustomerServiceTest extends Specification
 
         then:
         1 * customerRepository.getAllCustomerInformation(id) >> Optional.of(customer)
-        1 * customerAvatarService.delete(customer.getAvatar())
-        1 * customerRepository.save(customer)
+        1 * customerAvatarService.deleteById(id)
+        1 * customerRepository.delete(customer)
     }
 
     def "Edit"() {

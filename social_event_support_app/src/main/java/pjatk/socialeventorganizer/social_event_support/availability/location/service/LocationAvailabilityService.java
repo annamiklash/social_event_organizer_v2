@@ -7,7 +7,6 @@ import pjatk.socialeventorganizer.social_event_support.availability.dto.Availabi
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability;
 import pjatk.socialeventorganizer.social_event_support.availability.location.repository.LocationAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper;
-import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
@@ -15,11 +14,10 @@ import pjatk.socialeventorganizer.social_event_support.location.model.Location;
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository;
 
 import javax.transaction.Transactional;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
@@ -34,46 +32,14 @@ public class LocationAvailabilityService {
 
     private final LocationRepository locationRepository;
 
-    public List<LocationAvailability> createFromBusinessHours(Set<LocationBusinessHours> locationBusinessHours, Location location) {
-        List<LocationAvailability> availabilities = new ArrayList<>();
-        for (LocationBusinessHours businessHour : locationBusinessHours) {
-            final String day = businessHour.getDay();
-            final DayOfWeek dayOfWeek = DayOfWeek.valueOf(day);
-            LocalDate startDate = LocalDate.now();
-            final LocalDate endDate = startDate.plusDays(30);
-
-            while (startDate.isBefore(endDate) || startDate.equals(endDate)) {
-                final LocalDate nextWeekDay = startDate.with(TemporalAdjusters.next(dayOfWeek));
-                final LocationAvailability availability = LocationAvailability.builder()
-                        .date(nextWeekDay)
-                        .timeFrom(LocalDateTime.of(nextWeekDay, businessHour.getTimeFrom()))
-                        .timeTo(LocalDateTime.of(nextWeekDay, businessHour.getTimeTo()))
-                        .build();
-
-                locationAvailabilityRepository.save(availability);
-                availability.setLocation(location);
-                availabilities.add(availability);
-            }
-        }
-
-        return availabilities;
-    }
-
     @Transactional(rollbackOn = Exception.class)
     public List<LocationAvailability> update(List<AvailabilityDto> dtos, long locationId, boolean deleteAll) {
         final Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Location does not exist"));
 
-        final Map<String, List<AvailabilityDto>> byDate = dtos.stream()
-                .collect(Collectors.groupingBy(AvailabilityDto::getDate));
-
-        final List<AvailabilityDto> availabilityDtos = byDate.values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
         final List<LocationAvailability> result = new ArrayList<>();
 
-        for (AvailabilityDto availabilityDto : availabilityDtos) {
+        for (AvailabilityDto availabilityDto : dtos) {
             final LocationAvailability availability = resolveAvailabilitiesForDay(availabilityDto, location, deleteAll);
 
             availability.setLocation(location);
@@ -89,6 +55,12 @@ public class LocationAvailabilityService {
         return locationAvailabilityRepository.find(locId, date);
     }
 
+    public List<LocationAvailability> findAllByLocationIdAndDatePeriod(long id, String dateFrom, String dateTo) {
+        if (DateTimeUtil.fromStringToFormattedDate(dateFrom).isAfter(DateTimeUtil.fromStringToFormattedDate(dateTo))) {
+            throw new IllegalArgumentException("Date from after date to");
+        }
+        return locationAvailabilityRepository.findByIdAndPeriodDate(id, dateFrom, dateTo);
+    }
 
     public void delete(List<AvailabilityDto> availabilityDtos, long locationId) {
         for (AvailabilityDto availabilityDto : availabilityDtos) {

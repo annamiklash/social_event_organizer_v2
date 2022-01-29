@@ -30,10 +30,25 @@ public class LocationAvailabilityController {
             path = "allowed",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<AvailabilityDto>> list(@RequestParam long id,
-                                                               @RequestParam String date) {
+    public ResponseEntity<ImmutableList<AvailabilityDto>> listForDate(@RequestParam long id,
+                                                                      @RequestParam String date) {
 
         final List<LocationAvailability> availabilities = locationAvailabilityService.findAllByLocationIdAndDate(id, date);
+        final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
+                .map(AvailabilityMapper::toDto)
+                .collect(ImmutableList.toImmutableList());
+
+        return ResponseEntity.ok(resultList);
+    }
+
+    @RequestMapping(
+            path = "allowed/period",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImmutableList<AvailabilityDto>> listForPer(@RequestParam long id,
+                                                                     @RequestParam String dateFrom, @RequestParam String dateTo) {
+
+        final List<LocationAvailability> availabilities = locationAvailabilityService.findAllByLocationIdAndDatePeriod(id, dateFrom, dateTo);
         final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
                 .map(AvailabilityMapper::toDto)
                 .collect(ImmutableList.toImmutableList());
