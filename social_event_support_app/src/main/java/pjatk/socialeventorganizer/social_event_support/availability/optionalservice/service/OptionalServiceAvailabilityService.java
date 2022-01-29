@@ -76,6 +76,11 @@ public class OptionalServiceAvailabilityService {
 
     }
 
+    public void deleteById(long id){
+        optionalServiceAvailabilityRepository.deleteById(id);
+        optionalServiceAvailabilityRepository.flush();
+    }
+
     public OptionalServiceAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
         return optionalServiceAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
                 .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));

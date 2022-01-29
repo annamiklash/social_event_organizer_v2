@@ -75,15 +75,25 @@ public class OptionalServiceAvailabilityController {
     }
 
 
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+//    @RequestMapping(
+//            method = RequestMethod.DELETE,
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@RequestParam long id,
+//            @RequestParam String date){
+//        optionalServiceAvailabilityService.delete(id, date);
+//
+//        return ResponseEntity.ok().build();
+//    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
-            method = RequestMethod.DELETE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@RequestParam long id,
-            @RequestParam String date){
-        optionalServiceAvailabilityService.delete(id, date);
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Void> delete(@RequestParam @NotNull long id) {
+        optionalServiceAvailabilityService.deleteById(id);
 
         return ResponseEntity.ok().build();
     }
+
 }
