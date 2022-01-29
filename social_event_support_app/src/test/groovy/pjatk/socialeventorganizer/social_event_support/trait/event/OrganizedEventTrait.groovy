@@ -118,7 +118,7 @@ trait OrganizedEventTrait {
                     .guests(new HashSet<>())
                     .events(new HashSet<>())
                     .appProblems(new HashSet<>())
-                    .avatar(CustomerAvatar.builder().id(1L).build())
+                    .avatar(CustomerAvatar.builder().id(1L).image("Image".getBytes()).fileName("file").build())
                     .build())
             .eventType(EventType.builder()
                     .id(1L)

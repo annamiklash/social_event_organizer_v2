@@ -46,7 +46,7 @@ public class LocationAvailabilityController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<AvailabilityDto>> listForPeriod(@RequestParam long id,
-                                                                     @RequestParam String dateFrom, @RequestParam String dateTo) {
+                                                                        @RequestParam String dateFrom, @RequestParam String dateTo) {
 
         final List<LocationAvailability> availabilities = locationAvailabilityService.findAllByLocationIdAndDatePeriod(id, dateFrom, dateTo);
         final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
@@ -73,15 +73,24 @@ public class LocationAvailabilityController {
     }
 
 
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+//    @RequestMapping(
+//            method = RequestMethod.DELETE,
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@Valid @RequestBody AvailabilityDto[] dtos,
+//                                                                 @RequestParam @NotNull long id) {
+//        final List<AvailabilityDto> availabilityDtos = ImmutableList.copyOf(dtos);
+//        locationAvailabilityService.delete(availabilityDtos, id);
+//
+//        return ResponseEntity.ok().build();
+//    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
-            method = RequestMethod.DELETE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@Valid @RequestBody AvailabilityDto[] dtos,
-                                                                 @RequestParam @NotNull long id) {
-        final List<AvailabilityDto> availabilityDtos = ImmutableList.copyOf(dtos);
-        locationAvailabilityService.delete(availabilityDtos, id);
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Void> delete(@RequestParam @NotNull long id) {
+        locationAvailabilityService.deleteById(id);
 
         return ResponseEntity.ok().build();
     }

@@ -85,6 +85,11 @@ public class LocationAvailabilityService {
 
     }
 
+    public void deleteById(long id) {
+        locationAvailabilityRepository.deleteById(id);
+        locationAvailabilityRepository.flush();
+    }
+
     private LocationAvailability resolveAvailabilitiesForDay(AvailabilityDto availabilityDto, Location location, boolean deleteAll) {
         final List<LocationAvailability> locationAvailabilityWithStatusAvailableList =
                 findAllByLocationIdAndDate(location.getId(), availabilityDto.getDate())
@@ -187,10 +192,7 @@ public class LocationAvailabilityService {
         locationAvailabilityRepository.save(locationAvailability);
     }
 
-    private void deleteById(long id) {
-        locationAvailabilityRepository.deleteById(id);
-        locationAvailabilityRepository.flush();
-    }
+
 
 
 }
