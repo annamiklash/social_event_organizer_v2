@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
@@ -21,7 +22,6 @@ import pjatk.socialeventorganizer.social_event_support.reviews.service.repositor
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +36,7 @@ public class OptionalServiceReviewService {
 
     private final OptionalServiceRepository optionalServiceRepository;
 
-    public void save(OptionalServiceReview optionalServiceReview) {
-        serviceReviewRepository.save(optionalServiceReview);
-    }
+    private final TimestampHelper timestampHelper;
 
     public OptionalServiceReview leaveServiceReview(long id, long serviceId, ReviewDto dto) {
         final Customer customer = customerRepository.findById(id)
@@ -50,10 +48,9 @@ public class OptionalServiceReviewService {
         final OptionalServiceReview optionalServiceReview = ReviewMapper.fromServiceReviewDto(dto);
         optionalServiceReview.setOptionalService(optionalService);
         optionalServiceReview.setCustomer(customer);
-        optionalServiceReview.setCreatedAt(LocalDateTime.now());
+        optionalServiceReview.setCreatedAt(timestampHelper.now());
 
-        save(optionalServiceReview);
-
+        serviceReviewRepository.save(optionalServiceReview);
         return optionalServiceReview;
     }
 

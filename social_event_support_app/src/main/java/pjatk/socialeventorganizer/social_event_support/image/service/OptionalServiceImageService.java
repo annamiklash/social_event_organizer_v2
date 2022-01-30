@@ -29,7 +29,6 @@ public class OptionalServiceImageService {
 
     private final OptionalServiceService optionalServiceService;
 
-
     @SneakyThrows(IOException.class)
     public void upload(long serviceId, MultipartFile file) {
         if (file.getOriginalFilename() == null) {
@@ -51,11 +50,6 @@ public class OptionalServiceImageService {
                 .build();
 
         optionalServiceImageRepository.save(locationImage);
-    }
-
-
-    public int count(long serviceId) {
-        return optionalServiceImageRepository.countAll(serviceId);
     }
 
     public List<OptionalServiceImage> findByServiceId(long serviceId) {

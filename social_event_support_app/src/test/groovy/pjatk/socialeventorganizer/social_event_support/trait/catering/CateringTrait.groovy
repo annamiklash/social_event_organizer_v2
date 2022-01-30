@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.catering.model.CateringIt
 import pjatk.socialeventorganizer.social_event_support.catering.model.dto.CateringDto
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.Cuisine
 import pjatk.socialeventorganizer.social_event_support.cuisine.model.dto.CuisineDto
+import pjatk.socialeventorganizer.social_event_support.image.model.CateringImage
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 
 import java.time.LocalTime
@@ -62,6 +63,11 @@ trait CateringTrait {
                             .name('Greek')
                             .build()
             ))
+            .images(Set.of(CateringImage.builder()
+                    .id(1l)
+                    .fileName("fileName")
+                    .image("file.getBytes()".getBytes())
+                    .build()))
             .build()
 
     Catering fakeCateringWithDetails = Catering.builder()
@@ -70,6 +76,7 @@ trait CateringTrait {
             .email('email@email.com')
             .phoneNumber(new BigInteger('123456789'))
             .description('description')
+            .serviceCost(new BigDecimal(100.00))
             .business(Business.builder()
                     .id(1)
                     .firstName('Name')
@@ -100,7 +107,7 @@ trait CateringTrait {
             ))
             .cateringBusinessHours(Set.of(
                     CateringBusinessHours.builder()
-                            .day(DayEnum.MONDAY.name())
+                            .day(DayEnum.SUNDAY.name())
                             .timeFrom(LocalTime.of(10, 0))
                             .timeTo(LocalTime.of(20, 0))
                             .build()

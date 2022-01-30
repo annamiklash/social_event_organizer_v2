@@ -82,7 +82,6 @@ class CateringImageControllerTest extends Specification
     @WithMockUser(authorities = ['BUSINESS'])
     def "DELETE api/images/catering returns 200 positive test scenario"() {
         given:
-        def cateringId = 1L
         def imageId = 2L
 
         expect:
@@ -90,13 +89,12 @@ class CateringImageControllerTest extends Specification
                 delete('/api/images/catering')
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param("cateringId", cateringId.toString())
-                        .param("imageId", imageId.toString())
+                        .param("id", imageId.toString())
         )
                 .andExpect(status().isOk())
 
         BDDMockito.verify(cateringImageService, times(1))
-                .deleteById(eq(cateringId), eq(imageId))
+                .deleteById(eq(imageId))
 
     }
 

@@ -13,7 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.reviews.catering.service.
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper
 import pjatk.socialeventorganizer.social_event_support.table.TableDto
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
-import pjatk.socialeventorganizer.social_event_support.trait.reviews.ReviewDtoTrait
+import pjatk.socialeventorganizer.social_event_support.trait.reviews.ReviewTrait
 import pjatk.socialeventorganizer.social_event_support.trait.reviews.catering.CateringReviewTrait
 import spock.lang.Specification
 
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = [CateringReviewController.class])
 class CateringReviewControllerTest extends Specification
         implements CateringReviewTrait,
-                ReviewDtoTrait {
+                ReviewTrait {
 
     @Autowired
     private MockMvc mockMvc
@@ -52,7 +52,7 @@ class CateringReviewControllerTest extends Specification
                 .order(order)
                 .build()
 
-        def cateringReview = fakeCateringReview
+        def cateringReview = fakeCateringReviewWithCustomer
         def reviewList = ImmutableList.of(cateringReview)
         def reviewDto = ReviewMapper.toDto(cateringReview)
         def resultList = ImmutableList.of(reviewDto)
@@ -86,7 +86,7 @@ class CateringReviewControllerTest extends Specification
         def cateringId = 2L
         def dto = fakeReviewDto
 
-        def cateringReview = fakeCateringReview
+        def cateringReview = fakeCateringReviewWithCustomer
         def result = ReviewMapper.toDto(cateringReview)
 
         def jsonRequest = TestSerializer.serialize(dto)

@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
@@ -21,7 +22,6 @@ import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapp
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +36,7 @@ public class LocationReviewService {
 
     private final LocationRepository locationRepository;
 
-    public void save(LocationReview locationReview) {
-        locationReviewRepository.save(locationReview);
-    }
+    private final TimestampHelper timestampHelper;
 
     public LocationReview leaveLocationReview(long id, long locationId, ReviewDto dto) {
         final Customer customer = customerRepository.findById(id)
@@ -50,10 +48,9 @@ public class LocationReviewService {
         final LocationReview locationReview = ReviewMapper.fromLocationReviewDto(dto);
         locationReview.setLocation(location);
         locationReview.setCustomer(customer);
-        locationReview.setCreatedAt(LocalDateTime.now());
+        locationReview.setCreatedAt(timestampHelper.now());
 
-        save(locationReview);
-
+        locationReviewRepository.save(locationReview);
         return locationReview;
     }
 
@@ -71,7 +68,7 @@ public class LocationReviewService {
     }
 
     public List<LocationReview> getByLocationId(CustomPage customPage, long id) {
-        if (!exists(id)) {
+        if (notExists(id)) {
             throw new NotFoundException("Location with id " + id + " does not exist");
         }
         final Pageable paging = PageableMapper.map(customPage);
@@ -82,15 +79,15 @@ public class LocationReviewService {
     }
 
     public List<LocationReview> getByLocationId(long id) {
-        if (!exists(id)) {
+        if (notExists(id)) {
             throw new NotFoundException("Location with id " + id + " does not exist");
         }
 
         return locationReviewRepository.getByLocationId(id);
     }
 
-    public boolean exists(long id) {
-        return locationReviewRepository.existsLocationReviewByLocation_Id(id);
+    private boolean notExists(long id) {
+        return !locationReviewRepository.existsLocationReviewByLocation_Id(id);
     }
 
     public Long count(long locationId) {

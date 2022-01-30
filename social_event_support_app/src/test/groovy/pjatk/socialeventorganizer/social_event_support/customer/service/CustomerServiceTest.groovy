@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.customer.service
 
 import com.google.common.collect.ImmutableList
 import org.springframework.data.domain.PageImpl
+import org.springframework.mock.web.MockMultipartFile
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
@@ -382,5 +383,21 @@ class CustomerServiceTest extends Specification
         then:
         1 * organizedEventService.getWithAllInformationForSendingInvitations(eventId, customerId) >> organizedEvent
         1 * emailService.sendEmail(inviteEmail)
+    }
+
+    def "uploadAvatar"() {
+        given:
+        def customer = fakeCustomer
+        def customerId = 1l
+        def file = new MockMultipartFile("data", "filename.jpg", "image", "some xml".getBytes())
+        def avatar = fakeCustomer.getAvatar()
+        when:
+        customerService.uploadAvatar(customerId, file)
+
+        then:
+        1 * customerRepository.getByIdWithUser(customerId) >> Optional.of(customer)
+        1 * customerAvatarService.save(avatar)
+        1 * customerRepository.save(customer)
+
     }
 }

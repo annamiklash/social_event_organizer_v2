@@ -79,7 +79,7 @@ public class LocationController {
     public ResponseEntity<LocationDto> get(@RequestParam long id) {
         log.info("GET " + id);
 
-        final Location location = locationService.getWithMainImage(id);
+        final Location location = locationService.getWithImages(id);
         final LocationDto dto = LocationMapper.toDto(location);
 
         return ResponseEntity.ok(dto);

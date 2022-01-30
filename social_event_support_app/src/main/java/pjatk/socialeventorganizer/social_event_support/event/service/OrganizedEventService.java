@@ -115,42 +115,6 @@ public class OrganizedEventService {
                 .orElseThrow(() -> new NotFoundException("No organized event with eventId " + eventId));
     }
 
-//    public OrganizedEvent changeStatus(long customerId, long eventId, EventStatusEnum status) {
-//        if (!eventWithIdAndCustomerIdExists(customerId, eventId)) {
-//            throw new NotFoundException("Event with id " + eventId + " and customer id " + customerId + " does not exist");
-//        }
-//        final OrganizedEvent organizedEvent = getWithDetail(eventId, customerId);
-//
-//        switch (status) {
-//            case IN_PROGRESS: //possible only when current status CONFIRMED
-//                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
-//                    organizedEvent.setEventStatus(IN_PROGRESS.name());
-//                }
-//                break;
-//            case CONFIRMED: //if current IN_PROGRESS
-//                if (statusChangeHelper.possibleToChangeStatusFromInProgressToConfirmed(organizedEvent)) {
-//                    organizedEvent.setEventStatus(CONFIRMED.name());
-//                }
-//                break;
-//            case READY: //if current CONFIRMED
-//                if (CONFIRMED.name().equals(organizedEvent.getEventStatus())) {
-//                    organizedEvent.setEventStatus(READY.name());
-//                }
-//                break;
-//            case CANCELLED:  //any stage except for FINISHED
-//                cancel(organizedEvent);
-//                organizedEvent.setEventStatus(CANCELLED.name());
-//                break;
-//            case FINISHED:
-//                organizedEvent.setEventStatus(FINISHED.name());
-//                break;
-//        }
-//
-//        save(organizedEvent);
-//
-//        return organizedEvent;
-//    }
-
     public OrganizedEvent cancel(OrganizedEvent organizedEvent) {
         final Set<LocationForEvent> locationForEventSet = organizedEvent.getLocationForEvent();
 
@@ -228,7 +192,4 @@ public class OrganizedEventService {
         return organizedEvent;
     }
 
-    private boolean eventWithIdAndCustomerIdExists(long customerId, long eventId) {
-        return organizedEventRepository.existsOrganizedEventByIdAndCustomer_Id(eventId, customerId);
-    }
 }

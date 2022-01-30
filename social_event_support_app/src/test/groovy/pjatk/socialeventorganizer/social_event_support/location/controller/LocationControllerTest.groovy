@@ -114,28 +114,6 @@ class LocationControllerTest extends Specification
                 .andExpect(content().json(jsonResponse))
     }
 
-    @WithMockUser
-    def "GET api/locations/allowed returns 200 positive test scenario"() {
-        given:
-        def id = 1L
-
-        def location = fakeFullLocation
-        def result = LocationMapper.toDto(location)
-
-        def jsonResponse = TestSerializer.serialize(result)
-
-        BDDMockito.given(locationService.getWithMainImage(eq(id)))
-                .willReturn(location)
-
-        expect:
-        mockMvc.perform(
-                get("/api/locations/allowed")
-                        .param('id', id.toString())
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().json(jsonResponse))
-    }
 
     @WithMockUser
     def "GET api/locations/allowed/available returns 200 positive test scenario"() {
@@ -328,7 +306,7 @@ class LocationControllerTest extends Specification
 
         expect:
         mockMvc.perform(
-                get("/api/locations/catering")
+                get("/api/locations/allowed/catering")
                         .param('cateringId', cateringId.toString())
         )
                 .andExpect(status().isOk())

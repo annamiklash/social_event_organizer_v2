@@ -18,6 +18,8 @@ import pjatk.socialeventorganizer.social_event_support.event.model.OrganizedEven
 import pjatk.socialeventorganizer.social_event_support.event.model.dto.OrganizedEventDto
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.model.LocationForEvent
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.Interpreter
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.model.OptionalServiceForChosenLocation
 import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto
 import spock.lang.Shared
@@ -146,7 +148,22 @@ trait OrganizedEventTrait {
                                     .zipCode('01-157')
                                     .build())
                             .build())
-                    .services(ImmutableSet.of())
+                    .services(Set.of(OptionalServiceForChosenLocation.builder()
+                            .id(1L)
+                            .timeFrom(LocalTime.parse("10:00:00"))
+                            .timeTo(LocalTime.parse("12:00:00"))
+                            .comment("SAMPLE COMMENT")
+                            .confirmationStatus("CONFIRMED")
+                            .optionalService(Interpreter.builder()
+                                    .id(1l)
+                                    .type("INTERPRETER")
+                            .languages(Set.of(TranslationLanguage.builder()
+                                    .id(1l)
+                                    .name('ENGLISH')
+                                    .build()))
+                                    .build())
+                            .build()
+                    ))
                     .cateringsForEventLocation(ImmutableSet.of(CateringForChosenEventLocation.builder()
                             .id(1L)
                             .time(LocalTime.parse('10:15'))

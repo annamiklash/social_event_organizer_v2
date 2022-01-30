@@ -12,6 +12,7 @@ import pjatk.socialeventorganizer.social_event_support.event.model.EventType
 import pjatk.socialeventorganizer.social_event_support.event.repository.OrganizedEventRepository
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.service.OptionalServiceForLocationService
 import pjatk.socialeventorganizer.social_event_support.trait.customer.CustomerTrait
@@ -117,14 +118,20 @@ class OrganizedEventServiceTest extends Specification
         given:
         def orgEventId = 1L
         def customerId = 1L
-        def organizedEvent = fakeOrganizedEvent
+        def event = fakeFullOrganizedEvent
+        def languages = List.of(
+                TranslationLanguage.builder()
+                        .id(1l)
+                        .name('ENGLISH')
+                        .build())
+        def target = event
 
-        def target = organizedEvent
         when:
         def result = organizedEventService.getWithDetail(orgEventId, customerId)
 
         then:
-        1 * organizedEventRepository.getWithDetail(orgEventId, customerId) >> Optional.of(organizedEvent)
+        1 * organizedEventRepository.getWithDetail(orgEventId, customerId) >> Optional.of(event)
+        translationLanguageService.getAllByInterpreterId(1l) >> languages
 
         result == target
     }
@@ -268,13 +275,39 @@ class OrganizedEventServiceTest extends Specification
     def "Delete"() {
         given:
         def organizedEvent = fakeOrganizedEvent
-        .withModifiedAt(now)
-        .withDeletedAt(now)
 
         when:
         organizedEventService.delete(organizedEvent)
 
         then:
-        1 * organizedEventRepository.save(organizedEvent)
+        1 * organizedEventRepository.delete(organizedEvent)
+    }
+
+    def "Cancel"() {
+        given:
+        def event = fakeFullOrganizedEvent
+        event.setEventStatus('CANCELLED')
+
+        def cancelled = fakeOrganizedEvent
+        cancelled.setLocationForEvent(null)
+        cancelled.setGuests(null)
+        cancelled.setEventStatus('CANCELLED')
+
+        def locationForEvent = event.getLocationForEvent().iterator().next()
+        def services = locationForEvent.getServices();
+        def caterings = locationForEvent.getCateringsForEventLocation();
+        def target = cancelled
+
+        when:
+        def result = organizedEventService.cancel(event)
+
+        then:
+        1 * optionalServiceForLocationService.cancelReservation(services.iterator().next().getId())
+        1 * cateringForChosenEventLocationService.cancelReservation(caterings.iterator().next().getId())
+        1 * locationForEventService.cancelReservation(locationForEvent.getId())
+        1 * organizedEventRepository.save(event)
+
+        result == target
+
     }
 }

@@ -6,6 +6,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours
+import pjatk.socialeventorganizer.social_event_support.image.model.OptionalServiceImage
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.TranslationLanguageDto
@@ -40,6 +41,11 @@ trait OptionalServiceTrait {
                     .streetNumber(1)
                     .zipCode("01-157")
                     .build())
+            .images(Set.of(OptionalServiceImage.builder()
+                    .id(1l)
+                    .fileName("fileName")
+                    .image("file.getBytes()".getBytes())
+                    .build()))
             .build()
 
     Host fakeOptionalHost = Host.builder()

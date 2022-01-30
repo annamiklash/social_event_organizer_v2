@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.guest.mapper.GuestMapper;
@@ -17,7 +18,6 @@ import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +30,8 @@ public class GuestService {
     private final GuestRepository guestRepository;
 
     private final CustomerRepository customerRepository;
+
+    private final TimestampHelper timestampHelper;
 
     public ImmutableList<Guest> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -71,10 +73,21 @@ public class GuestService {
         final Guest guest = GuestMapper.fromDto(dto);
 
         guest.setCustomer(customer);
-        guest.setCreatedAt(LocalDateTime.now());
-        guest.setModifiedAt(LocalDateTime.now());
-        save(guest);
+        guest.setCreatedAt(timestampHelper.now());
+        guest.setModifiedAt(timestampHelper.now());
+        guestRepository.save(guest);
+        return guest;
+    }
 
+    public Guest edit(long guestId, GuestDto dto) {
+        final Guest guest = get(guestId);
+
+        guest.setFirstName(dto.getFirstName());
+        guest.setLastName(dto.getLastName());
+        guest.setEmail(dto.getEmail());
+        guest.setModifiedAt(timestampHelper.now());
+
+        guestRepository.save(guest);
         return guest;
     }
 
@@ -89,11 +102,6 @@ public class GuestService {
 
     public void delete(Guest guest) {
         guestRepository.delete(guest);
-    }
-
-
-    private void save(Guest guest) {
-        guestRepository.save(guest);
     }
 
 }

@@ -85,23 +85,47 @@ class OptionalServiceAvailabilityControllerTest extends Specification
                 .andExpect(content().json(jsonResponse))
     }
 
-    @WithMockUser(authorities = ['ADMIN'])
+    @WithMockUser(authorities = ['BUSINESS'])
+    def "GET api/availability/service/allowed/period returns 200 positive test scenario"() {
+        given:
+        def id = 1L
+        def dateFrom = "01.01.2021"
+        def dateTo = "01.01.2021"
+
+        def optionalServiceAvailability = fakeOptionalServiceAvailability
+        def optionalServiceAvailabilityList = ImmutableList.of(optionalServiceAvailability)
+        def resultList = ImmutableList.of(AvailabilityMapper.toDto(optionalServiceAvailability))
+        def jsonResponse = TestSerializer.serialize(resultList)
+
+        BDDMockito.given(optionalServiceAvailabilityService.findAllByServiceIdAndDatePeriod(eq(id), eq(dateFrom), eq(dateTo)))
+                .willReturn(optionalServiceAvailabilityList)
+
+        expect:
+        mockMvc.perform(
+                get("/api/availability/service/allowed/period")
+                        .param("id", id.toString())
+                        .param("dateFrom", dateFrom)
+                        .param("dateTo", dateTo)
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().json(jsonResponse))
+    }
+
+
+    @WithMockUser(authorities = ['BUSINESS'])
     def "DELETE api/availability/service returns 200 positive test scenario"() {
         given:
         def id = 1L
-        def date = "01.01.2021"
 
         expect:
         mockMvc.perform(
                 delete("/api/availability/service")
                         .param('id', id.toString())
-                        .param('date', date)
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
                 .andExpect(status().isOk())
 
         BDDMockito.verify(optionalServiceAvailabilityService, times(1))
-                .delete(eq(id), eq(date))
+                .deleteById(eq(id))
     }
 }

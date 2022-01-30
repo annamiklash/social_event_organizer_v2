@@ -13,7 +13,7 @@ import pjatk.socialeventorganizer.social_event_support.reviews.location.service.
 import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapper
 import pjatk.socialeventorganizer.social_event_support.table.TableDto
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
-import pjatk.socialeventorganizer.social_event_support.trait.reviews.ReviewDtoTrait
+import pjatk.socialeventorganizer.social_event_support.trait.reviews.ReviewTrait
 import pjatk.socialeventorganizer.social_event_support.trait.reviews.location.LocationReviewTrait
 import spock.lang.Specification
 
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = [LocationReviewController.class])
 class LocationReviewControllerTest extends Specification
         implements LocationReviewTrait,
-                ReviewDtoTrait {
+                ReviewTrait {
 
     @Autowired
     private MockMvc mockMvc
@@ -52,7 +52,7 @@ class LocationReviewControllerTest extends Specification
                 .order(order)
                 .build()
 
-        def locationReview = fakeLocationReview
+        def locationReview = fakeLocationReviewWithCustomer
         def reviewList = ImmutableList.of(locationReview)
         def reviewDto = ReviewMapper.toDto(locationReview)
         def resultList = ImmutableList.of(reviewDto)
@@ -86,7 +86,7 @@ class LocationReviewControllerTest extends Specification
         def locationId = 2L
         def dto = fakeReviewDto
 
-        def locationReview = fakeLocationReview
+        def locationReview = fakeLocationReviewWithCustomer
         def result = ReviewMapper.toDto(locationReview)
 
         def jsonRequest = TestSerializer.serialize(dto)

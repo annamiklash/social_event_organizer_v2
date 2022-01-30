@@ -26,6 +26,7 @@ public class LocationAvailabilityController {
 
     private final LocationAvailabilityService locationAvailabilityService;
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             path = "allowed",
             method = RequestMethod.GET,
@@ -41,6 +42,7 @@ public class LocationAvailabilityController {
         return ResponseEntity.ok(resultList);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(
             path = "allowed/period",
             method = RequestMethod.GET,
@@ -71,20 +73,6 @@ public class LocationAvailabilityController {
 
         return ResponseEntity.ok(resultList);
     }
-
-
-//    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-//    @RequestMapping(
-//            method = RequestMethod.DELETE,
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@Valid @RequestBody AvailabilityDto[] dtos,
-//                                                                 @RequestParam @NotNull long id) {
-//        final List<AvailabilityDto> availabilityDtos = ImmutableList.copyOf(dtos);
-//        locationAvailabilityService.delete(availabilityDtos, id);
-//
-//        return ResponseEntity.ok().build();
-//    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(

@@ -103,7 +103,7 @@ class OrganizedEventControllerTest extends Specification
 
         def organizedEvent = fakeFullOrganizedEvent
         def organizedEventList = ImmutableList.of(organizedEvent)
-        def organizedEventDto = OrganizedEventMapper.toDtoWithCustomerAndEventType(organizedEvent)
+        def organizedEventDto = OrganizedEventMapper.toDtoWithLocationCustomer(organizedEvent)
         def resultList = ImmutableList.of(organizedEventDto)
         def jsonResponse = TestSerializer.serialize(resultList)
 

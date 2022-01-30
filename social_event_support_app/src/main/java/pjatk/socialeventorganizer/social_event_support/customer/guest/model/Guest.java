@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Builder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "guest")
@@ -39,10 +38,14 @@ public class Guest implements Serializable {
     @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_customer")
     private Customer customer;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToMany(mappedBy = "guests", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<OrganizedEvent> organizedEvents;

@@ -48,7 +48,7 @@ public class OptionalServiceAvailabilityController {
     public ResponseEntity<ImmutableList<AvailabilityDto>> listForPeriod(@RequestParam long id,
                                                                      @RequestParam String dateFrom, @RequestParam String dateTo) {
 
-        final List<OptionalServiceAvailability> availabilities = optionalServiceAvailabilityService.findAllByLocationIdAndDatePeriod(id, dateFrom, dateTo);
+        final List<OptionalServiceAvailability> availabilities = optionalServiceAvailabilityService.findAllByServiceIdAndDatePeriod(id, dateFrom, dateTo);
         final ImmutableList<AvailabilityDto> resultList = availabilities.stream()
                 .map(AvailabilityMapper::toDto)
                 .collect(ImmutableList.toImmutableList());
@@ -74,18 +74,6 @@ public class OptionalServiceAvailabilityController {
         return ResponseEntity.ok(resultList);
     }
 
-
-//    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
-//    @RequestMapping(
-//            method = RequestMethod.DELETE,
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ImmutableList<AvailabilityDto>> delete(@RequestParam long id,
-//            @RequestParam String date){
-//        optionalServiceAvailabilityService.delete(id, date);
-//
-//        return ResponseEntity.ok().build();
-//    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
     @RequestMapping(

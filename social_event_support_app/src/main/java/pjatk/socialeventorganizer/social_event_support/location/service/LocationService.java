@@ -20,6 +20,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.location.se
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository;
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.CollectionUtil;
@@ -79,6 +80,8 @@ public class LocationService {
     private final LocationReviewService locationReviewService;
 
     private final LocationImageRepository locationImageRepository;
+    
+    private final TimestampHelper timestampHelper;
 
     public ImmutableList<Location> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -100,15 +103,6 @@ public class LocationService {
         return locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
     }
-
-    public Location getWithMainImage(long id) {
-        final Location location = locationRepository.findWithImages(id)
-                .orElseThrow(() -> new NotFoundException("Location with id " + id + " DOES NOT EXIST"));
-
-        location.setRating(locationReviewService.getRating(id));
-        return location;
-    }
-
 
     public Location getWithDetail(long id) {
         final Location location = locationRepository.getByIdWithDetail(id)
@@ -134,7 +128,7 @@ public class LocationService {
     }
 
     public ImmutableList<Location> search(FilterLocationsDto dto) {
-        List<Location> locations;
+        List<Location>locations  = new ArrayList<>();
 
         String city = dto.getCity();
         city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
@@ -212,15 +206,14 @@ public class LocationService {
                 .map(locationDescriptionItemService::getById)
                 .collect(Collectors.toSet());
 
-
         location.setLocationAddress(address);
         location.setBusiness(business);
         location.setDescriptions(descriptions);
         location.setLocationBusinessHours(new HashSet<>(businessHours));
         location.setImages(new HashSet<>());
         location.setRating(0.0);
-        location.setCreatedAt(LocalDateTime.now());
-        location.setModifiedAt(LocalDateTime.now());
+        location.setCreatedAt(timestampHelper.now());
+        location.setModifiedAt(timestampHelper.now());
 
         //!SERVES_FOOD && OUTSIDE_CATERING_AVAILABLE
         if (locationDescriptionEnumSet.contains(LocationDescriptionItemEnum.OUTSIDE_CATERING_AVAILABLE.getValue())) {
@@ -248,11 +241,6 @@ public class LocationService {
         location.setRating(locationReviewService.getRating(locationId));
         return location;
     }
-
-    private ImmutableList<Location> getAll() {
-        return ImmutableList.copyOf(locationRepository.getAll());
-    }
-
 
     @Transactional(rollbackOn = Exception.class)
     public Location edit(LocationDto dto, long id) {
@@ -285,7 +273,7 @@ public class LocationService {
             }
         });
 
-        location.setModifiedAt(LocalDateTime.now());
+        location.setModifiedAt(timestampHelper.now());
 
         save(location);
 
@@ -305,11 +293,6 @@ public class LocationService {
 //    @Cacheable("location_caterings")
     public ImmutableList<Location> getByCateringId(long cateringId) {
         return ImmutableList.copyOf(locationRepository.findAllByCateringId(cateringId));
-    }
-
-    public Location getAllLocationInformation(long locationId) {
-        return locationRepository.getAllLocationInformation(locationId)
-                .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
     }
 
     @Transactional(rollbackOn = Exception.class)

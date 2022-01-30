@@ -48,4 +48,10 @@ trait GuestTrait {
                     .build())
             .build()
 
+    GuestDto fakeGuestWithoutId = GuestDto.builder()
+            .firstName("Geralt")
+            .lastName("Rivijski")
+            .email('email@email.com')
+            .build()
+
 }

@@ -67,7 +67,7 @@ public class CateringService {
     private final CateringImageRepository cateringImageRepository;
     private final CateringReviewRepository cateringReviewRepository;
 
-//    @Cacheable("caterings")
+    //    @Cacheable("caterings")
     public ImmutableList<Catering> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -117,7 +117,7 @@ public class CateringService {
                 .orElseThrow(() -> new NotFoundException("Catering with ID " + id + " does not exist"));
     }
 
-//    @Cacheable("catering")
+    //    @Cacheable("catering")
     public Catering getWithDetail(long id) {
         return cateringRepository.findByIdWithDetail(id)
                 .orElseThrow(() -> new NotFoundException("Catering with ID " + id + " does not exist"));
@@ -231,7 +231,7 @@ public class CateringService {
     }
 
 
-//    @Cacheable("catering_locations")
+    //    @Cacheable("catering_locations")
     public ImmutableList<Catering> getByLocationId(long id) {
         return ImmutableList.copyOf(cateringRepository.findAllByLocationId(id));
     }
@@ -250,12 +250,9 @@ public class CateringService {
         return CollectionUtil.emptyListIfNull(cateringToDelete.getCateringForChosenEventLocations())
                 .stream()
                 .map(catering -> catering.getEventLocation().getEvent())
-                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));    }
-
-    private void saveCatering(Catering catering) {
-        log.info("TRYING TO SAVE" + catering.toString());
-        cateringRepository.saveAndFlush(catering);
+                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
     }
+
 
     private Catering createCateringWithLocation(CateringDto dto, Long locationId, Business business) {
         final Location location = locationService.get(locationId);
@@ -284,7 +281,7 @@ public class CateringService {
         catering.setCreatedAt(timestampHelper.now());
         catering.setModifiedAt(timestampHelper.now());
 
-        saveCatering(catering);
+        cateringRepository.saveAndFlush(catering);
         return catering;
     }
 

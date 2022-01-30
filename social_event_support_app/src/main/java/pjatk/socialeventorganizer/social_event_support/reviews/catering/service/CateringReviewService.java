@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering;
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
@@ -21,7 +22,6 @@ import pjatk.socialeventorganizer.social_event_support.reviews.mapper.ReviewMapp
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +36,7 @@ public class CateringReviewService {
 
     private final CateringService cateringService;
 
-    public void save(CateringReview cateringReview) {
-        cateringReviewRepository.save(cateringReview);
-    }
+    private final TimestampHelper timestampHelper;
 
     public CateringReview leaveCateringReview(long id, long cateringId, ReviewDto dto) {
         final Customer customer = customerService.get(id);
@@ -48,16 +46,15 @@ public class CateringReviewService {
         final CateringReview cateringReview = ReviewMapper.fromCateringReviewDto(dto);
         cateringReview.setCatering(catering);
         cateringReview.setCustomer(customer);
-        cateringReview.setCreatedAt(LocalDateTime.now());
+        cateringReview.setCreatedAt(timestampHelper.now());
 
-        save(cateringReview);
-
+        cateringReviewRepository.save(cateringReview);
         return cateringReview;
     }
 
 
     public List<CateringReview> getByCateringId(CustomPage customPage, long id) {
-        if (!exists(id)) {
+        if (notExists(id)) {
             throw new NotFoundException("Catering with id " + id + " does not exist");
         }
         final Pageable paging = PageableMapper.map(customPage);
@@ -68,7 +65,7 @@ public class CateringReviewService {
     }
 
     public List<CateringReview> getByCateringId(long id) {
-        if (!exists(id)) {
+        if (notExists(id)) {
             throw new NotFoundException("Catering with id " + id + " does not exist");
         }
         return cateringReviewRepository.getByCateringId(id);
@@ -92,8 +89,8 @@ public class CateringReviewService {
         return cateringReviewRepository.countAllByCatering_Id(cateringId);
     }
 
-    private boolean exists(long id) {
-        return cateringReviewRepository.existsCateringReviewByCatering_Id(id);
+    private boolean notExists(long id) {
+        return !cateringReviewRepository.existsCateringReviewByCatering_Id(id);
     }
 
 }

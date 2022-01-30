@@ -83,21 +83,17 @@ class LocationImageControllerTest extends Specification
     @WithMockUser(authorities = ['BUSINESS'])
     def "DELETE api/images/location returns 200 positive test scenario"() {
         given:
-        def locationId = 1L
         def id = 2L
 
         expect:
         mockMvc.perform(
                 delete('/api/images/location')
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param("locationId", locationId.toString())
                         .param("id", id.toString())
         )
                 .andExpect(status().isOk())
 
         BDDMockito.verify(locationImageService, times(1))
-                .deleteById(eq(locationId), eq(id))
+                .deleteById(eq(id))
 
     }
 }

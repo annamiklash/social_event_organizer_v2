@@ -18,6 +18,7 @@ import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerialize
 import pjatk.socialeventorganizer.social_event_support.trait.problem.AppProblemTrait
 import spock.lang.Specification
 
+import java.nio.file.Files
 import java.util.stream.Stream
 
 import static org.mockito.ArgumentMatchers.eq
@@ -98,6 +99,31 @@ class AppProblemControllerTest extends Specification
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json(jsonResponse))
+
+    }
+
+    @WithMockUser(authorities = ['ADMIN'])
+    def "GET api/problems/export positive test scenario"() {
+        given:
+        def dateFrom = '01.01.2022'
+        def dateTo = '01.02.2022'
+
+        def appProblem = [fakeAppProblemWithUser]
+        def result = ImmutableList.of(AppProblemMapper.toDtoWithUser(fakeAppProblemWithUser))
+        def path = csvTools.writeToFile(result)
+
+        BDDMockito.given(appProblemService.list(eq(dateFrom), eq(dateTo)))
+                .willReturn(appProblem)
+
+        expect:
+        mockMvc.perform(
+                get("/api/problems/export")
+                        .param("dateFrom", dateFrom)
+                        .param("dateTo", dateTo)
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.parseMediaType("text/csv")))
+                .andExpect(content().bytes(Files.readAllBytes(new File(path).toPath())))
 
     }
 

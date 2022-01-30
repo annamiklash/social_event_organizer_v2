@@ -53,7 +53,7 @@ public class OptionalServiceAvailabilityService {
         return optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(id, date);
     }
 
-    public List<OptionalServiceAvailability> findAllByLocationIdAndDatePeriod(long id, String dateFrom, String dateTo) {
+    public List<OptionalServiceAvailability> findAllByServiceIdAndDatePeriod(long id, String dateFrom, String dateTo) {
         if (DateTimeUtil.fromStringToFormattedDate(dateFrom).isAfter(DateTimeUtil.fromStringToFormattedDate(dateTo))) {
             throw new IllegalArgumentException("Date from after date to");
         }

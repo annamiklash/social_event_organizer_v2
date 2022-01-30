@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 @SuperBuilder
 @Data
+@ToString
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @RequiredArgsConstructor

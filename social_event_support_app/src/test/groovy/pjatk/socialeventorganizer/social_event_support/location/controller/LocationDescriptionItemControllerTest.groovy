@@ -1,18 +1,15 @@
 package pjatk.socialeventorganizer.social_event_support.location.controller
 
-import com.google.common.collect.ImmutableList
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
-import pjatk.socialeventorganizer.social_event_support.enums.LocationDescriptionItemEnum
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationDescriptionItemService
 import pjatk.socialeventorganizer.social_event_support.test_helper.TestSerializer
 import spock.lang.Specification
-
-import java.util.stream.Collectors
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -31,11 +28,8 @@ class LocationDescriptionItemControllerTest extends Specification {
     def "GET api/location_description/allowed/all returns 200 positive test scenario"() {
         given:
 
-        def resultList = ImmutableList.copyOf(ImmutableList.copyOf(
-                Arrays.stream(LocationDescriptionItemEnum.values())
-                        .map(LocationDescriptionItemEnum.&getValue)
-                        .sorted()
-                        .collect(Collectors.toList())))
+        def resultList = ["Outside Catering Available", "Can Bring Own Alcohol", "Can Bring Own Food", 'Has WiFi',
+                          "Has Projector", "Has Stage", "Wheelchair Accessible", "Has Patio", "Serves Food",].sort();
         def jsonResponse = TestSerializer.serialize(resultList)
 
         expect:

@@ -164,6 +164,7 @@ class CateringServiceTest extends Specification
 
         def cuisineDto = cateringDto.getCuisines().get(0)
         def catering = fakeCatering
+        catering.setImages(null)
         fakeCatering.setId(null)
         def cuisine = Cuisine.builder().name(cuisineDto.getName()).build()
 
@@ -188,6 +189,61 @@ class CateringServiceTest extends Specification
 
         when:
         def result = cateringService.create(cateringDto, null)
+
+        then:
+        1 * securityService.getUserCredentials() >> userCredentials
+        1 * businessRepository.findById(userCredentials.getUserId()) >> Optional.of(business)
+
+        1 * addressService.create(cateringDto.getAddress()) >> address
+        1 * cateringBusinessHoursService.create(businessHoursDto) >> cateringBusinessHours
+        1 * cuisineService.getByName(cuisineDto.getName()) >> cuisine
+
+        1 * locationService.findByCity(address.getCity()) >> locations
+
+        1 * cateringRepository.saveAndFlush(_)
+
+        result == target
+    }
+
+    def "create with location Id positive test scenario"() {
+        given:
+        def locationId = 1L
+        def userCredentials = fakeBusinessUserCredentials
+        def address = fakeAddress
+        def cateringBusinessHours = Set.of(fakeCateringBusinessHours)
+        def business = fakeVerifiedBusiness
+        def cateringDto = fakeCateringDtoOffersOutsideCatering
+        def businessHoursDto = [fakeBusinessHoursDto]
+        cateringDto.setBusinessHours(businessHoursDto)
+
+        def cuisineDto = cateringDto.getCuisines().get(0)
+        def catering = fakeCatering
+        catering.setImages(null)
+
+        fakeCatering.setId(null)
+        def cuisine = Cuisine.builder().name(cuisineDto.getName()).build()
+
+        def cateringSet = new HashSet<Catering>()
+        cateringSet.add(catering)
+        def location = fakeLocation
+        location.setCaterings(cateringSet)
+        def locations = ImmutableList.of(location)
+
+        catering.setCateringAddress(address)
+        catering.setBusiness(business)
+        catering.setCateringBusinessHours(ImmutableSet.copyOf(cateringBusinessHours))
+        catering.setCreatedAt(now)
+        catering.setModifiedAt(now)
+        catering.setLocations(new HashSet<>())
+        catering.setServiceCost(new BigDecimal("100.20"))
+        catering.setRating(0.0)
+
+        def target = Catering.builder().build()
+        InvokerHelper.setProperties(target, catering.properties)
+        target.setCuisines(Set.of(cuisine))
+
+        when:
+        def result = cateringService.create(cateringDto, locationId)
 
         then:
         1 * securityService.getUserCredentials() >> userCredentials
@@ -253,11 +309,34 @@ class CateringServiceTest extends Specification
         def result = cateringService.search(dto, locationId)
 
         then:
-        1 * cuisineService.getByName(dto.getCuisines().get(0))
+        1 * cuisineService.getByName(dto.getCuisines().iterator().next())
         1 * cateringRepository.search(cuisinesIds, "", locationId) >> caterings
 
         result == target
     }
+
+    def "search with date and price"() {
+        given:
+        def dto = FilterCateringsDto.builder()
+                .date('2022-01-30')
+                .minPrice(1)
+                .maxPrice(10000)
+                .build()
+        def locationId = null
+
+
+        def caterings = [fakeCateringWithDetails]
+        def target = ImmutableList.of(fakeCateringWithDetails)
+
+        when:
+        def result = cateringService.search(dto, locationId)
+
+        then:
+        1 * cateringRepository.search(null, "", locationId) >> caterings
+
+        result == target
+    }
+
 
     def "edit() positive test scenario"() {
         given:

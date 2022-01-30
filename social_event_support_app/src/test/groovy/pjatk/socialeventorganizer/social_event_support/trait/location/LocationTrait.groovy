@@ -8,9 +8,14 @@ import pjatk.socialeventorganizer.social_event_support.availability.location.mod
 import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
+import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.location.model.LocationDescriptionItem
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.LocationDto
+
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 
 trait LocationTrait {
 
@@ -42,6 +47,46 @@ trait LocationTrait {
                     .verificationStatus('VERIFIED')
                     .phoneNumber(new BigInteger("123123123"))
                     .build())
+            .images(Set.of(LocationImage.builder()
+                    .id(1l)
+                    .fileName("fileName")
+                    .image("file.getBytes()".getBytes())
+                    .build()))
+            .build()
+
+    Location fakeFullLocationWithAvailability = Location.builder()
+            .id(1L)
+            .caterings(new HashSet<Catering>())
+            .descriptions(new HashSet<LocationDescriptionItem>())
+            .availability(new HashSet<LocationAvailability>())
+            .locationBusinessHours(new HashSet<LocationBusinessHours>())
+            .locationAddress(Address.builder()
+                    .id(1)
+                    .country('Poland')
+                    .city('Warsaw')
+                    .streetName('Piękna')
+                    .streetNumber(1)
+                    .zipCode('01-157')
+                    .build())
+            .availability(Set.of(LocationAvailability.builder()
+                    .id(1l)
+                    .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                    .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 9, 0, 0))
+                    .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 20, 0, 0))
+                    .build()))
+            .business(Business.builder()
+                    .id(1)
+                    .firstName('Name')
+                    .lastName('Name')
+                    .businessName('Name')
+                    .verificationStatus('VERIFIED')
+                    .phoneNumber(new BigInteger("123123123"))
+                    .build())
+            .images(Set.of(LocationImage.builder()
+                    .id(1l)
+                    .fileName("fileName")
+                    .image("file.getBytes()".getBytes())
+                    .build()))
             .build()
 
     LocationDto fakeLocationDto = LocationDto.builder()

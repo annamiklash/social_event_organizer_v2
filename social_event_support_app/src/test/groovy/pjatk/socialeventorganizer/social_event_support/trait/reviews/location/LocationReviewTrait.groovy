@@ -27,7 +27,7 @@ trait LocationReviewTrait {
                     .guests(new HashSet<>())
                     .events(new HashSet<>())
                     .appProblems(new HashSet<>())
-                    .avatar(CustomerAvatar.builder().id(1L).build())
+                    .avatar(CustomerAvatar.builder().id(1L).image("image".getBytes()).fileName("name").build())
                     .build())
             .location(Location.builder()
                     .id(1)

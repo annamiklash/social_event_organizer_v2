@@ -28,6 +28,7 @@ trait CateringReviewTrait {
                     .email('email@email.com')
                     .guests(new HashSet<>())
                     .events(new HashSet<>())
+                    .avatar(CustomerAvatar.builder().id(1L).image("image".getBytes()).fileName("name").build())
                     .appProblems(new HashSet<>())
                     .avatar(CustomerAvatar.builder().id(1L).build())
                     .build())

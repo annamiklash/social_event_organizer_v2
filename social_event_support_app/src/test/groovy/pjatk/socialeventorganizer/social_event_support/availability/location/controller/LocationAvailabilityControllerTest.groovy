@@ -16,8 +16,8 @@ import pjatk.socialeventorganizer.social_event_support.trait.availability.Locati
 import spock.lang.Specification
 
 import static org.mockito.ArgumentMatchers.eq
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.mockito.Mockito.times
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -31,7 +31,7 @@ class LocationAvailabilityControllerTest extends Specification
     @MockBean
     private LocationAvailabilityService locationAvailabilityService
 
-    @WithMockUser
+    @WithMockUser(authorities = ['BUSINESS'])
     def "GET api/availability/location/allowed returns 200 positive test scenario"() {
         given:
         def id = 1L
@@ -55,6 +55,34 @@ class LocationAvailabilityControllerTest extends Specification
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json(jsonResponse))
     }
+
+    @WithMockUser(authorities = ['BUSINESS'])
+    def "GET api/availability/location/allowed/period returns 200 positive test scenario"() {
+        given:
+        def id = 1L
+        def dateFrom = "01.01.2021"
+        def dateTo = "01.01.2021"
+
+        def locationAvailability = fakeLocationAvailability
+        def locationAvailabilityList = ImmutableList.of(locationAvailability)
+        def resultList = ImmutableList.of(AvailabilityMapper.toDto(locationAvailability))
+        def jsonResponse = TestSerializer.serialize(resultList)
+
+        BDDMockito.given(locationAvailabilityService.findAllByLocationIdAndDatePeriod(eq(id), eq(dateFrom), eq(dateTo)))
+                .willReturn(locationAvailabilityList)
+
+        expect:
+        mockMvc.perform(
+                get("/api/availability/location/allowed/period")
+                        .param("id", id.toString())
+                        .param("dateFrom", dateFrom)
+                        .param("dateTo", dateTo)
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().json(jsonResponse))
+    }
+
 
     @WithMockUser(authorities = ['BUSINESS'])
     def "POST api/availability/location returns 200 positive test scenario"() {
@@ -84,6 +112,22 @@ class LocationAvailabilityControllerTest extends Specification
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().json(jsonResponse))
+    }
+
+    @WithMockUser(authorities = ['BUSINESS'])
+    def "DELETE api/availability/location returns 200 positive test scenario"() {
+        given:
+        def id = 1L
+
+        expect:
+        mockMvc.perform(
+                delete("/api/availability/location")
+                        .param('id', id.toString())
+        )
+                .andExpect(status().isOk())
+
+        BDDMockito.verify(locationAvailabilityService, times(1))
+                .deleteById(eq(id))
     }
 
 

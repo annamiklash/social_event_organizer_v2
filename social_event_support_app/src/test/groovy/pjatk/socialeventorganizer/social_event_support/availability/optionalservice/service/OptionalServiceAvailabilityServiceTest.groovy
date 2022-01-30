@@ -2,6 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.availability.optionalser
 
 
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository
+import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService
 import pjatk.socialeventorganizer.social_event_support.trait.availability.AvailabilityTrait
 import pjatk.socialeventorganizer.social_event_support.trait.availability.optionalservice.OptionalServiceAvailabilityTrait
@@ -31,6 +32,34 @@ class OptionalServiceAvailabilityServiceTest extends Specification
     }
     //todo: implement
     def "Update"() {
+    }
+
+    def "findAllByServiceIdAndDatePeriod positive scenario"() {
+        given:
+        def id = 1
+        def dateFrom = '2022-01-31'
+        def dateTo = '2022-02-15'
+        def serviceAvailability = fakeOptionalServiceAvailability
+
+        when:
+        optionalServiceAvailabilityService.findAllByServiceIdAndDatePeriod(id, dateFrom, dateTo)
+
+        then:
+        optionalServiceAvailabilityRepository.findByIdAndPeriodDate(id, dateFrom, dateTo) >> List.of(serviceAvailability)
+
+    }
+
+    def "findAllByServiceIdAndDatePeriod throws exception"() {
+        given:
+        def id = 1
+        def dateTo = '2022-01-31'
+        def dateFrom = '2022-02-15'
+
+        when:
+        optionalServiceAvailabilityService.findAllByServiceIdAndDatePeriod(id, dateFrom, dateTo)
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def "FindAllByServiceIdAndDate"() {
