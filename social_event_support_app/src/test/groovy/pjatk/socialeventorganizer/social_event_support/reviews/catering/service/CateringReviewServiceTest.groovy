@@ -42,29 +42,33 @@ class CateringReviewServiceTest extends Specification implements CateringTrait, 
     }
 
     def "LeaveCateringReview"() {
-//        given:
-//        def customerId = 1l
-//        def cateringId = 1l
-//        def reviewDto = fakeReviewDtoNoId
-//        def customer = fakeCustomer
-//        def catering = fakeCateringWithDetails
-//        def cateringReview = fakeCateringReview
-//
-//        def target = cateringReview
-//
-//        target.setCatering(catering);
-//        target.setCustomer(customer);
-//        target.setCreatedAt(now)
-//
-//        when:
-//        def result = cateringReviewService.leaveCateringReview(customerId, cateringId, reviewDto)
-//
-//        then:
-//        1 * customerService.get(customerId) >> customer
-//        1 * cateringService.get(cateringId) >> catering
-//        1 *  cateringReviewRepository.save(cateringReview)
-//
-//        result == target
+        given:
+        def customerId = 1l
+        def cateringId = 1l
+        def reviewDto = fakeReviewDtoNoId
+        def customer = fakeCustomer
+        def catering = fakeCateringWithDetails
+
+        def cateringReview = fakeCateringReviewNoId
+       cateringReview.setCatering(catering);
+       cateringReview.setCustomer(customer);
+       cateringReview.setCreatedAt(now);
+
+        def target = cateringReview
+
+        target.setCatering(catering);
+        target.setCustomer(customer);
+        target.setCreatedAt(now)
+
+        when:
+        def result = cateringReviewService.leaveCateringReview(customerId, cateringId, reviewDto)
+
+        then:
+        1 * customerService.get(customerId) >> customer
+        1 * cateringService.get(cateringId) >> catering
+        1 *  cateringReviewRepository.save(cateringReview)
+
+        result == target
     }
 
     def "GetByCateringId with Paging"() {

@@ -52,4 +52,9 @@ trait CateringOrderChoiceTrait {
             .itemId(1l)
             .amount(10)
             .build()
+
+    CateringOrderChoice fakeCateringOrderChoiceNoId = CateringOrderChoice
+            .builder()
+            .amount(10)
+            .build()
 }

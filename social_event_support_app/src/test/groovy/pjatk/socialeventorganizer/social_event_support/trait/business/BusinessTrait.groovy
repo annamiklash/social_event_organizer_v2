@@ -43,6 +43,7 @@ trait BusinessTrait {
             .lastName('Name')
             .businessName('Name')
             .verificationStatus('VERIFIED')
+            .isActive(true)
             .phoneNumber(new BigInteger("123123123"))
             .services(Set.of(
                     OptionalService.builder()

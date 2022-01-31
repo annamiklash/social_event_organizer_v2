@@ -53,19 +53,6 @@ public class CateringOrderChoiceService {
         return result;
     }
 
-    public CateringOrderChoice create(CateringOrderChoiceDto dto, long itemId, long reservationId) {
-        final CateringForChosenEventLocation catering = cateringForChosenEventLocationService.get(reservationId);
-        final CateringItem cateringItem = cateringItemService.get(itemId);
-
-        final CateringOrderChoice orderChoice = CateringOrderChoiceMapper.fromDto(dto);
-        orderChoice.setEventLocationCatering(catering);
-        orderChoice.setItem(cateringItem);
-
-        cateringOrderChoiceRepository.save(orderChoice);
-
-        return orderChoice;
-    }
-
     public CateringOrderChoice edit(CateringOrderChoiceDto dto, long orderChoiceId) {
         final CateringOrderChoice orderChoice = cateringOrderChoiceRepository.findWithDetail(orderChoiceId)
                 .orElseThrow(() -> new NotFoundException("No caatering order with id " + orderChoiceId));

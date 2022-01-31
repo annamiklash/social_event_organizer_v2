@@ -137,6 +137,19 @@ class CateringServiceTest extends Specification
         result == target
     }
 
+    def "IsOpen"() {
+        given:
+        def catering = fakeCateringWithDetails
+        def day = 'SUNDAY'
+
+        when:
+        def result = cateringService.isOpen(catering, day)
+
+        then:
+
+        result
+    }
+
     def "getByBusinessId() positive test scenario"() {
         given:
         def id = 1L

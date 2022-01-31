@@ -12,6 +12,10 @@ import pjatk.socialeventorganizer.social_event_support.optional_service.model.dt
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.TranslationLanguageDto
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.other.Host
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
+
 trait OptionalServiceTrait {
 
     OptionalService fakeOptionalService = OptionalService.builder()
@@ -65,6 +69,49 @@ trait OptionalServiceTrait {
                     .streetName("Street")
                     .streetNumber(1)
                     .zipCode("01-157")
+                    .build())
+            .build()
+
+    OptionalService fakeOptionalHostWithAvailability = Host.builder()
+            .id(1)
+            .type("HOST")
+            .alias("ALIAS")
+            .firstName("GERALT")
+            .lastName("RIVIJSKI")
+            .description("WIEDZMIN")
+            .serviceCost(new BigDecimal("123"))
+            .email('email@email.com')
+            .optionalServiceBusinessHours(new HashSet<OptionalServiceBusinessHours>())
+            .availability(Set.of(OptionalServiceAvailability.builder()
+                    .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                    .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 9, 0, 0))
+                    .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 23, 0, 0))
+                    .status('AVAILABLE')
+                    .build()))
+            .serviceAddress(Address.builder()
+                    .id(1)
+                    .country("Coutry")
+                    .city("City")
+                    .streetName("Street")
+                    .streetNumber(1)
+                    .zipCode("01-157")
+                    .build())
+            .business(Business.builder()
+                    .id(1)
+                    .firstName('Name')
+                    .lastName('Name')
+                    .businessName('Name')
+                    .verificationStatus('VERIFIED')
+                    .isActive(true)
+                    .phoneNumber(new BigInteger("123123123"))
+                    .build())
+            .serviceAddress(Address.builder()
+                    .id(1)
+                    .country('Poland')
+                    .city('Warsaw')
+                    .streetName('Piękna')
+                    .streetNumber(1)
+                    .zipCode('01-157')
                     .build())
             .build()
 

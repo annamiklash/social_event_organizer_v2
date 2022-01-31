@@ -157,12 +157,11 @@ class LocationServiceTest extends Specification implements LocationTrait,
         def dateTimeTo = DateTimeUtil.joinDateAndTime(date, timeTo);
 
         when:
-        def result = locationService.isAvailable(id, date, timeFrom, timeTo)
+        locationService.isAvailable(id, date, timeFrom, timeTo)
 
         then:
         1 * locationRepository.available(id, date, dateTimeFrom, dateTimeTo) >> _
 
-        result
     }
 
     def "GetCities"() {

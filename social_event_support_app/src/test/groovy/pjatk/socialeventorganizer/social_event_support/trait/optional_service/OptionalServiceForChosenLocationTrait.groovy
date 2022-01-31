@@ -101,6 +101,19 @@ trait OptionalServiceForChosenLocationTrait {
                     .build())
             .build()
 
+    OptionalServiceForChosenLocation fakeOptionalServiceForChosenLocationSimpleNoId = OptionalServiceForChosenLocation.builder()
+            .timeFrom(LocalTime.parse("10:00:00"))
+            .timeTo(LocalTime.parse("12:00:00"))
+            .comment("SAMPLE COMMENT")
+            .confirmationStatus("CONFIRMED")
+            .build()
+
+    OptionalServiceForChosenLocationDto fakeOptionalServiceForChosenLocationDtoBasic = OptionalServiceForChosenLocationDto.builder()
+            .timeFrom('13:00')
+            .timeTo('18:00')
+            .comment('SAMPLE COMMENT')
+            .build()
+
     OptionalServiceForChosenLocationDto fakeOptionalServiceForChosenLocationDto = OptionalServiceForChosenLocationDto.builder()
             .timeFrom('10:00')
             .timeTo('12:00')

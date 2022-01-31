@@ -292,6 +292,24 @@ class UserControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['ADMIN'])
+    def "POST api/{id}/activate returns 200 positive test scenario"() {
+        given:
+        def id = 1L
+
+        expect:
+        mockMvc.perform(
+                post("/api/{id}/activate", id)
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
+                .andExpect(status().isOk())
+
+        BDDMockito.verify(userService, times(1))
+                .activate(eq(id))
+
+    }
+
+    @WithMockUser(authorities = ['ADMIN'])
     def "GET api/users/all returns 200 positive test scenario"() {
         given:
         def keyword = "sample keyword"

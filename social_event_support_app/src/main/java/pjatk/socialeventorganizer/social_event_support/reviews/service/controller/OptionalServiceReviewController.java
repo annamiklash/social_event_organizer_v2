@@ -54,6 +54,7 @@ public class OptionalServiceReviewController {
         final List<OptionalServiceReview> review = optionalServiceReviewService.getByServiceId(CustomPage.builder()
                 .pageNo(pageNo)
                 .pageSize(pageSize)
+                .order(order)
                 .sortBy(sortBy).build(), serviceId);
 
         final Long count = optionalServiceReviewService.count(serviceId);

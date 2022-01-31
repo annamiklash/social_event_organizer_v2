@@ -31,6 +31,12 @@ trait ReviewTrait {
             .starRating(5)
             .build()
 
+    LocationReview fakeLocationReviewNoId = LocationReview.builder()
+            .title('SAMPLE TITLE')
+            .comment('SAMPLE COMMENT')
+            .starRating(5)
+            .build()
+
     LocationReview fakeLocationReviewWithCustomer = LocationReview.builder()
             .id(1L)
             .title('SAMPLE TITLE')
@@ -56,6 +62,13 @@ trait ReviewTrait {
             .comment('SAMPLE COMMENT')
             .starRating(5)
             .build()
+
+    CateringReview fakeCateringReviewNoId = CateringReview.builder()
+            .title('SAMPLE TITLE')
+            .comment('SAMPLE COMMENT')
+            .starRating(5)
+            .build()
+
     CateringReview fakeCateringReviewWithCustomer = CateringReview.builder()
             .id(1L)
             .title('SAMPLE TITLE')
@@ -77,6 +90,12 @@ trait ReviewTrait {
 
     OptionalServiceReview fakeServiceReview = OptionalServiceReview.builder()
             .id(1L)
+            .title('SAMPLE TITLE')
+            .comment('SAMPLE COMMENT')
+            .starRating(5)
+            .build()
+
+    OptionalServiceReview fakeServiceReviewNoId = OptionalServiceReview.builder()
             .title('SAMPLE TITLE')
             .comment('SAMPLE COMMENT')
             .starRating(5)

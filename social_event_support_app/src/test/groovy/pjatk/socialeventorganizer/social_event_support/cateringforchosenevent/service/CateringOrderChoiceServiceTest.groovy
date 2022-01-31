@@ -2,7 +2,7 @@ package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.s
 
 import com.google.common.collect.ImmutableList
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringItemService
-import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringOrderChoiceMapper
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.dto.CateringOrderChoiceDto
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringOrderChoiceRepository
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringItemTrait
 import pjatk.socialeventorganizer.social_event_support.trait.cateringforchosenevent.CateringForChosenEventLocationTrait
@@ -48,26 +48,43 @@ class CateringOrderChoiceServiceTest extends Specification
         result == target
     }
 
+    def "GetAll with reservation id"() {
+        given:
+        def cateringId = 1L
+        def reservationId = 1L
+
+        def target = ImmutableList.of(fakeCateringOrderChoiceConfirmed)
+
+        when:
+        def result = cateringOrderChoiceService.getAll(cateringId, reservationId)
+
+        then:
+        1 * cateringOrderChoiceRepository.getAll(cateringId, reservationId) >> target
+
+        result == target
+    }
+
     def "Create"() {
         given:
-        def dto = fakeCateringOrderChoiceDto
-        def itemId = 1L
-        def cateringId = 2L
+        def dtos = [fakeCateringOrderChoiceDto] as CateringOrderChoiceDto[]
+        def reservationId = 1L
 
         def catering = fakeCateringForChosenEventLocation
         def cateringItem = fakeCateringItem
 
-        def target = CateringOrderChoiceMapper.fromDto(dto);
-        target.setEventLocationCatering(catering)
-        target.setItem(cateringItem)
+        def savedCateringItem = fakeCateringOrderChoiceNoId;
+        savedCateringItem.setEventLocationCatering(catering)
+        savedCateringItem.setItem(cateringItem)
+
+        def target = [savedCateringItem]
 
         when:
-        def result = cateringOrderChoiceService.create(dto, itemId, cateringId)
+        def result = cateringOrderChoiceService.create(dtos, reservationId)
 
         then:
-        1 * cateringForChosenEventLocationService.get(cateringId) >> catering
-        1 * cateringItemService.get(itemId) >> cateringItem
-        1 * cateringOrderChoiceRepository.save(target) >> target
+        1 * cateringForChosenEventLocationService.get(reservationId) >> catering
+        1 * cateringItemService.get(dtos.iterator().next().getItemId()) >> cateringItem
+        1 * cateringOrderChoiceRepository.saveAll(target) >> target
 
         result == target
     }
@@ -85,7 +102,7 @@ class CateringOrderChoiceServiceTest extends Specification
 
         then:
         1 * cateringOrderChoiceRepository.findWithDetail(orderChoiceId) >> Optional.of(target)
-        1* cateringOrderChoiceRepository.save(target)
+        1 * cateringOrderChoiceRepository.save(target)
 
         result == target
     }

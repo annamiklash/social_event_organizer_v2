@@ -11,6 +11,12 @@ trait UserTrait {
             .email('test@email.com')
             .build()
 
+    User fakeUserB = User.builder()
+            .id(1)
+            .type('B' as char)
+            .email('test@email.com')
+            .build()
+
     UserDto fakeUserDto = UserDto.builder()
             .id(1)
             .type('C' as char)

@@ -1,8 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.reviews;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pjatk.socialeventorganizer.social_event_support.customer.model.Customer;
 
@@ -10,7 +8,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @SuperBuilder
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 @RequiredArgsConstructor
 @MappedSuperclass

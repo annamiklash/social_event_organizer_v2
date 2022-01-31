@@ -418,10 +418,4 @@ public class OptionalServiceService {
         return optionalServices;
     }
 
-
-    public OptionalService getAllServiceInformation(long serviceId) {
-        return optionalServiceRepository.getAllServiceInformation(serviceId)
-                .orElseThrow(() -> new NotFoundException("Service with serviceId " + serviceId + " DOES NOT EXIST"));
-
-    }
 }

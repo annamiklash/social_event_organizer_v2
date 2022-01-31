@@ -10,6 +10,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.business.model.Business;
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.mapper.PageableMapper;
 import pjatk.socialeventorganizer.social_event_support.common.paginator.CustomPage;
 import pjatk.socialeventorganizer.social_event_support.common.util.EmailUtil;
@@ -26,7 +27,6 @@ import pjatk.socialeventorganizer.social_event_support.user.model.dto.UserDto;
 import pjatk.socialeventorganizer.social_event_support.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -48,6 +48,8 @@ public class UserService {
 
     private final BusinessRepository businessRepository;
 
+    private final TimestampHelper timestampHelper;
+
 
     public ImmutableList<User> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
@@ -63,11 +65,6 @@ public class UserService {
                 .orElseThrow(() -> new InvalidCredentialsException(INCORRECT_CREDENTIALS));
     }
 
-    public void save(User user) {
-
-        userRepository.save(user);
-    }
-
     public User get(long id) {
         final Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
@@ -78,31 +75,28 @@ public class UserService {
 
     public UserDto getWithDetail(long id) {
         final User user = get(id);
-        if (user.getType() == 'C') {
+        final Character type = user.getType();
+        if (type == 'C') {
             final Customer customer = customerRepository.findById(id)
                     .orElseThrow(() -> new InvalidCredentialsException(USER_NOT_EXISTS));
             return UserMapper.toDtoWithCustomer(user, customer);
 
-        } else if (user.getType() == 'B') {
+        } else if (type == 'B') {
             final Business business = businessRepository.findById(id)
                     .orElseThrow(() -> new InvalidCredentialsException(USER_NOT_EXISTS));
             return UserMapper.toDtoWithBusiness(user, business);
 
-        } else if (user.getType() == 'A') {
+        } else if (type == 'A') {
             return UserMapper.toDto(user);
         }
         throw new InvalidCredentialsException(USER_NOT_EXISTS);
-    }
-
-    public User getByResetPasswordToken(String token) {
-        return userRepository.findUserByResetPasswordToken(token);
     }
 
     @Transactional(rollbackOn = Exception.class)
     public void sendResetEmailLink(String email, String appUrl) {
         final User user = getUserByEmail(email);
         user.setResetPasswordToken(UUID.randomUUID().toString());
-        save(user);
+        userRepository.save(user);
 
         final String emailSubject = "Password Reset Request";
         final String content = "To reset your password, click the link below:\n" + appUrl
@@ -121,7 +115,7 @@ public class UserService {
             throw new InvalidCredentialsException(PASSWORDS_NOT_MATCH);
         }
         user.setPassword(passwordEncoderSecurity.bcryptEncryptor(dto.getNewPassword()));
-        save(user);
+        userRepository.save(user);
     }
 
     public void setNewPassword(String token, NewPasswordDto newPasswordDto) {
@@ -129,12 +123,7 @@ public class UserService {
 
         user.setPassword(passwordEncoderSecurity.bcryptEncryptor(newPasswordDto.getPassword()));
         user.setResetPasswordToken(null);
-        save(user);
-    }
-
-    public boolean isNewAccount(long id, char type) {
-        final Optional<User> optionalUser = userRepository.isNewAccount(id, type);
-        return optionalUser.isEmpty();
+        userRepository.save(user);
     }
 
     public boolean userExists(String email) {
@@ -144,21 +133,32 @@ public class UserService {
     public void block(long id) {
         final User user = get(id);
         user.setActive(false);
-        user.setBlockedAt(LocalDateTime.now());
+        user.setBlockedAt(timestampHelper.now());
 
-        save(user);
+        userRepository.save(user);
+    }
+
+    public void activate(long id) {
+        final User user = get(id);
+        user.setActive(true);
+        user.setBlockedAt(null);
+        user.setModifiedAt(timestampHelper.now());
+
+        userRepository.save(user);
     }
 
     public boolean isActive(LoginDto loginDto) {
         return userRepository.active(loginDto.getEmail()).isPresent();
     }
 
-    public void delete(User user) {
-        userRepository.delete(user);
-    }
-
     public Long count(String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
         return userRepository.countAll(keyword);
     }
+
+    private User getByResetPasswordToken(String token) {
+        return userRepository.findUserByResetPasswordToken(token)
+                .orElseThrow(() -> new InvalidCredentialsException(USER_NOT_EXISTS));
+    }
+
 }

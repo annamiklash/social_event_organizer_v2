@@ -49,13 +49,13 @@ class LocationReviewServiceTest extends Specification implements LocationTrait,
         def reviewDto = fakeReviewDtoNoId
         def customer = fakeCustomer
         def location = fakeFullLocation
-        def locationReview = fakeLocationReview
+
+        def locationReview = fakeLocationReviewNoId
+        locationReview.setLocation(location);
+        locationReview.setCustomer(customer);
+        locationReview.setCreatedAt(now);
 
         def target = locationReview
-
-        target.setLocation(location);
-        target.setCustomer(customer);
-        target.setCreatedAt(now)
 
         when:
         def result = locationReviewService.leaveLocationReview(customerId, locationId, reviewDto)

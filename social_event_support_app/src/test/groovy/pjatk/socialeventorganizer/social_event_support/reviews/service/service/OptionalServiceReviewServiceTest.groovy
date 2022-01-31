@@ -43,6 +43,29 @@ class OptionalServiceReviewServiceTest extends Specification implements Optional
     }
     def "LeaveServiceReview"() {
 
+        given:
+        def customerId = 1l
+        def locationId = 1l
+        def reviewDto = fakeReviewDtoNoId
+        def customer = fakeCustomer
+        def service = fakeOptionalService
+
+        def serviceReview = fakeServiceReviewNoId
+        serviceReview.setOptionalService(service);
+        serviceReview.setCustomer(customer);
+        serviceReview.setCreatedAt(now);
+
+        def target = serviceReview
+
+        when:
+        def result = optionalServiceReviewService.leaveServiceReview(customerId, locationId, reviewDto)
+
+        then:
+        1 * customerRepository.findById(customerId) >> Optional.of(customer)
+        1 * optionalServiceRepository.findById(locationId) >> Optional.of(service)
+        1 * optionalServiceReviewRepository.save(serviceReview)
+
+        result == target
     }
 
     def "GetByServiceId with Paging"() {
@@ -89,10 +112,6 @@ class OptionalServiceReviewServiceTest extends Specification implements Optional
 
         then:
         1 * optionalServiceReviewRepository.delete(serviceReview)
-    }
-
-    def "Exists"() {
-
     }
 
     def "Count"() {

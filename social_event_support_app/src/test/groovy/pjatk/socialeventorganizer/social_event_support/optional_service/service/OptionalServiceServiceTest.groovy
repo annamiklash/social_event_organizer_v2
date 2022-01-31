@@ -7,9 +7,11 @@ import pjatk.socialeventorganizer.social_event_support.address.service.AddressSe
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessHoursService
+import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException
 import pjatk.socialeventorganizer.social_event_support.image.repository.OptionalServiceImageRepository
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.service.MusicStyleService
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.repostory.OptionalServiceForChosenLocationRepository
@@ -206,11 +208,61 @@ class OptionalServiceServiceTest extends Specification
     }
 
     def "Edit"() {
+        given:
+        def id = 1l
+        def dto = fakeOptionalServiceHostDto
+        def host = fakeOptionalHost
 
+        host.setAlias(dto.getAlias())
+        host.setFirstName(dto.getFirstName())
+        host.setLastName(dto.getFirstName())
+        host.setEmail(dto.getEmail())
+        host.setServiceCost(Converter.convertPriceString(dto.getServiceCost()))
+        host.setDescription(dto.getDescription())
+        host.setModifiedAt(timestampHelper.now())
+
+        def target = host
+
+        when:
+        def result = optionalServiceService.edit(dto, id)
+
+        then:
+        1 * optionalServiceRepository.findWithDetail(id) >> Optional.of(host)
+        1 * optionalServiceRepository.save(_)
+
+        result == target
     }
 
     def "Search"() {
+        given:
+        def dto = FilterOptionalServiceDto.builder()
+                .city('Warsaw, Poland')
+                .date('2022-02-01')
+                .minPrice('0')
+                .maxPrice('10000')
+                .type('HOST')
+                .build()
 
+        def city = dto.getCity()
+
+        def host = fakeOptionalHostWithAvailability
+        def hosts = [host]
+        host.setServiceCost(200.00)
+        def hostList = [host]
+        def hostResult  = host
+        def rating = 3
+        hostResult.setRating(rating);
+
+        def target = ImmutableList.of(hostResult)
+
+        when:
+        def result = optionalServiceService.search(dto)
+
+        then:
+        1 * optionalServiceRepository.search(dto.getDate(), dto.getType(), city) >> _
+        1 * optionalServiceReviewService.getRating(host.getId()) >> rating
+
+        result == target
     }
 
     def "IsAvailable"() {

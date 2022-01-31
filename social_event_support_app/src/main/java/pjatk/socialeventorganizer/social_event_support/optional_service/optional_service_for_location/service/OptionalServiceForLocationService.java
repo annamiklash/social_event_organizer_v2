@@ -89,8 +89,7 @@ public class OptionalServiceForLocationService {
         locationForEvent.setEvent(organizedEvent);
         optionalServiceForChosenLocation.setLocationForEvent(locationForEvent);
 
-        save(optionalServiceForChosenLocation);
-
+        optionalServiceForChosenLocationRepository.save(optionalServiceForChosenLocation);
         return optionalServiceForChosenLocation;
     }
 
@@ -124,7 +123,7 @@ public class OptionalServiceForLocationService {
         final OptionalServiceForChosenLocation optionalService = findByServiceIdAndEventId(serviceId, eventId);
 
         optionalService.setConfirmationStatus(CONFIRMED.name());
-        save(optionalService);
+        optionalServiceForChosenLocationRepository.save(optionalService);
 
         final OrganizedEvent organizedEvent = optionalService.getLocationForEvent().getEvent();
 
@@ -170,11 +169,6 @@ public class OptionalServiceForLocationService {
         return modified;
     }
 
-    private void save(OptionalServiceForChosenLocation optionalServiceForChosenLocation) {
-        optionalServiceForChosenLocationRepository.save(optionalServiceForChosenLocation);
-    }
-
-
     private OptionalServiceForChosenLocation findByServiceIdAndEventId(long serviceId, long eventId) {
         return optionalServiceForChosenLocationRepository.findByServiceIdAndEventId(serviceId, eventId)
                 .orElseThrow(() -> new NotFoundException("No optional service for event " + eventId));
@@ -182,9 +176,7 @@ public class OptionalServiceForLocationService {
 
     public List<OptionalServiceForChosenLocation> listAllByStatus(long serviceId, String status) {
         return optionalServiceForChosenLocationRepository.findAllByServiceIdAndStatus(serviceId, status);
-
     }
-
 
     @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation cancelReservation(long locationForEventId) {

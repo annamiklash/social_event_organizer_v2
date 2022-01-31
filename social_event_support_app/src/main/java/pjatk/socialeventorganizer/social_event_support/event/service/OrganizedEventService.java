@@ -192,4 +192,12 @@ public class OrganizedEventService {
         return organizedEvent;
     }
 
+    public void performUpdate() {
+        final List<OrganizedEvent> all = organizedEventRepository.findAll();
+        CollectionUtils.emptyIfNull(all).stream()
+                .filter(organizedEvent -> !Objects.equals(organizedEvent.getEventStatus(), "FINISHED")
+                        && organizedEvent.getDate().isAfter(timestampHelper.now().toLocalDate()))
+                .peek(organizedEvent -> organizedEvent.setEventStatus("FINISH"))
+                .forEach(organizedEventRepository::save);
+    }
 }

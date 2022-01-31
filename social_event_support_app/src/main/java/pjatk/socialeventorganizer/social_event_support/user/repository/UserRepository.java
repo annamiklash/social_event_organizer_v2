@@ -14,29 +14,16 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u from users u " +
-            "left join business b on b.id = u.id " +
-            "where u.id = :id AND u.type = :type")
-    Optional<User> isNewAccount(@Param("id") long id, @Param("type") char type);
-
-    @Query("SELECT u from users u " +
             "where u.email = :email")
     Optional<User> findUserByEmail (String email);
 
     boolean existsByEmail(String email);
 
-    User findUserByResetPasswordToken(String resetPasswordToken);
+    Optional<User> findUserByResetPasswordToken(String resetPasswordToken);
 
     @Query("SELECT u from users u where u.email = :email " +
             "and u.blockedAt is null")
     Optional<User> active(@Param("email") String email);
-
-    @Query("SELECT u from users u " +
-            "left join customer c on c.id = : id")
-    Optional<User> getWithDetailCustomer(@Param("id") long id);
-
-    @Query("SELECT u from users u " +
-            "left join business b on b.id = : id")
-    Optional<User> getWithDetailBusiness(@Param("id") long id);
 
     @Query("SELECT u FROM users u " +
             "LEFT JOIN customer c on c.id = u.id " +

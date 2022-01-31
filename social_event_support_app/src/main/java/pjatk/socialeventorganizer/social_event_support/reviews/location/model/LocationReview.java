@@ -7,10 +7,10 @@ import pjatk.socialeventorganizer.social_event_support.reviews.Review;
 
 import javax.persistence.*;
 
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @Data
-@ToString
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "location_review")

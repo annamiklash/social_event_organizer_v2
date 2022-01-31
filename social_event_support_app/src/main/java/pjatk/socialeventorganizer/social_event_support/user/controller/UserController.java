@@ -124,6 +124,14 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("{id}/activate")
+    public ResponseEntity<Void> activate(@PathVariable long id) {
+        userService.activate(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(
             method = RequestMethod.GET,
             path = "users/all",
