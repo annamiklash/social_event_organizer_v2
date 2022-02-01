@@ -10,6 +10,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @Data
+@ToString(callSuper = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "optional_service_availability")

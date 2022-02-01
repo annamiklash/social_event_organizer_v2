@@ -149,18 +149,22 @@ class LocationServiceTest extends Specification implements LocationTrait,
     def "IsAvailable"() {
         given:
         def id = 1l
-        def date = '2022-02-03'
+        def date = '2022-02-01'
         def timeFrom = '10:00'
         def timeTo = '18:00'
 
         def dateTimeFrom = DateTimeUtil.joinDateAndTime(date, timeFrom);
         def dateTimeTo = DateTimeUtil.joinDateAndTime(date, timeTo);
 
+        def location = fakeFullLocationWithAvailability
+
         when:
-        locationService.isAvailable(id, date, timeFrom, timeTo)
+        def result = locationService.isAvailable(id, date, timeFrom, timeTo)
 
         then:
-        1 * locationRepository.available(id, date, dateTimeFrom, dateTimeTo) >> _
+        1 * locationRepository.available(id, date, dateTimeFrom, dateTimeTo) >> Optional.of(location)
+
+        result
 
     }
 

@@ -8,6 +8,7 @@ import pjatk.socialeventorganizer.social_event_support.availability.optionalserv
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository;
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.service.OptionalServiceAvailabilityService;
 import pjatk.socialeventorganizer.social_event_support.common.constants.Const;
+import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository;
 import pjatk.socialeventorganizer.social_event_support.enums.EventStatusEnum;
@@ -55,6 +56,8 @@ public class OptionalServiceForLocationService {
     private final OptionalServiceAvailabilityRepository optionalServiceAvailabilityRepository;
 
     private final OptionalServiceAvailabilityService optionalServiceAvailabilityService;
+
+    private final TimestampHelper timestampHelper;
 
     @Transactional(rollbackOn = Exception.class)
     public OptionalServiceForChosenLocation create(long customerId, long eventId, long serviceId, OptionalServiceForChosenLocationDto dto) {
@@ -169,10 +172,6 @@ public class OptionalServiceForLocationService {
         return modified;
     }
 
-    private OptionalServiceForChosenLocation findByServiceIdAndEventId(long serviceId, long eventId) {
-        return optionalServiceForChosenLocationRepository.findByServiceIdAndEventId(serviceId, eventId)
-                .orElseThrow(() -> new NotFoundException("No optional service for event " + eventId));
-    }
 
     public List<OptionalServiceForChosenLocation> listAllByStatus(long serviceId, String status) {
         return optionalServiceForChosenLocationRepository.findAllByServiceIdAndStatus(serviceId, status);
@@ -210,17 +209,23 @@ public class OptionalServiceForLocationService {
         return serviceForEvent;
     }
 
-    private boolean isAllowedToCancel(LocalDateTime dateTime) {
-        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(LocalDateTime.now());
-    }
-
     public OptionalServiceForChosenLocation getWithServiceAndEvent(long locationForEventId) {
         return optionalServiceForChosenLocationRepository.getWithServiceAndEvent(locationForEventId)
                 .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
     }
 
-
     public List<OptionalServiceForChosenLocation> listAllByStatusAndBusinessId(long businessId, String status) {
         return optionalServiceForChosenLocationRepository.findAllByBusinessIdAndStatus(businessId, status);
+    }
+
+
+    private OptionalServiceForChosenLocation findByServiceIdAndEventId(long serviceId, long eventId) {
+        return optionalServiceForChosenLocationRepository.findByServiceIdAndEventId(serviceId, eventId)
+                .orElseThrow(() -> new NotFoundException("No optional service for event " + eventId));
+    }
+
+
+    private boolean isAllowedToCancel(LocalDateTime dateTime) {
+        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(LocalDateTime.now());
     }
 }

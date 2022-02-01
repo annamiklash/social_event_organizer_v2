@@ -21,4 +21,11 @@ trait AvailabilityTrait {
             .timeTo(LocalDateTime.of(2022, Month.JANUARY, 1, 20, 0, 0))
             .build()
 
+    OptionalServiceAvailability fakeServiceAvailabilityWithId = OptionalServiceAvailability.builder()
+            .id(1l)
+            .date(LocalDate.of(2022, Month.JANUARY, 1))
+            .timeFrom(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 0, 0))
+            .timeTo(LocalDateTime.of(2022, Month.JANUARY, 1, 20, 0, 0))
+            .build()
+
 }

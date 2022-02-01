@@ -102,10 +102,10 @@ trait OptionalServiceForChosenLocationTrait {
             .build()
 
     OptionalServiceForChosenLocation fakeOptionalServiceForChosenLocationSimpleNoId = OptionalServiceForChosenLocation.builder()
-            .timeFrom(LocalTime.parse("10:00:00"))
-            .timeTo(LocalTime.parse("12:00:00"))
+            .timeFrom(LocalTime.parse("13:00:00"))
+            .timeTo(LocalTime.parse("18:00:00"))
             .comment("SAMPLE COMMENT")
-            .confirmationStatus("CONFIRMED")
+            .confirmationStatus("NOT_CONFIRMED")
             .build()
 
     OptionalServiceForChosenLocationDto fakeOptionalServiceForChosenLocationDtoBasic = OptionalServiceForChosenLocationDto.builder()
