@@ -50,10 +50,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
@@ -88,7 +85,7 @@ public class OptionalServiceService {
 
     private final TimestampHelper timestampHelper;
 
-//    @Cacheable("services")
+    //    @Cacheable("services")
     public ImmutableList<OptionalService> list(CustomPage customPage, String keyword) {
         keyword = Strings.isNullOrEmpty(keyword) ? "" : keyword.toLowerCase();
 
@@ -118,7 +115,7 @@ public class OptionalServiceService {
     }
 
 
-//    @Cacheable("service")
+    //    @Cacheable("service")
     public OptionalService getWithDetail(long serviceId) {
         final OptionalService optionalService = optionalServiceRepository.findWithDetail(serviceId)
                 .orElseThrow(() -> new NotFoundException("Service with serviceId " + serviceId + " DOES NOT EXIST"));
@@ -285,7 +282,7 @@ public class OptionalServiceService {
         final String type = serviceToDelete.getType();
         switch (type) {
             case "INTERPRETER":
-                final ImmutableSet<TranslationLanguage> languages = ImmutableSet.copyOf(((Interpreter) serviceToDelete).getLanguages());
+                final List<TranslationLanguage> languages = translationLanguageService.getAllByInterpreterId(serviceToDelete.getId());
                 for (TranslationLanguage language : languages) {
                     ((Interpreter) serviceToDelete).removeLanguage(language);
                 }
@@ -310,7 +307,8 @@ public class OptionalServiceService {
     private boolean hasPendingReservations(OptionalService serviceToDelete) {
         return serviceToDelete.getServiceForLocation().stream()
                 .map(optionalService -> optionalService.getLocationForEvent().getEvent())
-                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
+                .anyMatch(organizedEvent -> Objects.equals(organizedEvent.getEventStatus(), "IN_PROGRESS") ||
+                        Objects.equals(organizedEvent.getEventStatus(), "READY"));
     }
 
     private List<OptionalService> filterByPrice(String minPrice, String maxPrice, List<OptionalService> services) {

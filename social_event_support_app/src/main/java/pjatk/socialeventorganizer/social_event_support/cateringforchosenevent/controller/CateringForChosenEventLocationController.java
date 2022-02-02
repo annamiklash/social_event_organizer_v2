@@ -42,12 +42,11 @@ public class CateringForChosenEventLocationController {
         return ResponseEntity.ok(CateringForChosenLocationMapper.toDto(catering));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'BUSINESS')")
+    @PreAuthorize("hasAnyAuthority('BUSINESS')")
     @RequestMapping(
             method = RequestMethod.PUT,
-            path = "order/confirm",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CateringForChosenEventLocationDto> confirmOrderReservation(@RequestParam long reservationId) {
+            path = "order/confirm")
+    public ResponseEntity<Void> confirmOrderReservation(@RequestParam long reservationId) {
 
         cateringForChosenEventLocationService.confirmOrder(reservationId);
 

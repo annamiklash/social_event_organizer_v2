@@ -6,6 +6,8 @@ import pjatk.socialeventorganizer.social_event_support.address.model.Address
 import pjatk.socialeventorganizer.social_event_support.address.model.dto.AddressDto
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability
 import pjatk.socialeventorganizer.social_event_support.business.model.Business
+import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum
+import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours
 import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage
@@ -44,6 +46,7 @@ trait LocationTrait {
                     .firstName('Name')
                     .lastName('Name')
                     .businessName('Name')
+                    .email('business@email.com')
                     .verificationStatus('VERIFIED')
                     .phoneNumber(new BigInteger("123123123"))
                     .build())
@@ -56,6 +59,17 @@ trait LocationTrait {
 
     Location fakeFullLocationWithAvailability = Location.builder()
             .id(1L)
+            .name('Name')
+            .description('Description')
+            .email('email@email')
+            .phoneNumber(new BigInteger(123456789))
+            .seatingCapacity(30)
+            .standingCapacity(100)
+            .dailyRentCost(new BigDecimal(100.0))
+            .sizeInSqMeters(300)
+            .createdAt(LocalDateTime.of(2020, Month.FEBRUARY, 1, 9, 0, 0))
+            .modifiedAt(LocalDateTime.of(2020, Month.FEBRUARY, 1, 9, 0, 0))
+            .deletedAt(null)
             .caterings(new HashSet<Catering>())
             .descriptions(new HashSet<LocationDescriptionItem>())
             .availability(new HashSet<LocationAvailability>())
@@ -72,7 +86,8 @@ trait LocationTrait {
                     .id(1l)
                     .date(LocalDate.of(2022, Month.FEBRUARY, 1))
                     .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 9, 0, 0))
-                    .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 20, 0, 0))
+                    .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 23, 0, 0))
+                    .status('AVAILABLE')
                     .build()))
             .business(Business.builder()
                     .id(1)
@@ -99,7 +114,7 @@ trait LocationTrait {
             .standingCapacity(20)
             .description("SAMPLE DESCRIPTION")
             .dailyRentCost("123")
-            .sizeInSqMeters(100)
+            .sizeInSqMeters(200)
             .descriptions(ImmutableSet.of())
             .address(AddressDto.builder()
                     .id(1L)
@@ -110,6 +125,42 @@ trait LocationTrait {
                     .zipCode('01-157')
                     .build())
             .businessHours(ImmutableList.of())
+            .build()
+
+    Location fakeLocationToCreate = Location.builder()
+            .name("SAMPLE LOCATION NAME")
+            .email("test@email.com")
+            .phoneNumber(new BigInteger('123123123'))
+            .seatingCapacity(10)
+            .standingCapacity(20)
+            .description("SAMPLE DESCRIPTION")
+            .dailyRentCost(123.00)
+            .sizeInSqMeters(200)
+            .build()
+
+    LocationDto fakeLocationDtoCreate = LocationDto.builder()
+            .name("SAMPLE LOCATION NAME")
+            .email("test@email.com")
+            .phoneNumber('123123123')
+            .seatingCapacity(10)
+            .standingCapacity(20)
+            .description("SAMPLE DESCRIPTION")
+            .dailyRentCost("123")
+            .sizeInSqMeters(200)
+            .descriptions(Set.of('Outside Catering Available'))
+            .address(AddressDto.builder()
+                    .country('Poland')
+                    .city('Warsaw')
+                    .streetName('Piękna')
+                    .streetNumber(1)
+                    .zipCode('01-157')
+                    .build())
+            .businessHours(ImmutableList.of(
+                    BusinessHoursDto.builder()
+                            .day(DayEnum.MONDAY)
+                            .timeFrom('10:00:00')
+                            .timeTo('20:00:00')
+                            .build()))
             .build()
 
 

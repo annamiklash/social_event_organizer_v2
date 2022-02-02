@@ -2,7 +2,6 @@ package pjatk.socialeventorganizer.social_event_support.location.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,10 +46,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pjatk.socialeventorganizer.social_event_support.availability.AvailabilityEnum.AVAILABLE;
@@ -80,7 +76,7 @@ public class LocationService {
     private final LocationReviewService locationReviewService;
 
     private final LocationImageRepository locationImageRepository;
-    
+
     private final TimestampHelper timestampHelper;
 
     public ImmutableList<Location> list(CustomPage customPage, String keyword) {
@@ -128,7 +124,7 @@ public class LocationService {
     }
 
     public ImmutableList<Location> search(FilterLocationsDto dto) {
-        List<Location>locations  = new ArrayList<>();
+        List<Location> locations = new ArrayList<>();
 
         String city = dto.getCity();
         city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
@@ -259,7 +255,8 @@ public class LocationService {
                 .map(locationDescriptionItemService::getById)
                 .collect(Collectors.toSet());
 
-        final Set<LocationDescriptionItem> locationDescriptions = ImmutableSet.copyOf(location.getDescriptions());
+        final Set<LocationDescriptionItem> locationDescriptions =
+                location.getDescriptions();
 
         locationDescriptions.forEach(locationDescriptionItem -> {
             if (!inputDescriptions.contains(locationDescriptionItem)) {
@@ -290,7 +287,7 @@ public class LocationService {
                 .orElseThrow(() -> new NotFoundException("Location with id " + locationId + " DOES NOT EXIST"));
     }
 
-//    @Cacheable("location_caterings")
+    //    @Cacheable("location_caterings")
     public ImmutableList<Location> getByCateringId(long cateringId) {
         return ImmutableList.copyOf(locationRepository.findAllByCateringId(cateringId));
     }
@@ -448,7 +445,8 @@ public class LocationService {
     private boolean hasPendingReservations(Location locationToDelete) {
         return locationToDelete.getLocationForEvent().stream()
                 .map(LocationForEvent::getEvent)
-                .anyMatch(organizedEvent -> organizedEvent.getDate().isAfter(LocalDate.now()));
+                .anyMatch(organizedEvent -> Objects.equals(organizedEvent.getEventStatus(), "IN_PROGRESS") ||
+                        Objects.equals(organizedEvent.getEventStatus(), "READY"));
 
     }
 

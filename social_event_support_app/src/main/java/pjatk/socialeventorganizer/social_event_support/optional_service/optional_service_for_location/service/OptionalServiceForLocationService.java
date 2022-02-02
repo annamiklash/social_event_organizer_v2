@@ -178,8 +178,8 @@ public class OptionalServiceForLocationService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public OptionalServiceForChosenLocation cancelReservation(long locationForEventId) {
-        final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(locationForEventId);
+    public OptionalServiceForChosenLocation cancelReservation(long serviceForEventId) {
+        final OptionalServiceForChosenLocation serviceForEvent = getWithServiceAndEvent(serviceForEventId);
 
         final OrganizedEvent event = serviceForEvent.getLocationForEvent().getEvent();
 
@@ -197,9 +197,9 @@ public class OptionalServiceForLocationService {
         final String stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeFrom));
         final String stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeTo));
 
-        OptionalServiceAvailability locationAvailability =
+        OptionalServiceAvailability serviceAvailability =
                 optionalServiceAvailabilityService.getByDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), stringTimeFrom, stringTimeTo);
-        optionalServiceAvailabilityService.updateToAvailable(locationAvailability, serviceForEvent.getOptionalService());
+        optionalServiceAvailabilityService.updateToAvailable(serviceAvailability, serviceForEvent.getOptionalService());
 
         event.setModifiedAt(LocalDateTime.now());
 
@@ -209,9 +209,9 @@ public class OptionalServiceForLocationService {
         return serviceForEvent;
     }
 
-    public OptionalServiceForChosenLocation getWithServiceAndEvent(long locationForEventId) {
-        return optionalServiceForChosenLocationRepository.getWithServiceAndEvent(locationForEventId)
-                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
+    public OptionalServiceForChosenLocation getWithServiceAndEvent(long serviceForEventId) {
+        return optionalServiceForChosenLocationRepository.getWithServiceAndEvent(serviceForEventId)
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + serviceForEventId));
     }
 
     public List<OptionalServiceForChosenLocation> listAllByStatusAndBusinessId(long businessId, String status) {

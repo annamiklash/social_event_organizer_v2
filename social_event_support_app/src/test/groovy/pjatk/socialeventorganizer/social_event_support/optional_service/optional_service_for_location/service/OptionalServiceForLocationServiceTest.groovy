@@ -80,22 +80,20 @@ class OptionalServiceForLocationServiceTest extends Specification implements Opt
                 .optionalService(service)
                 .build(),
                 OptionalServiceAvailability.builder()
-                .status('NOT_AVAILABLE')
-                .date(LocalDate.of(2022, Month.FEBRUARY, 1))
-                .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 13, 0, 0))
-                .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
-                .optionalService(service)
-                .build(),
+                        .status('NOT_AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 13, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
+                        .optionalService(service)
+                        .build(),
                 OptionalServiceAvailability.builder()
-                .status('AVAILABLE')
-                .date(LocalDate.of(2022, Month.FEBRUARY, 1))
-                .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
-                .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 23, 0, 0))
-                .optionalService(service)
-                .build())
+                        .status('AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 23, 0, 0))
+                        .optionalService(service)
+                        .build())
 
-
-        def locationReservation = fakeLocationForEvent
         def serviceReservation = fakeOptionalServiceForChosenLocationSimpleNoId
         serviceReservation.setOptionalService(service)
         serviceReservation.setLocationForEvent(null)
@@ -147,7 +145,6 @@ class OptionalServiceForLocationServiceTest extends Specification implements Opt
         given:
         def serviceId = 1l
         def status = 'CONFIRMED'
-        def reservation = fakeOptionalServiceForChosenLocation
         def target = [fakeOptionalServiceForChosenLocation]
         when:
         def result = optionalServiceForLocationService.listAllByStatus(serviceId, status)
@@ -159,12 +156,73 @@ class OptionalServiceForLocationServiceTest extends Specification implements Opt
     }
 
     def "CancelReservation"() {
+        given:
+        def serviceForEventId = 1l
+        def serviceReservation = fakeOptionalServiceForChosenLocation
+        def event = serviceReservation.getLocationForEvent().getEvent()
+        event.setDate(LocalDate.of(2022, Month.APRIL, 1))
+        def timeFrom = serviceReservation.getTimeFrom();
+        def timeTo = serviceReservation.getTimeTo();
+        def date = event.getDate();
+        def dateTime = LocalDateTime.of(date, timeFrom)
+        def stringTimeFrom = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeFrom))
+        def stringTimeTo = DateTimeUtil.joinDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), DateTimeUtil.fromLocalTimeToString(timeTo))
+        def service = fakeOptionalHostWithAvailability
+        def serviceAvailability = Set.of(OptionalServiceAvailability.builder()
+                .status('AVAILABLE')
+                .date(LocalDate.of(2022, Month.APRIL, 1))
+                .timeFrom(LocalDateTime.of(2022, Month.APRIL, 1, 9, 0, 0))
+                .timeTo(LocalDateTime.of(2022, Month.APRIL, 1, 13, 0, 0))
+                .optionalService(service)
+                .build(),
+                OptionalServiceAvailability.builder()
+                        .status('NOT_AVAILABLE')
+                        .date(LocalDate.of(2022, Month.APRIL, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.APRIL, 1, 13, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.APRIL, 1, 18, 0, 0))
+                        .optionalService(service)
+                        .build(),
+                OptionalServiceAvailability.builder()
+                        .status('AVAILABLE')
+                        .date(LocalDate.of(2022, Month.APRIL, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.APRIL, 1, 18, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.APRIL, 1, 23, 0, 0))
+                        .optionalService(service)
+                        .build())
+        service.setAvailability(serviceAvailability)
+        serviceReservation.setOptionalService(service)
+
+        event.setModifiedAt(now)
+
+        def cancelledAvailability = OptionalServiceAvailability.builder()
+                .status('NOT_AVAILABLE')
+                .date(LocalDate.of(2022, Month.APRIL, 1))
+                .timeFrom(LocalDateTime.of(2022, Month.APRIL, 1, 13, 0, 0))
+                .timeTo(LocalDateTime.of(2022, Month.APRIL, 1, 18, 0, 0))
+                .optionalService(service)
+                .build()
+
+        def cancelledReservation = serviceReservation
+        cancelledReservation.setConfirmationStatus('CANCELLED')
+
+        def target = cancelledReservation
+        when:
+        def result = optionalServiceForLocationService.cancelReservation(serviceForEventId)
+
+        then:
+        1 * optionalServiceForChosenLocationRepository.getWithServiceAndEvent(serviceForEventId) >> Optional.of(serviceReservation)
+        1 * optionalServiceAvailabilityService.getByDateAndTime(DateTimeUtil.fromLocalDateToDateString(date), stringTimeFrom, stringTimeTo) >> cancelledAvailability
+        1 * optionalServiceAvailabilityService.updateToAvailable(cancelledAvailability, serviceReservation.getOptionalService())
+        1 * optionalServiceForChosenLocationRepository.save(cancelledReservation);
+        1 * organizedEventRepository.save(event)
+
+        result == target
+
     }
 
     def "GetWithServiceAndEvent"() {
         given:
         def locationForEventId = 1l
-        def status = 'CONFIRMED'
         def reservation = fakeOptionalServiceForChosenLocation
         def target = reservation
         when:

@@ -3,9 +3,11 @@ package pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.s
 
 import com.google.common.collect.ImmutableSet
 import org.codehaus.groovy.runtime.InvokerHelper
+import pjatk.socialeventorganizer.social_event_support.catering.model.CateringItem
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.mapper.CateringForChosenLocationMapper
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringForChosenEventLocation
+import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.model.CateringOrderChoice
 import pjatk.socialeventorganizer.social_event_support.cateringforchosenevent.repository.CateringForLocationRepository
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.customer.repository.CustomerRepository
@@ -235,6 +237,33 @@ class CateringForChosenEventLocationServiceTest extends Specification
         1 * organizedEventRepository.save(event)
 
         result == target
+    }
+
+    def "ConfirmOrder"() {
+        given:
+        def reservationId = 1L
+
+        def catering = fakeCateringForChosenEventLocation
+        catering.setCateringOrder(Set.of(
+                CateringOrderChoice.builder()
+                        .id(1l)
+                        .amount(10)
+                        .item(CateringItem.builder()
+                                .id(1l)
+                                .name('Name')
+                                .build())
+                        .build()))
+
+        def target = catering
+        target.setCateringOrderConfirmed(true)
+
+        when:
+        cateringForChosenEventLocationService.confirmOrder(reservationId)
+
+        then:
+        1 * cateringForLocationRepository.getWithCateringOrder(reservationId) >> Optional.of(catering)
+        1 * cateringForLocationRepository.save(target)
+
     }
 
     def "ListAllByStatus"() {

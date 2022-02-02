@@ -3,7 +3,6 @@ package pjatk.socialeventorganizer.social_event_support.customer.service
 import com.google.common.collect.ImmutableList
 import org.springframework.data.domain.PageImpl
 import org.springframework.mock.web.MockMultipartFile
-import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
@@ -21,7 +20,6 @@ import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEv
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
-import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
@@ -155,16 +153,17 @@ class CustomerServiceTest extends Specification
     def "SendMessage(#clazz)"() {
         given:
         def customerId = 1L
-        def receiverId = 2L
+        def receiverId = 1l
 
         def user = fakeUser
         def customer = fakeCustomer
+        customer.setEmail('test@email.com')
 
         def location = fakeFullLocation
         def catering = fakeCateringWithDetails
         def optionalService = fakeOptionalService
 
-        def locationMessageDto = MessageDto.builder()
+        def messageDto = MessageDto.builder()
                 .subject("SAMPLE SUBJECT")
                 .receiverEmail(location.getBusiness().getEmail())
                 .replyToEmail(user.getEmail())
@@ -192,23 +191,13 @@ class CustomerServiceTest extends Specification
                 messageDto.getReceiverEmail(), messageDto.getSubject(), messageDto.getReplyToEmail())
 
         when:
-        customerService.sendMessage(customerId, receiverId, messageDto, clazz)
+        customerService.sendMessage(customerId, receiverId, messageDto, Location.class)
 
         then:
         1 * userService.get(customerId) >> user
+        1 * locationService.getWithDetail(receiverId) >> location
         1 * customerRepository.getByIdWithUser(customerId) >> Optional.of(customer)
         1 * emailService.sendEmail(inviteEmail)
-
-        locationService.getWithDetail(receiverId) >> location
-        cateringService.getWithDetail(receiverId) >> catering
-        optionalServiceService.getWithDetail(receiverId) >> optionalService
-
-        where:
-        clazz                 | _ | messageDto
-        Location.class        | _ | locationMessageDto
-        Catering.class        | _ | cateringMessageDto
-        OptionalService.class | _ | serviceMessageDto
-
     }
 
     def "GetWithDetail"() {

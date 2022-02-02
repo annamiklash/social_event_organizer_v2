@@ -16,6 +16,7 @@ import pjatk.socialeventorganizer.social_event_support.trait.cateringforchosenev
 import spock.lang.Specification
 
 import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.Mockito.times
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -58,6 +59,24 @@ class CateringForChosenEventLocationControllerTest extends Specification
     }
 
     @WithMockUser(authorities = ['BUSINESS'])
+    def "PUT api/event/catering/order/confirm returns 200 positive test scenario"() {
+        given:
+        def reservationId = 1L
+
+
+        expect:
+        mockMvc.perform(
+                put("/api/event/catering/order/confirm")
+                        .param('reservationId', reservationId.toString())
+        )
+                .andExpect(status().isOk())
+
+        BDDMockito.verify(cateringForChosenEventLocationService, times(1))
+                .confirmOrder(eq(reservationId))
+
+    }
+
+    @WithMockUser(authorities = ['BUSINESS'])
     def "GET api/event/catering/status returns 200 positive test scenario"() {
         given:
         def statusStr = 'SAMPLE STATUS'
@@ -78,6 +97,33 @@ class CateringForChosenEventLocationControllerTest extends Specification
                 get("/api/event/catering/status")
                         .param("status", statusStr)
                         .param("cateringId", cateringId.toString())
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().json(jsonResponse))
+    }
+
+    @WithMockUser(authorities = ['BUSINESS'])
+    def "GET api/event/catering/business/status returns 200 positive test scenario"() {
+        given:
+        def statusStr = 'SAMPLE STATUS'
+        def businessId = 1L
+
+        def cateringForChosenEventLocation = fakeFullCateringForChosenEventLocation
+        def cateringForChosenEventLocationList = ImmutableList.of(cateringForChosenEventLocation)
+        def cateringForChosenEventLocationDto = CateringForChosenLocationMapper.toDtoWithEvent(cateringForChosenEventLocation)
+        def resultList = ImmutableList.of(cateringForChosenEventLocationDto)
+
+        def jsonResponse = TestSerializer.serialize(resultList)
+
+        BDDMockito.given(cateringForChosenEventLocationService.listAllByStatusAndBusinessId(eq(businessId), eq(statusStr)))
+                .willReturn(cateringForChosenEventLocationList)
+
+        expect:
+        mockMvc.perform(
+                get("/api/event/catering/business/status")
+                        .param("businessId", businessId.toString())
+                        .param("status", statusStr)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

@@ -77,16 +77,9 @@ public class LocationForEventService {
         locationForEvent.setLocation(location);
         locationForEvent.setEvent(organizedEvent);
 
-        save(locationForEvent);
-
+        locationForEventRepository.save(locationForEvent);
         return locationForEvent;
     }
-
-    public LocationForEvent getWithLocation(long locationForEventId) {
-        return locationForEventRepository.findByIdWithLocation(locationForEventId)
-                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
-    }
-
 
     @Transactional(rollbackOn = Exception.class)
     public LocationForEvent cancelReservation(long locationForEventId) {
@@ -128,6 +121,46 @@ public class LocationForEventService {
         return locationForEvent;
     }
 
+    public LocationForEvent confirmReservation(long locationId, long eventId) {
+        final LocationForEvent locationForEvent = findByLocationIdAndEventId(locationId, eventId);
+
+        locationForEvent.setConfirmationStatus(CONFIRMED.toString());
+        locationForEventRepository.save(locationForEvent);
+        final OrganizedEvent organizedEvent = locationForEvent.getEvent();
+
+        organizedEvent.setModifiedAt(timestampHelper.now());
+        organizedEventRepository.save(organizedEvent);
+
+        return locationForEvent;
+    }
+
+    public List<LocationForEvent> listAllByStatus(long locationId, String status) {
+        return locationForEventRepository.findAllByLocationIdAndStatus(locationId, status);
+    }
+
+    public List<LocationForEvent> listAllByStatusAndBusinessId(long businessId, String status) {
+        return locationForEventRepository.findAllBusinessIdAndStatus(businessId, status);
+    }
+
+    public LocationForEvent findByEventId(long eventId) {
+        return locationForEventRepository.findByEventId(eventId)
+                .orElseThrow(() -> new NotFoundException("Location for event does not exist"));
+    }
+
+    private LocationForEvent findByLocationIdAndEventId(long id, long eventId) {
+        return locationForEventRepository.findByEventIdAndLocationId(eventId, id)
+                .orElseThrow(() -> new NotFoundException("Location for event does not exist"));
+    }
+
+    private LocationForEvent getWithLocationAndEvent(long locationForEventId) {
+        return locationForEventRepository.getWithLocationAndEvent(locationForEventId)
+                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
+    }
+
+    private boolean isAllowedToCancel(LocalDateTime dateTime) {
+        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(timestampHelper.now());
+    }
+
     private boolean isCateringCancelled(Set<CateringForChosenEventLocation> cateringsForEventLocation) {
         if (CollectionUtils.isEmpty(cateringsForEventLocation)) {
             return false;
@@ -144,50 +177,6 @@ public class LocationForEventService {
                 .allMatch(service -> CANCELLED.name().equals(service.getConfirmationStatus()));
     }
 
-    public LocationForEvent getWithLocationAndEvent(long locationForEventId) {
-        return locationForEventRepository.getWithLocationAndEvent(locationForEventId)
-                .orElseThrow(() -> new NotFoundException("No location Reservation with id " + locationForEventId));
-    }
-
-    public LocationForEvent confirmReservation(long locationId, long eventId) {
-        final LocationForEvent locationForEvent = findByLocationIdAndEventId(locationId, eventId);
-
-        locationForEvent.setConfirmationStatus(CONFIRMED.toString());
-        save(locationForEvent);
-
-        final OrganizedEvent organizedEvent = locationForEvent.getEvent();
-
-        organizedEvent.setModifiedAt(timestampHelper.now());
-        organizedEventRepository.save(organizedEvent);
-
-        return locationForEvent;
-    }
-
-    public List<LocationForEvent> listAllByStatus(long locationId, String status) {
-        return locationForEventRepository.findAllByLocationIdAndStatus(locationId, status);
-
-    }
-
-    public void save(LocationForEvent locationForEvent) {
-        locationForEventRepository.save(locationForEvent);
-    }
-
-    public LocationForEvent findByLocationIdAndEventId(long id, long eventId) {
-        return locationForEventRepository.findByEventIdAndLocationId(eventId, id)
-                .orElseThrow(() -> new NotFoundException("Location for event does not exist"));
-    }
-
-    private boolean isAllowedToCancel(LocalDateTime dateTime) {
-        return dateTime.minusDays(Const.MAX_CANCELLATION_DAYS_PRIOR).isAfter(timestampHelper.now());
-    }
 
 
-    public List<LocationForEvent> listAllByStatusAndBusinessId(long businessId, String status) {
-        return locationForEventRepository.findAllBusinessIdAndStatus(businessId, status);
-    }
-
-    public LocationForEvent findByEventId(long eventId) {
-        return locationForEventRepository.findByEventId(eventId)
-                .orElseThrow(() -> new NotFoundException("Location for event does not exist"));
-    }
 }

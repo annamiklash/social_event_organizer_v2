@@ -1,6 +1,7 @@
 package pjatk.socialeventorganizer.social_event_support.trait.availability
 
 import pjatk.socialeventorganizer.social_event_support.availability.dto.AvailabilityDto
+import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability
 
 import java.time.LocalDate
@@ -22,6 +23,13 @@ trait AvailabilityTrait {
             .build()
 
     OptionalServiceAvailability fakeServiceAvailabilityWithId = OptionalServiceAvailability.builder()
+            .id(1l)
+            .date(LocalDate.of(2022, Month.JANUARY, 1))
+            .timeFrom(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 0, 0))
+            .timeTo(LocalDateTime.of(2022, Month.JANUARY, 1, 20, 0, 0))
+            .build()
+
+    LocationAvailability fakeLocationAvailabilityWithId = LocationAvailability.builder()
             .id(1l)
             .date(LocalDate.of(2022, Month.JANUARY, 1))
             .timeFrom(LocalDateTime.of(2022, Month.JANUARY, 1, 10, 0, 0))

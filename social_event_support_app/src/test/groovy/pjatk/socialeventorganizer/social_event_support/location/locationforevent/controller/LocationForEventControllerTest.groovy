@@ -3,6 +3,8 @@ package pjatk.socialeventorganizer.social_event_support.location.locationforeven
 import spock.lang.Specification
 
 class LocationForEventControllerTest extends Specification {
+
+    //TODO: finish test
     def "ConfirmReservation"() {
     }
 

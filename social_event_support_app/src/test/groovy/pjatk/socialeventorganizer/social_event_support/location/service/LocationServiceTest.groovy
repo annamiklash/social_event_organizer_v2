@@ -3,35 +3,50 @@ package pjatk.socialeventorganizer.social_event_support.location.service
 import com.google.common.collect.ImmutableList
 import org.springframework.data.domain.PageImpl
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService
+import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability
 import pjatk.socialeventorganizer.social_event_support.availability.location.repository.LocationAvailabilityRepository
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
+import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.service.LocationBusinessHoursService
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.catering.repository.CateringRepository
+import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil
+import pjatk.socialeventorganizer.social_event_support.image.model.LocationImage
 import pjatk.socialeventorganizer.social_event_support.image.repository.LocationImageRepository
 import pjatk.socialeventorganizer.social_event_support.location.model.LocationDescriptionItem
 import pjatk.socialeventorganizer.social_event_support.location.model.dto.FilterLocationsDto
 import pjatk.socialeventorganizer.social_event_support.location.repository.LocationRepository
+import pjatk.socialeventorganizer.social_event_support.reviews.location.model.LocationReview
 import pjatk.socialeventorganizer.social_event_support.reviews.location.service.LocationReviewService
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
+import pjatk.socialeventorganizer.social_event_support.trait.availability.AvailabilityTrait
 import pjatk.socialeventorganizer.social_event_support.trait.business.BusinessTrait
 import pjatk.socialeventorganizer.social_event_support.trait.catering.CateringTrait
 import pjatk.socialeventorganizer.social_event_support.trait.location.LocationTrait
+import pjatk.socialeventorganizer.social_event_support.trait.location.locationforevent.LocationForEventTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
+import pjatk.socialeventorganizer.social_event_support.trait.user.UserCredentialsTrait
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month
 
 class LocationServiceTest extends Specification implements LocationTrait,
         AddressTrait,
         CateringTrait,
         BusinessTrait,
         BusinessHoursTrait,
-        PageTrait {
+        PageTrait,
+        UserCredentialsTrait,
+        AvailabilityTrait,
+        LocationForEventTrait {
 
     @Subject
     LocationService locationService
@@ -237,11 +252,83 @@ class LocationServiceTest extends Specification implements LocationTrait,
         1 * locationRepository.findByLocationAddress_City(city) >> locations
 
         result == target
-
-
     }
 
     def "Create"() {
+        given:
+        def userCredentials = fakeBusinessUserCredentials
+        def business = fakeVerifiedBusiness
+        def dto = fakeLocationDtoCreate
+        def address = fakeAddress
+        def businessHours = [fakeLocationBusinessHours]
+
+        def descriptionsDto = dto.getDescriptions()
+        def description = LocationDescriptionItem.builder()
+                .id('Outside Catering Available')
+                .description('desc')
+                .build()
+        def descriptions = Set.of(description)
+
+        def caterings = [fakeCatering]
+
+        def locationToSave = fakeLocationToCreate
+        locationToSave.setLocationAddress(address)
+        locationToSave.setBusiness(business)
+        locationToSave.setDescriptions(descriptions)
+        locationToSave.setLocationBusinessHours(new HashSet<>(businessHours))
+        locationToSave.setImages(new HashSet<>())
+        locationToSave.setRating(0.0)
+        locationToSave.setCreatedAt(now)
+        locationToSave.setModifiedAt(now)
+        locationToSave.setCaterings(new HashSet<Catering>(caterings))
+
+        def availabilityList = [
+                LocationAvailability.builder()
+                        .date(LocalDate.parse('2022-02-07'))
+                        .timeFrom(LocalDateTime.of(LocalDate.parse('2022-02-07'), LocalTime.parse('10:00:00')))
+                        .timeTo(LocalDateTime.of(LocalDate.parse('2022-02-07'), LocalTime.parse('20:00:00')))
+                        .status('AVAILABLE')
+                        .location(locationToSave)
+                        .build(),
+                LocationAvailability.builder()
+                        .date(LocalDate.parse('2022-02-14'))
+                        .timeFrom(LocalDateTime.of(LocalDate.parse('2022-02-14'), LocalTime.parse('10:00:00')))
+                        .timeTo(LocalDateTime.of(LocalDate.parse('2022-02-14'), LocalTime.parse('20:00:00')))
+                        .status('AVAILABLE')
+                        .location(locationToSave)
+                        .build(),
+                LocationAvailability.builder()
+                        .date(LocalDate.parse('2022-02-21'))
+                        .timeFrom(LocalDateTime.of(LocalDate.parse('2022-02-21'), LocalTime.parse('10:00:00')))
+                        .timeTo(LocalDateTime.of(LocalDate.parse('2022-02-21'), LocalTime.parse('20:00:00')))
+                        .status('AVAILABLE')
+                        .location(locationToSave)
+                        .build(),
+                LocationAvailability.builder()
+                        .date(LocalDate.parse('2022-02-28'))
+                        .timeFrom(LocalDateTime.of(LocalDate.parse('2022-02-28'), LocalTime.parse('10:00:00')))
+                        .timeTo(LocalDateTime.of(LocalDate.parse('2022-02-28'), LocalTime.parse('20:00:00')))
+                        .status('AVAILABLE')
+                        .location(locationToSave)
+                        .build()
+        ]
+
+        def target = locationToSave
+
+        when:
+        def result = locationService.create(dto)
+
+        then:
+        1 * securityService.getUserCredentials() >> userCredentials
+        1 * businessRepository.findById(userCredentials.getUserId()) >> Optional.of(business)
+        1 * addressService.create(dto.getAddress()) >> address
+        1 * locationBusinessHoursService.create(dto.getBusinessHours()) >> businessHours
+        1 * locationDescriptionItemService.getById(descriptionsDto.iterator().next()) >> description
+        1 * cateringRepository.findByCateringAddress_City(address.getCity()) >> caterings
+        1 * locationRepository.save(target)
+        1 * locationAvailabilityRepository.save(availabilityList.iterator().next())
+
+        result == target
     }
 
     def "Save"() {
@@ -275,6 +362,42 @@ class LocationServiceTest extends Specification implements LocationTrait,
     }
 
     def "Edit"() {
+        given:
+        def locationId = 1l
+        def dto = fakeLocationDtoCreate
+        dto.setDescriptions(Set.of('Has WiFi'))
+
+        def inputDescriptionEnums = dto.getDescriptions()
+
+        def location = fakeFullLocation
+        location.setCaterings(new HashSet<Catering>())
+        location.setAvailability(Set.of(fakeLocationAvailabilityWithId))
+        def description = LocationDescriptionItem.builder()
+                .id('Has WiFi')
+                .description('desc')
+                .build()
+        location.setDescriptions(Set.of(description))
+
+        def target = location
+
+        target.setEmail(dto.getEmail())
+        target.setName(dto.getName())
+        target.setPhoneNumber(Converter.convertPhoneNumberString(dto.getPhoneNumber()))
+        target.setDescription(dto.getDescription())
+        target.setSeatingCapacity(dto.getSeatingCapacity())
+        target.setStandingCapacity(dto.getStandingCapacity())
+        target.setDailyRentCost(Converter.convertPriceString(dto.getDailyRentCost()))
+        target.setModifiedAt(now)
+
+        when:
+        def result = locationService.edit(dto, locationId)
+
+        then:
+        1 * locationRepository.getByIdWithDetail(locationId) >> Optional.of(location)
+        1 * locationDescriptionItemService.getById(inputDescriptionEnums.iterator().next()) >> description
+        1 * locationRepository.save(location)
+
+        result == target
     }
 
     def "GetByBusinessId"() {
@@ -325,8 +448,103 @@ class LocationServiceTest extends Specification implements LocationTrait,
     }
 
     def "Delete"() {
+        given:
+        def id = 1l
+        def locationToDelete = fakeFullLocationWithAvailability
+        def locationReservation = fakeFullLocationForEvent
+        locationReservation.setLocation(null)
+        def event = locationReservation.getEvent()
+        event.setEventStatus('FINISHED')
+
+        locationToDelete.setLocationForEvent(Set.of(locationReservation))
+
+        locationToDelete.setCaterings(
+                Set.of(
+                        Catering.builder()
+                                .id(1l)
+                                .name('Name')
+                                .build()))
+        locationToDelete.setReviews(
+                Set.of(
+                        LocationReview.builder()
+                                .id(1l)
+                                .title('title')
+                                .build()))
+        locationToDelete.setImages(
+                Set.of(
+                        LocationImage.builder()
+                                .id(1l)
+                                .build()))
+        locationToDelete.setLocationBusinessHours(
+                Set.of(
+                        LocationBusinessHours.builder()
+                                .id(1l)
+                                .build()))
+        def description = LocationDescriptionItem.builder()
+                .id('Has WiFi')
+                .description('desc')
+                .build()
+        locationToDelete.setDescriptions(Set.of(description))
+
+        def finalToDelete = locationToDelete
+        finalToDelete.setDescriptions(null)
+        finalToDelete.setCaterings(null)
+
+        when:
+        locationService.delete(id)
+
+        then:
+        1 * locationRepository.getAllLocationInformation(id) >> Optional.of(locationToDelete)
+        1 * locationBusinessHoursService.delete(locationToDelete.getLocationBusinessHours().iterator().next())
+        1 * locationImageRepository.delete(locationToDelete.getImages().iterator().next())
+        1 * locationReviewService.delete(locationToDelete.getReviews().iterator().next())
+        1 * addressService.delete(locationToDelete.getLocationAddress())
+        1 * locationRepository.delete(finalToDelete)
+
     }
 
     def "ModifyAvailabilityAfterBooking"() {
+        def location = fakeFullLocationWithAvailability
+        def eventDate = '2022-02-01'
+        def dateTimeFrom = '2022-02-01 13:00'
+        def dateTimeTo = '2022-02-01 18:00'
+
+        def date = DateTimeUtil.fromStringToFormattedDate(eventDate);
+        def timeFrom = DateTimeUtil.fromStringToFormattedDateTime(dateTimeFrom);
+        def timeTo = DateTimeUtil.fromStringToFormattedDateTime(dateTimeTo);
+        def availability = location.getAvailability()[0]
+        availability.setLocation(location)
+
+        def newAvailabilities = List.of(
+                LocationAvailability.builder()
+                        .status('AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 9, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 13, 0, 0))
+                        .location(location)
+                        .build(),
+                LocationAvailability.builder()
+                        .status('NOT_AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 13, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
+                        .location(location)
+                        .build(),
+                LocationAvailability.builder()
+                        .status('AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 23, 0, 0))
+                        .location(location)
+                        .build())
+
+
+        when:
+        locationService.modifyAvailabilityAfterBooking(location, eventDate, dateTimeFrom, dateTimeTo)
+
+        then:
+        1 * locationAvailabilityRepository.delete(availability)
+        1 * locationAvailabilityRepository.saveAndFlush(newAvailabilities.iterator().next())
+
     }
 }

@@ -6,22 +6,28 @@ import org.springframework.data.domain.PageImpl
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
+import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours
 import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessHoursService
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException
+import pjatk.socialeventorganizer.social_event_support.image.model.OptionalServiceImage
 import pjatk.socialeventorganizer.social_event_support.image.repository.OptionalServiceImageRepository
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.FilterOptionalServiceDto
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.model.TranslationLanguage
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.interpreter.translation.service.TranslationLanguageService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.music.musicstyle.service.MusicStyleService
 import pjatk.socialeventorganizer.social_event_support.optional_service.optional_service_for_location.repostory.OptionalServiceForChosenLocationRepository
 import pjatk.socialeventorganizer.social_event_support.optional_service.repository.OptionalServiceRepository
+import pjatk.socialeventorganizer.social_event_support.reviews.service.model.OptionalServiceReview
 import pjatk.socialeventorganizer.social_event_support.reviews.service.service.OptionalServiceReviewService
 import pjatk.socialeventorganizer.social_event_support.security.service.SecurityService
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
 import pjatk.socialeventorganizer.social_event_support.trait.availability.AvailabilityTrait
 import pjatk.socialeventorganizer.social_event_support.trait.business.BusinessTrait
+import pjatk.socialeventorganizer.social_event_support.trait.location.locationforevent.LocationForEventTrait
+import pjatk.socialeventorganizer.social_event_support.trait.optional_service.OptionalServiceForChosenLocationTrait
 import pjatk.socialeventorganizer.social_event_support.trait.optional_service.OptionalServiceTrait
 import pjatk.socialeventorganizer.social_event_support.trait.page.PageTrait
 import pjatk.socialeventorganizer.social_event_support.trait.user.UserCredentialsTrait
@@ -37,7 +43,9 @@ class OptionalServiceServiceTest extends Specification
                 UserCredentialsTrait,
                 PageTrait,
                 BusinessTrait,
-                AvailabilityTrait {
+                AvailabilityTrait,
+                LocationForEventTrait,
+                OptionalServiceForChosenLocationTrait {
 
     @Subject
     OptionalServiceService optionalServiceService
@@ -249,7 +257,7 @@ class OptionalServiceServiceTest extends Specification
         def hosts = [host]
         host.setServiceCost(200.00)
         def hostList = [host]
-        def hostResult  = host
+        def hostResult = host
         def rating = 3
         hostResult.setRating(rating);
 
@@ -334,6 +342,56 @@ class OptionalServiceServiceTest extends Specification
     }
 
     def "Delete"() {
+        given:
+        def id = 1l
+        def serviceToDelete = fakeOptionalInterpreterWithAvailability
 
+        def serviceReservation = fakeOptionalServiceForChosenLocation
+        def event = serviceReservation.getLocationForEvent().getEvent()
+        event.setEventStatus('FINISHED')
+
+        serviceToDelete.setReviews(
+                Set.of(
+                        OptionalServiceReview.builder()
+                                .id(1l)
+                                .title('title')
+                                .build()))
+
+        serviceToDelete.setImages(
+                Set.of(
+                        OptionalServiceImage.builder()
+                                .id(1l)
+                                .build()))
+
+        serviceToDelete.setOptionalServiceBusinessHours(
+                Set.of(
+                        OptionalServiceBusinessHours.builder()
+                                .id(1l)
+                                .day('MONDAY')
+                                .build()))
+
+        serviceToDelete.setServiceForLocation(Set.of(serviceReservation))
+        def languages = List.of(
+                TranslationLanguage.builder()
+                        .id(1l)
+                        .name('English')
+                        .build())
+        serviceToDelete.setLanguages(new HashSet<TranslationLanguage>(languages))
+
+        def toDelete = serviceToDelete
+
+        when:
+        optionalServiceService.delete(id)
+
+        then:
+        1 * optionalServiceRepository.getAllServiceInformation(id) >> Optional.of(serviceToDelete)
+        1 * optionalServiceBusinessService.delete(serviceToDelete.getOptionalServiceBusinessHours().iterator().next())
+        1 * optionalServiceAvailabilityRepository.delete(serviceToDelete.getAvailability().iterator().next())
+        1 * optionalServiceForChosenLocationRepository.delete(serviceToDelete.getServiceForLocation().iterator().next())
+        1 * optionalServiceImageRepository.delete(serviceToDelete.getImages().iterator().next())
+        1 * optionalServiceReviewService.delete(serviceToDelete.getReviews().iterator().next())
+        1 * addressService.delete(serviceToDelete.getServiceAddress())
+        1 * translationLanguageService.getAllByInterpreterId(serviceToDelete.getId()) >> languages
+        1 * optionalServiceRepository.delete(toDelete);
     }
 }
