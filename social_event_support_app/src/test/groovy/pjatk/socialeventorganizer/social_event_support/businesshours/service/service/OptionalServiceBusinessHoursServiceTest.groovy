@@ -1,7 +1,8 @@
 package pjatk.socialeventorganizer.social_event_support.businesshours.service.service
 
 
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.repository.OptionalServiceBusinessHoursRepository
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.repository.OptionalServiceBusinessHoursRepository
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.service.OptionalServiceBusinessHoursService
 import pjatk.socialeventorganizer.social_event_support.trait.BusinessHoursTrait
 import spock.lang.Specification
 import spock.lang.Subject

@@ -313,16 +313,25 @@ class CateringServiceTest extends Specification
                 .build()
         def locationId = null
 
-        def cuisinesIds = Set.of(1l)
+        def catering = fakeCateringWithDetails
+        catering.setBusiness(null)
+        catering.setCateringItems(null)
+        def caterings = [catering]
+        def target = ImmutableList.of(catering)
+        def cuisine =
+                Cuisine.builder()
+                        .id(1l)
+                        .name('Greek')
+                        .build()
 
-        def caterings = [fakeCateringWithDetails]
-        def target = ImmutableList.of(fakeCateringWithDetails)
+        def cuisines = cuisine
+        def cuisinesIds = Set.of(cuisine.getId())
 
         when:
         def result = cateringService.search(dto, locationId)
 
         then:
-        1 * cuisineService.getByName(dto.getCuisines().iterator().next())
+        1 * cuisineService.getByName(dto.getCuisines().iterator().next()) >> cuisine
         1 * cateringRepository.search(cuisinesIds, "", locationId) >> caterings
 
         result == target

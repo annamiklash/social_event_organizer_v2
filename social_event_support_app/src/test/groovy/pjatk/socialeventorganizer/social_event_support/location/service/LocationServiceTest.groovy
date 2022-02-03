@@ -1,5 +1,6 @@
 package pjatk.socialeventorganizer.social_event_support.location.service
 
+import com.google.common.base.Strings
 import com.google.common.collect.ImmutableList
 import org.springframework.data.domain.PageImpl
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService
@@ -212,29 +213,40 @@ class LocationServiceTest extends Specification implements LocationTrait,
 
     def "Search"() {
         given:
-        def filter = FilterLocationsDto.builder()
+        def dto = FilterLocationsDto.builder()
                 .city('Warsaw, Poland')
                 .descriptionItems(['Has WiFi'])
-                .date('2022-01-02')
+                .date('2022-02-01')
                 .guestCount(10)
                 .isSeated(true)
                 .build()
+        def city = dto.getCity();
+        city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
 
+        def location = fakeFullLocationWithAvailability
+        def rating = 4.0
         def locationDescription = LocationDescriptionItem.builder()
                 .id('Has WiFi')
                 .description('Description')
                 .build()
-        def locationDescriptions = [locationDescription]
-        def locations = [fakeFullLocationWithAvailability]
+//        location.setRating(rating)
+        location.setDescriptions(
+                Set.of(locationDescription))
+        location.setLocationBusinessHours(null)
 
-        def target = ImmutableList.of(fakeFullLocationWithAvailability)
+        def newLoc = location
+
+        def locations = [newLoc]
+
+        def target = ImmutableList.copyOf(location)
 
         when:
-        def result = locationService.search(filter)
+        def result = locationService.search(dto)
 
         then:
-        1 * locationDescriptionItemService.getById(locationDescriptions.iterator().next().getId()) >> _
-        1 * locationRepository.searchWithDate(filter.getCity(), filter.getDate()) >> locations
+        1 * locationDescriptionItemService.getById(dto.getDescriptionItems().iterator().next()) >> locationDescription
+        1 * locationRepository.searchWithDate(city, dto.getDate()) >> locations
+
 
         result == target
     }

@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.businesshours.service.model;
+package pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.model;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;

@@ -5,7 +5,7 @@ import pjatk.socialeventorganizer.social_event_support.address.model.dto.Address
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.model.OptionalServiceAvailability
 import pjatk.socialeventorganizer.social_event_support.business.model.Business
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.model.OptionalServiceBusinessHours
 import pjatk.socialeventorganizer.social_event_support.image.model.OptionalServiceImage
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.optional_service.model.dto.OptionalServiceDto
@@ -35,6 +35,7 @@ trait OptionalServiceTrait {
                     .firstName('Name')
                     .lastName('Name')
                     .businessName('Name')
+                    .email('business@email.com')
                     .verificationStatus('VERIFIED')
                     .phoneNumber(new BigInteger("123123123"))
                     .build())
@@ -104,6 +105,7 @@ trait OptionalServiceTrait {
                     .businessName('Name')
                     .verificationStatus('VERIFIED')
                     .isActive(true)
+                    .email('business@email.com')
                     .phoneNumber(new BigInteger("123123123"))
                     .build())
             .serviceAddress(Address.builder()
@@ -114,6 +116,7 @@ trait OptionalServiceTrait {
                     .streetNumber(1)
                     .zipCode('01-157')
                     .build())
+            .images(new HashSet<OptionalServiceImage>())
             .build()
 
     Interpreter fakeOptionalInterpreterWithAvailability = Interpreter.builder()

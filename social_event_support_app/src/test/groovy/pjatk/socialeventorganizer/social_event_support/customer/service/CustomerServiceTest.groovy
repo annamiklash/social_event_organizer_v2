@@ -3,6 +3,7 @@ package pjatk.socialeventorganizer.social_event_support.customer.service
 import com.google.common.collect.ImmutableList
 import org.springframework.data.domain.PageImpl
 import org.springframework.mock.web.MockMultipartFile
+import pjatk.socialeventorganizer.social_event_support.catering.model.Catering
 import pjatk.socialeventorganizer.social_event_support.catering.service.CateringService
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
@@ -20,6 +21,7 @@ import pjatk.socialeventorganizer.social_event_support.event.service.OrganizedEv
 import pjatk.socialeventorganizer.social_event_support.location.locationforevent.service.LocationForEventService
 import pjatk.socialeventorganizer.social_event_support.location.model.Location
 import pjatk.socialeventorganizer.social_event_support.location.service.LocationService
+import pjatk.socialeventorganizer.social_event_support.optional_service.model.OptionalService
 import pjatk.socialeventorganizer.social_event_support.optional_service.service.OptionalServiceService
 import pjatk.socialeventorganizer.social_event_support.security.password.PasswordEncoderSecurity
 import pjatk.socialeventorganizer.social_event_support.trait.address.AddressTrait
@@ -37,7 +39,6 @@ import pjatk.socialeventorganizer.social_event_support.user.service.EmailService
 import pjatk.socialeventorganizer.social_event_support.user.service.UserService
 import spock.lang.Specification
 import spock.lang.Subject
-import spock.lang.Unroll
 
 import java.time.LocalDateTime
 
@@ -149,8 +150,7 @@ class CustomerServiceTest extends Specification
         result == target
     }
 
-    @Unroll
-    def "SendMessage(#clazz)"() {
+    def "SendMessage(#Location)"() {
         given:
         def customerId = 1L
         def receiverId = 1l
@@ -160,35 +160,24 @@ class CustomerServiceTest extends Specification
         customer.setEmail('test@email.com')
 
         def location = fakeFullLocation
-        def catering = fakeCateringWithDetails
-        def optionalService = fakeOptionalService
 
         def messageDto = MessageDto.builder()
                 .subject("SAMPLE SUBJECT")
-                .receiverEmail(location.getBusiness().getEmail())
-                .replyToEmail(user.getEmail())
+                .content('SAMPLE CONTENT')
                 .build()
 
-        def cateringMessageDto = MessageDto.builder()
-                .subject("SAMPLE SUBJECT")
-                .receiverEmail(catering.getBusiness().getEmail())
-                .replyToEmail(user.getEmail())
-                .build()
-
-        def serviceMessageDto = MessageDto.builder()
-                .subject("SAMPLE SUBJECT")
-                .receiverEmail(optionalService.getBusiness().getEmail())
-                .replyToEmail(user.getEmail())
-                .build()
+        def locationMessageDto = messageDto
+        locationMessageDto.setReceiverEmail(location.getBusiness().getEmail())
+        locationMessageDto.setReplyToEmail(user.getEmail())
 
         def content = "Message send from user " +
                 customer.getFirstName() + " " +
                 customer.getLastName() + " " +
                 "with email" + " " + user.getEmail() +
-                "\n\n" + messageDto.getContent()
+                "\n\n" + locationMessageDto.getContent() +  "\n\n" + "Sent via SocialEventOrganizer app"
 
         def inviteEmail = EmailUtil.buildEmail(content,
-                messageDto.getReceiverEmail(), messageDto.getSubject(), messageDto.getReplyToEmail())
+                locationMessageDto.getReceiverEmail(), locationMessageDto.getSubject(), locationMessageDto.getReplyToEmail())
 
         when:
         customerService.sendMessage(customerId, receiverId, messageDto, Location.class)
@@ -196,6 +185,84 @@ class CustomerServiceTest extends Specification
         then:
         1 * userService.get(customerId) >> user
         1 * locationService.getWithDetail(receiverId) >> location
+        1 * customerRepository.getByIdWithUser(customerId) >> Optional.of(customer)
+        1 * emailService.sendEmail(inviteEmail)
+    }
+
+    def "SendMessage(#Catering)"() {
+        given:
+        def customerId = 1L
+        def receiverId = 1l
+
+        def user = fakeUser
+        def customer = fakeCustomer
+        customer.setEmail('test@email.com')
+
+        def catering = fakeCateringWithDetails
+
+        def messageDto = MessageDto.builder()
+                .subject("SAMPLE SUBJECT")
+                .content('SAMPLE CONTENT')
+                .build()
+
+        def cateringMessageDto = messageDto
+        cateringMessageDto.setReceiverEmail(catering.getBusiness().getEmail())
+        cateringMessageDto.setReplyToEmail(user.getEmail())
+
+        def content = "Message send from user " +
+                customer.getFirstName() + " " +
+                customer.getLastName() + " " +
+                "with email" + " " + user.getEmail() +
+                "\n\n" + cateringMessageDto.getContent() +  "\n\n" + "Sent via SocialEventOrganizer app"
+
+        def inviteEmail = EmailUtil.buildEmail(content,
+                cateringMessageDto.getReceiverEmail(), cateringMessageDto.getSubject(), cateringMessageDto.getReplyToEmail())
+
+        when:
+        customerService.sendMessage(customerId, receiverId, messageDto, Catering.class)
+
+        then:
+        1 * userService.get(customerId) >> user
+        1 * cateringService.getWithDetail(receiverId) >> catering
+        1 * customerRepository.getByIdWithUser(customerId) >> Optional.of(customer)
+        1 * emailService.sendEmail(inviteEmail)
+    }
+
+    def "SendMessage(#Service)"() {
+        given:
+        def customerId = 1L
+        def receiverId = 1l
+
+        def user = fakeUser
+        def customer = fakeCustomer
+        customer.setEmail('test@email.com')
+
+        def optionalService = fakeOptionalService
+
+        def messageDto = MessageDto.builder()
+                .subject("SAMPLE SUBJECT")
+                .content('SAMPLE CONTENT')
+                .build()
+
+        def serviceMessageDto = messageDto
+        serviceMessageDto.setReceiverEmail(optionalService.getBusiness().getEmail())
+        serviceMessageDto.setReplyToEmail(user.getEmail())
+
+        def content = "Message send from user " +
+                customer.getFirstName() + " " +
+                customer.getLastName() + " " +
+                "with email" + " " + user.getEmail() +
+                "\n\n" + serviceMessageDto.getContent() +  "\n\n" + "Sent via SocialEventOrganizer app"
+
+        def inviteEmail = EmailUtil.buildEmail(content,
+                serviceMessageDto.getReceiverEmail(), serviceMessageDto.getSubject(), serviceMessageDto.getReplyToEmail())
+
+        when:
+        customerService.sendMessage(customerId, receiverId, messageDto, OptionalService.class)
+
+        then:
+        1 * userService.get(customerId) >> user
+        1 * optionalServiceService.getWithDetail(receiverId) >> optionalService
         1 * customerRepository.getByIdWithUser(customerId) >> Optional.of(customer)
         1 * emailService.sendEmail(inviteEmail)
     }
@@ -317,7 +384,7 @@ class CustomerServiceTest extends Specification
         def guestIds = [1L] as long[]
 
         def customer = fakeCustomer
-        def locationForEvent = fakeLocationForEvent
+        def locationForEvent = fakeLocationForEventDto
         def guests = [fakeGuest]
         def organizedEvent = fakeOrganizedEvent
         organizedEvent.setGuests(new HashSet<>(guests))
@@ -344,7 +411,7 @@ class CustomerServiceTest extends Specification
         def address = fakeAddress
         def location = fakeLocation
         location.setLocationAddress(address)
-        def locationForEvent = fakeLocationForEvent
+        def locationForEvent = fakeLocationForEventDto
         locationForEvent.setEvent(fakeOrganizedEvent)
         locationForEvent.setLocation(location)
         def customer = fakeCustomer

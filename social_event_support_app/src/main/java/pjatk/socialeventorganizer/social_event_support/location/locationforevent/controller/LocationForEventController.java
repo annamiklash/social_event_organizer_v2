@@ -62,7 +62,7 @@ public class LocationForEventController {
             path = "business/status",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ImmutableList<LocationForEventDto>> listAllByConfirmationStatusAndBusinessId(@RequestParam String status,
-                                                                                                                       @RequestParam long businessId) {
+                                                                                                       @RequestParam long businessId) {
 
         List<LocationForEvent> optionalServices = locationForEventService.listAllByStatusAndBusinessId(businessId, status);
 

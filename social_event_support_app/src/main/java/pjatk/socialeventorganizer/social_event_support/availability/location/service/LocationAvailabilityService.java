@@ -72,7 +72,6 @@ public class LocationAvailabilityService {
     public LocationAvailability getByDateAndTime(String date, String timeFrom, String timeTo) {
         return locationAvailabilityRepository.getByDateAndTime(date, timeFrom, timeTo)
                 .orElseThrow(() -> new NotFoundException("Nothing for given date and time"));
-
     }
 
     public void updateToAvailable(LocationAvailability locationAvailability, Location location) {
@@ -80,9 +79,9 @@ public class LocationAvailabilityService {
 
         final LocationAvailability availability = resolveAvailabilitiesForDay(availabilityDto, location, false);
         availability.setStatus(AVAILABLE.name());
+
         save(availability);
         deleteById(locationAvailability.getId());
-
     }
 
     public void deleteById(long id) {

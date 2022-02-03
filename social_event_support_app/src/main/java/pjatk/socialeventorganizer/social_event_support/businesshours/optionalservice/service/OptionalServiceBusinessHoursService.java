@@ -1,4 +1,4 @@
-package pjatk.socialeventorganizer.social_event_support.businesshours.service.service;
+package pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import pjatk.socialeventorganizer.social_event_support.businesshours.BusinessHoursValidator;
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto;
 import pjatk.socialeventorganizer.social_event_support.businesshours.mapper.BusinessHoursMapper;
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours;
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.repository.OptionalServiceBusinessHoursRepository;
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.model.OptionalServiceBusinessHours;
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.repository.OptionalServiceBusinessHoursRepository;
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil;
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException;
 

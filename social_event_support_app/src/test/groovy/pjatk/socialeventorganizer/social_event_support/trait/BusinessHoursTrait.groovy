@@ -5,7 +5,7 @@ import pjatk.socialeventorganizer.social_event_support.businesshours.DayEnum
 import pjatk.socialeventorganizer.social_event_support.businesshours.catering.model.CateringBusinessHours
 import pjatk.socialeventorganizer.social_event_support.businesshours.dto.BusinessHoursDto
 import pjatk.socialeventorganizer.social_event_support.businesshours.location.model.LocationBusinessHours
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.model.OptionalServiceBusinessHours
 
 import java.time.LocalTime
 

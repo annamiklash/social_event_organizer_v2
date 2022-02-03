@@ -82,8 +82,10 @@ trait CateringTrait {
                     .firstName('Name')
                     .lastName('Name')
                     .businessName('Name')
+                    .email('business@email.com')
                     .verificationStatus('VERIFIED')
                     .phoneNumber(new BigInteger("123123123"))
+                    .isActive(true)
                     .build())
             .cateringAddress(Address.builder()
                     .id(1L)
@@ -95,7 +97,7 @@ trait CateringTrait {
                     .build())
             .cuisines(Set.of(
                     Cuisine.builder()
-                            .id(1)
+                            .id(1l)
                             .name('Greek')
                             .build()
             ))
@@ -107,6 +109,7 @@ trait CateringTrait {
             ))
             .cateringBusinessHours(Set.of(
                     CateringBusinessHours.builder()
+                            .id(1l)
                             .day(DayEnum.SUNDAY.name())
                             .timeFrom(LocalTime.of(10, 0))
                             .timeTo(LocalTime.of(20, 0))

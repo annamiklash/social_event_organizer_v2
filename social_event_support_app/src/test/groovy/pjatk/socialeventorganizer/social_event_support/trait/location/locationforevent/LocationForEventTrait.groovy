@@ -19,7 +19,13 @@ import static pjatk.socialeventorganizer.social_event_support.enums.Confirmation
 
 trait LocationForEventTrait {
 
-    LocationForEvent fakeLocationForEvent = LocationForEvent.builder()
+    LocationForEventDto fakeLocationForEvent = LocationForEventDto.builder()
+            .timeFrom("10:00:00")
+            .timeTo("12:00:00")
+            .guestCount(10)
+            .build()
+
+    LocationForEvent fakeLocationForEventDto = LocationForEvent.builder()
             .id(1L)
             .timeFrom(LocalTime.parse("10:00:00"))
             .timeTo(LocalTime.parse("12:00:00"))

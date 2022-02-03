@@ -237,8 +237,6 @@ public class CustomerService {
         final OrganizedEvent organizedEvent = organizedEventService.get(eventId);
 
         organizedEvent.setGuests(new HashSet<>(guests));
-
-
         organizedEvent.setModifiedAt(timestampHelper.now());
 
         organizedEventService.save(organizedEvent);

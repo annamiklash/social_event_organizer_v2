@@ -15,6 +15,7 @@ trait CustomerTrait {
             .id(1L)
             .firstName('Geralt')
             .lastName('Rivijski')
+            .type('C' as char)
             .birthdate(LocalDate.parse('2007-12-03'))
             .phoneNumber(new BigInteger("123123123"))
             .email('email@email.com')

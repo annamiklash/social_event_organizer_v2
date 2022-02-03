@@ -1,13 +1,14 @@
 package pjatk.socialeventorganizer.social_event_support.optional_service.service
 
+import com.google.common.base.Strings
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
 import org.springframework.data.domain.PageImpl
 import pjatk.socialeventorganizer.social_event_support.address.service.AddressService
 import pjatk.socialeventorganizer.social_event_support.availability.optionalservice.repository.OptionalServiceAvailabilityRepository
 import pjatk.socialeventorganizer.social_event_support.business.repository.BusinessRepository
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.model.OptionalServiceBusinessHours
-import pjatk.socialeventorganizer.social_event_support.businesshours.service.service.OptionalServiceBusinessHoursService
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.model.OptionalServiceBusinessHours
+import pjatk.socialeventorganizer.social_event_support.businesshours.optionalservice.service.OptionalServiceBusinessHoursService
 import pjatk.socialeventorganizer.social_event_support.common.convertors.Converter
 import pjatk.socialeventorganizer.social_event_support.common.helper.TimestampHelper
 import pjatk.socialeventorganizer.social_event_support.exceptions.BusinessVerificationException
@@ -252,11 +253,12 @@ class OptionalServiceServiceTest extends Specification
                 .build()
 
         def city = dto.getCity()
+        city = Strings.isNullOrEmpty(dto.getCity()) ? "" : city.substring(0, city.indexOf(','));
 
         def host = fakeOptionalHostWithAvailability
-        def hosts = [host]
         host.setServiceCost(200.00)
-        def hostList = [host]
+        def hosts = [host]
+
         def hostResult = host
         def rating = 3
         hostResult.setRating(rating);
@@ -267,7 +269,7 @@ class OptionalServiceServiceTest extends Specification
         def result = optionalServiceService.search(dto)
 
         then:
-        1 * optionalServiceRepository.search(dto.getDate(), dto.getType(), city) >> _
+        1 * optionalServiceRepository.search(dto.getDate(), dto.getType(), city) >> hosts
         1 * optionalServiceReviewService.getRating(host.getId()) >> rating
 
         result == target

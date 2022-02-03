@@ -1,7 +1,9 @@
 package pjatk.socialeventorganizer.social_event_support.availability.location.service
 
+
 import pjatk.socialeventorganizer.social_event_support.availability.location.model.LocationAvailability
 import pjatk.socialeventorganizer.social_event_support.availability.location.repository.LocationAvailabilityRepository
+import pjatk.socialeventorganizer.social_event_support.availability.mapper.AvailabilityMapper
 import pjatk.socialeventorganizer.social_event_support.common.util.DateTimeUtil
 import pjatk.socialeventorganizer.social_event_support.exceptions.IllegalArgumentException
 import pjatk.socialeventorganizer.social_event_support.exceptions.NotFoundException
@@ -12,6 +14,10 @@ import pjatk.socialeventorganizer.social_event_support.trait.location.LocationTr
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
+
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 
 class LocationAvailabilityServiceTest extends Specification
         implements LocationAvailabilityTrait,
@@ -77,27 +83,61 @@ class LocationAvailabilityServiceTest extends Specification
 
     def "updateToAvailable positive scenario"() {
         given:
-        def location = fakeLocation
-        def availabilityDto = fakeAvailabilityDto
-        availabilityDto.setStatus('NOT_AVAILABLE')
-        def locationAvailabilities = [fakeLocationAvailability]
-        def locationAvailability = fakeLocationAvailability
-        def locationAvailabilityUpper = Optional.of(fakeLocationAvailability)
-        def locationAvailabilityLower = Optional.of(fakeLocationAvailability)
-        def dateTimeFrom = DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeFrom())
-        def dateTimeTo = DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeTo())
+        def location = fakeFullLocationWithAvailability
 
+        def newAvailabilities = List.of(
+                LocationAvailability.builder()
+                        .id(1l)
+                        .status('AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 9, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 13, 0, 0))
+                        .location(location)
+                        .build(),
+                LocationAvailability.builder()
+                        .id(2l)
+                        .status('NOT_AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 13, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
+                        .location(location)
+                        .build(),
+                LocationAvailability.builder()
+                        .id(3l)
+                        .status('AVAILABLE')
+                        .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                        .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 18, 0, 0))
+                        .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 23, 0, 0))
+                        .location(location)
+                        .build())
+
+        def availabilityDto = AvailabilityMapper.toDto(newAvailabilities.get(1));
+        def locationAvailability = LocationAvailability.builder()
+                .status('AVAILABLE')
+                .date(LocalDate.of(2022, Month.FEBRUARY, 1))
+                .timeFrom(LocalDateTime.of(2022, Month.FEBRUARY, 1, 9, 0, 0))
+                .timeTo(LocalDateTime.of(2022, Month.FEBRUARY, 1, 23, 0, 0))
+                .location(location)
+                .build()
+
+        location.setAvailability(new HashSet<LocationAvailability>(newAvailabilities))
+        def locationAvailabilityUpper = newAvailabilities.get(0)
+        def locationAvailabilityLower = newAvailabilities.get(2)
+
+        final String timeFrom = DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeFrom())
+        final String timeTo = DateTimeUtil.joinDateAndTime(availabilityDto.getDate(), availabilityDto.getTimeTo())
 
         when:
-        locationAvailabilityService.updateToAvailable(fakeLocationAvailability, location)
+        locationAvailabilityService.updateToAvailable(newAvailabilities.get(1), location)
 
         then:
-        1 * locationAvailabilityRepository.findByLocationIdAndTimeTo(location.getId(), dateTimeFrom) >> Optional.empty()
-        1 * locationAvailabilityRepository.findByLocationIdAndTimeFrom(location.getId(), dateTimeTo) >> Optional.empty()
-        locationAvailabilityRepository.find(location.getId(), availabilityDto.getDate()) >> locationAvailabilities
+        _ * locationAvailabilityRepository.find(location.getId(), availabilityDto.getDate()) >> newAvailabilities
+        1 * locationAvailabilityRepository.findByLocationIdAndTimeTo(location.getId(), timeFrom) >> Optional.of(locationAvailabilityUpper)
+        1 * locationAvailabilityRepository.findByLocationIdAndTimeFrom(location.getId(), timeTo) >> Optional.of(locationAvailabilityLower)
         1 * locationAvailabilityRepository.save(locationAvailability)
-        1 * locationAvailabilityRepository.deleteById(locationAvailability.getId());
-        1 * locationAvailabilityRepository.flush();
+        1 * locationAvailabilityRepository.deleteById(locationAvailabilityUpper.getId())
+        1 * locationAvailabilityRepository.deleteById(locationAvailabilityLower.getId())
+        _ * locationAvailabilityRepository.flush()
     }
 
     def "getByDateAndTime positive scenario"() {

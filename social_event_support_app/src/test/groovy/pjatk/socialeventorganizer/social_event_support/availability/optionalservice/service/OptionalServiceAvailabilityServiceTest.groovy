@@ -32,6 +32,8 @@ class OptionalServiceAvailabilityServiceTest extends Specification
     }
     //todo: implement
     def "Update"() {
+
+
     }
 
     def "findAllByServiceIdAndDatePeriod positive scenario"() {
@@ -92,9 +94,17 @@ class OptionalServiceAvailabilityServiceTest extends Specification
         1 * optionalServiceAvailabilityRepository.findAvailabilitiesByServiceIdAndDate(locationId, date) >> [fakeOptionalServiceAvailability]
         1 * optionalServiceAvailabilityRepository.delete(optionalServiceAvailability)
     }
-    //todo: implement
-    def "UpdateToAvailable"() {
 
+    def "deleteById"() {
+        given:
+        def id = 1l
+
+        when:
+        optionalServiceAvailabilityService.deleteById(id)
+
+        then:
+        1 * optionalServiceAvailabilityRepository.deleteById(id)
+        1 * optionalServiceAvailabilityRepository.flush()
     }
 
     def "GetByDateAndTime"() {
